@@ -1,0 +1,7 @@
+set -e
+
+tar xzf libyaml/yaml-0.1.6.tar.gz
+cd yaml-0.1.6
+./configure --prefix=${BOSH_INSTALL_TARGET}
+make
+make install

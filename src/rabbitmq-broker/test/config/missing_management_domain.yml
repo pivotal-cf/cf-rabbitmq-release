@@ -1,0 +1,22 @@
+---
+# CC, default assumes bosh-lite is used
+cc_endpoint: http://127.0.0.1:8181
+# UAA
+uaa_client:
+  client_id: cf
+  username: "p1-rabbit"
+  password: "p1-rabbit-pwd"
+service:
+  username: "p1-rabbit"
+  password: "p1-rabbit-testpwd"
+  url: http://127.0.0.1:4567
+logging:
+  level: debug
+  print_stack_traces: true
+pid: /tmp/cf_rabbitmq_broker.pid
+rabbitmq:
+  hosts:
+    - 127.0.0.1
+  administrator:
+    username: guest
+    password: guest

@@ -1,0 +1,140 @@
+#!/bin/sh
+
+#
+# rabbitmq_broker RabbitMQ service broker
+#
+
+set -e
+
+NAME=rabbitmq_broker
+BROKER=/var/vcap/packages/rabbitmq-broker/bin/cf_rabbitmq_broker
+CONFIG=/var/vcap/jobs/rabbitmq-broker/config/rabbitmq_broker.yml
+DESC="RabbitMQ service broker"
+USER=vcap
+
+INIT_LOG_DIR=/var/vcap/sys/log/rabbitmq-broker
+
+PID_FILE=/var/vcap/sys/run/rabbitmq-broker/pid
+
+START_PROG=/usr/bin/setsid
+TIMESTAMP=/bin/date
+
+test -x "${BROKER}"
+test -x "${START_PROG}"
+test -f "${CONFIG}"
+
+RETVAL=0
+
+ensure_dir() {
+    DIR=$1
+    if [ ! -d "${DIR}" ] ; then
+        mkdir -p "${DIR}"
+        chown -R "${USER}":"${USER}" "${DIR}"
+        chmod 755 "${DIR}"
+    fi
+}
+
+ensure_dirs() {
+    ensure_dir "$(dirname "${PID_FILE}")"
+    ensure_dir "${INIT_LOG_DIR}"
+}
+
+remove_pid() {
+    rm -f "${PID_FILE}"
+    rmdir "$(dirname "${PID_FILE}")" || :
+}
+
+start_broker() {
+    status_broker
+    if [ "${RETVAL}" = 0 ]; then
+        echo "RabbitMQ service broker is currently running"
+    else
+        RETVAL=0
+        ensure_dirs
+        echo "$("${TIMESTAMP}"): Starting RabbitMQ service broker" >> "${INIT_LOG_DIR}/startup_stdout.log"
+        set +e
+        "${START_PROG}" "${BROKER}" "${CONFIG}" \
+            1>> "${INIT_LOG_DIR}/startup_stdout.log" \
+            2>> "${INIT_LOG_DIR}/startup_stderr.log" \
+            0<&- &
+        RETVAL=$?
+        set -e
+        case "${RETVAL}" in
+            0)
+                echo "$("${TIMESTAMP}"): Finished starting RabbitMQ service broker" >> "${INIT_LOG_DIR}/startup_stdout.log"
+                echo "SUCCESS"
+                ;;
+            *)
+                echo "$("${TIMESTAMP}"): Errored starting RabbitMQ service broker" >> "${INIT_LOG_DIR}/startup_stdout.log"
+                echo "$("${TIMESTAMP}"): Errored starting RabbitMQ service broker" >> "${INIT_LOG_DIR}/startup_stderr.log"
+                remove_pid
+                echo "FAILED - check ${INIT_LOG_DIR}/startup_std*.log"
+                RETVAL=1
+                ;;
+        esac
+    fi
+}
+
+stop_broker() {
+    status_broker
+    if [ "${RETVAL}" = 0 ]; then
+        set +e
+        kill $(cat "${PID_FILE}")
+        RETVAL=$?
+        set -e
+        if [ "${RETVAL}" = 0 ]; then
+            remove_pid
+        else
+            echo "FAILED - check logs"
+        fi
+    else
+        echo "RabbitMQ service broker not running"
+    fi
+}
+
+# RETVAL = 0 if running, != 0 if stopped
+status_broker() {
+    if [ -f "${PID_FILE}" ]; then
+        RETVAL=0
+        set +e
+        kill -0 $(cat "${PID_FILE}") > /dev/null 2>&1
+        if [ $? != 0 ]; then
+            RETVAL=3
+        fi
+        set -e
+    else
+        RETVAL=1
+    fi
+}
+
+restart_broker() {
+    stop_broker
+    start_broker
+}
+
+case "$1" in
+    start)
+        echo -n "Starting ${DESC}: "
+        start_broker
+        echo "${NAME}."
+        ;;
+    stop)
+        echo -n "Stopping ${DESC}: "
+        stop_broker
+        echo "${NAME}."
+        ;;
+    status)
+        status_broker
+        ;;
+    force-reload|reload|restart)
+        echo -n "Restarting ${DESC}: "
+        restart_broker
+        echo "${NAME}."
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|reload|force-reload}" >&2
+        RETVAL=1
+        ;;
+esac
+
+exit "${RETVAL}"

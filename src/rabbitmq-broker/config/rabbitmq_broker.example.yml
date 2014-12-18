@@ -1,0 +1,24 @@
+---
+# CC, default assumes bosh-lite is used
+cc_endpoint: http://api.10.244.0.34.xip.io
+# UAA
+uaa_client:
+  client_id: cf
+  username: "p1-rabbit"
+  password: "p1-rabbit-pwd"
+service:
+  # credentials CC uses to authenticate with the broker
+  username: "p1-rabbit"
+  password: "367@8G24#e:3pTVwD.ng,YMJKds9<X"
+  url: http://10.244.9.14:4567
+logging:
+  level: debug
+  print_stack_traces: true
+pid: /tmp/cf_rabbitmq_broker.pid
+rabbitmq:
+  management_domain: pivotal-rabbitmq.10.244.0.34.xip.io
+  hosts:
+    - 10.244.9.50
+  administrator:
+    username: guest
+    password: guest

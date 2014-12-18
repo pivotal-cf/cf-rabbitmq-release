@@ -1,0 +1,51 @@
+#!/bin/sh
+##  The contents of this file are subject to the Mozilla Public License
+##  Version 1.1 (the "License"); you may not use this file except in
+##  compliance with the License. You may obtain a copy of the License
+##  at http://www.mozilla.org/MPL/
+##
+##  Software distributed under the License is distributed on an "AS IS"
+##  basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+##  the License for the specific language governing rights and
+##  limitations under the License.
+##
+##  The Original Code is RabbitMQ.
+##
+##  The Initial Developer of the Original Code is VMware, Inc.
+##  Copyright (c) 2007-2014 VMware, Inc.  All rights reserved.
+##
+
+## This is a customised version of the upstream script wrapper, taking
+## account bug 25622. The upstream this was base on is
+## http://hg.rabbitmq.com/rabbitmq-server/file/b29268e075c1/packaging/common/rabbitmq-script-wrapper
+##
+## This file may need updating manually if and when the upstream changes.
+
+RABBITMQ_USER=vcap
+
+# Escape spaces and quotes, because shell is revolting.
+for arg in "$@" ; do
+	# Escape quotes in parameters, so that they're passed through cleanly.
+	arg=$(sed -e 's/"/\\"/g' <<-END
+		$arg
+		END
+	)
+	CMDLINE="${CMDLINE} \"${arg}\""
+done
+
+SCRIPT=`basename $0`
+
+cd /var/vcap/store/rabbitmq # this is our HOME for rabbit/vcap
+
+if [ `id -u` = `id -u ${RABBITMQ_USER}` -a "$SCRIPT" = "rabbitmq-server" ] ; then
+    /var/vcap/packages/rabbitmq-server/privbin/rabbitmq-server "$@"
+elif [ `id -u` = 0 ] ; then
+    su ${RABBITMQ_USER} -p -s /bin/sh -c "PATH=$PATH /var/vcap/packages/rabbitmq-server/privbin/${SCRIPT} ${CMDLINE}"
+else
+    /var/vcap/packages/rabbitmq-server/privbin/${SCRIPT}
+    echo
+    echo "Only root or ${RABBITMQ_USER} should run ${SCRIPT}"
+    echo
+    exit 1
+fi
+

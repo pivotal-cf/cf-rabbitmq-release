@@ -1,0 +1,13 @@
+---
+cc_endpoint: http://127.0.0.1:8181
+uaa_client:
+  client_id: cf
+  username: "p1-rabbit"
+  password: "p1-rabbitpwd"
+service:
+  username: "p1-rabbit"
+  password: "p1-rabbit-testpwd"
+  url: http://127.0.0.1:4567
+logging:
+  level: debug
+pid: /tmp/rabbitmq_gateway.pid

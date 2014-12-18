@@ -1,0 +1,262 @@
+#!/bin/sh
+#
+# rabbitmq-server RabbitMQ broker
+
+# Note: if in rabbitmq-env.conf you change the location of the PID file,
+# (probably by setting PID_FILE) things will continue to work, even from
+# this file, as the rabbitmq-env script (sourced by all the rabbitmq
+# commands) will equally source the rabbitmq-env.conf file and so
+# PID_FILE will be reset every time, correctly). However, this file will
+# still have the wrong definition of PID_FILE and so will create the
+# "wrong" directory. Meh-ish.
+
+set -ex
+
+PATH=/var/vcap/packages/erlang/bin:$PATH
+
+NAME=rabbitmq-server
+DAEMON=/var/vcap/packages/rabbitmq-server/bin/rabbitmq-server
+CONTROL=/var/vcap/packages/rabbitmq-server/bin/rabbitmqctl
+DESC=rabbitmq-server
+USER=vcap
+INIT_LOG_DIR=/var/vcap/sys/log/rabbitmq-server
+PID_FILE=/var/vcap/sys/run/rabbitmq-server/pid
+HOME_DIR=/var/vcap/store/rabbitmq
+OPERATOR_USERNAME_FILE="${HOME_DIR}/operator_administrator.username"
+START_PROG=/usr/bin/setsid
+JOB_DIR=/var/vcap/jobs/rabbitmq-server
+TIMESTAMP=/bin/date
+
+test -x "${DAEMON}"
+test -x "${CONTROL}"
+test -x "${START_PROG}"
+
+RETVAL=0
+
+[ -f "/var/vcap/store/rabbitmq/etc/default/${NAME}" ] && . "/var/vcap/store/rabbitmq/etc/default/${NAME}"
+
+ensure_dir() {
+    DIR=$1
+    if [ ! -d "${DIR}" ] ; then
+        mkdir -p "${DIR}"
+        chown -R "${USER}":"${USER}" "${DIR}"
+        chmod 755 "${DIR}"
+    fi
+}
+
+ensure_dirs() {
+    ensure_dir "$(dirname "${PID_FILE}")"
+    ensure_dir "${INIT_LOG_DIR}"
+    ensure_dir "${HOME_DIR}"
+}
+
+remove_pid() {
+    rm -f "${PID_FILE}"
+    rmdir "$(dirname "${PID_FILE}")" || :
+}
+
+delete_guest() {
+    set +e
+    "${CONTROL}" delete_user guest > /dev/null 2>&1
+    set -e
+}
+
+grant_permissions_for_all_vhosts() {
+    username=$1
+
+    VHOSTS=$(${CONTROL} list_vhosts | head -n -1 | tail -n +2)
+    for vhost in $VHOSTS
+    do
+        "${CONTROL}" set_permissions -p $vhost $username ".*" ".*" ".*"  > /dev/null 2>&1
+    done
+    true
+}
+
+create_operator_admin() {
+  <% rabbit_props = properties.send(:"rabbitmq-server")
+     if rabbit_props
+        if administrators = rabbit_props.administrators
+            if admin = administrators.ops_manager %>
+                echo "<%= admin.username %>" > $OPERATOR_USERNAME_FILE
+                create_admin <%= admin.username %> <%= admin.password %>
+            <% end %>
+        <% end %>
+    <% end %>
+    true
+}
+
+create_broker_admin() {
+  <% rabbit_props = properties.send(:"rabbitmq-server")
+     if rabbit_props
+        if administrators = rabbit_props.administrators
+            if admin = administrators.broker %>
+                create_admin <%= admin.username %> <%= admin.password %>
+            <% end %>
+        <% end %>
+    <% end %>
+    true
+}
+
+create_admin() {
+    username=$1
+    password=$2
+
+    set +e
+    "${CONTROL}" add_user $username $password  > /dev/null 2>&1
+    #change the password incase the OPERATOR_USERNAME_FILE does not exist & add user fails i.e. upgrading old release
+    "${CONTROL}" change_password $username $password  > /dev/null 2>&1
+    "${CONTROL}" set_user_tags $username administrator  > /dev/null 2>&1
+    grant_permissions_for_all_vhosts $username
+    set -e
+}
+
+delete_operator_admin() {
+  set +e
+  USERNAME=$(cat $OPERATOR_USERNAME_FILE)
+  "${CONTROL}" delete_user $USERNAME  > /dev/null 2>&1
+  set -e
+  true
+}
+
+run_script() {
+    local script
+    script=$1
+    echo "$("${TIMESTAMP}"): Starting ${script}" >> "${INIT_LOG_DIR}/startup_stdout.log"
+    set +e
+    ( . "${script}" ) \
+        1>> "${INIT_LOG_DIR}/startup_stdout.log" \
+        2>> "${INIT_LOG_DIR}/startup_stderr.log" \
+        0<&-
+    RETVAL=$?
+    set -e
+    case "${RETVAL}" in
+        0)
+            echo "$("${TIMESTAMP}"): Finished ${script}" >> "${INIT_LOG_DIR}/startup_stdout.log"
+            return 0
+            ;;
+        *)
+            echo "$("${TIMESTAMP}"): Errored ${script}" >> "${INIT_LOG_DIR}/startup_stdout.log"
+            echo "$("${TIMESTAMP}"): Errored ${script}" >> "${INIT_LOG_DIR}/startup_stderr.log"
+            echo "FAILED - check ${INIT_LOG_DIR}/startup_std*.log"
+            RETVAL=1
+            exit "${RETVAL}"
+            ;;
+    esac
+}
+
+start_rabbitmq () {
+    status_rabbitmq
+    if [ "${RETVAL}" = 0 ] ; then
+        echo "RabbitMQ is currently running"
+    else
+        RETVAL=0
+        ensure_dirs
+        run_script "${JOB_DIR}/bin/setup.sh"
+        run_script "${JOB_DIR}/bin/plugins.sh"
+        echo "$("${TIMESTAMP}"): Starting RabbitMQ" >> "${INIT_LOG_DIR}/startup_stdout.log"
+        RABBITMQ_PID_FILE="${PID_FILE}" "${START_PROG}" "${DAEMON}" \
+            >> "${INIT_LOG_DIR}/startup_stdout.log" \
+            2> "${INIT_LOG_DIR}/startup_stderr.log" \
+            0<&- &
+        set +e
+        "${CONTROL}" wait "${PID_FILE}" >/dev/null 2>&1
+        RETVAL=$?
+        set -e
+        case "${RETVAL}" in
+            0)
+                # no post-install script, so delete guest every time we start
+                delete_guest
+                [ -f $OPERATOR_USERNAME_FILE ] && delete_operator_admin
+                create_operator_admin
+                create_broker_admin
+                echo "$("${TIMESTAMP}"): Finished starting RabbitMQ" >> "${INIT_LOG_DIR}/startup_stdout.log"
+                echo "SUCCESS"
+                ;;
+            *)
+                echo "$("${TIMESTAMP}"): Errored starting RabbitMQ" >> "${INIT_LOG_DIR}/startup_stdout.log"
+                echo "$("${TIMESTAMP}"): Errored starting RabbitMQ" >> "${INIT_LOG_DIR}/startup_stderr.log"
+                remove_pid
+                echo "FAILED - check ${INIT_LOG_DIR}/startup_std*.log"
+                RETVAL=1
+                ;;
+        esac
+    fi
+}
+
+stop_rabbitmq() {
+    status_rabbitmq
+    if [ "${RETVAL}" = 0 ] ; then
+        set +e
+        "${CONTROL}" stop "${PID_FILE}" > "${INIT_LOG_DIR}/shutdown_log" 2> "${INIT_LOG_DIR}/shutdown_err"
+        RETVAL=$?
+        set -e
+        if [ "${RETVAL}" = 0 ] ; then
+            remove_pid
+        else
+            echo "FAILED - check ${INIT_LOG_DIR}/shutdown_log, _err"
+        fi
+    else
+        echo "RabbitMQ is not running"
+        RETVAL=0
+    fi
+}
+
+status_rabbitmq() {
+    set +e
+    if [ "$1" != "quiet" ] ; then
+        "${CONTROL}" status 2>&1
+    else
+        "${CONTROL}" status > /dev/null 2>&1
+    fi
+    if [ $? != 0 ] ; then
+        RETVAL=3
+    fi
+    set -e
+}
+
+restart_running_rabbitmq () {
+    status_rabbitmq
+    if [ "${RETVAL}" = 0 ] ; then
+        restart_rabbitmq
+    else
+        echo "RabbitMQ is not runnning"
+        RETVAL=0
+    fi
+}
+
+restart_rabbitmq() {
+    stop_rabbitmq
+    start_rabbitmq
+}
+
+case "$1" in
+    start)
+        echo -n "Starting ${DESC}: "
+        start_rabbitmq
+        echo "${NAME}."
+        ;;
+    stop)
+        echo -n "Stopping ${DESC}: "
+        stop_rabbitmq
+        echo "${NAME}."
+        ;;
+    status)
+        status_rabbitmq
+        ;;
+    force-reload|reload|restart)
+        echo -n "Restarting ${DESC}: "
+        restart_rabbitmq
+        echo "${NAME}."
+        ;;
+    try-restart)
+        echo -n "Restarting ${DESC}: "
+        restart_running_rabbitmq
+        echo "${NAME}."
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload}" >&2
+        RETVAL=1
+        ;;
+esac
+
+exit "${RETVAL}"

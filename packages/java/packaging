@@ -1,0 +1,11 @@
+# abort script on any command that exit with a non zero value
+set -e
+
+JAVA_VERSION="1.7.0_45"
+
+archive="java/jdk${JAVA_VERSION}.gz"
+
+echo "Extracting archive..."
+tar xzf $archive
+
+cp -R jdk${JAVA_VERSION}/* ${BOSH_INSTALL_TARGET}

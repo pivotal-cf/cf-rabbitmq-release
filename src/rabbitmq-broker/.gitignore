@@ -1,0 +1,12 @@
+config/rabbitmq_broker.yml
+config/invalid*.yml
+config/missing*.yml
+config/incorrect*.yml
+tmp/*
+lib/*
+target/*
+.lein-*
+.nrepl-*
+checkouts/*
+debug/*
+self-installs/*

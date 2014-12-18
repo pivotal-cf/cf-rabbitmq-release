@@ -1,0 +1,28 @@
+#! /bin/sh
+
+set -e
+
+(
+  RABBITMQ_PLUGINS=/var/vcap/packages/rabbitmq-server/bin/rabbitmq-plugins
+  PATH=$RABBITMQ_HOME/bin:$ERLANG_HOME/bin:/var/vcap/packages/ruby/bin:$PATH
+
+  for plugin in $($RABBITMQ_PLUGINS list -m -E)
+  do \
+      $RABBITMQ_PLUGINS disable ${plugin}
+  done
+
+  $RABBITMQ_PLUGINS enable rabbitmq_clusterer
+
+  PLUGINS="$($RABBITMQ_PLUGINS list -m)"
+
+  <% if_p("rabbitmq-server.plugins") do |plugins|
+    plugins.each do |plugin| %>
+      REMAINING_PLUGINS=$(echo "${PLUGINS}" | sed -e 's/^\(.*\)<%= plugin %>\(.*\)$/\1\2/gm')
+      if [ "${REMAINING_PLUGINS}" = "${PLUGINS}" ]; then
+        echo "Ignoring unrecognised plugin: <%= plugin %>"
+      else
+        $RABBITMQ_PLUGINS enable <%= plugin %>
+      fi
+    <% end %>
+  <% end %>
+)

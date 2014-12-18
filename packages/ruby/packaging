@@ -1,0 +1,24 @@
+set -e
+
+RUBY_VERSION="1.9.3-p545"
+GEMS_VERSION="1.8.24"
+BUNDLER_VERSION="1.2.1"
+
+tar xzf ruby/ruby-${RUBY_VERSION}.tar.gz
+(
+  cd ruby-${RUBY_VERSION}
+  ./configure --prefix=${BOSH_INSTALL_TARGET} \
+    --disable-install-doc \
+    --with-opt-dir=/var/vcap/packages/libyaml
+  make
+  make install
+)
+
+tar zxvf ruby/rubygems-${GEMS_VERSION}.tgz
+(
+  cd rubygems-${GEMS_VERSION}
+
+  ${BOSH_INSTALL_TARGET}/bin/ruby setup.rb
+)
+
+${BOSH_INSTALL_TARGET}/bin/gem install ruby/bundler-${BUNDLER_VERSION}.gem --no-ri --no-rdoc

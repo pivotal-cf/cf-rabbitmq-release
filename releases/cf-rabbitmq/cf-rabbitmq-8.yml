@@ -1,0 +1,194 @@
+---
+packages:
+- name: autoconf
+  version: bfc4e561b4dcb4bae9574218fe5fcb10d4e03bb7
+  sha1: !binary |-
+    NGEyNDcwOTA0ODU4N2E2OTRhNzMyZjM1ZWY4MmYzN2QyZWE1MGFjOA==
+  fingerprint: !binary |-
+    YmZjNGU1NjFiNGRjYjRiYWU5NTc0MjE4ZmU1ZmNiMTBkNGUwM2JiNw==
+  dependencies:
+  - packages
+- name: autofoo
+  version: b513e72194ae9617fa8bacfe3d9a2cf24f35ad17
+  sha1: !binary |-
+    NGVhM2Q0YzQ4NjhhMzUxYWRjZTc1OTgxODI5OGYxNDVhMGJmYjZmOQ==
+  fingerprint: !binary |-
+    YjUxM2U3MjE5NGFlOTYxN2ZhOGJhY2ZlM2Q5YTJjZjI0ZjM1YWQxNw==
+  dependencies:
+  - autoconf
+  - automake
+  - libtool
+  - packages
+- name: automake
+  version: a7931b6558a175fb2f146e2cb41fae9315ca2e75
+  sha1: !binary |-
+    NzE3YjM4MTMxNjgxYjc3NmYwNGUzNTY2ZGEyYzkxMGE4M2QzNmM3Ng==
+  fingerprint: !binary |-
+    YTc5MzFiNjU1OGExNzVmYjJmMTQ2ZTJjYjQxZmFlOTMxNWNhMmU3NQ==
+  dependencies:
+  - autoconf
+  - packages
+- name: broker-registrar
+  version: 62775a540fa2879abe759d4bce5b791253da7a70
+  sha1: !binary |-
+    NTljNjBlMjg2MWJkNzU0MDkwZWJjNTIyNWY0MWM0NDgzZmNjNjYyMA==
+  fingerprint: !binary |-
+    NjI3NzVhNTQwZmEyODc5YWJlNzU5ZDRiY2U1Yjc5MTI1M2RhN2E3MA==
+  dependencies:
+  - ruby
+- name: cf
+  version: 99a5a3792f8ee43ff36b1b1952f727a8900ce3dc
+  sha1: !binary |-
+    MWEwYTRkNDI4YmY2YzQ2ODMyZWU4OTFhZDI5OTBkMzYzNGU1YTYwNw==
+  fingerprint: !binary |-
+    OTlhNWEzNzkyZjhlZTQzZmYzNmIxYjE5NTJmNzI3YTg5MDBjZTNkYw==
+  dependencies:
+  - packages
+- name: erlang
+  version: ffa59df2b608ad9667533baf65d107cc14d09031
+  sha1: !binary |-
+    MzYxNDUzOTJjMzU0OGQ1OTk1OWJhMjRhYjQxODI5NjIwY2NjNjM3Mw==
+  fingerprint: !binary |-
+    ZmZhNTlkZjJiNjA4YWQ5NjY3NTMzYmFmNjVkMTA3Y2MxNGQwOTAzMQ==
+  dependencies:
+  - autofoo
+  - packages
+- name: haproxy
+  version: 43e554be1ce0ec6aba6f590d8e3da49fa4fdbd55
+  sha1: !binary |-
+    YTljZjdiMDM3NzAzNjRiY2Y0YzM3Nzc0MmNmNjZmY2RkOGU3ODk3Nw==
+  fingerprint: !binary |-
+    NDNlNTU0YmUxY2UwZWM2YWJhNmY1OTBkOGUzZGE0OWZhNGZkYmQ1NQ==
+  dependencies:
+  - packages
+- name: java
+  version: 04f491163ca8fb0f19daafd09261fde29da78137
+  sha1: !binary |-
+    ZDgzZmVjM2EyZWI4ODNkNzc0OWMyOWIwN2FlYmQwNzg2ZjU3NTQ5OQ==
+  fingerprint: !binary |-
+    MDRmNDkxMTYzY2E4ZmIwZjE5ZGFhZmQwOTI2MWZkZTI5ZGE3ODEzNw==
+  dependencies:
+  - packages
+- name: libtool
+  version: 8dc0eec3c854e7ea740b494b35e4afd760701cea
+  sha1: !binary |-
+    NjliNDYwM2ZiOWI2MGYyNjBmYmMxMmMzODJhMzBkM2ZkMDcxY2VmNw==
+  fingerprint: !binary |-
+    OGRjMGVlYzNjODU0ZTdlYTc0MGI0OTRiMzVlNGFmZDc2MDcwMWNlYQ==
+  dependencies:
+  - autoconf
+  - automake
+  - packages
+- name: libyaml
+  version: a8e96d700e5f32bbe4e22fa069c38a109f52307a
+  sha1: !binary |-
+    MTUyYWEyMzdjZDQ2MmRkMzgwNjBjMGJlMzIwYmQwMmRlNjRjMTlmYw==
+  fingerprint: !binary |-
+    YThlOTZkNzAwZTVmMzJiYmU0ZTIyZmEwNjljMzhhMTA5ZjUyMzA3YQ==
+  dependencies:
+  - packages
+- name: packages
+  version: 9492656fc2dba32e3a4d7f5872683a3d29b1a9b0
+  sha1: !binary |-
+    M2RmYmIwYTAzNTc5NDM5YjIxNjA5NGQ1ZWRmZjVkOGE1NDQwOTgxMw==
+  fingerprint: !binary |-
+    OTQ5MjY1NmZjMmRiYTMyZTNhNGQ3ZjU4NzI2ODNhM2QyOWIxYTliMA==
+  dependencies: []
+- name: rabbitmq-broker
+  version: !binary |-
+    MmRmNGIwYjY2YmExY2Y1NTA3NGRkYTdmNDJhYjBiODdlMzJmNWZkYw==
+  sha1: !binary |-
+    MjA0YjM0OGIzZTY0YTg0M2ZhY2RmOTcxNThhMjNjZTZiZDI5NmVmOA==
+  fingerprint: !binary |-
+    MmRmNGIwYjY2YmExY2Y1NTA3NGRkYTdmNDJhYjBiODdlMzJmNWZkYw==
+  dependencies:
+  - java
+  - packages
+- name: rabbitmq-server
+  version: 9a028b54720993b8d25fa561c064546c53352a2e
+  sha1: !binary |-
+    YWY5NDhlMjA3NmRiN2YxOWQyYjMyMGYyZDhmOTBkMjQ2MjMwYmQ1NQ==
+  fingerprint: !binary |-
+    OWEwMjhiNTQ3MjA5OTNiOGQyNWZhNTYxYzA2NDU0NmM1MzM1MmEyZQ==
+  dependencies:
+  - packages
+- name: ruby
+  version: f66caa47b35b0a58467605e8ca0216ecaf61f873
+  sha1: !binary |-
+    OGM1ODU0YmE5M2JlNDgyYjRmMjQ2MWYxNzVhODE2NjlmY2U5NjdkOQ==
+  fingerprint: !binary |-
+    ZjY2Y2FhNDdiMzViMGE1ODQ2NzYwNWU4Y2EwMjE2ZWNhZjYxZjg3Mw==
+  dependencies:
+  - libyaml
+  - packages
+- name: service-instance-migrator
+  version: 0640c55af162028b62c8f708d04e475b41808111
+  sha1: !binary |-
+    NDE0YjU2ZGExMjdlYTFmMGI3YjIwMWQ0NjA1NDViODNjMmI0MDEyZg==
+  fingerprint: !binary |-
+    MDY0MGM1NWFmMTYyMDI4YjYyYzhmNzA4ZDA0ZTQ3NWI0MTgwODExMQ==
+  dependencies:
+  - java
+  - packages
+- name: util-linux
+  version: 0a97b1ff5575191fb22f37b1efd6b8c9bdfee2a0
+  sha1: !binary |-
+    Mjg3NGNjNTQ2MDk2NWVkZTU5YjlhYmI3NTY2OWI2NWE3NjE3MWMyYw==
+  fingerprint: !binary |-
+    MGE5N2IxZmY1NTc1MTkxZmIyMmYzN2IxZWZkNmI4YzliZGZlZTJhMA==
+  dependencies:
+  - autofoo
+  - packages
+jobs:
+- name: broker-deregistrar
+  version: 30015fee8a0532ac7e5b72080dca95e85b810eda
+  fingerprint: !binary |-
+    MzAwMTVmZWU4YTA1MzJhYzdlNWI3MjA4MGRjYTk1ZTg1YjgxMGVkYQ==
+  sha1: !binary |-
+    ZDY2MTJiYThhZThlNzIwY2IwZGY3MDhkN2VkNDlmZmYxNDg2NDUxYg==
+- name: broker-registrar
+  version: 9f566e65b9c68b62521b77ea3105afe9f654396b
+  fingerprint: !binary |-
+    OWY1NjZlNjViOWM2OGI2MjUyMWI3N2VhMzEwNWFmZTlmNjU0Mzk2Yg==
+  sha1: !binary |-
+    Mjc5ZDA2MzM5OWM4NzYzMjRiOWJlYzhhYjgxMjE5OGUwZmJjOTBlNA==
+- name: haproxy
+  version: 50a48f8fba40de30f826ee2d79a8104c4a721a3d
+  fingerprint: !binary |-
+    NTBhNDhmOGZiYTQwZGUzMGY4MjZlZTJkNzlhODEwNGM0YTcyMWEzZA==
+  sha1: !binary |-
+    MGZmZTc2NjIyNTZlYTUyNWQ4YWZjMWYzMjgxZTM3YTYwY2VmNDY0Yw==
+- name: phantom
+  version: 2c8512c5491ebf52de73a450147bc370d7474b4d
+  fingerprint: !binary |-
+    MmM4NTEyYzU0OTFlYmY1MmRlNzNhNDUwMTQ3YmMzNzBkNzQ3NGI0ZA==
+  sha1: !binary |-
+    M2FlMTc2ZmJlZTZiNjVlNDE5ZTRmNzEyZDVjN2JmOTgyOGQxMmNiMQ==
+- name: rabbitmq-broker
+  version: a729b9b2d9c0d63cfd3ba3633d755d81820d4382
+  fingerprint: !binary |-
+    YTcyOWI5YjJkOWMwZDYzY2ZkM2JhMzYzM2Q3NTVkODE4MjBkNDM4Mg==
+  sha1: !binary |-
+    YTk2YTllMTRkMWEyMzgwYTljYWQzOWM2N2U3YTU4NWEyYzE1ODU1Mg==
+- name: rabbitmq-haproxy
+  version: d79de2811c365eb058250ac088e26fd427140b9b
+  fingerprint: !binary |-
+    ZDc5ZGUyODExYzM2NWViMDU4MjUwYWMwODhlMjZmZDQyNzE0MGI5Yg==
+  sha1: !binary |-
+    NTdjZTJmNTdiY2ZiZmFiMzJmNzVmNDMyNjY3NjVmYTRkYmY4MWE2Nw==
+- name: rabbitmq-server
+  version: 6187d6b1070f0697ff519d559a64e63e11455ee5
+  fingerprint: !binary |-
+    NjE4N2Q2YjEwNzBmMDY5N2ZmNTE5ZDU1OWE2NGU2M2UxMTQ1NWVlNQ==
+  sha1: !binary |-
+    ODNiNTJmMDFkZTcyZjRhMzU5NTg5NzMwNzlhNzA2NTljMTAyMzIwOA==
+- name: service-instance-migrator
+  version: 3e248ddb34b1209b5495684790542a5eeda07695
+  fingerprint: !binary |-
+    M2UyNDhkZGIzNGIxMjA5YjU0OTU2ODQ3OTA1NDJhNWVlZGEwNzY5NQ==
+  sha1: !binary |-
+    NDNjNDY5MDVkNDVhNWY2NzFjYTlhNWZmYjcwZWI4YmMxMGJkMzNiMA==
+commit_hash: 0fc0ec65
+uncommitted_changes: false
+name: cf-rabbitmq
+version: '8'

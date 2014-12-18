@@ -1,0 +1,49 @@
+---
+builds:
+  33bd8630-123e-4ac1-80c3-e132a14eab29:
+    version: '1'
+  051d7e1a-4b60-4bc7-87be-837c51f32498:
+    version: '2'
+  8b52b703-1c41-498a-855a-4be77a9a2ce6:
+    version: '3'
+  932ac661-b324-4783-93d3-cac823d0d13f:
+    version: '4'
+  499e0e0d-02b4-427e-8d86-2c4444ef4e4e:
+    version: '5'
+  8d4306d9-44ef-47a8-8e96-92ac96831a64:
+    version: '6'
+  747f0bdc-17cf-4f94-bddf-1da12038204e:
+    version: '7'
+  c9fce41c-5468-4d4f-b17a-e331030da723:
+    version: '8'
+  61c52043-4321-4d64-bb6e-716286f178f4:
+    version: '9'
+  5743fb85-1564-4688-b3f3-784e41b811a6:
+    version: '10'
+  440ce3cc-3b96-45ae-b8da-a9eb6c46f71e:
+    version: '11'
+  54c9eba6-6c4d-4c87-8757-55daaf0d8ffe:
+    version: '12'
+  1fd5bc1b-ae39-4371-ac31-0b7b3764302c:
+    version: '13'
+  ea9f015d-c05d-4fac-b3f3-08a204900bc7:
+    version: '14'
+  a9465931-0f8a-4f06-8e17-6338f8e4b4c6:
+    version: '15'
+  6d788839-665e-44f2-bae0-970acb0b17f3:
+    version: '16'
+  d30a62dd-bdbe-4275-990b-ca25fc096772:
+    version: '17'
+  26619e98-d528-4d9f-82c4-b3fbdc61acc9:
+    version: '18'
+  843b2105-3b36-4e28-80b5-9d4816aef2ea:
+    version: '19'
+  0ef4a6d7-3938-43ee-8c39-d5658889bc24:
+    version: '20'
+  793b26e6-b34c-4563-83eb-a52fc51475a6:
+    version: '21'
+  8a8b3ab6-b56b-4586-a5d4-391c1050cb10:
+    version: '22'
+  8ae19e5b-16e7-4bdb-8729-a6b7e3ec25c5:
+    version: '23'
+format-version: '2'

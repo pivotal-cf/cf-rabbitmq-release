@@ -1,0 +1,5 @@
+check process rabbitmq-haproxy
+  with pidfile /var/vcap/sys/run/rabbitmq-haproxy/pid
+  start program "/var/vcap/jobs/rabbitmq-haproxy/bin/rabbitmq-haproxy.init start"
+  stop program "/var/vcap/jobs/rabbitmq-haproxy/bin/rabbitmq-haproxy.init stop"
+  group vcap

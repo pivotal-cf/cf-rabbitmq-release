@@ -1,0 +1,62 @@
+---
+name: rabbitmq-broker
+
+packages:
+- java
+- rabbitmq-broker
+- util-linux
+- golang
+- route-registrar
+
+properties:
+  rabbitmq-broker.cc_endpoint:
+    description: "URL for CC"
+  rabbitmq-broker.uaa_endpoint:
+    description: "URL for UAA"
+  rabbitmq-broker.uaa_client.client_id:
+    description: "Client ID for UAA"
+  rabbitmq-broker.uaa_client.username:
+    description: "Services Username"
+  rabbitmq-broker.uaa_client.password:
+    description: "Services Password"
+  rabbitmq-broker.rabbitmq.hosts:
+    description: "List of IPs of the Rabbit servers (maybe proxied) upon which to allocate resources"
+  rabbitmq-broker.rabbitmq.administrator.username:
+    description: "The username used to access an admin account of the Rabbit servers"
+  rabbitmq-broker.rabbitmq.administrator.password:
+    description: "The password used to access an admin account of the Rabbit servers"
+  rabbitmq-broker.rabbitmq.ssl:
+    default: false
+    description: "Set to true if RabbitMQ cluster is configured to use TLS/SSL"
+  rabbitmq-broker.rabbitmq.management_domain:
+    description: "Domain that will be used to access RabbitMQ management UI, typically the system CF/CC domain."
+  rabbitmq-broker.logging.level:
+    default: "info"
+    description: "Logging level"
+  rabbitmq-broker.logging.print_stack_traces:
+    default: false
+    description: "Should boot exception handlers print full stack traces?"
+  rabbitmq-broker.service.url:
+    description: "The URL to the service gateway"
+  rabbitmq-broker.service.username:
+    description: "Username used by Cloud Controller for authentication"
+  rabbitmq-broker.service.password:
+    description: "Password used by Cloud Controller for authentication"
+  cf.domain:
+    description: "Domain shared by the UAA and CF API, e.g. '10.244.0.34.xip.io'"
+  cf.nats.host:
+    description: "Hostname/IP of NATS"
+  cf.nats.port:
+    description: "Port that NATS listens on"
+  cf.nats.username:
+    description: "The user to use when authenticating with NATS"
+  cf.nats.password:
+    description: "The password to use when authenticating with NATS"
+  route-registrar.target_ip:
+    description: "IP address RabbitMQ management UI requests will be routed to, typically that of RabbitMQ HAproxy VM"
+
+templates:
+  broker_config.yml.erb:    config/rabbitmq_broker.yml
+  broker_ctl.erb: bin/rabbitmq_broker_ctl
+  route_registrar_ctl.erb: bin/route_registrar_ctl
+  registrar_settings.yml.erb: config/registrar_settings.yml

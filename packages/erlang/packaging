@@ -1,0 +1,12 @@
+set -e
+
+export HOME=${BOSH_INSTALL_DIR}
+
+VERSION="17.1"
+
+tar xzf erlang/otp_src_${VERSION}.tar.gz
+cd otp_src_${VERSION}
+./configure --prefix=${BOSH_INSTALL_TARGET}
+make
+make install
+

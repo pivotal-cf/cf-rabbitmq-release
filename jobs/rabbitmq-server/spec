@@ -1,0 +1,15 @@
+---
+name: rabbitmq-server
+packages:
+- util-linux # needed for setsid
+- erlang
+- rabbitmq-server
+
+templates:
+  plugins.sh.erb:           bin/plugins.sh
+  rabbitmq-server.init.erb: bin/rabbitmq-server.init
+  setup.sh.erb:             bin/setup.sh
+  rabbitmq.config.erb:      etc/rabbitmq.config
+  cacert.pem.erb:           etc/cacert.pem
+  cert.pem.erb:             etc/cert.pem
+  key.pem.erb:              etc/key.pem

@@ -1,0 +1,9 @@
+[submodule "src/broker-registrar"]
+	path = src/broker-registrar
+	url = git@github.com:pivotal-cf/broker-registrar.git
+[submodule "src/rabbitmq-broker/tools/leiningen"]
+	path = src/rabbitmq-broker/tools/leiningen
+	url = git@github.com:michaelklishin/standalone-lein.git
+[submodule "src/route-registrar/src/github.com/cloudfoundry-incubator/route-registrar"]
+	path = src/route-registrar/src/github.com/cloudfoundry-incubator/route-registrar
+	url = git@github.com:cloudfoundry-incubator/route-registrar.git

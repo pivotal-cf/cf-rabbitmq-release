@@ -1,0 +1,30 @@
+<% ips = p("rabbitmq-haproxy.server_ips")
+   ports = p("rabbitmq-haproxy.ports").to_s.
+   split(/[\[\], ]/).
+   map { |port| port.to_i }.
+   select { |port| port > 0 && port < 65536 }
+%>
+global
+	daemon
+	user vcap
+	group vcap
+	maxconn 64000
+	spread-checks 4
+
+defaults
+	timeout connect 10s
+        timeout client  2d
+        timeout server  2d
+
+<% ports.each do |port| %>
+frontend input-<%= port %>
+	bind :<%= port %>
+	default_backend output-<%= port %>
+
+backend output-<%= port %>
+        mode tcp
+        balance leastconn
+<% ips.each_index do |idx| %>
+	server node<%= idx %> <%= ips[idx] %>:<%= port %> check inter 5000
+<% end %>
+<% end %>

@@ -1,0 +1,12 @@
+---
+name: rabbitmq-haproxy
+packages:
+- haproxy
+properties:
+  rabbitmq-haproxy.server_ips:
+    description: "List of IP addresses for the RabbitMQ cluster to proxy"
+  rabbitmq-haproxy.ports:
+    description: "List of ports (as string!) to forward to the RabbitMQ cluster"
+templates:
+  rabbitmq-haproxy.init.erb:   bin/rabbitmq-haproxy.init
+  haproxy.config.erb: haproxy.config
