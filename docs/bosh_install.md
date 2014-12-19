@@ -1,6 +1,6 @@
 ## Installing BOSH
 
-There is nothing special about installing BOSH for the Pivotal Cloud
+There is nothing special about installing BOSH for the Cloud
 Foundry RabbitMQ deployment. The following are reasonably generic but
 by no means intended to be a canonical installation guide. Use at your
 own risk. Equally, if you are familiar with BOSH and/or already have

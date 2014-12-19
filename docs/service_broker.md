@@ -1,4 +1,4 @@
-# RabbitMQ Service Broker for Pivotal Cloud Foundry
+# RabbitMQ Service Broker for Cloud Foundry
 
 The repository also includes a service broker for RabbitMQ. If you
 don't intend to run Cloud Foundry or don't wish to be able to
@@ -298,7 +298,7 @@ in the deployment manifest:
           username: "p1-rabbit"
           password: "p1-rabbit-devpwd"
       resource_pool: services-small
-    
+
     - name: broker-deregistrar
       release: cf-rabbitmq
       template: broker-deregistrar
@@ -314,7 +314,7 @@ in the deployment manifest:
           username: "p1-rabbit"
           password: "p1-rabbit-devpwd"
       resource_pool: services-small
-    
+
     properties:
       # for broker registrar
       cf:
@@ -347,7 +347,7 @@ To run the errand, do
 ### Binding an App
 
 To bind a service instance to an app, you need to deploy an app first.
-[Lab Rat](https://github.com/michaelklishin/labrat) is a good candidate.
+[Lab Rat](https://github.com/pivotal-cf/rabbit-labrat) is a good candidate.
 
 To deploy the app to Cloud Foundry, do
 

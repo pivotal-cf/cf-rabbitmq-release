@@ -1,6 +1,6 @@
 # Deploying and Managing the RabbitMQ service
 
-The Pivotal Cloud Foundry installer will install zero or one RabbitMQ
+The Cloud Foundry release will install zero or one RabbitMQ
 clusters of largely any size. The installation has a load balancer
 (`haproxy`) which spreads connections on all of the default ports for
 all of the shipped plugins across all the machines within the cluster.
