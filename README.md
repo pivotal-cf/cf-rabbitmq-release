@@ -1,4 +1,4 @@
-# Cloud Foundry RabbitMQ Serivce
+# Cloud Foundry RabbitMQ Service
 
 This repository contains the release for RabbitMQ for Cloud Foundry.
 It is deployable by BOSH in the usual way.
