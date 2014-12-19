@@ -58,4 +58,6 @@ builds:
     version: '28'
   a29c0473-5335-4a46-bca0-2b76ee836a91:
     version: '29'
+  636d3a0d-671e-4214-bd45-4c5ea7b070de:
+    version: '30'
 format-version: '2'
