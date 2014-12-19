@@ -1,4 +1,4 @@
-# RabbitMQ for Pivotal CF
+# Cloud Foundry RabbitMQ Serivce
 
 This repository contains the release for RabbitMQ for Cloud Foundry.
 It is deployable by BOSH in the usual way.
