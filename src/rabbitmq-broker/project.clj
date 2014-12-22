@@ -4,7 +4,7 @@
                  ;; CF client
                  [clojurewerkz/mold       "1.0.0-beta4"]
                  ;; RabbitMQ client (including HTTP API)
-                 [com.novemberain/langohr "3.0.0-rc4" :exclusions [clj-http]]
+                 [com.novemberain/langohr "3.0.0" :exclusions [clj-http]]
                  ;; HTTP client which uses HTTPCore 4.2.x, compatible
                  ;; with Spring 3 and CF Java client.
                  [clj-http                "0.7.6"]
