@@ -82,4 +82,6 @@ builds:
     version: '40'
   b5ae8d51-6dfb-4dc0-9698-09638b3cecaf:
     version: '41'
+  cf933cb7-1402-4edb-a160-1a99c97b93ca:
+    version: '42'
 format-version: '2'
