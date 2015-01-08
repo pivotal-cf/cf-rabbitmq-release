@@ -31,7 +31,7 @@
   :source-paths      ["src/clojure"]
   :java-source-paths ["src/java"]
   :resource-paths    ["src/resources"]
-  :javac-options     ["-target" "1.6" "-source" "1.6"]
+  :javac-options     ["-target" "1.7" "-source" "1.7"]
   :main io.pivotal.pcf.rabbitmq.main
   :global-vars {*warn-on-reflection* true}
   :jvm-opts ["-Xmx512m"]
