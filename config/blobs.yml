@@ -63,3 +63,7 @@ rabbitmq-server/rabbitmq_clusterer-3.4.3.1.ez:
   object_id: e4904636-e027-436f-a8dd-4f4ae680a728
   sha: 8d002615d66af2498ef922507957d5cf6274489d
   size: 57318
+java/jre1.8.0_20.tar.gz:
+  object_id: 49264d83-d6a7-4444-a801-88e4af6e0691
+  sha: 30745df3fca966a222a2800052aa2406ad987de3
+  size: 62751094

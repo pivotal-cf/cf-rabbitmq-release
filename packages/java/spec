@@ -1,5 +1,5 @@
 ---
 name: java
 files:
-- java/jdk1.7.0_45.gz
+- java/jre1.8.0_20.tar.gz
 dependencies: []
