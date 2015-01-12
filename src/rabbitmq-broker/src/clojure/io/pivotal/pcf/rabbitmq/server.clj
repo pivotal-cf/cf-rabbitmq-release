@@ -1,11 +1,9 @@
 (ns io.pivotal.pcf.rabbitmq.server
   (:require [taoensso.timbre :as log]
             [io.pivotal.pcf.rabbitmq.config :as cfg]
-            [io.pivotal.pcf.rabbitmq.cf :as cfc]
             [io.pivotal.pcf.rabbitmq.resources :as rs]
             [clojure.java.io :as io]
             beckon
-            [clojurewerkz.mold.users  :as cfu]
             [ring.adapter.jetty9 :refer [run-jetty]]
             [compojure.core :refer [defroutes GET PUT DELETE]]
             [compojure.route :as rt]
@@ -15,8 +13,7 @@
             [ring.middleware.basic-authentication :refer [wrap-basic-authentication]]
             [langohr.http :as hc])
   (:import java.io.File
-           java.lang.management.ManagementFactory
-           [org.cloudfoundry.client.lib CloudFoundryClient]))
+           java.lang.management.ManagementFactory))
 
 ;;
 ;; Implementation
@@ -244,15 +241,7 @@
 
 (defn ^{:private true} connect-to-cf
   [config]
-  (log/infof "About to connect to CF...")
-  (let [client                   (cfg/make-cf-client config)
-        _                        (cfc/init! client)
-        token                    (cfu/login client)
-        config'                  (-> config
-                                     (assoc :cf-client client :uaa-token token))]
-    (log/infof "Authenticated with UAA, %s token expires %s, value (abridged): %s..."
-               (:type token) (:expiration token) (.substring ^String (:value token) 0 10))
-    config'))
+  config)
 
 (defn ^{:private true} retry
   [f {:keys [times period log-fn operation] :or {times 10000 period 10}}]
