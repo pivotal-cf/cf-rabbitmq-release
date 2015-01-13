@@ -1,13 +1,6 @@
 (defproject com.pivotal.pcf.rabbitmq/broker "1.3.0-SNAPSHOT"
   :description "Pivotal CF RabbitMQ service broker"
   :dependencies [[org.clojure/clojure     "1.6.0"]
-                 ;; CF client
-                 [clojurewerkz/mold       "1.0.0-beta4" :exclusions [org.cloudfoundry/cloudfoundry-client-lib]]
-
-                 ;; org.cloudfoundry/cloudfoundry-client-lib - used by clojurewerks/mold
-                 ;; need to update to work with jac
-                 [org.cloudfoundry/cloudfoundry-client-lib "1.1.0"]
-
                  ;; RabbitMQ client (including HTTP API)
                  [com.novemberain/langohr "3.0.0-rc4" :exclusions [clj-http]]
                  ;; HTTP client which uses HTTPCore 4.2.x, compatible

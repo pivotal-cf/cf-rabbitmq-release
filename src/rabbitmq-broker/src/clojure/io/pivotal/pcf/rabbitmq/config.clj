@@ -1,12 +1,10 @@
 (ns io.pivotal.pcf.rabbitmq.config
   (:require [clj-yaml.core :as yaml]
-            [clojurewerkz.mold.client :as cf]
             [validateur.validation :as vdt :refer [validation-set
                                                    presence-of
                                                    inclusion-of
                                                    validate-with-predicate]]
-            [io.pivotal.pcf.rabbitmq.constants :refer [management-ui-port]])
-  (:import  [org.cloudfoundry.client.lib CloudFoundryClient]))
+            [io.pivotal.pcf.rabbitmq.constants :refer [management-ui-port]]))
 
 ;;
 ;; Implementation
@@ -205,14 +203,3 @@
            scheme (http-scheme m)]
        (format "%s://%s:%d"
                scheme host management-ui-port))))
-
-(defn ^CloudFoundryClient make-cf-client
-  [m]
-  (cf/make-client (cc-endpoint m) {:credentials {:email (uaa-username m)
-                                                 :password (uaa-password m)
-                                                 :client-id (uaa-client-id m)}
-
-                                   ;; Pivotal CF uses TLS for CC/UAA but
-                                   ;; we do not perform peer verification
-                                   :trust-self-signed-certs? true
-                                   :http-opts {:insecure? true}}))
