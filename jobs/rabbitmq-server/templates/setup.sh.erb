@@ -28,8 +28,9 @@ nodes = ips.length
 
 # TLS versions with a '.' character should include single quotes
 supported_tls_versions = %w{'tlsv1.2' 'tlsv1.1'}
-if_p('rabbitmq-server.ssl.enable_tls1_0') do |enable_tls1_0|
-  supported_tls_versions << "tlsv1" if enable_tls1_0 == true
+security_options = p('rabbitmq-server.ssl.security_options', [])
+if security_options.include?('enable_tls1_0')
+  supported_tls_versions << "tlsv1"
 end
 
 %>
