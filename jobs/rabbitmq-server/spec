@@ -5,6 +5,37 @@ packages:
 - erlang
 - rabbitmq-server
 
+properties:
+  rabbitmq-server.ssl.cacert:
+    description: "RabbitMQ server CA certificate"
+  rabbitmq-server.ssl.cert:
+    description: "RabbitMQ server certificate"
+  rabbitmq-server.ssl.key:
+    description: "RabbitMQ server private key"
+  rabbitmq-server.ssl.security_options:
+    description: "SSL security options (currently only 'enable_tls1_0')"
+
+  rabbitmq-server.plugins:
+    description: "RabbitMQ plugins (array of strings)"
+
+  rabbitmq-server.administrators.broker.username:
+    description: "RabbitMQ admin username (for broker)"
+  rabbitmq-server.administrators.broker.password:
+    description: "RabbitMQ admin password (for broker)"
+  rabbitmq-server.administrators.ops_manager.username:
+    description: "RabbitMQ admin username (for operator)"
+  rabbitmq-server.administrators.ops_manager.password:
+    description: "RabbitMQ admin password (for operator)"
+
+  rabbitmq-server.config:
+    description: "RabbitMQ configuration (base64 encoded)"
+
+  rabbitmq-server.cookie:
+    description: "Erlang cookie used by RabbitMQ nodes and rabbitmqctl"
+
+  rabbitmq-server.static_ips:
+    description: "Cluster node IPs"
+
 templates:
   plugins.sh.erb:           bin/plugins.sh
   rabbitmq-server.init.erb: bin/rabbitmq-server.init

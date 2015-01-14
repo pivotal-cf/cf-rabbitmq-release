@@ -73,28 +73,22 @@ grant_permissions_for_all_vhosts() {
 }
 
 create_operator_admin() {
-  <% rabbit_props = properties.send(:"rabbitmq-server")
-     if rabbit_props
-        if administrators = rabbit_props.administrators
-            if admin = administrators.ops_manager %>
-                echo "<%= admin.username %>" > $OPERATOR_USERNAME_FILE
-                create_admin <%= admin.username %> <%= admin.password %>
-            <% end %>
-        <% end %>
-    <% end %>
-    true
+  <%
+    username = p('rabbitmq-server.administrators.ops_manager.username')
+    password = p('rabbitmq-server.administrators.ops_manager.password')
+  %>
+  echo "<%= username %>" > $OPERATOR_USERNAME_FILE
+  create_admin <%= username %> <%= password %>
+  true
 }
 
 create_broker_admin() {
-  <% rabbit_props = properties.send(:"rabbitmq-server")
-     if rabbit_props
-        if administrators = rabbit_props.administrators
-            if admin = administrators.broker %>
-                create_admin <%= admin.username %> <%= admin.password %>
-            <% end %>
-        <% end %>
-    <% end %>
-    true
+  <%
+    username = p('rabbitmq-server.administrators.broker.username')
+    password = p('rabbitmq-server.administrators.broker.password')
+  %>
+  create_admin <%= username %> <%= password %>
+  true
 }
 
 create_admin() {

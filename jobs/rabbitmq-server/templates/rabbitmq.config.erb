@@ -1,10 +1,5 @@
-<% rabbit_props = properties.send(:"rabbitmq-server")
-   if rabbit_props
-     if config = rabbit_props.config %>
-<%= config.unpack("m0").first %>
-  <% else %>
-[].
-  <% end %>
+<% if p("rabbitmq-server.config", false) %>
+<%= p("rabbitmq-server.config").unpack("m0").first %>
 <% else %>
 [].
 <% end %>
