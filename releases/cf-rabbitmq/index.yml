@@ -98,4 +98,10 @@ builds:
     version: '48'
   67f95e3a-bd46-450f-a847-bba5a7a53536:
     version: '49'
+  6d779716-b958-4904-9260-10959ec4065f:
+    version: '50'
+  fe5f15b7-03af-4d1c-ab0c-a0505ad64c59:
+    version: '51'
+  3bd1a5c7-10af-4e22-989e-08f584c1221f:
+    version: '52'
 format-version: '2'
