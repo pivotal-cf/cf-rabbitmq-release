@@ -73,12 +73,12 @@ grant_permissions_for_all_vhosts() {
 }
 
 create_operator_admin() {
-  <%
-    username = p('rabbitmq-server.administrators.ops_manager.username')
-    password = p('rabbitmq-server.administrators.ops_manager.password')
-  %>
-  echo "<%= username %>" > $OPERATOR_USERNAME_FILE
-  create_admin <%= username %> <%= password %>
+  <% if_p('rabbitmq-server.administrators.ops_manager.username') do |username| %>
+    echo "<%= username %>" > $OPERATOR_USERNAME_FILE
+    <% if_p('rabbitmq-server.administrators.ops_manager.password') do |password| %>
+        create_admin <%= username %> <%= password %>
+    <% end %>
+  <% end %>
   true
 }
 
