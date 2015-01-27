@@ -7,29 +7,25 @@ import (
 )
 
 type Migrator struct {
-	mnesiaDbDir string
+	mnesiaDbDirPath string
 }
 
-func NewMigrator(mnesiaDbDir string) *Migrator {
+func NewMigrator(mnesiaDbDirPath string) *Migrator {
 	return &Migrator{
-		mnesiaDbDir: mnesiaDbDir,
+		mnesiaDbDirPath: mnesiaDbDirPath,
 	}
 }
 
 func (migrator *Migrator) MigrateConfiguration() error {
-
-	newPath := filepath.Join(filepath.Dir(migrator.mnesiaDbDir), "db")
-
-	if fileAvailable(newPath) {
-		return errors.New("Already migrated Mnesia DB DIR")
+	if err := migrator.migrateDB(); err != nil {
+		return err
 	}
 
-	if fileAvailable(migrator.mnesiaDbDir) {
-		return os.Rename(migrator.mnesiaDbDir, newPath)
-	} else {
-		return errors.New("No Mnesia DB DIR found")
+	if err := migrator.migrateConfig(); err != nil {
+		return err
 	}
 
+	return nil
 }
 
 func fileAvailable(filePath string) bool {
@@ -38,4 +34,29 @@ func fileAvailable(filePath string) bool {
 		return false
 	}
 	return true
+}
+
+func (migrator *Migrator) migrateDB() error {
+	newDbPath := filepath.Join(filepath.Dir(migrator.mnesiaDbDirPath), "db")
+
+	if fileAvailable(newDbPath) {
+		return errors.New("Already migrated Mnesia DB DIR")
+	}
+
+	if fileAvailable(migrator.mnesiaDbDirPath) {
+		return os.Rename(migrator.mnesiaDbDirPath, newDbPath)
+	} else {
+		return errors.New("No Mnesia DB DIR found")
+	}
+}
+
+func (migrator *Migrator) migrateConfig() error {
+	configPath := filepath.Join(migrator.mnesiaDbDirPath + ".config")
+	newConfigPath := filepath.Join(filepath.Dir(migrator.mnesiaDbDirPath), "cluster.config")
+
+	if fileAvailable(configPath) {
+		return os.Rename(configPath, newConfigPath)
+	} else {
+		return errors.New("Could not find config file to migrate")
+	}
 }
