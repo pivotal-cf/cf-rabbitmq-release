@@ -24,8 +24,9 @@ if_p("rabbitmq-server.static_ips") do |cluster_ips|
   end
 end
 
-index = Array(ips).index(job_ip)
+
 require 'digest'
+job_ip_md5 = Digest::MD5.hexdigest(job_ip)
 cookie = p('rabbitmq-server.cookie', Digest::MD5.hexdigest(ips.join))
 
 # TLS versions with a '.' character should include single quotes
@@ -62,7 +63,7 @@ end
 
   HOSTS=""
   <% ips.each_index do |idx| %>
-  HOSTS="${HOSTS}{host, {<%= ips[idx].gsub('.',',') %>}, [\"node<%= idx %>\"]}.\n"
+  HOSTS="${HOSTS}{host, {<%= ips[idx].gsub('.',',') %>}, [\"<%= Digest::MD5.hexdigest(ips[idx]) %>\"]}.\n"
   <% end %>
 
   # 1. Write out our erl_inetrc file. We do this to avoid modifying
@@ -101,7 +102,7 @@ end
   # Some of the options include quotes, both single and double. To avoid multiple layers of
   # quoting, which is quite fragile, shell script string concatenation is used:
   # 'a"'"'b" is treated as a single string, `a"'b`, by bash.
-  SELF_NODE="rabbit@node<%= index %>"
+  SELF_NODE="rabbit@<%= job_ip_md5 %>"
   CONFIG="CONFIG_FILE='${SCRIPT_DIR}/../etc/rabbitmq'"
   NODENAME="NODENAME='${SELF_NODE}'"
   SERVER_START_ARGS="SERVER_START_ARGS='-rabbitmq_clusterer config \"${CLUSTER_CONFIG}\" -rabbit disk_free_limit 1000000 -rabbit cluster_partition_handling autoheal -rabbit halt_on_upgrade_failure false"
@@ -127,7 +128,7 @@ end
   fi
   ${SED} "/${PREFIX}/,/${SUFFIX}/d" < ${DIR}/env.backup > ${DIR}/env
   printf "${PREFIX}\n${NODENAME}\n${CONFIG}\n${SERVER_START_ARGS}\n${SUFFIX}\n" >> ${DIR}/env
- 
+
   # set custom RabbitMQ db / plugin directory not specifying the node name
   printf "RABBITMQ_MNESIA_DIR=${RABBITMQ_MNESIA_DIR}\n" >> ${DIR}/env
   printf "RABBITMQ_PLUGINS_EXPAND_DIR=${RABBITMQ_PLUGINS_EXPAND_DIR}\n" >> ${DIR}/env
@@ -142,13 +143,13 @@ end
   ${MKDIR} -p $(${DIRNAME} ${CLUSTER_CONFIG})
   CONFIG_NODES=""
   <% ips.each_index do |idx| %>
-  CONFIG_NODES="${CONFIG_NODES},{rabbit@node<%= idx %>,disc}"
+  CONFIG_NODES="${CONFIG_NODES},{rabbit@<%= Digest::MD5.hexdigest(ips[idx]) %>,disc}"
   <% end %>
   CONFIG_NODES=$(printf "${CONFIG_NODES}" | ${SED} -e 's/^,//')
   CONFIG_VERSION=$("${DATE}" +%s)
   # configure the gospel (seed) node. Other nodes will discover cluster members
   # through it.
-  CONFIG='[{gospel,{node,rabbit@node0}},{nodes,['"${CONFIG_NODES}"']},{version,'"${CONFIG_VERSION}"'}].'
+  CONFIG='[{gospel,{node,rabbit@<%= Digest::MD5.hexdigest(ips.first) %>}},{nodes,['"${CONFIG_NODES}"']},{version,'"${CONFIG_VERSION}"'}].'
   printf "${CONFIG}\n" > ${DIR}/cluster
   ${CHOWN} ${USER}:${USER} ${DIR}/cluster
   ${CP} ${DIR}/cluster ${CLUSTER_CONFIG}
