@@ -25,6 +25,10 @@ func (migrator *Migrator) MigrateConfiguration() error {
 		return err
 	}
 
+	if err := migrator.migratePluginsExpand(); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -54,9 +58,28 @@ func (migrator *Migrator) migrateConfig() error {
 	configPath := filepath.Join(migrator.mnesiaDbDirPath + ".config")
 	newConfigPath := filepath.Join(filepath.Dir(migrator.mnesiaDbDirPath), "cluster.config")
 
+	if fileAvailable(newConfigPath) {
+		return errors.New("Already migrated Mnesia config file")
+	}
+
 	if fileAvailable(configPath) {
 		return os.Rename(configPath, newConfigPath)
 	} else {
 		return errors.New("Could not find config file to migrate")
+	}
+}
+
+func (migrator *Migrator) migratePluginsExpand() error {
+	configPath := filepath.Join(migrator.mnesiaDbDirPath + "-plugins-expand")
+	newConfigPath := filepath.Join(filepath.Dir(migrator.mnesiaDbDirPath), "plugins-expand")
+
+	if fileAvailable(newConfigPath) {
+		return errors.New("Already migrated Mnesia plugins-expand DIR")
+	}
+
+	if fileAvailable(configPath) {
+		return os.Rename(configPath, newConfigPath)
+	} else {
+		return errors.New("Could not find plugins-expand DIR to migrate")
 	}
 }
