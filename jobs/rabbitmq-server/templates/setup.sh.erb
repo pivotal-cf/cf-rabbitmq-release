@@ -9,6 +9,7 @@ default_network = spec.networks.marshal_dump().detect { |_, network_spec| networ
 job_ip = spec.networks.send(spec.networks.methods(false).first).ip
 dns_record_name = default_network.dns_record_name
 network = dns_record_name.split('.')[1..-1].join('.')
+cookie = p('rabbitmq-server.cookie', network.gsub(/\./, ':'))
 
 ssl = false
 if_p("rabbitmq-server.ssl.key") do |key|
@@ -23,10 +24,7 @@ if_p("rabbitmq-server.static_ips") do |cluster_ips|
     ips = cluster_ips
   end
 end
-
 index = Array(ips).index(job_ip)
-require 'digest'
-cookie = p('rabbitmq-server.cookie', Digest::MD5.hexdigest(ips.join))
 
 # TLS versions with a '.' character should include single quotes
 supported_tls_versions = %w{'tlsv1.2' 'tlsv1.1'}
