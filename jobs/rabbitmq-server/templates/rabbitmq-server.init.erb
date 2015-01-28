@@ -64,7 +64,7 @@ delete_guest() {
 grant_permissions_for_all_vhosts() {
     username=$1
 
-    VHOSTS=$(${CONTROL} list_vhosts | tail -n +2)
+    VHOSTS=$(${CONTROL} list_vhosts | head -n -1 | tail -n +2)
     for vhost in $VHOSTS
     do
         "${CONTROL}" set_permissions -p $vhost $username ".*" ".*" ".*"  > /dev/null 2>&1
