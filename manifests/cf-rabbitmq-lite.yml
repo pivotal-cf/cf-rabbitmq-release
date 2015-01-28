@@ -97,8 +97,6 @@ properties:
       broker:
         username: broker
         password: CkY26kTuAyZT8r2
-    static_ips:
-    - 10.244.9.6
     ssl:
       cert: |
         -----BEGIN CERTIFICATE-----
