@@ -49,8 +49,6 @@ end
   COOKIE=<%= cookie %>
   USER=vcap
   HOME_DIR=/var/vcap/store/rabbitmq
-  RABBITMQ_MNESIA_DIR="${HOME_DIR}/mnesia/db"
-  RABBITMQ_PLUGINS_EXPAND_DIR="${HOME_DIR}/mnesia/db-plugins-expand"
   CLUSTER_CONFIG="${HOME_DIR}/etc/rabbitmq/cluster.config"
   SCRIPT_DIR="$(${DIRNAME} $0)"
 
@@ -125,16 +123,7 @@ end
   fi
   ${SED} "/${PREFIX}/,/${SUFFIX}/d" < ${DIR}/env.backup > ${DIR}/env
   printf "${PREFIX}\n${NODENAME}\n${CONFIG}\n${SERVER_START_ARGS}\n${SUFFIX}\n" >> ${DIR}/env
- 
-  # set custom RabbitMQ db / plugin directory not specifying the node name
-  printf "RABBITMQ_MNESIA_DIR=${RABBITMQ_MNESIA_DIR}\n" >> ${DIR}/env
-  printf "RABBITMQ_PLUGINS_EXPAND_DIR=${RABBITMQ_PLUGINS_EXPAND_DIR}\n" >> ${DIR}/env
   ${CP} ${DIR}/env ${CONF_ENV_FILE}
-
-  # migrate any old db / config / plugin folders to the node agnostic structure
-  [ -d ${HOME_DIR}/mnesia/rabbit@node*-plugins-expand ] && mv ${HOME_DIR}/mnesia/rabbit@node*-plugins-expand $RABBITMQ_PLUGINS_EXPAND_DIR
-  [ -f ${HOME_DIR}/mnesia/rabbit@node*.config ] && mv ${HOME_DIR}/mnesia/rabbit@node*.config $RABBITMQ_MNESIA_DIR-cluster.config
-  [ -d ${HOME_DIR}/mnesia/rabbit@node* ] && mv ${HOME_DIR}/mnesia/rabbit@node* $RABBITMQ_MNESIA_DIR
 
   # 3. Write out the cluster_config
   ${MKDIR} -p $(${DIRNAME} ${CLUSTER_CONFIG})
