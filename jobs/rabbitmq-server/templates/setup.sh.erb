@@ -3,12 +3,12 @@
 set -e
 
 <%
-index = spec.index
+
 job = spec.job.name
 default_network = spec.networks.marshal_dump().detect { |_, network_spec| network_spec.default }.last
+job_ip = spec.networks.send(spec.networks.methods(false).first).ip
 dns_record_name = default_network.dns_record_name
 network = dns_record_name.split('.')[1..-1].join('.')
-cookie = p('rabbitmq-server.cookie', network.gsub(/\./, ':'))
 
 ssl = false
 if_p("rabbitmq-server.ssl.key") do |key|
@@ -24,7 +24,10 @@ if_p("rabbitmq-server.static_ips") do |cluster_ips|
   end
 end
 
-nodes = ips.length
+
+require 'digest'
+job_ip_md5 = Digest::MD5.hexdigest(job_ip)
+cookie = p('rabbitmq-server.cookie', Digest::MD5.hexdigest(ips.join))
 
 # TLS versions with a '.' character should include single quotes
 supported_tls_versions = %w{'tlsv1.2' 'tlsv1.1'}
@@ -49,6 +52,8 @@ end
   COOKIE=<%= cookie %>
   USER=vcap
   HOME_DIR=/var/vcap/store/rabbitmq
+  RABBITMQ_MNESIA_DIR="${HOME_DIR}/mnesia/db"
+  RABBITMQ_PLUGINS_EXPAND_DIR="${HOME_DIR}/mnesia/db-plugins-expand"
   CLUSTER_CONFIG="${HOME_DIR}/etc/rabbitmq/cluster.config"
   SCRIPT_DIR="$(${DIRNAME} $0)"
 
@@ -58,7 +63,7 @@ end
 
   HOSTS=""
   <% ips.each_index do |idx| %>
-  HOSTS="${HOSTS}{host, {<%= ips[idx].gsub('.',',') %>}, [\"node<%= idx %>\"]}.\n"
+  HOSTS="${HOSTS}{host, {<%= ips[idx].gsub('.',',') %>}, [\"<%= Digest::MD5.hexdigest(ips[idx]) %>\"]}.\n"
   <% end %>
 
   # 1. Write out our erl_inetrc file. We do this to avoid modifying
@@ -97,7 +102,7 @@ end
   # Some of the options include quotes, both single and double. To avoid multiple layers of
   # quoting, which is quite fragile, shell script string concatenation is used:
   # 'a"'"'b" is treated as a single string, `a"'b`, by bash.
-  SELF_NODE="rabbit@node<%= index %>"
+  SELF_NODE="rabbit@<%= job_ip_md5 %>"
   CONFIG="CONFIG_FILE='${SCRIPT_DIR}/../etc/rabbitmq'"
   NODENAME="NODENAME='${SELF_NODE}'"
   SERVER_START_ARGS="SERVER_START_ARGS='-rabbitmq_clusterer config \"${CLUSTER_CONFIG}\" -rabbit disk_free_limit 1000000 -rabbit cluster_partition_handling autoheal -rabbit halt_on_upgrade_failure false"
@@ -123,19 +128,28 @@ end
   fi
   ${SED} "/${PREFIX}/,/${SUFFIX}/d" < ${DIR}/env.backup > ${DIR}/env
   printf "${PREFIX}\n${NODENAME}\n${CONFIG}\n${SERVER_START_ARGS}\n${SUFFIX}\n" >> ${DIR}/env
+
+  # set custom RabbitMQ db / plugin directory not specifying the node name
+  printf "RABBITMQ_MNESIA_DIR=${RABBITMQ_MNESIA_DIR}\n" >> ${DIR}/env
+  printf "RABBITMQ_PLUGINS_EXPAND_DIR=${RABBITMQ_PLUGINS_EXPAND_DIR}\n" >> ${DIR}/env
   ${CP} ${DIR}/env ${CONF_ENV_FILE}
+
+  # migrate any old db / config / plugin folders to the node agnostic structure
+  [ -d ${HOME_DIR}/mnesia/rabbit@node*-plugins-expand ] && mv ${HOME_DIR}/mnesia/rabbit@node*-plugins-expand $RABBITMQ_PLUGINS_EXPAND_DIR
+  [ -f ${HOME_DIR}/mnesia/rabbit@node*.config ] && mv ${HOME_DIR}/mnesia/rabbit@node*.config $RABBITMQ_MNESIA_DIR-cluster.config
+  [ -d ${HOME_DIR}/mnesia/rabbit@node* ] && mv ${HOME_DIR}/mnesia/rabbit@node* $RABBITMQ_MNESIA_DIR
 
   # 3. Write out the cluster_config
   ${MKDIR} -p $(${DIRNAME} ${CLUSTER_CONFIG})
   CONFIG_NODES=""
   <% ips.each_index do |idx| %>
-  CONFIG_NODES="${CONFIG_NODES},{rabbit@node<%= idx %>,disc}"
+  CONFIG_NODES="${CONFIG_NODES},{rabbit@<%= Digest::MD5.hexdigest(ips[idx]) %>,disc}"
   <% end %>
   CONFIG_NODES=$(printf "${CONFIG_NODES}" | ${SED} -e 's/^,//')
   CONFIG_VERSION=$("${DATE}" +%s)
   # configure the gospel (seed) node. Other nodes will discover cluster members
   # through it.
-  CONFIG='[{gospel,{node,rabbit@node0}},{nodes,['"${CONFIG_NODES}"']},{version,'"${CONFIG_VERSION}"'}].'
+  CONFIG='[{gospel,{node,rabbit@<%= Digest::MD5.hexdigest(ips.first) %>}},{nodes,['"${CONFIG_NODES}"']},{version,'"${CONFIG_VERSION}"'}].'
   printf "${CONFIG}\n" > ${DIR}/cluster
   ${CHOWN} ${USER}:${USER} ${DIR}/cluster
   ${CP} ${DIR}/cluster ${CLUSTER_CONFIG}
