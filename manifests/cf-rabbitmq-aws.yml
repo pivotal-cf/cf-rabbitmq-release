@@ -1,0 +1,201 @@
+director_uuid: 11111111-1111-1111-1111-111111111111
+name: cf-rabbitmq
+
+releases:
+- name: cf-rabbitmq
+  version: latest
+
+jobs:
+- name: rmq
+  release: cf-rabbitmq
+  template: rabbitmq-server
+  instances: 1
+  resource_pool: services-small
+  persistent_disk: 2048
+  networks:
+  - name: services1
+    static_ips:
+    - 10.10.38.6
+
+- name: rmq-broker
+  release: cf-rabbitmq
+  template: rabbitmq-broker
+  instances: 1
+  resource_pool: services-small
+  networks:
+  - name: services1
+    static_ips:
+    - 10.10.38.7
+
+- name: haproxy
+  release: cf-rabbitmq
+  template: rabbitmq-haproxy
+  instances: 1
+  resource_pool: services-small
+  networks:
+  - name: services1
+    static_ips:
+    - 10.10.38.8
+
+- name: broker-registrar
+  release: cf-rabbitmq
+  template: broker-registrar
+  instances: 1
+  lifecycle: errand
+  networks:
+  - name: services1
+  properties:
+    broker:
+      protocol: http
+      host: 10.10.38.7
+      port: 4567
+      name: p-rabbitmq
+      username: "p1-rabbit"
+      password: "p1-rabbit-default-password"
+  resource_pool: services-small
+
+- name: broker-deregistrar
+  release: cf-rabbitmq
+  template: broker-deregistrar
+  instances: 1
+  lifecycle: errand
+  networks:
+  - name: services1
+  properties:
+    broker:
+      protocol: http
+      host: 10.10.38.7
+      port: 4567
+      name: p-rabbitmq
+      username: "p1-rabbit"
+      password: "p1-rabbit-default-password"
+  resource_pool: services-small
+
+properties:
+  # for broker and route registrars
+  cf:
+    domain: api.your_cc_enpoint.com
+    admin_password: your-cf-password
+    admin_username: admin
+    api_url: "http://api.your_cc_enpoint.com"
+    nats:
+      host: "10.10.80.11"
+      port: "4222"
+      password: your-nats-password
+      username: your-nats-username
+  route-registrar:
+    target_ip: "10.10.38.8"
+  rabbitmq-server:
+    plugins:
+    - rabbitmq_management
+    - rabbitmq_mqtt
+    - rabbitmq_stomp
+    administrators:
+      broker:
+        username: broker
+        password: thebrokersrabbitpassword
+    static_ips:
+    - 10.10.38.6
+    ssl:
+      cert: |
+        -----BEGIN CERTIFICATE-----
+        -----END CERTIFICATE-----
+      key: |
+        -----BEGIN RSA PRIVATE KEY-----
+        -----END RSA PRIVATE KEY-----
+      cacert: |
+        -----BEGIN CERTIFICATE-----
+        -----END CERTIFICATE-----
+  rabbitmq-haproxy:
+    ports:
+    - 5672
+    - 5671
+    - 1883
+    - 8883
+    - 61613
+    - 61614
+    - 15672
+    - 15674
+    server_ips:
+    - 10.10.38.6
+  rabbitmq-broker:
+    cc_endpoint: http://your_cc_enpoint.com
+    uaa_client:
+      client_id: cf
+      username: "admin"
+      password: "your-uaa-password"
+    service:
+      username: "p1-rabbit"
+      password: "p1-rabbit-default-password"
+      url: http://10.10.38.7:4567
+    logging:
+      level: debug
+      print_stack_traces: false
+    rabbitmq:
+      management_domain: pivotal-rabbitmq.your_cc_enpoint.com
+      ssl: |
+        -----BEGIN CERTIFICATE-----
+        ****** KEY GOES HERE **********
+        -----END CERTIFICATE-----
+      hosts:
+        - 10.10.38.8
+      administrator:
+        username: broker
+        password: thebrokersrabbitpassword
+
+networks:
+- name: services1
+  type: manual
+  subnets:
+  - range: 10.10.38.0/24
+    gateway: 10.10.38.1
+    # Amazon reserves the first four IPs and the last IP for networking purposes
+    reserved:
+    - 10.10.38.2 - 10.10.38.4
+    - 10.10.38.254
+    static:
+    - 10.10.38.6 - 10.10.38.8
+    dns:
+    - 10.10.0.6
+    cloud_properties:
+      subnet: subnet-111111111
+- name: vip_network
+  type: vip
+  # Fake network properties to satisfy bosh diff
+  subnets:
+  - range: 127.0.99.0/24
+    gateway: 127.0.99.1
+    dns:
+    - 127.0.99.250
+  cloud_properties:
+    security_groups:
+    - bosh
+
+
+resource_pools:
+- cloud_properties:
+    instance_type: m3.medium
+  name: services-small
+  network: services1
+  size: 4
+  stemcell:
+    name: bosh-aws-xen-ubuntu-trusty-go_agent
+    version: latest
+
+meta:
+  stemcell:
+    name:
+    version: latest
+
+update:
+  canaries: 1
+  canary_watch_time: 30000-180000
+  update_watch_time: 30000-180000
+  max_in_flight: 4
+
+compilation:
+  cloud_properties:
+    instance_type: m3.medium
+  network: services1
+  reuse_compilation_vms: true
+  workers: 3
