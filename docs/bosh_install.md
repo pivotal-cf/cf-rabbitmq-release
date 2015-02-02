@@ -22,55 +22,30 @@ seem reasonable.
 In your inception VM...
 
 - `cd ~/workspace/deployments-aws/<name>`
-- `git clone git@github.com:cloudfoundry/pivotalone-rabbit.git && cd pivotalone-rabbit`
+- `git clone git@github.com:pivotal-cf/cf-rabbitmq-release.git && cd cf-rabbitmq-release`
 - `bosh create release --with-tarball` (at the prompt, name the release
-  `pivotalone-rabbit`)
+  `cf-rabbitmq`)
 - `bosh upload release`
-
-### Upload a stemcell
-
-As per [a set of instructions we
-found](https://github.com/cloudfoundry/internal-docs/blob/master/bosh/cheat.md#stemcells)...
-
-- `wget http://bosh-jenkins-artifacts.s3.amazonaws.com/bosh-stemcell/aws/latest-bosh-stemcell-aws.tgz`
-- `bosh upload stemcell latest-bosh-stemcell-aws.tgz`
 
 ### Create a deployment and deploy it
 
-- `wget https://github.com/cloudfoundry/cf-release/raw/master/templates/cf-aws-template.yml.erb`
-- `cp cf-aws-template.yml.erb pivotalone-rabbit.yml`
-
 #### AWS
 
-The following are for AWS and largely avoid you learning actually what
-the different sections are about or for. Some of the older
-vSphere-based blogs and docs are useful for explaining the intent,
-even if they're a little out of date regarding the details.
-
-- edit `pivotalone-rabbit.yml`
-  - strip out the comment at the beginning
-  - strip out all jobs and properties at the end (leave just `jobs: []` and `properties: {}`
-  - remove all resource pools except `common`
-  - set the `name` to `pivotalone-rabbit`
-  - set the `director_uuid` to the value shown by `bosh status`
-  - set `releases.name` to `pivotalone-rabbit`
-  - (optional) set `compilation.workers` to `1`
-  - set `compilation.cloud_properties.availability_zone` and
-    `resource_pools[common].cloud_properties.availability_zone` to the
-    value of `original_configuration.vpc.subnets.cf1.availability_zone`
-    in `aws_vpc_receipt.yml`
+- edit [`manifests/cf-rabbitmq-aws.yml`](https://github.com/pivotal-cf/cf-rabbitmq-release/blob/master/manifests/cf-rabbitmq-aws.yml)
+  - set the `director_uuid` to the value shown by `bosh status --uuid`
   - set `networks.subnets.cloud_properties.subnet` to the value of
     `vpc.subnets.cf1` in `aws_vpc_receipt.yml`
-  - (optional) set `resource_pools[common].size` to `4`
-  - copy&paste some of the deployment manifest snippets below, with the
-    following substitutions:
-    - `my-resource-pool` -> `common`
-    - `mynetwork` -> `cf1`
-- `bosh deployment pivotalone-rabbit.yml`
+- update cf domain in the properties section , hint search for `your_cc_enpoint.com`
+- update passwords in properties section such as:
+	- `properties.cf.nats.username/password`
+	- `properties.uaa_client.username/password`
+- add ssl certificates to the following sections if required:
+	- `properties.rabbitmq-broker.rabbitmq.ssl`
+	- `properties.rabbitmq-server.ssl`
+- make any required ip changes to the manifest depending on your AWS setup
+- `bosh deployment manifests/cf-rabbitmq-aws.yml`
 - `bosh deploy`
-
-You should now have some running rabbit(s). Quite how you can tell is
-left as an exercise to the reader.
+- run `bosh vms` or similar to look at the status of the deployment
 
 #### vSphere
 
