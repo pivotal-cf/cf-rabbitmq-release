@@ -52,26 +52,38 @@ end
   COOKIE=<%= cookie %>
   USER=vcap
   HOME_DIR=/var/vcap/store/rabbitmq
-  RABBITMQ_MNESIA_DIR="${HOME_DIR}/mnesia/db"
-  RABBITMQ_PLUGINS_EXPAND_DIR="${HOME_DIR}/mnesia/db-plugins-expand"
+  RABBITMQ_MNESIA_BASE="${HOME_DIR}/mnesia"
+  RABBITMQ_MNESIA_DIR="${RABBITMQ_MNESIA_BASE}/db"
+  RABBITMQ_PLUGINS_EXPAND_DIR="$RABBITMQ_MNESIA_BASE/db-plugins-expand"
   CLUSTER_CONFIG="${HOME_DIR}/etc/rabbitmq/cluster.config"
   SCRIPT_DIR="$(${DIRNAME} $0)"
+  JOB_IP=<%= job_ip %>
 
   # Unfortunate tight coupling. Beware.
   # We need this for CONF_ENV_FILE, HOME, ERL_INETRC, and for MNESIA_BASE
   . /var/vcap/packages/rabbitmq-server/privbin/rabbitmq-defaults
+
+  # Load the shared variables for the node name migration
+  . /var/vcap/jobs/rabbitmq-server/bin/node_name_migration.sh
+
+  # If we are running on the old node naming strategy eg rabbit@node* then copy the current erl_inetrc for use later in the node name migration
+  [ -d ${HOME_DIR}/mnesia/rabbit@node*-plugins-expand ] && ${MKDIR} -p ${MIGRATION_DIR} && ${CP} ${ERL_INETRC} ${MIGRATION_DIR}/erl_inetrc_old
 
   HOSTS=""
   <% ips.each_index do |idx| %>
   HOSTS="${HOSTS}{host, {<%= ips[idx].gsub('.',',') %>}, [\"<%= Digest::MD5.hexdigest(ips[idx]) %>\"]}.\n"
   <% end %>
 
-  # 1. Write out our erl_inetrc file. We do this to avoid modifying
+  # 1. Write out our new erl_inetrc file. We do this to avoid modifying
   #    /etc/hosts.
   #    See http://erlang.org/doc/apps/erts/inet_cfg.html for more info.
   DIR=$(${MKTEMP} -d)
   printf "${HOSTS}{lookup, [file]}.\n" >> ${DIR}/erl_inetrc
   ${CP} ${DIR}/erl_inetrc ${ERL_INETRC}
+
+  # If we are running on the old node naming strategy eg rabbit@node* then copy the new erl_inetrc for use later in the node name migration
+  [ -d ${HOME_DIR}/mnesia/rabbit@node*-plugins-expand ] && ${CP} ${ERL_INETRC} ${MIGRATION_DIR}/erl_inetrc_new
+  [ -d ${HOME_DIR}/mnesia/rabbit@node*-plugins-expand ] && echo $JOB_IP > ${MIGRATION_DIR}/self_ip
 
   ${MKDIR} -p $(${DIRNAME} ${CONF_ENV_FILE})
 
