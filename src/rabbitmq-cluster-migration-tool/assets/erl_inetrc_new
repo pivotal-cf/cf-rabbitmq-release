@@ -1,0 +1,5 @@
+{host, {172,16,87,39}, ["adad4242442ad4242424"]}.
+{host, {172,16,87,51}, ["z9dad942kdadl024A6kA"]}.
+{host, {172,16,87,40}, ["Pld4429ddakri2425ksFS"]}.
+{host, {172,16,87,52}, ["baBb481oa9AE59Aog942F"]}.
+{lookup, [file]}.
