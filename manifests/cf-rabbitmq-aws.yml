@@ -74,10 +74,10 @@ jobs:
 properties:
   # for broker and route registrars
   cf:
-    domain: api.your_cc_enpoint.com
+    domain: api.your_cc_endpoint.com
     admin_password: your-cf-password
     admin_username: admin
-    api_url: "http://api.your_cc_enpoint.com"
+    api_url: "http://api.your_cc_endpoint.com"
     nats:
       host: "10.10.80.11"
       port: "4222"
@@ -119,7 +119,7 @@ properties:
     server_ips:
     - 10.10.38.6
   rabbitmq-broker:
-    cc_endpoint: http://your_cc_enpoint.com
+    cc_endpoint: http://your_cc_endpoint.com
     uaa_client:
       client_id: cf
       username: "admin"
@@ -132,7 +132,7 @@ properties:
       level: debug
       print_stack_traces: false
     rabbitmq:
-      management_domain: pivotal-rabbitmq.your_cc_enpoint.com
+      management_domain: pivotal-rabbitmq.your_cc_endpoint.com
       ssl: |
         -----BEGIN CERTIFICATE-----
         ****** KEY GOES HERE **********

@@ -35,16 +35,38 @@ In your inception VM...
   - set the `director_uuid` to the value shown by `bosh status --uuid`
   - set `networks.subnets.cloud_properties.subnet` to the value of
     `vpc.subnets.cf1` in `aws_vpc_receipt.yml`
-- update cf domain in the properties section , hint search for `your_cc_enpoint.com`
-- update passwords in properties section such as:
+- update cf domain in the properties section , hint search for `your_cc_endpoint.com`
+- update cf related passwords in properties section such as:
 	- `properties.cf.nats.username/password`
 	- `properties.uaa_client.username/password`
+- to change the rabbitmq administrator username / password change:
+	- `properties.rabbitmq-server.administrators.broker.username/password`
+	- `properties.rabbitmq-broker.administrators.username/password`
 - add ssl certificates to the following sections if required:
 	- `properties.rabbitmq-broker.rabbitmq.ssl`
 	- `properties.rabbitmq-server.ssl`
+- to configure rabbitmq plugins edit:
+	- `properties.rabbitmq-server.plugins`
+	
+	For example:
+
+		properties:
+			rabbitmq-server:
+				plugins:
+				- rabbitmq_management
+				- rabbitmq_mqtt
+				- rabbitmq_stomp
+	
+- to enable tls 1.0 (required for JDK 6.0 support) add the following:
+ 
+		properties
+		  rabbitmq-server:
+		    ssl:
+			  security_options: 
+			  - enable_tls1_0 			  
 - make any required ip changes to the manifest depending on your AWS setup
-- `bosh deployment manifests/cf-rabbitmq-aws.yml`
-- `bosh deploy`
+- set the deployment manifest `bosh deployment manifests/cf-rabbitmq-aws.yml`
+- deploy `bosh deploy`
 - run `bosh vms` or similar to look at the status of the deployment
 
 #### vSphere
