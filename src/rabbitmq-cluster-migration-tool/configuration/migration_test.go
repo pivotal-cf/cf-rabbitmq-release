@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	. "github.com/pivotal-cf/cf-rabbit-release/src/rabbitmq-cluster-migration-tool/configuration"
+	. "github.com/pivotal-cf/cf-rabbitmq-release/src/rabbitmq-cluster-migration-tool/configuration"
 )
 
 var _ = Describe("migrating a legacy configuration", func() {

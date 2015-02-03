@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/pivotal-cf/cf-rabbit-release/src/rabbitmq-cluster-migration-tool/configuration"
+	"github.com/pivotal-cf/cf-rabbitmq-release/src/rabbitmq-cluster-migration-tool/configuration"
 )
 
 func main() {
