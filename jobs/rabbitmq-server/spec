@@ -4,6 +4,7 @@ packages:
 - util-linux # needed for setsid
 - erlang
 - rabbitmq-server
+- rabbitmq-cluster-migration-tool
 
 properties:
   rabbitmq-server.ssl.cacert:
