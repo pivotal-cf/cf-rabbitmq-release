@@ -8,13 +8,19 @@ import (
 )
 
 type FakeShell struct {
-	Command string
-	Args    []string
+	Command   string
+	Args      []string
+	NodePairs []string
 }
 
 func (s *FakeShell) Run(command string, args []string) error {
 	s.Command = command
 	s.Args = args
+	s.NodePairs = []string{}
+	//the nodes get renamed in pairs, we want to test the pairs are correct
+	for i := 3; i < len(args); i += 2 {
+		s.NodePairs = append(s.NodePairs, args[i]+args[i+1])
+	}
 	return nil
 }
 
@@ -33,16 +39,17 @@ var _ = Describe("Ctl", func() {
 		ctlRunner := rabbit.CtlRunner{ShellRunner: &fakeShellRunner}
 		err := ctlRunner.RenameClusterNodes(selfNode, nodeMapping)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(fakeShellRunner.Args).To(ConsistOf([]string{
+
+		Expect(fakeShellRunner.Args[:3]).To(Equal([]string{
 			"-n",
 			"rabbit@node0",
 			"rename_cluster_node",
-			"'rabbit@node0'",
-			"'rabbit@new1'",
-			"'rabbit@node1'",
-			"'rabbit@new3'",
-			"'rabbit@node2'",
-			"'rabbit@new5'",
+		}))
+
+		Expect(fakeShellRunner.NodePairs).To(ConsistOf([]string{
+			"'rabbit@node1''rabbit@new3'",
+			"'rabbit@node2''rabbit@new5'",
+			"'rabbit@node0''rabbit@new1'",
 		}))
 		Expect(fakeShellRunner.Command).To(Equal("rabbitmqctl"))
 	})
