@@ -47,9 +47,9 @@ var _ = Describe("Ctl", func() {
 		}))
 
 		Expect(fakeShellRunner.NodePairs).To(ConsistOf([]string{
-			"'rabbit@node1''rabbit@new3'",
-			"'rabbit@node2''rabbit@new5'",
-			"'rabbit@node0''rabbit@new1'",
+			"rabbit@node1rabbit@new3",
+			"rabbit@node2rabbit@new5",
+			"rabbit@node0rabbit@new1",
 		}))
 		Expect(fakeShellRunner.Command).To(Equal("rabbitmqctl"))
 	})

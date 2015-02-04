@@ -42,7 +42,7 @@ func generateRenameClusterNodesCommand(selfNode string, nodeMapping mapping.Node
 
 	command := fmt.Sprintf("-n rabbit@%s rename_cluster_node", selfNode)
 	for oldNodeName, newNodeName := range nodeMapping {
-		command = fmt.Sprintf("%s 'rabbit@%s' 'rabbit@%s'", command, oldNodeName, newNodeName)
+		command = fmt.Sprintf("%s rabbit@%s rabbit@%s", command, oldNodeName, newNodeName)
 	}
 	return command, nil
 }
