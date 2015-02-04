@@ -50,6 +50,7 @@ func main() {
 func renameNodes(oldIPAddressesWithNodeNames, newIPAddressesWithNodeNames parsers.IPAddressesWithNodeNames, selfNodeName string) {
 	nodeMappings := mapping.NodeNames(oldIPAddressesWithNodeNames, newIPAddressesWithNodeNames)
 	if len(nodeMappings) == 0 {
+		log.Print("Nothing to be renamed, exiting...")
 		os.Exit(0)
 	}
 
