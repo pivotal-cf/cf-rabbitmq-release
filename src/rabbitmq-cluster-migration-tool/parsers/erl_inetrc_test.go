@@ -13,7 +13,7 @@ import (
 var _ = Describe("ErlInetrc", func() {
 
 	It("can parse the ipsWithNodeNames and ips from a given file", func() {
-		file, err := filepath.Abs("../assets/erl_inetrc")
+		file, err := filepath.Abs("../assets/erl_inetrc_old")
 		Expect(err).ToNot(HaveOccurred())
 
 		ipsWithNodeNames, err := parsers.ParseErlInetRcFile(file)
@@ -45,7 +45,7 @@ var _ = Describe("ErlInetrc", func() {
 		var ipsWithNodeNames parsers.IPAddressesWithNodeNames
 
 		BeforeEach(func() {
-			file, err := filepath.Abs("../assets/erl_inetrc")
+			file, err := filepath.Abs("../assets/erl_inetrc_old")
 			Expect(err).ToNot(HaveOccurred())
 
 			ipsWithNodeNames, err = parsers.ParseErlInetRcFile(file)

@@ -1,11 +1,13 @@
 package mapping
 
 import (
-	"../parsers"
+	"github.com/pivotal-cf/cf-rabbitmq-release/src/rabbitmq-cluster-migration-tool/parsers"
 )
 
-func NodeNames(oldIPAddressesWithNodeNames, newIPAddressesWithNodeNames parsers.IPAddressesWithNodeNames) map[string]string {
-	mappingResult := map[string]string{}
+type NodeMapping map[string]string
+
+func NodeNames(oldIPAddressesWithNodeNames, newIPAddressesWithNodeNames parsers.IPAddressesWithNodeNames) NodeMapping {
+	mappingResult := NodeMapping{}
 	for ip, node := range oldIPAddressesWithNodeNames {
 		if newNodeName := newIPAddressesWithNodeNames.NodeNameByIp(ip); newNodeName != "" {
 			if newNodeName != node {
