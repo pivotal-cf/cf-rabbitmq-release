@@ -67,7 +67,7 @@ end
   . /var/vcap/jobs/rabbitmq-server/bin/node_name_migration.sh
 
   # If we are running on the old node naming strategy eg rabbit@node* then copy the current erl_inetrc for use later in the node name migration
-  [ -d ${HOME_DIR}/mnesia/rabbit@node*-plugins-expand ] && ${MKDIR} -p ${MIGRATION_DIR} && ${CP} ${ERL_INETRC} ${MIGRATION_DIR}/erl_inetrc_old
+  [ -f ${ERL_INETRC} ] && ${MKDIR} -p ${MIGRATION_DIR} && ${CP} ${ERL_INETRC} ${MIGRATION_DIR}/erl_inetrc_old
 
   HOSTS=""
   <% ips.each_index do |idx| %>
@@ -82,12 +82,12 @@ end
   ${CP} ${DIR}/erl_inetrc ${ERL_INETRC}
 
   # If we are running on the old node naming strategy eg rabbit@node* then copy the new erl_inetrc for use later in the node name migration
-  [ -d ${HOME_DIR}/mnesia/rabbit@node*-plugins-expand ] && ${CP} ${ERL_INETRC} ${MIGRATION_DIR}/erl_inetrc_new
-  [ -d ${HOME_DIR}/mnesia/rabbit@node*-plugins-expand ] && echo $JOB_IP > ${MIGRATION_DIR}/self_ip
+  [ -d ${MIGRATION_DIR} ] && ${CP} ${ERL_INETRC} ${MIGRATION_DIR}/erl_inetrc_new
+  echo $JOB_IP > ${MIGRATION_DIR}/self_ip
 
   ${MKDIR} -p $(${DIRNAME} ${CONF_ENV_FILE})
 
-  # 2. Modify the rabbitmq-env.conf to include the right NODENAME and SERVER_START_ARGS.
+  # 3. Modify the rabbitmq-env.conf to include the right NODENAME and SERVER_START_ARGS.
   #    SERVER_START_ARGS is appended to the Erlang VM command line, like so (shortened and formatted
   #    for readability):
   #
@@ -151,7 +151,17 @@ end
   [ -f ${HOME_DIR}/mnesia/rabbit@node*.config ] && mv ${HOME_DIR}/mnesia/rabbit@node*.config $RABBITMQ_MNESIA_DIR-cluster.config
   [ -d ${HOME_DIR}/mnesia/rabbit@node* ] && mv ${HOME_DIR}/mnesia/rabbit@node* $RABBITMQ_MNESIA_DIR
 
-  # 3. Write out the cluster_config
+
+  # 3. Run the node name migration
+  if [ -d $MIGRATION_DIR ]
+  then
+      #run the migration tool passing in the migration directory
+      $MIGRATION_TOOL $MIGRATION_DIR
+      #cleanup migration directory - rm
+      rm -rf $MIGRATION_DIR
+  fi
+
+  # 4. Write out the cluster_config
   ${MKDIR} -p $(${DIRNAME} ${CLUSTER_CONFIG})
   CONFIG_NODES=""
   <% ips.each_index do |idx| %>

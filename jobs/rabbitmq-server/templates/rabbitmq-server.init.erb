@@ -104,18 +104,6 @@ create_admin() {
     set -e
 }
 
-migrate_node_names(){
-    . /var/vcap/jobs/rabbitmq-server/bin/node_name_migration.sh
-    #if required run the migration tool - this dir is created in setup.sh if a name migration is required
-    if [ -d $MIGRATION_DIR ]
-    then
-        #run the migration tool passing in the migration directory
-        $MIGRATION_TOOL $MIGRATION_DIR
-        #cleanup migration directory - rm
-        rm -r $MIGRATION_DIR
-    fi
-}
-
 delete_operator_admin() {
   set +e
   USERNAME=$(cat $OPERATOR_USERNAME_FILE)
@@ -175,7 +163,6 @@ start_rabbitmq () {
                 [ -f $OPERATOR_USERNAME_FILE ] && delete_operator_admin
                 create_operator_admin
                 create_broker_admin
-                migrate_node_names
                 echo "$("${TIMESTAMP}"): Finished starting RabbitMQ" >> "${INIT_LOG_DIR}/startup_stdout.log"
                 echo "SUCCESS"
                 ;;
