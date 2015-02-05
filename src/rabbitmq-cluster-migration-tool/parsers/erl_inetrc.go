@@ -10,7 +10,7 @@ import (
 
 type IPAddressesWithNodeNames map[string]string
 
-func (i IPAddressesWithNodeNames) NodeNameByIp(ip string) string {
+func (i IPAddressesWithNodeNames) NodeNameByIP(ip string) string {
 	return i[ip]
 }
 

@@ -53,12 +53,12 @@ var _ = Describe("ErlInetrc", func() {
 		})
 
 		It("can provide the hostname given the ip address", func() {
-			nodeName := ipsWithNodeNames.NodeNameByIp("172.16.87.39")
+			nodeName := ipsWithNodeNames.NodeNameByIP("172.16.87.39")
 			Expect(nodeName).To(Equal("node0"))
 		})
 
 		It("returns an empty string if the ip address is not found", func() {
-			nodeName := ipsWithNodeNames.NodeNameByIp("10.10.10.10")
+			nodeName := ipsWithNodeNames.NodeNameByIP("10.10.10.10")
 			Expect(nodeName).To(BeEmpty())
 		})
 	})

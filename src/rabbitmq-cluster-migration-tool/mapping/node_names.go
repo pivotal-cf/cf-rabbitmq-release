@@ -9,7 +9,7 @@ type NodeMapping map[string]string
 func NodeNames(oldIPAddressesWithNodeNames, newIPAddressesWithNodeNames parsers.IPAddressesWithNodeNames) NodeMapping {
 	mappingResult := NodeMapping{}
 	for ip, node := range oldIPAddressesWithNodeNames {
-		if newNodeName := newIPAddressesWithNodeNames.NodeNameByIp(ip); newNodeName != "" {
+		if newNodeName := newIPAddressesWithNodeNames.NodeNameByIP(ip); newNodeName != "" {
 			if newNodeName != node {
 				mappingResult[node] = newNodeName
 			}

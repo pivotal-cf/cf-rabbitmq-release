@@ -33,15 +33,15 @@ func main() {
 		log.Fatalf("could not parse file %s (%s)", newErlInetRcFilepath, err.Error())
 	}
 
-	selfIpFilepath := migrationDirPath + "/self_ip"
-	selfIp, err := parsers.ParseSelfIpFile(selfIpFilepath)
+	selfIPFilepath := migrationDirPath + "/self_ip"
+	selfIP, err := parsers.ParseSelfIPFile(selfIPFilepath)
 	if err != nil {
-		log.Fatalf("could not parse file %s (%s)", selfIpFilepath, err.Error())
+		log.Fatalf("could not parse file %s (%s)", selfIPFilepath, err.Error())
 	}
 
-	selfNodeName := oldIPAddressesWithNodeNames.NodeNameByIp(selfIp)
+	selfNodeName := oldIPAddressesWithNodeNames.NodeNameByIP(selfIP)
 	if selfNodeName == "" {
-		log.Fatalf("could not resolve old node name for IP address %s in file %s", selfIp, oldErlInetRcFilepath)
+		log.Fatalf("could not resolve old node name for IP address %s in file %s", selfIP, oldErlInetRcFilepath)
 	}
 
 	renameNodes(oldIPAddressesWithNodeNames, newIPAddressesWithNodeNames, selfNodeName)

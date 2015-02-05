@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func ParseSelfIpFile(filepath string) (string, error) {
+func ParseSelfIPFile(filepath string) (string, error) {
 	ip, err := ioutil.ReadFile(filepath)
 	if err != nil {
 		return "", err
