@@ -3,7 +3,7 @@ package parsers_test
 import (
 	"path/filepath"
 
-	"../parsers"
+	"github.com/pivotal-cf/cf-rabbitmq-release/src/rabbitmq-cluster-migration-tool/parsers"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
