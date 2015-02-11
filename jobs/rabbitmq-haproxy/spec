@@ -7,6 +7,10 @@ properties:
     description: "List of IP addresses for the RabbitMQ cluster to proxy"
   rabbitmq-haproxy.ports:
     description: "List of ports (as string!) to forward to the RabbitMQ cluster"
+  rabbitmq-haproxy.stats.username:
+    description: "Admin username to access HaProxy stats dashboard"
+  rabbitmq-haproxy.stats.password:
+    description: "Admin password to access HaProxy stats dashboard"
 templates:
   rabbitmq-haproxy.init.erb:   bin/rabbitmq-haproxy.init
   haproxy.config.erb: haproxy.config

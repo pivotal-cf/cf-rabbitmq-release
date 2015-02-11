@@ -28,3 +28,23 @@ backend output-<%= port %>
 	server node<%= idx %> <%= ips[idx] %>:<%= port %> check inter 5000
 <% end %>
 <% end %>
+
+listen stats 0.0.0.0:80
+    mode http
+    balance
+    timeout client 5000
+    timeout connect 4000
+    timeout server 30000
+
+    #This is the virtual URL to access the stats page
+    stats uri /
+
+    #Authentication realm. This can be set to anything. Escape space characters with a backslash.
+    stats realm HAProxy\ Statistics
+
+    #The user/pass you want to use.
+    stats auth <%= p("rabbitmq-haproxy.stats.username") %>:<%= p("rabbitmq-haproxy.stats.password") %>
+
+    #This allows you to take down and bring up back end servers.
+    #This will produce an error on older versions of HAProxy.
+    stats admin if TRUE
