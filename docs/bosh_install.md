@@ -57,7 +57,7 @@ In your inception VM...
 				- rabbitmq_mqtt
 				- rabbitmq_stomp
 	
-- to enable TLSv1.0 (required for JDK 6.0 support) add the following:
+- to enable TLSv1.0 (required for JDK 6 support) add the following:
  
 		properties
 		  rabbitmq-server:
