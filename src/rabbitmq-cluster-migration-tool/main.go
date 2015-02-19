@@ -10,8 +10,8 @@ import (
 )
 
 func main() {
-	if len(os.Args) != 2 {
-		log.Fatal("USAGE: <migration_dir_path>")
+	if len(os.Args) != 3 {
+		log.Fatal("USAGE: <migration_dir_path> <cluster_state_file_path>")
 	}
 
 	migrationDirPath := os.Args[1]
@@ -44,10 +44,11 @@ func main() {
 		log.Fatalf("could not resolve old node name for IP address %s in file %s", selfIP, oldErlInetRcFilepath)
 	}
 
-	renameNodes(oldIPAddressesWithNodeNames, newIPAddressesWithNodeNames, selfNodeName)
+	clusterStateFilePath := os.Args[2]
+	renameNodes(oldIPAddressesWithNodeNames, newIPAddressesWithNodeNames, selfNodeName, clusterStateFilePath)
 }
 
-func renameNodes(oldIPAddressesWithNodeNames, newIPAddressesWithNodeNames parsers.IPAddressesWithNodeNames, selfNodeName string) {
+func renameNodes(oldIPAddressesWithNodeNames, newIPAddressesWithNodeNames parsers.IPAddressesWithNodeNames, selfNodeName, clusterStateFilePath string) {
 	nodeMappings := mapping.NodeNames(oldIPAddressesWithNodeNames, newIPAddressesWithNodeNames)
 	if len(nodeMappings) == 0 {
 		log.Print("Nothing to be renamed, exiting...")
@@ -59,5 +60,10 @@ func renameNodes(oldIPAddressesWithNodeNames, newIPAddressesWithNodeNames parser
 
 	if err != nil {
 		log.Fatalf("failed to execute rename_cluster_node command (err: %s)", err.Error())
+	}
+
+	err = rabbit.UpdateStateFile(nodeMappings, clusterStateFilePath)
+	if err != nil {
+		log.Fatalf("failed to update cluster state file (err: %s)", err.Error())
 	}
 }
