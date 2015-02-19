@@ -156,7 +156,7 @@ end
   if [ -d $MIGRATION_DIR ]
   then
       #run the migration tool passing in the migration directory
-      $MIGRATION_TOOL $MIGRATION_DIR
+      $MIGRATION_TOOL $MIGRATION_DIR $RABBITMQ_MNESIA_DIR-cluster.config
       #cleanup migration directory - rm
       rm -rf $MIGRATION_DIR
   fi
