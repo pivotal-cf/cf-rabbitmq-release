@@ -57,7 +57,7 @@ In your inception VM...
 				- rabbitmq_mqtt
 				- rabbitmq_stomp
 	
-- to enable tls 1.0 (required for JDK 6.0 support) add the following:
+- to enable TLSv1.0 (required for JDK 6 support) add the following:
  
 		properties
 		  rabbitmq-server:
@@ -68,6 +68,8 @@ In your inception VM...
 - set the deployment manifest `bosh deployment manifests/cf-rabbitmq-aws.yml`
 - deploy `bosh deploy`
 - run `bosh vms` or similar to look at the status of the deployment
+
+Note: TLS versions 1.1 and 1.2 are enabled by default.
 
 #### vSphere
 
