@@ -147,6 +147,9 @@ end
   ${CP} ${DIR}/env ${CONF_ENV_FILE}
 
   # migrate any old db / config / plugin folders to the node agnostic structure
+
+  [ -f ${HOME_DIR}/mnesia/rabbit@node*.config ] cp ${HOME_DIR}/mnesia/rabbit@node*.config ${HOME_DIR}/rabbitmq-node-cluster.config.backup
+
   [ -d ${HOME_DIR}/mnesia/rabbit@node*-plugins-expand ] && mv ${HOME_DIR}/mnesia/rabbit@node*-plugins-expand $RABBITMQ_PLUGINS_EXPAND_DIR
   [ -f ${HOME_DIR}/mnesia/rabbit@node*.config ] && mv ${HOME_DIR}/mnesia/rabbit@node*.config $RABBITMQ_MNESIA_DIR-cluster.config
   [ -d ${HOME_DIR}/mnesia/rabbit@node* ] && mv ${HOME_DIR}/mnesia/rabbit@node* $RABBITMQ_MNESIA_DIR
