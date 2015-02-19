@@ -32,7 +32,7 @@ var _ = Describe("Ctl", func() {
 		"node2": "new5",
 	}
 
-	It("It runs the correct rename_cluster command", func() {
+	It("runs the correct rename_cluster command", func() {
 		selfNode := "node0"
 
 		fakeShellRunner := FakeShell{}
@@ -54,7 +54,7 @@ var _ = Describe("Ctl", func() {
 		Expect(fakeShellRunner.Command).To(Equal("rabbitmqctl"))
 	})
 
-	It("Returns an error if the self node is empty", func() {
+	It("returns an error if the self node is empty", func() {
 		selfNode := ""
 
 		fakeShellRunner := FakeShell{}
@@ -65,7 +65,7 @@ var _ = Describe("Ctl", func() {
 
 	})
 
-	It("Returns an error if provided with an empty node mapping", func() {
+	It("returns an error if provided with an empty node mapping", func() {
 		nodeMapping := mapping.NodeMapping{}
 		selfNode := "node0"
 
