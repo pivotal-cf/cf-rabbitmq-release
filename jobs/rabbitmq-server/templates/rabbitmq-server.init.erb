@@ -226,6 +226,7 @@ restart_rabbitmq() {
 case "$1" in
     start)
         echo -n "Starting ${DESC}: "
+        ulimit -n 50000
         start_rabbitmq
         echo "${NAME}."
         ;;
