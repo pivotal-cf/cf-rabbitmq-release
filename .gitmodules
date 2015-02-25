@@ -7,3 +7,6 @@
 [submodule "src/route-registrar/src/github.com/cloudfoundry-incubator/route-registrar"]
 	path = src/route-registrar/src/github.com/cloudfoundry-incubator/route-registrar
 	url = git@github.com:cloudfoundry-incubator/route-registrar.git
+[submodule "src/rabbitmq-cluster-migration-tool"]
+	path = src/rabbitmq-cluster-migration-tool
+	url = git@github.com:pivotal-cf/rabbitmq-cluster-migration-tool.git
