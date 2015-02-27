@@ -2,7 +2,7 @@
   :description "Pivotal CF RabbitMQ service broker"
   :dependencies [[org.clojure/clojure     "1.6.0"]
                  ;; RabbitMQ client (including HTTP API)
-                 [com.novemberain/langohr "3.0.0" :exclusions [clj-http]]
+                 [com.novemberain/langohr "3.1.0" :exclusions [clj-http]]
                  ;; HTTP client which uses HTTPCore 4.2.x, compatible
                  ;; with Spring 3 and CF Java client.
                  [clj-http                "1.0.1"]
