@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-PACKAGE_NAME=github.com/pivotal-cf/cf-rabbitmq-release/src/rabbitmq-cluster-migration-tool
+PACKAGE_NAME=github.com/pivotal-cf/rabbitmq-cluster-migration-tool
 PACKAGE_DIR=${BOSH_INSTALL_TARGET}/src/${PACKAGE_NAME}
 
 mkdir -p $(dirname $PACKAGE_DIR)
