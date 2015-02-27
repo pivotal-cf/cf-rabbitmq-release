@@ -12,7 +12,7 @@
                  [ring/ring-servlet         "1.3.1"]
                  ;; Embedded HTTP server. Same as ring-jetty-adapter
                  ;; but uses Jetty 9 => requires JDK 7.
-                 [info.sunng/ring-jetty9-adapter "0.7.2"]
+                 [info.sunng/ring-jetty9-adapter "0.8.2"]
                  [ring/ring-json            "0.3.1"     :exclusions [ring/ring-core]]
                  ;; basic HTTP authentication
                  [ring-basic-authentication "1.0.5"     :exclusions [org.clojure/clojure ring/ring-core]]
