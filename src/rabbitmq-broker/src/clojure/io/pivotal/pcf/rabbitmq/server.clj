@@ -154,6 +154,7 @@
           (log/infof "Created special user for dashboard access: %s" mu)
           (rs/grant-broker-administrator-permissions id)
           (log/infof "Granted system administrator access to vhost %s" id)
+          (if (cfg/mirrored-queues?) (rs/add-mirrored-queue-policy id))
           (catch Exception e
             (.printStackTrace e)
             (log-exception e)

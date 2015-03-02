@@ -138,6 +138,13 @@
      (not (not (or (get-in m [:rabbitmq :ssl])
                    (get-in m [:rabbitmq :tls]))))))
 
+
+(defn mirrored-queues?
+  ([]
+     (mirrored-queues? final-config))
+  ([m]
+     (get-in m [:rabbitmq :mirrored_queues])))
+
 (defn management-domain
   ([]
      (management-domain final-config))

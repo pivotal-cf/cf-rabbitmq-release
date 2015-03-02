@@ -1,7 +1,16 @@
 (ns io.pivotal.pcf.rabbitmq.resources-test
   (:require [clojure.test :refer :all]
-            [io.pivotal.pcf.rabbitmq.test-helpers :refer [load-config]]
+            [langohr.http :as hc]
+            [io.pivotal.pcf.rabbitmq.test-helpers :refer [load-config has-mirrored-policy?]]
             [io.pivotal.pcf.rabbitmq.resources :as rs]))
+
+(deftest test-add-mirrored-queue-policy
+  (let [vhost "unit-test-vhost"]
+    (hc/add-vhost vhost)
+    (hc/set-permissions vhost "guest" {:configure ".*" :read ".*" :write ".*"})
+    (rs/add-mirrored-queue-policy vhost)
+    (has-mirrored-policy? vhost rs/mirrored-queue-policy-name)
+    (hc/delete-vhost vhost)))
 
 
 (deftest test-uri-for

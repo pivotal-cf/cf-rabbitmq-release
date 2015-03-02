@@ -21,6 +21,12 @@
   (let [m (load-config "config/valid_with_tls.yml")]
     (is (cfg/using-tls? m))))
 
+(deftest test-default-mirrored-queues
+  (let [m (load-config "config/valid.yml")]
+    (is (not (cfg/mirrored-queues? m))))
+  (let [m (load-config "config/valid_with_mirrored_queues.yml")]
+    (is (cfg/mirrored-queues? m))))
+
 (deftest test-amqp-scheme
   (let [m (load-config "config/valid.yml")]
     (is (= "amqp" (cfg/amqp-scheme m))))

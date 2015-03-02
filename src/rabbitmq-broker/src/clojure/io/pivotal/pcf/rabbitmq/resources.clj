@@ -12,6 +12,8 @@
 ;; API
 ;;
 
+(def ^:const mirrored-queue-policy-name "cf-mirrored-queue-policy")
+
 (defn vhost-exists?
   [^String name]
   (hc/vhost-exists? name))
@@ -23,6 +25,11 @@
 (defn delete-vhost
   [^String name]
   (hc/delete-vhost name))
+
+
+(defn add-mirrored-queue-policy
+  [^String vhost]
+  (hc/set-policy vhost mirrored-queue-policy-name {:pattern ".*" :apply-to "all" :definition {:ha-mode "all" :ha-sync-mode "automatic"}}))
 
 ;; policymaker implies management but we include it anyway
 ;; to make it more obvious for ops.

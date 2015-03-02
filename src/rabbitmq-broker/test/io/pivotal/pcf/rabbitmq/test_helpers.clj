@@ -1,7 +1,9 @@
 (ns io.pivotal.pcf.rabbitmq.test-helpers
   (:refer-clojure :exclude [get])
   (:require [clojure.java.io :as io]
+            [langohr.http :as hc]
             [clj-yaml.core :as yaml]
+            [clojure.test :refer :all]
             [clj-http.client :as httpc]
             [cheshire.core :as json]))
 
@@ -14,6 +16,33 @@
   (yaml/parse-string (slurp (io/resource relative-resource-path))))
 
 (def load-config (memoize load-config!))
+
+(defn has-policy?
+   [^String vhost ^String policy-name]
+   (let [policy (hc/get-policies vhost policy-name)]
+      (testing "policy exists"
+        (is (nil? (:error policy)))
+        (is (nil? (:reason policy)))
+        (is (= (:name policy) policy-name)))))
+
+(defn has-not-policy?
+   [^String vhost ^String policy-name]
+   (let [policy (hc/get-policies vhost policy-name)]
+      (testing "policy exists"
+        (is (:error policy))
+        (is (:reason policy)))))
+
+
+(defn has-mirrored-policy?
+   [^String vhost ^String policy-name]
+   (has-policy? vhost policy-name)
+   (testing "policy has valid pattern, ha-mode and ha-sync-mode"
+     (let [policy (hc/get-policies vhost policy-name)]
+       (is (= (:pattern policy) ".*"))
+       (is (= (:apply-to policy) "all"))
+       (let [definition (:definition policy)]
+         (is (= (:ha-mode definition) "all"))
+         (is (= (:ha-sync-mode definition) "automatic"))))))
 
 (defn get
   ([^String path]
