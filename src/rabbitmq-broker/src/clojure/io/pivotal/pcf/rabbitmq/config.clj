@@ -144,6 +144,12 @@
   ([m]
    (true? (get-in m [:rabbitmq :mirrored_queues :enabled] false))))
 
+(defn mirrored-queues-policy-name
+  ([]
+   (mirrored-queues-policy-name final-config))
+  ([m]
+   (get-in m [:rabbitmq :mirrored_queues :policy_name] "cf-mirrored-queues")))
+
 (defn management-domain
   ([]
      (management-domain final-config))

@@ -5,11 +5,11 @@
             [io.pivotal.pcf.rabbitmq.resources :as rs]))
 
 (deftest test-add-mirrored-queue-policy
-  (let [vhost "unit-test-vhost"]
+  (let [vhost "unit-test-vhost" policy-name "cf-test-mirrored-queue-policy"]
     (hc/add-vhost vhost)
     (hc/set-permissions vhost "guest" {:configure ".*" :read ".*" :write ".*"})
-    (rs/add-mirrored-queue-policy vhost)
-    (has-mirrored-policy? vhost rs/mirrored-queue-policy-name)
+    (rs/add-mirrored-queues-policy vhost policy-name)
+    (has-mirrored-policy? vhost policy-name)
     (hc/delete-vhost vhost)))
 
 

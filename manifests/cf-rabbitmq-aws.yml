@@ -132,6 +132,9 @@ properties:
       level: debug
       print_stack_traces: false
     rabbitmq:
+      mirrored_queues:
+        enabled: true
+        policy_name: "cf-mirrored-queues"
       management_domain: pivotal-rabbitmq.your_cc_endpoint.com
       ssl: |
         -----BEGIN CERTIFICATE-----

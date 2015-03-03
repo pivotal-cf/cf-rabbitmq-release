@@ -1,9 +1,10 @@
 (ns io.pivotal.pcf.rabbitmq.integration-test
   (:require [clojure.test :refer :all]
             [io.pivotal.pcf.rabbitmq.test-helpers :refer [load-config has-mirrored-policy?] :as th]
-            [io.pivotal.pcf.rabbitmq.server    :as srv]
-            [io.pivotal.pcf.rabbitmq.resources :as rs]
-            [cheshire.core :as json])
+             [io.pivotal.pcf.rabbitmq.config :as cfg]
+             [io.pivotal.pcf.rabbitmq.server    :as srv]
+             [io.pivotal.pcf.rabbitmq.resources :as rs]
+             [cheshire.core :as json])
   (:import org.eclipse.jetty.server.Server
            java.util.UUID))
 
@@ -99,7 +100,7 @@
                                          (is dbu)
                                          (is (.startsWith dbu (format "http://pivotal-rabbitmq.127.0.0.1/#/login/mu-%s" id))))
                                        (is (rs/vhost-exists? id))
-                                       (th/has-mirrored-policy? id rs/mirrored-queue-policy-name))))))
+                                       (th/has-mirrored-policy? id (cfg/mirrored-queues-policy-name)))))))
 
 (deftest test-create-service-without-mirrored-queues
   (testing "with provided service id that is NOT taken"
@@ -111,7 +112,7 @@
                                          (is dbu)
                                          (is (.startsWith dbu (format "http://pivotal-rabbitmq.127.0.0.1/#/login/mu-%s" id))))
                                        (is (rs/vhost-exists? id))
-                                       (is (th/has-not-policy? id rs/mirrored-queue-policy-name))))))
+                                       (is (th/has-no-policy? id (cfg/mirrored-queues-policy-name)))))))
   (testing "with provided service id that IS taken"
     (let [id (.toLowerCase ^String (str (UUID/randomUUID)))]
       (try

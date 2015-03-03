@@ -25,7 +25,8 @@
   (let [m (load-config "config/valid.yml")]
     (is (not (cfg/mirrored-queues-enabled? m))))
   (let [m (load-config "config/valid_with_mirrored_queues.yml")]
-    (is (cfg/mirrored-queues-enabled? m))))
+    (is (cfg/mirrored-queues-enabled? m))
+    (is (cfg/mirrored-queues-policy-name m))))
 
 (deftest test-amqp-scheme
   (let [m (load-config "config/valid.yml")]

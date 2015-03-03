@@ -25,7 +25,7 @@
         (is (nil? (:reason policy)))
         (is (= (:name policy) policy-name)))))
 
-(defn has-not-policy?
+(defn has-no-policy?
    [^String vhost ^String policy-name]
    (let [policy (hc/get-policies vhost policy-name)]
       (testing "policy exists"

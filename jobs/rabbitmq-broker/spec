@@ -42,9 +42,12 @@ properties:
     description: "Username used by Cloud Controller for authentication"
   rabbitmq-broker.service.password:
     description: "Password used by Cloud Controller for authentication"
-  rabbitmq-broker.rabbitmq.mirrored_queues:
+  rabbitmq-broker.rabbitmq.mirrored_queues.enabled:
     description: "Enable mirrored queues as default policy"
     default: true
+  rabbitmq-broker.rabbitmq.mirrored_queues.policy_name:
+    description: "Mirrored queues default policy name"
+    default: "cf-mirrored-queues"
   cf.domain:
     description: "Domain shared by the UAA and CF API, e.g. '10.244.0.34.xip.io'"
   cf.nats.host:
