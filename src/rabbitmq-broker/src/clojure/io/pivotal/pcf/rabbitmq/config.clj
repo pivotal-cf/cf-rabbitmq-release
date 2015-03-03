@@ -148,7 +148,7 @@
   ([]
    (mirrored-queues-policy-name final-config))
   ([m]
-   (get-in m [:rabbitmq :mirrored_queues :policy_name] "cf-mirrored-queues")))
+   (get-in m [:rabbitmq :mirrored_queues :policy_name] "mirrored_queues")))
 
 (defn management-domain
   ([]

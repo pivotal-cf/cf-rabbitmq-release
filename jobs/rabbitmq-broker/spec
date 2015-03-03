@@ -47,7 +47,7 @@ properties:
     default: true
   rabbitmq-broker.rabbitmq.mirrored_queues.policy_name:
     description: "Mirrored queues default policy name"
-    default: "cf-mirrored-queues"
+    default: "mirrored_queues"
   cf.domain:
     description: "Domain shared by the UAA and CF API, e.g. '10.244.0.34.xip.io'"
   cf.nats.host:

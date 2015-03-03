@@ -17,7 +17,7 @@ pid: /tmp/cf_rabbitmq_broker.pid
 rabbitmq:
   mirrored_queues:
     enabled: true
-    policy_name: "cf-mirrored-queues"
+    policy_name: "mirrored_queues"
   management_domain: pivotal-rabbitmq.127.0.0.1
   hosts:
     - 127.0.0.1

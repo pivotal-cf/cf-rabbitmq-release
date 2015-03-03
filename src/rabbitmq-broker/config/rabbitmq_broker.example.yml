@@ -16,6 +16,9 @@ logging:
   print_stack_traces: true
 pid: /tmp/cf_rabbitmq_broker.pid
 rabbitmq:
+  mirrored_queues:
+    enabled: true
+    policy_name: "mirrored_queue"
   management_domain: pivotal-rabbitmq.10.244.0.34.xip.io
   hosts:
     - 10.244.9.50

@@ -134,7 +134,7 @@ properties:
     rabbitmq:
       mirrored_queues:
         enabled: true
-        policy_name: "cf-mirrored-queues"
+        policy_name: "mirrored_queues"
       management_domain: pivotal-rabbitmq.your_cc_endpoint.com
       ssl: |
         -----BEGIN CERTIFICATE-----
