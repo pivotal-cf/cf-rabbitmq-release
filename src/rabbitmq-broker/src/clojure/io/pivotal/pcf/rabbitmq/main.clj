@@ -4,6 +4,7 @@
             [clojure.string :as cs]
             [io.pivotal.pcf.rabbitmq.config :as cfg]
             [io.pivotal.pcf.rabbitmq.server :as srv]
+            [io.pivotal.pcf.rabbitmq.init.policy_setter :as policy_setter]
             [taoensso.timbre :as log])
   (:import java.io.File))
 
