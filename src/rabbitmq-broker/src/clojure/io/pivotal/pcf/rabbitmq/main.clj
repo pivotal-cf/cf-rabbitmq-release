@@ -83,7 +83,7 @@
     (if (>= attempts-left 0)
       (do
         (Thread/sleep polling-sleep)
-        (start-initializers m (- attempts-left 1)))
+        (start-initializers m (dec attempts-left)))
       (throw (Exception. "Could not contact the RabbitMQ cluster")))))
 
 
@@ -98,6 +98,7 @@
       (let [m (cfg/from-path (:config-path options))]
         (if (cfg/valid? m)
           (do
+            (srv/init m)
             (start-initializers m polling-attempts)
             (let [s (srv/start m)]
               (.join s)))

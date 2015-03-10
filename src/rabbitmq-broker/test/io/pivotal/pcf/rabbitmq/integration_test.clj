@@ -17,7 +17,8 @@
      (start-server "config/valid.yml"))
   ([^String config-path]
      (let [m (load-config config-path)]
-       (srv/start m identity))))
+       (srv/init m)
+       (srv/start m))))
 
 (defmacro ^{:private true} provided-vhost-exists
   [^String name & body]

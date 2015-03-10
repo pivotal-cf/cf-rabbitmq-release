@@ -240,52 +240,26 @@
              {:port 4567
               :join? false}))
 
-(defn ^{:private true} connect-to-cf
-  [config]
-  config)
-
-(defn ^{:private true} retry
-  [f {:keys [times period log-fn operation] :or {times 10000 period 10}}]
-  (fn [& args]
-    (loop [i times]
-      (let [[res success?] (try
-                             [(apply f args) true]
-                             (catch Exception e
-                               (log-fn e)
-                               [nil false]))]
-        (if success?
-          res
-          (if (<= i 0)
-            (throw (IllegalStateException. (format "stopping after %d unsuccessful attempts to %s" times operation)))
-            (do (Thread/sleep (* 1000 period))
-                (recur (dec i)))))))))
-
 ;;
 ;; API
 ;;
 
+(defn init
+  [config]
+  (initialize-logger config)
+  (drop-pid (cfg/pid-path config))
+  (announce-start config)
+  (install-signal-traps)
+  (init-catalog! config)
+  (log/infof "Initialized service catalog")
+  (cfg/init! config)
+  (log/infof "Finalized own configuration")
+  (log-if-using-tls config)
+  (init-rabbitmq-connection! config))
+
 (defn start
-  ([config]
-     (initialize-logger config)
-     (start config connect-to-cf))
-  ([config init-fn]
-     (initialize-logger config)
-     (drop-pid (cfg/pid-path config))
-     (let [f'      (retry init-fn {:times 1000
-                                   :period 15
-                                   :log-fn (partial log-exception config)
-                                   :operation "authenticate with UAA"})
-           config' (f' config)]
-       (announce-start config')
-       (install-signal-traps)
-       (init-catalog! config')
-       (log/infof "Initialized service catalog")
-       (cfg/init! config')
-       (log/infof "Finalized own configuration")
-       (log-if-using-tls config')
-       (init-rabbitmq-connection! config')
-       config'
-       (start-http-server config'))))
+  [config]
+  (start-http-server config))
 
 (defn shutdown
   []
