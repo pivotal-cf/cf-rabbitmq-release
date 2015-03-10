@@ -3,6 +3,7 @@
             [langohr.http :as hc]
             [io.pivotal.pcf.rabbitmq.test-helpers :refer [has-mirrored-policy? has-no-policy? load-config]]
             [io.pivotal.pcf.rabbitmq.config :as cfg]
+            [io.pivotal.pcf.rabbitmq.resources :as rs]
             [io.pivotal.pcf.rabbitmq.init.policy-setter :as ps]))
 
 (def vhost-1 "vhost-1")

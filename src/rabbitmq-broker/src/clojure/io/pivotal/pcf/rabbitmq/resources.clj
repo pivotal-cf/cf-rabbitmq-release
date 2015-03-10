@@ -1,5 +1,6 @@
 (ns io.pivotal.pcf.rabbitmq.resources
   (:require [langohr.http :as hc]
+            [taoensso.timbre :as log]
             [io.pivotal.pcf.rabbitmq.config :as cfg]
             [io.pivotal.pcf.rabbitmq.gen :as gen]
             [io.pivotal.pcf.rabbitmq.constants :refer [management-ui-port]])
@@ -30,7 +31,8 @@
   ([^String vhost]
    (add-mirrored-queues-policy vhost (cfg/mirrored-queues-policy-name)))
   ([^String vhost ^String policy-name]
-   (hc/set-policy vhost policy-name {:pattern ".*" :apply-to "all" :definition {:ha-mode "all" :ha-sync-mode "automatic"}})))
+    (log/infof (format "Adding policy '%s' to vhost '%s'." policy-name vhost))
+    (hc/set-policy vhost policy-name {:pattern ".*" :apply-to "all" :definition {:ha-mode "all" :ha-sync-mode "automatic"}})))
 
 ;; policymaker implies management but we include it anyway
 ;; to make it more obvious for ops.
