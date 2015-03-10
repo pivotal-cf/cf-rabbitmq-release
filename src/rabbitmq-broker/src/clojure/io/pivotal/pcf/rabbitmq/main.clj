@@ -4,7 +4,7 @@
             [clojure.string :as cs]
             [io.pivotal.pcf.rabbitmq.config :as cfg]
             [io.pivotal.pcf.rabbitmq.server :as srv]
-            [io.pivotal.pcf.rabbitmq.init.policy_setter :as policy_setter]
+            [io.pivotal.pcf.rabbitmq.init.policy-setter :as policy-setter]
             [taoensso.timbre :as log])
   (:import java.io.File))
 
@@ -64,6 +64,14 @@
      (println msg)
      (System/exit status)))
 
+(def initializers (set [policy-setter/init-policy-on-all-vhosts]))
+(def server srv/start)
+
+(defn start-initializers
+  [m]
+  ; (poll-rabbit)
+  (doseq [init initializers] (init m)))
+
 (defn -main
   [& args]
   (let [{:keys [errors options arguments summary]} (parse-opts args cli-options)]
@@ -74,8 +82,10 @@
     (try
       (let [m (cfg/from-path (:config-path options))]
         (if (cfg/valid? m)
-          (let [^org.eclipse.jetty.server.Server s (srv/start m)]
-            (.join s))
+          (do
+            (start-initializers m)
+            (let [s (server m)]
+              (.join s)))
           (display-config-errors (cfg/validate m))))
       (catch Exception e
         (log/infof "Failed to start with config from %s:" (:config-path options))
