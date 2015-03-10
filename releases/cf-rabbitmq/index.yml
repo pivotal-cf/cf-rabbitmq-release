@@ -158,4 +158,12 @@ builds:
     version: '78'
   ce0f388a-9a05-4415-8854-87f87fd5cb84:
     version: '79'
+  b24bfb21-500c-48c6-b9bd-bbf9790fb6fe:
+    version: '80'
+  3d2fd10d-0da0-4744-9c21-3043fd9eca55:
+    version: '81'
+  dc5be327-1e9f-4647-8725-144d5234cd4b:
+    version: '82'
+  e40828a6-da00-42cd-9aba-da74ba72a9e6:
+    version: '83'
 format-version: '2'
