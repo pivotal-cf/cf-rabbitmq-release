@@ -59,6 +59,10 @@ end
   SCRIPT_DIR="$(${DIRNAME} $0)"
   JOB_IP=<%= job_ip %>
 
+  <% if_p("syslog_aggregator.address", "syslog_aggregator.port") do %>
+  /var/vcap/packages/syslog_aggregator/setup_syslog_forwarder $JOB_DIR/config
+  <% end %>
+
   # Unfortunate tight coupling. Beware.
   # We need this for CONF_ENV_FILE, HOME, ERL_INETRC, and for MNESIA_BASE
   . /var/vcap/packages/rabbitmq-server/privbin/rabbitmq-defaults

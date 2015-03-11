@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -e
+
+CONFIG_DIR=$1
+
+if [[ -z $CONFIG_DIR ]]
+then
+  echo "Usage: setup_syslog_forwarder [config dir]"
+  exit 1
+fi
+
+cp $CONFIG_DIR/syslog_forwarder.conf /etc/rsyslog.d/00-syslog_forwarder.conf
+ln -fs /usr/lib/rsyslog/imfile.so /usr/local/lib/rsyslog/imfile.so
+chmod 755 /var/vcap/data/sys/
+chmod 755 /var/vcap/data/sys/log/
+
+/usr/sbin/service rsyslog restart

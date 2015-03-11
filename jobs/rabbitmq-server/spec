@@ -5,6 +5,7 @@ packages:
 - erlang
 - rabbitmq-server
 - rabbitmq-cluster-migration-tool
+- syslog_aggregator
 
 properties:
   rabbitmq-server.ssl.cacert:
@@ -20,13 +21,13 @@ properties:
     description: "RabbitMQ plugins (array of strings)"
 
   rabbitmq-server.administrators.broker.username:
-    description: "RabbitMQ admin username (for broker)"
+    description: "RabbitMQ admin username for broker"
   rabbitmq-server.administrators.broker.password:
-    description: "RabbitMQ admin password (for broker)"
+    description: "RabbitMQ admin password for broker"
   rabbitmq-server.administrators.ops_manager.username:
-    description: "RabbitMQ admin username (for operator)"
+    description: "RabbitMQ admin username for operator"
   rabbitmq-server.administrators.ops_manager.password:
-    description: "RabbitMQ admin password (for operator)"
+    description: "RabbitMQ admin password for operator"
 
   rabbitmq-server.config:
     description: "RabbitMQ configuration (base64 encoded)"
@@ -37,6 +38,11 @@ properties:
   rabbitmq-server.static_ips:
     description: "Cluster node IPs"
 
+  syslog_aggregator.address:
+    description: "Syslog drain hostname"
+  syslog_aggregator.port:
+    description: "Syslog drain port"
+
 templates:
   plugins.sh.erb:             bin/plugins.sh
   rabbitmq-server.init.erb:   bin/rabbitmq-server.init
@@ -46,3 +52,4 @@ templates:
   cacert.pem.erb:             etc/cacert.pem
   cert.pem.erb:               etc/cert.pem
   key.pem.erb:                etc/key.pem
+  syslog_forwarder.conf.erb:  config/syslog_forwarder.conf
