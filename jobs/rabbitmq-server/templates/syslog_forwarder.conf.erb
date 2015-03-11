@@ -20,7 +20,7 @@ input(type="imfile"
 input(type="imfile"
       File="/var/vcap/sys/log/rabbitmq-server/rabbit@<%= job_ip_md5sum %>-sasl.log"
       StateFile="rabbitsasl.log.statefile"
-      Tag="rabbitmq")
+      Tag="rabbitmq_sasl")
 
 input(type="imfile"
       File="/var/vcap/sys/log/rabbitmq-server/startup_stderr.log"
