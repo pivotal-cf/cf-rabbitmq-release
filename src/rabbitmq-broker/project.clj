@@ -20,8 +20,9 @@
                  [org.clojure/tools.cli     "0.3.1"]
                  ;; logging
                  [com.taoensso/timbre       "3.3.1"]
-                 ;; YAML parser
+                 ;; YAML/JSON parser
                  [circleci/clj-yaml         "0.5.3"]
+                 [org.clojure/data.json     "0.2.6"]
                  ;; validation
                  [com.novemberain/validateur "2.3.1"]
                  ;; nicer signal handling

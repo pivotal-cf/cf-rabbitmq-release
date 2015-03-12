@@ -1,10 +1,10 @@
 (ns io.pivotal.pcf.rabbitmq.integration-test
   (:require [clojure.test :refer :all]
-            [io.pivotal.pcf.rabbitmq.test-helpers :refer [load-config has-mirrored-policy?] :as th]
-             [io.pivotal.pcf.rabbitmq.config :as cfg]
-             [io.pivotal.pcf.rabbitmq.server    :as srv]
-             [io.pivotal.pcf.rabbitmq.resources :as rs]
-             [cheshire.core :as json])
+            [io.pivotal.pcf.rabbitmq.test-helpers :refer [load-config has-policy? has-no-policy?] :as th]
+            [io.pivotal.pcf.rabbitmq.config :as cfg]
+            [io.pivotal.pcf.rabbitmq.server :as srv]
+            [io.pivotal.pcf.rabbitmq.resources :as rs]
+            [cheshire.core :as json])
   (:import org.eclipse.jetty.server.Server
            java.util.UUID))
 
@@ -17,7 +17,6 @@
      (start-server "config/valid.yml"))
   ([^String config-path]
      (let [m (load-config config-path)]
-       (srv/init m)
        (srv/start m))))
 
 (defmacro ^{:private true} provided-vhost-exists
@@ -70,9 +69,9 @@
          (cfg/init! nil)
          (.stop s#)))))
 
-(defmacro ^{:private true} with-server-running-mirrored-queues-config
+(defmacro ^{:private true} with-server-running-operator-set-policy-config
   [& body]
-  `(let [^Server s# (start-server "config/valid_with_mirrored_queues.yml")]
+  `(let [^Server s# (start-server "config/valid_with_operator_set_policy.yml")]
     (try
       ~@body
       (finally
@@ -94,19 +93,19 @@
              :name     "p-rabbitmq"
              :bindable true)))))
 
-(deftest test-create-service-with-mirrored-queues
+(deftest test-create-service-with-operater-set-policy
   (testing "with provided service id that is NOT taken"
     (let [id (.toLowerCase ^String (str (UUID/randomUUID)))]
-      (with-server-running-mirrored-queues-config "config/valid_with_mirrored_queues.yml"
+      (with-server-running-operator-set-policy-config "config/valid_with_operator_set_policy.yml"
         (provided-vhost-does-not-exist id
                                        (let [res         (th/put (format "v2/service_instances/%s" id))
                                              ^String dbu (:dashboard_url res)]
                                          (is dbu)
                                          (is (.startsWith dbu (format "http://pivotal-rabbitmq.127.0.0.1/#/login/mu-%s" id))))
                                        (is (rs/vhost-exists? id))
-                                       (th/has-mirrored-policy? id (cfg/mirrored-queues-policy-name)))))))
+                                       (th/has-policy? id (cfg/operator-set-policy-name)))))))
 
-(deftest test-create-service-without-mirrored-queues
+(deftest test-create-service-without-operator-set-policy
   (testing "with provided service id that is NOT taken"
     (let [id (.toLowerCase ^String (str (UUID/randomUUID)))]
       (with-server-running
@@ -116,7 +115,7 @@
                                          (is dbu)
                                          (is (.startsWith dbu (format "http://pivotal-rabbitmq.127.0.0.1/#/login/mu-%s" id))))
                                        (is (rs/vhost-exists? id))
-                                       (is (th/has-no-policy? id (cfg/mirrored-queues-policy-name)))))))
+                                       (is (th/has-no-policy? id (cfg/operator-set-policy-name)))))))
   (testing "with provided service id that IS taken"
     (let [id (.toLowerCase ^String (str (UUID/randomUUID)))]
       (try

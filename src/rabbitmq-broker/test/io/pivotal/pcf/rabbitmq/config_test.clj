@@ -21,12 +21,18 @@
   (let [m (load-config "config/valid_with_tls.yml")]
     (is (cfg/using-tls? m))))
 
-(deftest test-default-mirrored-queues
-  (let [m (load-config "config/valid.yml")]
-    (is (not (cfg/mirrored-queues-enabled? m))))
-  (let [m (load-config "config/valid_with_mirrored_queues.yml")]
-    (is (cfg/mirrored-queues-enabled? m))
-    (is (cfg/mirrored-queues-policy-name m))))
+(deftest test-operator-set-policies
+  (testing "with valid policy definition"
+    (let [m (load-config "config/valid.yml")]
+      (is (not (cfg/operator-set-policy-enabled? m))))
+    (let [m (load-config "config/valid_with_operator_set_policy.yml")]
+      (is (cfg/operator-set-policy-enabled? m))
+      (is (= (cfg/operator-set-policy-name m) "operator_set_policy"))
+      (is (= (cfg/operator-set-policy-definition m) {:ha-mode "exactly" :ha-params 2 :ha-sync-mode "automatic"}))
+      (is (= (cfg/operator-set-policy-priority m) 50))))
+  (testing "with invalid policy definition"
+    (let [m (load-config "config/valid_with_corrupt_operator_set_policy.yml")]
+      (is (nil? (cfg/operator-set-policy-definition m))))))
 
 (deftest test-amqp-scheme
   (let [m (load-config "config/valid.yml")]

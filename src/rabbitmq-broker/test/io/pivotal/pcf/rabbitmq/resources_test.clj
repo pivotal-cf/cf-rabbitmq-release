@@ -1,16 +1,30 @@
 (ns io.pivotal.pcf.rabbitmq.resources-test
   (:require [clojure.test :refer :all]
             [langohr.http :as hc]
-            [io.pivotal.pcf.rabbitmq.test-helpers :refer [load-config has-mirrored-policy?]]
+            [io.pivotal.pcf.rabbitmq.test-helpers :refer [load-config has-policy-with-definition? has-no-policy?]]
             [io.pivotal.pcf.rabbitmq.resources :as rs]))
 
-(deftest test-add-mirrored-queue-policy
-  (let [vhost "unit-test-vhost" policy-name "cf-test-mirrored-queue-policy"]
-    (hc/add-vhost vhost)
-    (hc/set-permissions vhost "guest" {:configure ".*" :read ".*" :write ".*"})
-    (rs/add-mirrored-queues-policy vhost policy-name)
-    (has-mirrored-policy? vhost policy-name)
-    (hc/delete-vhost vhost)))
+(deftest test-add-operator-set-policy
+  (testing "when the policy-definition is set"
+    (let [vhost "unit-test-vhost"
+          policy-name "cf-test-mirrored-queue-policy"
+          policy-definition {:ha-mode "exactly" :ha-params 2 :ha-sync-mode "automatic"}
+          policy-priority 50]
+      (hc/add-vhost vhost)
+      (hc/set-permissions vhost "guest" {:configure ".*" :read ".*" :write ".*"})
+      (rs/add-operator-set-policy vhost policy-name policy-definition policy-priority)
+      (has-policy-with-definition? vhost policy-name policy-definition policy-priority)
+      (hc/delete-vhost vhost)))
+  (testing "when the policy-definition is not set"
+    (let [vhost "unit-test-vhost"
+          policy-name "cf-test-mirrored-queue-policy"
+          policy-definition nil
+          policy-priority 50]
+      (hc/add-vhost vhost)
+      (hc/set-permissions vhost "guest" {:configure ".*" :read ".*" :write ".*"})
+      (rs/add-operator-set-policy vhost policy-name policy-definition policy-priority)
+      (has-no-policy? vhost policy-name)
+      (hc/delete-vhost vhost))))
 
 (deftest test-dashboard-url
   (testing "returns a formatted dashboard url"

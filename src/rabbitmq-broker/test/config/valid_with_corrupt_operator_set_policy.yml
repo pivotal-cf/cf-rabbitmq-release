@@ -15,9 +15,11 @@ logging:
   print_stack_traces: true
 pid: /tmp/cf_rabbitmq_broker.pid
 rabbitmq:
-  mirrored_queues:
+  operator_set_policy:
     enabled: true
-    policy_name: "mirrored_queues"
+    policy_name: "operator_set_policy"
+    policy_definition: "NOT JSON Mwwhhaaaa"
+    policy_priority: 50
   management_domain: pivotal-rabbitmq.127.0.0.1
   hosts:
     - 127.0.0.1

@@ -154,7 +154,7 @@
           (log/infof "Created special user for dashboard access: %s" mu)
           (rs/grant-broker-administrator-permissions id)
           (log/infof "Granted system administrator access to vhost %s" id)
-          (if (cfg/mirrored-queues-enabled?) (rs/add-mirrored-queues-policy id))
+          (if (cfg/operator-set-policy-enabled?) (rs/add-operator-set-policy id))
           (catch Exception e
             (.printStackTrace e)
             (log-exception e)
@@ -249,7 +249,7 @@
 ;; API
 ;;
 
-(defn init
+(defn start
   [config]
   (initialize-logger config)
   (drop-pid (cfg/pid-path config))
@@ -260,10 +260,7 @@
   (cfg/init! config)
   (log/infof "Finalized own configuration")
   (log-if-using-tls config)
-  (init-rabbitmq-connection! config))
-
-(defn start
-  [config]
+  (init-rabbitmq-connection! config)
   (start-http-server config))
 
 (defn shutdown

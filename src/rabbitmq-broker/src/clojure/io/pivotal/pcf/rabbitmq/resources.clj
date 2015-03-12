@@ -27,12 +27,12 @@
   (hc/delete-vhost name))
 
 
-(defn add-mirrored-queues-policy
+(defn add-operator-set-policy
   ([^String vhost]
-   (add-mirrored-queues-policy vhost (cfg/mirrored-queues-policy-name)))
-  ([^String vhost ^String policy-name]
+   (add-operator-set-policy vhost (cfg/operator-set-policy-name) (cfg/operator-set-policy-definition) (cfg/operator-set-policy-priority)))
+  ([^String vhost ^String policy-name policy-definition ^long policy-priority]
     (log/infof (format "Adding policy '%s' to vhost '%s'." policy-name vhost))
-    (hc/set-policy vhost policy-name {:pattern ".*" :apply-to "all" :definition {:ha-mode "all" :ha-sync-mode "automatic"}})))
+    (hc/set-policy vhost policy-name {:pattern ".*" :apply-to "all" :definition policy-definition :priority policy-priority})))
 
 ;; policymaker implies management but we include it anyway
 ;; to make it more obvious for ops.

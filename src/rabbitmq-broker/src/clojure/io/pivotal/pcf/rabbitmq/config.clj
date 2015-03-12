@@ -1,5 +1,6 @@
 (ns io.pivotal.pcf.rabbitmq.config
   (:require [clj-yaml.core :as yaml]
+            [clojure.data.json :as json]
             [validateur.validation :as vdt :refer [validation-set
                                                    presence-of
                                                    inclusion-of
@@ -138,17 +139,34 @@
      (not (not (or (get-in m [:rabbitmq :ssl])
                    (get-in m [:rabbitmq :tls]))))))
 
-(defn mirrored-queues-enabled?
+(defn operator-set-policy-enabled?
   ([]
-   (mirrored-queues-enabled? final-config))
+   (operator-set-policy-enabled? final-config))
   ([m]
-   (true? (get-in m [:rabbitmq :mirrored_queues :enabled] false))))
+   (true? (get-in m [:rabbitmq :operator_set_policy :enabled] false))))
 
-(defn mirrored-queues-policy-name
+(defn operator-set-policy-name
   ([]
-   (mirrored-queues-policy-name final-config))
+   (operator-set-policy-name final-config))
   ([m]
-   (get-in m [:rabbitmq :mirrored_queues :policy_name] "mirrored_queues")))
+   (get-in m [:rabbitmq :operator_set_policy :policy_name] "operator_set_policy")))
+
+(defn operator-set-policy-definition
+  ([]
+    (operator-set-policy-definition final-config))
+  ([m]
+    (try
+      (json/read-str
+        (get-in m [:rabbitmq :operator_set_policy :policy_definition])
+        :key-fn keyword)
+      (catch Exception e
+        (.printStackTrace e)))))
+
+(defn operator-set-policy-priority
+  ([]
+   (operator-set-policy-priority final-config))
+  ([m]
+   (get-in m [:rabbitmq :operator_set_policy :policy_priority] 50)))
 
 (defn management-domain
   ([]

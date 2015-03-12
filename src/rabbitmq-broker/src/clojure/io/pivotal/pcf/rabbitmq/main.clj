@@ -4,15 +4,8 @@
             [clojure.string :as cs]
             [io.pivotal.pcf.rabbitmq.config :as cfg]
             [io.pivotal.pcf.rabbitmq.server :as srv]
-            [io.pivotal.pcf.rabbitmq.init.policy-setter :as policy-setter]
-            [langohr.http :as hc]
             [taoensso.timbre :as log])
   (:import java.io.File))
-
-; Constants
-(def initializers (set [policy-setter/init-policy-on-all-vhosts]))
-(def polling-sleep 30000)
-(def polling-attempts 60)
 
 (def cli-options
   [
@@ -69,24 +62,6 @@
      (println msg)
      (System/exit status)))
 
-(defn ^:private rabbit-up?
-  []
-  (try
-    (= (:status (hc/aliveness-test "/")) "ok")
-    (catch Exception e
-      false)))
-
-(defn start-initializers
-  [m attempts-left]
-  (if (rabbit-up?)
-    (doseq [init initializers] (init m))
-    (if (>= attempts-left 0)
-      (do
-        (Thread/sleep polling-sleep)
-        (start-initializers m (dec attempts-left)))
-      (throw (Exception. "Could not contact the RabbitMQ cluster")))))
-
-
 (defn -main
   [& args]
   (let [{:keys [errors options arguments summary]} (parse-opts args cli-options)]
@@ -97,11 +72,8 @@
     (try
       (let [m (cfg/from-path (:config-path options))]
         (if (cfg/valid? m)
-          (do
-            (srv/init m)
-            (start-initializers m polling-attempts)
-            (let [s (srv/start m)]
-              (.join s)))
+          (let [s (srv/start m)]
+            (.join s))
           (display-config-errors (cfg/validate m))))
       (catch Exception e
         (log/infof "Failed to start with config from %s:" (:config-path options))

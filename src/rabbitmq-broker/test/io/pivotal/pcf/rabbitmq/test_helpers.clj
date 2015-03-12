@@ -33,16 +33,15 @@
         (is (:reason policy)))))
 
 
-(defn has-mirrored-policy?
-   [^String vhost ^String policy-name]
+(defn has-policy-with-definition?
+   [^String vhost ^String policy-name policy-definition policy-priority]
    (has-policy? vhost policy-name)
    (testing "policy has valid pattern, ha-mode and ha-sync-mode"
      (let [policy (hc/get-policies vhost policy-name)]
        (is (= (:pattern policy) ".*"))
        (is (= (:apply-to policy) "all"))
-       (let [definition (:definition policy)]
-         (is (= (:ha-mode definition) "all"))
-         (is (= (:ha-sync-mode definition) "automatic"))))))
+       (is (= (:definition policy) policy-definition))
+       (is (= (:priority policy) policy-priority)))))
 
 (defn get
   ([^String path]
