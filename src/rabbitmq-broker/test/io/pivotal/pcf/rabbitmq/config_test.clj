@@ -2,7 +2,7 @@
   (:require [clojure.test :refer :all]
             [io.pivotal.pcf.rabbitmq.test-helpers :refer [load-config]]
             [io.pivotal.pcf.rabbitmq.config :as cfg]))
- 
+
 (deftest test-cc-endpoint
   (let [m (load-config "config/valid.yml")]
     (is (= "http://127.0.0.1:8181" (cfg/cc-endpoint m)))))
@@ -73,3 +73,12 @@
          :tags
          :metadata
          :plans)))
+
+(deftest test-node-hosts
+  (let [m  (load-config "config/valid.yml")]
+    (is (= (set (cfg/node-hosts m)) (set ["127.0.0.1" "127.0.0.2"])))))
+
+
+(deftest test-rabbitmq-administrator-uris
+  (let [m  (load-config "config/valid.yml")]
+    (is (= (set (cfg/rabbitmq-administrator-uris m)) (set ["http://127.0.0.1:15672" "http://127.0.0.2:15672"])))))

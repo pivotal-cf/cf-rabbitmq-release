@@ -83,9 +83,12 @@
   (hc/set-permissions vhost (cfg/rabbitmq-administrator) full-permissions))
 
 (defn ^String dashboard-url
-  [^String scheme ^String username ^String password]
-  (let [host (cfg/management-domain)]
-    (format "%s://%s/#/login/%s/%s" scheme host username password)))
+  ([m ^String scheme ^String username ^String password]
+    (let [host (cfg/management-domain m)]
+      (format "%s://%s/#/login/%s/%s" scheme host username password)))
+  ([^String scheme ^String username ^String password]
+    (let [host (cfg/management-domain)]
+      (format "%s://%s/#/login/%s/%s" scheme host username password))))
 
 (defn ^String uri-for
   [^String scheme ^String username ^String password ^String node-host ^String vhost]
@@ -194,45 +197,54 @@
           (path-for-protocol proto vhost)))
 
 (defn inject-http-protocol
-  [m ^String node-host ^String username ^String password tls?]
-  (let [k (protocol-key-for "management" tls?)]
+  [m node-hosts ^String username ^String password tls?]
+  (let [first-node-host (get node-hosts 0)
+        k (protocol-key-for "management" tls?)]
     (assoc m k {:uri      (http-api-uri-for (if tls?
                                               "https"
-                                              "http") username password node-host)
+                                              "http") username password first-node-host)
+                :uris     (map (fn [node-host] (http-api-uri-for (if tls? "https" "http") username password node-host)) node-hosts)
                 :username username
                 :password password
-                :host     node-host
+                :host     first-node-host
+                :hosts    node-hosts
                 :port     management-ui-port
                 :path     "/api"
                 :ssl      (not (not tls?))})))
 
 (defn protocol-info-for
-  [^String node-host ^String vhost ^String username ^String password protos tls?]
+  [node-hosts ^String vhost ^String username ^String password protos tls?]
   (-> (reduce (fn [acc [proto port]]
-                (let [username'    (username-for-protocol proto username vhost)
-                      proto-tls?   (proto-with-tls? proto)
-                      m            {:username username'
-                                    :password password
-                                    :port     port
-                                    :host     node-host
-                                    :ssl      proto-tls?
-                                    :uri      (build-uri-for node-host port vhost proto username' password proto-tls?)}]
+                (let [first-node-host (get node-hosts 0)
+                      username'       (username-for-protocol proto username vhost)
+                      proto-tls?      (proto-with-tls? proto)
+                      m               {:username username'
+                                       :password password
+                                       :port     port
+                                       :host     first-node-host
+                                       :hosts    node-hosts
+                                       :ssl      proto-tls?
+                                       :uri      (build-uri-for first-node-host port vhost proto username' password proto-tls?)
+                                       :uris     (map (fn [node-host] (build-uri-for node-host port vhost proto username' password proto-tls?)) node-hosts)}]
                   (assoc acc (protocol-key-for proto (proto-with-tls? proto))
                          (-> m
                              (maybe-inject-vhost proto vhost)))))
               {}
               protos)
-      (inject-http-protocol node-host username password tls?)))
+      (inject-http-protocol node-hosts username password tls?)))
 
 (defn credentials-for
-  [^String node-host ^String vhost ^String username ^String password protos tls?]
-  (let [m {:uri           (uri-for (cfg/amqp-scheme) (URLEncoder/encode username) password node-host vhost)
-           :vhost         vhost
-           :username      username
-           :ssl           tls?
-           :password      password
-           :hostname      node-host
-           :http_api_uri  (http-api-uri-for (cfg/http-scheme) username password node-host)
-           :protocols     (protocol-info-for node-host vhost username password protos tls?)
-           :dashboard_url (dashboard-url (cfg/http-scheme) username password)}]
-    m))
+  [node-hosts ^String vhost ^String username ^String password protos tls?]
+  (let [first-node-host (get node-hosts 0)]
+    {:uri           (uri-for (cfg/amqp-scheme) (URLEncoder/encode username) password first-node-host vhost)
+     :uris          (map (fn [node-host] (uri-for (cfg/amqp-scheme) (URLEncoder/encode username) password node-host vhost)) node-hosts)
+     :vhost         vhost
+     :username      username
+     :ssl           tls?
+     :password      password
+     :hostname      first-node-host
+     :hostnames     node-hosts
+     :http_api_uri  (http-api-uri-for (cfg/http-scheme) username password first-node-host)
+     :http_api_uris (map (fn [node-host] (http-api-uri-for (cfg/http-scheme) username password node-host)) node-hosts)
+     :protocols     (protocol-info-for node-hosts vhost username password protos tls?)
+     :dashboard_url (dashboard-url (cfg/http-scheme) username password)}))

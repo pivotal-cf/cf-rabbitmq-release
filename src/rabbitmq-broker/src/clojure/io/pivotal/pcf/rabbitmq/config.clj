@@ -198,20 +198,16 @@
   ([]
      (node-hosts final-config))
   ([m]
-     (get-in m [:rabbitmq :hosts])))
+     (vec (get-in m [:rabbitmq :hosts]))))
 
-(defn random-node-host
-  ([]
-     (random-node-host final-config))
-  ([m]
-     (when-let [xs (node-hosts m)]
-       (rand-nth xs))))
 
-(defn rabbitmq-administrator-uri
+(defn rabbitmq-administrator-uris
   ([]
-     (rabbitmq-administrator-uri final-config))
+     (rabbitmq-administrator-uris final-config))
   ([m]
-     (let [host   (random-node-host m)
-           scheme (http-scheme m)]
-       (format "%s://%s:%d"
-               scheme host management-ui-port))))
+     (let [scheme (http-scheme m)]
+       (mapv
+          (fn
+            [host]
+            (format "%s://%s:%d" scheme host management-ui-port))
+          (node-hosts m)))))

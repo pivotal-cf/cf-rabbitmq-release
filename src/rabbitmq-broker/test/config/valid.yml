@@ -18,6 +18,7 @@ rabbitmq:
   management_domain: pivotal-rabbitmq.127.0.0.1
   hosts:
     - 127.0.0.1
+    - 127.0.0.2
   administrator:
     username: guest
     password: guest

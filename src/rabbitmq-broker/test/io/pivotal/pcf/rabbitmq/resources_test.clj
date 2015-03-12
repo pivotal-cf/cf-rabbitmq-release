@@ -12,6 +12,11 @@
     (has-mirrored-policy? vhost policy-name)
     (hc/delete-vhost vhost)))
 
+(deftest test-dashboard-url
+  (testing "returns a formatted dashboard url"
+    (let [m (load-config "config/valid.yml")]
+      (is (= (rs/dashboard-url m "scheme" "user" "pass")
+             "scheme://pivotal-rabbitmq.127.0.0.1/#/login/user/pass")))))
 
 (deftest test-uri-for
   (are [m uri] (is (= uri (rs/uri-for (:scheme m)
@@ -120,33 +125,41 @@
     (let [protos {"stomp" 61613 "mqtt" 1883  "amqp" 5672}
           ssl?   false
           out    {"amqp"       {:uri      "amqp://guest:guest@mercurio.local:5672/my-app"
+                                :uris     ["amqp://guest:guest@mercurio.local:5672/my-app" "amqp://guest:guest@other.local:5672/my-app"]
                                 :username "guest"
                                 :password "guest"
                                 :vhost    "my-app"
                                 :host     "mercurio.local"
+                                :hosts    ["mercurio.local" "other.local"]
                                 :port     5672
                                 :ssl      ssl?}
                   "mqtt"       {:uri      "mqtt://my-app%3Aguest:guest@mercurio.local:1883"
+                                :uris     ["mqtt://my-app%3Aguest:guest@mercurio.local:1883" "mqtt://my-app%3Aguest:guest@other.local:1883"]
                                 :username "my-app:guest"
                                 :password "guest"
                                 :host     "mercurio.local"
+                                :hosts    ["mercurio.local" "other.local"]
                                 :port     1883
                                 :ssl      ssl?}
                   "stomp"      {:uri      "stomp://guest:guest@mercurio.local:61613"
+                                :uris     ["stomp://guest:guest@mercurio.local:61613" "stomp://guest:guest@other.local:61613"]
                                 :username "guest"
                                 :password "guest"
                                 :vhost    "my-app"
                                 :host     "mercurio.local"
+                                :hosts    ["mercurio.local" "other.local"]
                                 :port     61613
                                 :ssl      ssl?}
                   "management" {:uri      "http://guest:guest@mercurio.local:15672/api"
+                                :uris     ["http://guest:guest@mercurio.local:15672/api" "http://guest:guest@other.local:15672/api"]
                                 :username "guest"
                                 :password "guest"
                                 :host     "mercurio.local"
+                                :hosts    ["mercurio.local" "other.local"]
                                 :port     15672
                                 :path     "/api"
                                 :ssl      ssl?}}]
-    (is (= (rs/protocol-info-for "mercurio.local" "my-app" "guest" "guest"
+    (is (= (rs/protocol-info-for ["mercurio.local" "other.local"] "my-app" "guest" "guest"
                                  protos
                                  ssl?)
            out))))
@@ -154,33 +167,63 @@
     (let [protos {"stomp/ssl" 61614 "mqtt/ssl" 8883  "amqp/ssl" 5671}
           ssl?   true
           out    {"amqp+ssl"       {:uri      "amqps://guest:guest@mercurio.local:5671/my-app"
+                                    :uris     ["amqps://guest:guest@mercurio.local:5671/my-app" "amqps://guest:guest@other.local:5671/my-app"]
                                     :username "guest"
                                     :password "guest"
                                     :vhost    "my-app"
                                     :host     "mercurio.local"
+                                    :hosts    ["mercurio.local" "other.local"]
                                     :port     5671
                                     :ssl      ssl?}
                   "mqtt+ssl"       {:uri      "mqtt+ssl://my-app%3Aguest:guest@mercurio.local:8883"
+                                    :uris     ["mqtt+ssl://my-app%3Aguest:guest@mercurio.local:8883" "mqtt+ssl://my-app%3Aguest:guest@other.local:8883"]
                                     :username "my-app:guest"
                                     :password "guest"
                                     :host     "mercurio.local"
+                                    :hosts    ["mercurio.local" "other.local"]
                                     :port     8883
                                     :ssl      ssl?}
                   "stomp+ssl"      {:uri      "stomp+ssl://guest:guest@mercurio.local:61614"
+                                    :uris     ["stomp+ssl://guest:guest@mercurio.local:61614" "stomp+ssl://guest:guest@other.local:61614"]
                                     :username "guest"
                                     :password "guest"
                                     :vhost    "my-app"
                                     :host     "mercurio.local"
+                                    :hosts    ["mercurio.local" "other.local"]
                                     :port     61614
                                     :ssl      ssl?}
                   "management+ssl" {:uri      "https://guest:guest@mercurio.local:15672/api"
+                                    :uris     ["https://guest:guest@mercurio.local:15672/api" "https://guest:guest@other.local:15672/api"]
                                     :username "guest"
                                     :password "guest"
                                     :host     "mercurio.local"
+                                    :hosts    ["mercurio.local" "other.local"]
                                     :port     15672
                                     :path     "/api"
                                     :ssl      ssl?}}]
-    (is (= (rs/protocol-info-for "mercurio.local" "my-app" "guest" "guest"
+    (is (= (rs/protocol-info-for ["mercurio.local" "other.local"] "my-app" "guest" "guest"
                                  protos
                                  ssl?)
            out)))))
+
+(deftest test-credentials-for
+  (testing "works"
+    (with-redefs [rs/protocol-info-for (fn [node-hosts ^String vhost ^String username ^String password protos tls?] "fake-protocol-info")]
+      (is (= (rs/credentials-for ["host-1" "host-2"]
+                                "vhost-1"
+                                "user"
+                                "password"
+                                {"stomp/ssl" 61614 "mqtt/ssl" 8883  "amqp/ssl" 5671}
+                                true)
+          {:uri           "amqp://user:password@host-1/vhost-1"
+           :uris          ["amqp://user:password@host-1/vhost-1" "amqp://user:password@host-2/vhost-1"]
+           :username      "user"
+           :ssl           true
+           :password      "password"
+           :vhost         "vhost-1"
+           :hostname      "host-1"
+           :hostnames     ["host-1" "host-2"]
+           :http_api_uri  "http://user:password@host-1:15672/api"
+           :http_api_uris ["http://user:password@host-1:15672/api" "http://user:password@host-2:15672/api"]
+           :protocols     "fake-protocol-info"
+           :dashboard_url "http://null/#/login/user/password"})))))

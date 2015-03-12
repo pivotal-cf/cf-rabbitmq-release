@@ -81,7 +81,7 @@
 
 (defn init-rabbitmq-connection!
   [config]
-  (let [uri    (cfg/rabbitmq-administrator-uri config)
+  (let [uri    (get (cfg/rabbitmq-administrator-uris config) 0)
         uname  (cfg/rabbitmq-administrator config)
         pwd    (cfg/rabbitmq-administrator-password config)
         opts   (if (cfg/using-tls?)
@@ -182,19 +182,24 @@
   ;;  * plan_id
   ;;  * app_guid
   (log/infof "Asked to bind service %s, RabbitMQ user id: %s" (:instance_id params) (:id params))
-  (let [^String vh (:instance_id params)
-        ^String u  (:id params)]
-    (if (and vh u (rs/vhost-exists? vh))
-      (if (rs/user-exists? u)
+  (let [^String virtual-host (:instance_id params) ; Instance ID in CF = Virtual Host ID in Rabbit
+        ^String user-id  (:id params)]             ; Binding ID in CF = User ID in Rabbit
+    (if (and virtual-host user-id (rs/vhost-exists? virtual-host))
+      (if (rs/user-exists? user-id)
         (conflict)
-        (let [p (rs/generate-password)]
+        (let [password (rs/generate-password)]
           (try
-            (rs/add-user u p)
-            (rs/grant-permissions u vh)
-            (ok {:credentials (rs/credentials-for (cfg/random-node-host) vh u p (rs/protocol-ports) (cfg/using-tls?))})
+            (rs/add-user user-id password)
+            (rs/grant-permissions user-id virtual-host)
+            (ok {:credentials (rs/credentials-for (cfg/node-hosts)
+                                                  virtual-host
+                                                  user-id
+                                                  password
+                                                  (rs/protocol-ports)
+                                                  (cfg/using-tls?))})
             (catch Exception e
-              (log/errorf "Failed to grant user %s permissions to vhost %s: %s" u vh (.getMessage e))
-              (rs/delete-user u)
+              (log/errorf "Failed to grant user %s permissions to vhost %s: %s" user-id virtual-host (.getMessage e))
+              (rs/delete-user user-id)
               (internal-error)))))
       (gone))))
 

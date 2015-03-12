@@ -2,6 +2,7 @@
   (:require [clojure.test :refer :all]
             [langohr.http :as hc]
             [io.pivotal.pcf.rabbitmq.main :as main]
+            [io.pivotal.pcf.rabbitmq.config :as cfg]
             [io.pivotal.pcf.rabbitmq.server :as server])
   (:import (java.net URL UnknownHostException)))
 
@@ -39,14 +40,17 @@
                   main/polling-attempts 5
                   main/polling-sleep 10
                   main/exit FakeExit]
-      (def FakeAlivenessCallsBeforeSuccess 5)
-      (def FakeInitCalled nil)
-      (def FakeExitCalled nil)
-      (def FakeServerInitCalled nil)
-      (main/-main "-c" "test/config/valid.yml")
-      (is (= FakeServerInitCalled "called"))
-      (is (= FakeInitCalled "called"))
-      (is (= FakeExitCalled nil))))
+      (try
+        (def FakeAlivenessCallsBeforeSuccess 5)
+        (def FakeInitCalled nil)
+        (def FakeExitCalled nil)
+        (def FakeServerInitCalled nil)
+        (main/-main "-c" "test/config/valid.yml")
+        (is (= FakeServerInitCalled "called"))
+        (is (= FakeInitCalled "called"))
+        (is (= FakeExitCalled nil))
+        (finally
+          (cfg/init! nil)))))
   (testing "when the polling fails exits the app"
     (with-redefs [hc/aliveness-test FakeAlivenessTest
                   server/init FakeServerInit
@@ -55,11 +59,14 @@
                   main/polling-attempts 5
                   main/polling-sleep 10
                   main/exit FakeExit]
-      (def FakeAlivenessCallsBeforeSuccess -1)
-      (def FakeInitCalled nil)
-      (def FakeExitCalled nil)
-      (def FakeServerInitCalled nil)
-      (main/-main "-c" "test/config/valid.yml")
-      (is (= FakeServerInitCalled "called"))
-      (is (= FakeInitCalled nil))
-      (is (= FakeExitCalled "called")))))
+      (try
+        (def FakeAlivenessCallsBeforeSuccess -1)
+        (def FakeInitCalled nil)
+        (def FakeExitCalled nil)
+        (def FakeServerInitCalled nil)
+        (main/-main "-c" "test/config/valid.yml")
+        (is (= FakeServerInitCalled "called"))
+        (is (= FakeInitCalled nil))
+        (is (= FakeExitCalled "called"))
+        (finally
+          (cfg/init! nil))))))

@@ -58,6 +58,7 @@
      (is (not (rs/user-exists? ~name)))
      ~@body
      (finally
+       (cfg/init! nil)
        (rs/delete-user ~name))))
 
 (defmacro ^{:private true} with-server-running
@@ -66,15 +67,17 @@
      (try
        ~@body
        (finally
+         (cfg/init! nil)
          (.stop s#)))))
 
 (defmacro ^{:private true} with-server-running-mirrored-queues-config
   [& body]
   `(let [^Server s# (start-server "config/valid_with_mirrored_queues.yml")]
-     (try
-       ~@body
-       (finally
-         (.stop s#)))))
+    (try
+      ~@body
+      (finally
+        (cfg/init! nil)
+        (.stop s#)))))
 
 
 ;;
@@ -167,11 +170,14 @@
                                  (is (.startsWith dbu (format "http://pivotal-rabbitmq.127.0.0.1/#/login/%s" bid)))
                                  (are [k] (get-in res ["credentials" k])
                                       "uri"
+                                      "uris"
                                       "vhost"
                                       "username"
                                       "password"
                                       "hostname"
+                                      "hostnames"
                                       "http_api_uri"
+                                      "http_api_uris"
                                       "protocols")
                                  (rs/delete-user bid))))))
   (testing "with provided service id that IS NOT valid (missing)"
