@@ -132,9 +132,11 @@ properties:
       level: debug
       print_stack_traces: false
     rabbitmq:
-      mirrored_queues:
+      operator_set_policy:
         enabled: true
-        policy_name: "mirrored_queues"
+        policy_name: "operator_set_policy"
+        policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
+        policy_priority: 50
       management_domain: pivotal-rabbitmq.your_cc_endpoint.com
       ssl: |
         -----BEGIN CERTIFICATE-----
