@@ -6,9 +6,6 @@
 %>
 
 $MaxMessageSize 8k # default is 2k
-# We only support UDP log forwarding.
-# TCP and REPL have other requirements which we're not accounting for.
-
 $WorkDirectory /var/spool/rsyslog
 module(load="imfile" PollingInterval="10")
 
@@ -43,6 +40,7 @@ template(name="CfLogTemplate" type="list") {
         property(name="msg")
 }
 
-*.* @<%= p("syslog_aggregator.address") %>:<%= p("syslog_aggregator.port") %>;CfLogTemplate
+# http://www.rsyslog.com/doc/v7-stable/configuration/actions.html: @ = UDP, @@ = TCP
+*.* @@<%= p("syslog_aggregator.address") %>:<%= p("syslog_aggregator.port") %>;CfLogTemplate
 
 <% end %>
