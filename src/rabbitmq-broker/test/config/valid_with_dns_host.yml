@@ -19,7 +19,7 @@ rabbitmq:
   hosts:
     - 127.0.0.1
     - 127.0.0.2
-  dns_host:
+  dns_host: "my-dns-host.com"
   administrator:
     username: guest
     password: guest

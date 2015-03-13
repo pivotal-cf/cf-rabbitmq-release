@@ -1,6 +1,7 @@
 (ns io.pivotal.pcf.rabbitmq.config
   (:require [clj-yaml.core :as yaml]
             [clojure.data.json :as json]
+            [clojure.string :as string]
             [validateur.validation :as vdt :refer [validation-set
                                                    presence-of
                                                    inclusion-of
@@ -183,7 +184,6 @@
        (and (= u username)
             (= p password)))))
 
-
 (defn ^String http-scheme
   ([]
      (http-scheme final-config))
@@ -216,8 +216,10 @@
   ([]
      (node-hosts final-config))
   ([m]
-     (vec (get-in m [:rabbitmq :hosts]))))
-
+    (let [dns-host (get-in m [:rabbitmq :dns_host])]
+      (if (string/blank? dns-host)
+        (vec (get-in m [:rabbitmq :hosts]))
+        [dns-host]))))
 
 (defn rabbitmq-administrator-uris
   ([]

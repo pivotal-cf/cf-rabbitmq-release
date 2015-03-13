@@ -81,9 +81,12 @@
          :plans)))
 
 (deftest test-node-hosts
-  (let [m  (load-config "config/valid.yml")]
-    (is (= (set (cfg/node-hosts m)) (set ["127.0.0.1" "127.0.0.2"])))))
-
+  (testing "when there is no DNS host"
+    (let [m  (load-config "config/valid.yml")]
+      (is (= (set (cfg/node-hosts m)) (set ["127.0.0.1" "127.0.0.2"])))))
+  (testing "when there is a DNS host"
+    (let [m  (load-config "config/valid_with_dns_host.yml")]
+      (is (= (set (cfg/node-hosts m)) (set ["my-dns-host.com"]))))))
 
 (deftest test-rabbitmq-administrator-uris
   (let [m  (load-config "config/valid.yml")]
