@@ -21,6 +21,8 @@ properties:
     description: "Services Password"
   rabbitmq-broker.rabbitmq.hosts:
     description: "List of IPs of the Rabbit servers (maybe proxied) upon which to allocate resources"
+  rabbitmq-broker.rabbitmq.dns_host:
+    description: "External load balancer host"
   rabbitmq-broker.rabbitmq.administrator.username:
     description: "The username used to access an admin account of the Rabbit servers"
   rabbitmq-broker.rabbitmq.administrator.password:
