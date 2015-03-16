@@ -203,7 +203,7 @@
     (assoc m k {:uri      (http-api-uri-for (if tls?
                                               "https"
                                               "http") username password first-node-host)
-                :uris     (map (fn [node-host] (http-api-uri-for (if tls? "https" "http") username password node-host)) node-hosts)
+                :uris     (map #(http-api-uri-for (if tls? "https" "http") username password %) node-hosts)
                 :username username
                 :password password
                 :host     first-node-host
@@ -225,7 +225,7 @@
                                        :hosts    node-hosts
                                        :ssl      proto-tls?
                                        :uri      (build-uri-for first-node-host port vhost proto username' password proto-tls?)
-                                       :uris     (map (fn [node-host] (build-uri-for node-host port vhost proto username' password proto-tls?)) node-hosts)}]
+                                       :uris     (map #(build-uri-for % port vhost proto username' password proto-tls?) node-hosts)}]
                   (assoc acc (protocol-key-for proto (proto-with-tls? proto))
                          (-> m
                              (maybe-inject-vhost proto vhost)))))
@@ -237,7 +237,7 @@
   [node-hosts ^String vhost ^String username ^String password protos tls?]
   (let [first-node-host (get node-hosts 0)]
     {:uri           (uri-for (cfg/amqp-scheme) (URLEncoder/encode username) password first-node-host vhost)
-     :uris          (map (fn [node-host] (uri-for (cfg/amqp-scheme) (URLEncoder/encode username) password node-host vhost)) node-hosts)
+     :uris          (map #(uri-for (cfg/amqp-scheme) (URLEncoder/encode username) password % vhost) node-hosts)
      :vhost         vhost
      :username      username
      :ssl           tls?
@@ -245,6 +245,6 @@
      :hostname      first-node-host
      :hostnames     node-hosts
      :http_api_uri  (http-api-uri-for (cfg/http-scheme) username password first-node-host)
-     :http_api_uris (map (fn [node-host] (http-api-uri-for (cfg/http-scheme) username password node-host)) node-hosts)
+     :http_api_uris (map #(http-api-uri-for (cfg/http-scheme) username password %) node-hosts)
      :protocols     (protocol-info-for node-hosts vhost username password protos tls?)
      :dashboard_url (dashboard-url (cfg/http-scheme) username password)}))

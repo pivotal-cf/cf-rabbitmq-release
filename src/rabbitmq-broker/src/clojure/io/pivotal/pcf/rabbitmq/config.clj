@@ -196,9 +196,7 @@
   ([]
      (amqp-scheme final-config))
   ([m]
-     (if (using-tls? m)
-       "amqps"
-       "amqp")))
+     (if (using-tls? m) "amqps" "amqp")))
 
 (defn rabbitmq-administrator
   ([]
@@ -216,18 +214,15 @@
   ([]
      (node-hosts final-config))
   ([m]
-    (let [dns-host (get-in m [:rabbitmq :dns_host])]
-      (if (string/blank? dns-host)
-        (vec (get-in m [:rabbitmq :hosts]))
-        [dns-host]))))
+    (if-let [dns-host (get-in m [:rabbitmq :dns_host])]
+      [dns-host]
+      (vec (get-in m [:rabbitmq :hosts])))))
 
 (defn rabbitmq-administrator-uris
   ([]
      (rabbitmq-administrator-uris final-config))
   ([m]
-     (let [scheme (http-scheme m)]
-       (mapv
-          (fn
-            [host]
-            (format "%s://%s:%d" scheme host management-ui-port))
-          (node-hosts m)))))
+    (let [scheme (http-scheme m)]
+      (mapv
+        #(format "%s://%s:%d" scheme % management-ui-port)
+        (node-hosts m)))))

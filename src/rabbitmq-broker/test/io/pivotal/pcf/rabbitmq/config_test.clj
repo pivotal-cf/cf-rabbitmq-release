@@ -68,7 +68,7 @@
     (is (not (cfg/valid? (load-config "config/missing_rabbitmq_administrator.yml"))))))
 
 (deftest test-service-info
-  (let [m  (load-config "config/valid.yml")
+  (let [m (load-config "config/valid.yml")
         si (cfg/service-info m)]
     (are [attr] (is (attr si))
          :id
@@ -82,12 +82,12 @@
 
 (deftest test-node-hosts
   (testing "when there is no DNS host"
-    (let [m  (load-config "config/valid.yml")]
-      (is (= (set (cfg/node-hosts m)) (set ["127.0.0.1" "127.0.0.2"])))))
+    (let [m (load-config "config/valid.yml")]
+      (is (= (set (cfg/node-hosts m)) #{"127.0.0.1" "127.0.0.2"}))))
   (testing "when there is a DNS host"
-    (let [m  (load-config "config/valid_with_dns_host.yml")]
-      (is (= (set (cfg/node-hosts m)) (set ["my-dns-host.com"]))))))
+    (let [m (load-config "config/valid_with_dns_host.yml")]
+      (is (= (set (cfg/node-hosts m)) #{"my-dns-host.com"})))))
 
 (deftest test-rabbitmq-administrator-uris
-  (let [m  (load-config "config/valid.yml")]
-    (is (= (set (cfg/rabbitmq-administrator-uris m)) (set ["http://127.0.0.1:15672" "http://127.0.0.2:15672"])))))
+  (let [m (load-config "config/valid.yml")]
+    (is (= (set (cfg/rabbitmq-administrator-uris m)) #{"http://127.0.0.1:15672" "http://127.0.0.2:15672"}))))
