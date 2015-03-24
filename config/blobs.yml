@@ -11,22 +11,10 @@ haproxy/haproxy-1.5-dev19.tar.gz:
   object_id: 62e4f1aa-4f9f-4a37-b5d3-a5382f641a88
   sha: 5c16686c516dbeaab8ada6c17c25e9629ab4f7d3
   size: 1143258
-java/jdk1.7.0_45.gz:
-  object_id: faeb5922-d6ed-4068-b26e-281122cc290e
-  sha: 1c8cb229e2f7f0a3e5e798a3008c5a1f7c604934
-  size: 138094686
 libyaml/yaml-0.1.6.tar.gz:
   object_id: a23306ca-e4ef-473c-b188-8c4204dc4f17
   sha: f3d404e11bec3c4efcddfd14c42d46f1aabe0b5d
   size: 503012
-rabbitmq-server/rabbitmq_clusterer-3.3.5.ez:
-  object_id: a2ab3f44-df6a-47ae-bc3c-df0b2800c7f3
-  sha: b656b5a1617a0bd94ea60ef146b5d2ed3573a040
-  size: 57268
-rabbitmq-server/rabbitmq-server-generic-unix-3.3.5.tar.gz:
-  object_id: b8be2714-feee-4944-a69c-ece0a075f180
-  sha: 318f39aa741959906398f0df788778a3ec63480e
-  size: 4083688
 ruby/bundler-1.2.1.gem:
   object_id: 648721b1-7fc3-447c-a44d-ef7e3b14b217
   sha: 0cbe6ad7a41f064d6c11c1058465fffb1bd58069
@@ -43,14 +31,6 @@ util-linux/util-linux_2.20.1.orig.tar.gz:
   object_id: 00358c94-0d4b-4db5-bb8f-f8b6df178818
   sha: d1dcff8d39e1a821cb0efda31a38452d12fd6b52
   size: 6174190
-rabbitmq-server/rabbitmq-server-generic-unix-3.4.2.1.tar.gz:
-  object_id: f0e2b1d1-5b8e-42ce-b19b-41f903b1a86c
-  sha: 88c0a4e519c58e71135d36c99ad03646b03cd883
-  size: 4605715
-rabbitmq-server/rabbitmq_clusterer-3.4.2.1.ez:
-  object_id: 3adc5d54-9491-4690-90ef-e26bfc5a7da2
-  sha: 5dd4f07d0acb0285b9cc069af110c9dd0f5b79f5
-  size: 57319
 rabbitmq-server/rabbitmq-server-generic-unix-3.4.3.1.tar.gz:
   object_id: 7528f400-54c8-4d88-8ab9-eb1ccd0fdf4e
   sha: 4b286cc5c3b87538f61ddd14a1dbe8e2ed279b8b
