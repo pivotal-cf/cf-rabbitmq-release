@@ -3,10 +3,6 @@ erlang/otp_src_17.1.tar.gz:
   object_id: 75128d78-5cb1-4892-80db-111d80033084
   sha: 3f5756c6ea4a6af5240412250224bd6e1c774f55
   size: 66912681
-git/git-1.7.11.2.tar.gz:
-  object_id: 32e8e3d3-aba2-4b27-982c-3b80f2bf37ce
-  sha: f67b4f6c0277250411c6872ae7b8a872ae11d313
-  size: 4015780
 golang/go1.2.1.linux-amd64.tar.gz:
   object_id: c87bdd9b-8d34-43cc-b84c-bb3c493a1026
   sha: 7605f577ff6ac2d608a3a4e829b255ae2ebc8dcf
