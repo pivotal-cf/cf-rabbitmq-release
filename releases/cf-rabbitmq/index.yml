@@ -190,4 +190,6 @@ builds:
     version: '94'
   b15a66a1-90bd-4202-ab04-893255fcb0e8:
     version: '95'
+  8f637596-dc10-418c-8e99-03728cdc3df8:
+    version: '96'
 format-version: '2'
