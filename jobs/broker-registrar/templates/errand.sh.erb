@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -e
+set -x
+
+export PATH=$PATH:/var/vcap/packages/cf-cli/bin
+
+CF_API_URL='<%= p("cf.api_url") %>'
+CF_ADMIN_USERNAME='<%= p("cf.admin_username") %>'
+CF_ADMIN_PASSWORD='<%= p("cf.admin_password") %>'
+BROKER_NAME='<%= p("broker.name") %>'
+BROKER_URL='<%= p("broker.protocol") %>://<%= p("broker.host") %>:<%= p("broker.port") %>'
+BROKER_USERNAME='<%= p("broker.username") %>'
+BROKER_PASSWORD='<%= p("broker.password") %>'
+
+cf --version
+cf api --skip-ssl-validation $CF_API_URL
+cf auth $CF_ADMIN_USERNAME $CF_ADMIN_PASSWORD
+cf create-service-broker $BROKER_NAME $BROKER_USERNAME $BROKER_PASSWORD $BROKER_URL || cf update-service-broker $BROKER_NAME $BROKER_USERNAME $BROKER_PASSWORD $BROKER_URL
+cf enable-service-access $BROKER_NAME

@@ -11,22 +11,6 @@ haproxy/haproxy-1.5-dev19.tar.gz:
   object_id: 62e4f1aa-4f9f-4a37-b5d3-a5382f641a88
   sha: 5c16686c516dbeaab8ada6c17c25e9629ab4f7d3
   size: 1143258
-libyaml/yaml-0.1.6.tar.gz:
-  object_id: a23306ca-e4ef-473c-b188-8c4204dc4f17
-  sha: f3d404e11bec3c4efcddfd14c42d46f1aabe0b5d
-  size: 503012
-ruby/bundler-1.2.1.gem:
-  object_id: 648721b1-7fc3-447c-a44d-ef7e3b14b217
-  sha: 0cbe6ad7a41f064d6c11c1058465fffb1bd58069
-  size: 226816
-ruby/ruby-1.9.3-p545.tar.gz:
-  object_id: d8d4de4e-cfb0-438a-a745-b683f8b389b5
-  sha: 03455364740914e8d2dfd6421f681b3fb68a4313
-  size: 12582277
-ruby/rubygems-1.8.24.tgz:
-  object_id: 05b705f7-b75e-4d2b-b57d-6aa617974f40
-  sha: 30f27047e74f7943117736a0d3e224994fee0905
-  size: 380101
 util-linux/util-linux_2.20.1.orig.tar.gz:
   object_id: 00358c94-0d4b-4db5-bb8f-f8b6df178818
   sha: d1dcff8d39e1a821cb0efda31a38452d12fd6b52
@@ -43,3 +27,7 @@ java/jre1.8.0_20.tar.gz:
   object_id: 49264d83-d6a7-4444-a801-88e4af6e0691
   sha: 30745df3fca966a222a2800052aa2406ad987de3
   size: 62751094
+cf-cli/cf-linux-amd64-6.10.tgz:
+  object_id: cda6b19b-8df2-4583-a1b5-a0ab78ba191d
+  sha: f845800310e4b702a39a2f1191e3d71862630103
+  size: 4803309

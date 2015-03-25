@@ -1,0 +1,4 @@
+---
+name: cf-cli
+files:
+  - cf-cli/cf-linux-amd64-6.10.tgz

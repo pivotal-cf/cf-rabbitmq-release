@@ -1,6 +1,3 @@
-[submodule "src/broker-registrar"]
-	path = src/broker-registrar
-	url = git@github.com:pivotal-cf/broker-registrar.git
 [submodule "src/rabbitmq-broker/tools/leiningen"]
 	path = src/rabbitmq-broker/tools/leiningen
 	url = git@github.com:michaelklishin/standalone-lein.git
