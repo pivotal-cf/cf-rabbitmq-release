@@ -1,6 +1,6 @@
 set -e
 
-RMQ_VERSION="3.4.3.1"
+RMQ_VERSION="3.4.4.1"
 
 tar xzf rabbitmq-server/rabbitmq-server-generic-unix-${RMQ_VERSION}.tar.gz
 
