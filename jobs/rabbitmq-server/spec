@@ -24,9 +24,9 @@ properties:
     description: "RabbitMQ admin username for broker"
   rabbitmq-server.administrators.broker.password:
     description: "RabbitMQ admin password for broker"
-  rabbitmq-server.administrators.ops_manager.username:
+  rabbitmq-server.administrators.management.username:
     description: "RabbitMQ admin username for operator"
-  rabbitmq-server.administrators.ops_manager.password:
+  rabbitmq-server.administrators.management.password:
     description: "RabbitMQ admin password for operator"
 
   rabbitmq-server.config:
