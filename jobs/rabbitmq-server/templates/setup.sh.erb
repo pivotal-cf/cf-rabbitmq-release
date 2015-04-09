@@ -126,7 +126,7 @@ end
 <% if ssl %>
   # if TLS is enabled, disable the non-TLS listener for AMQP 0-9-1 and make the management/HTTP API
   # listener use TLS.
-  SERVER_START_ARGS="${SERVER_START_ARGS} -rabbit tcp_listeners [] -rabbit ssl_listeners [5671] -rabbitmq_management listener [{port,15672},{ssl,false}] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614]"
+  SERVER_START_ARGS="${SERVER_START_ARGS} -rabbit tcp_listeners [] -rabbit ssl_listeners [5671] -rabbitmq_management listener [{port,15672},{ssl,true}] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614]"
 <% end %>
   # enclosing single quote, see the concatenation comment above
   SERVER_START_ARGS="${SERVER_START_ARGS}'"
