@@ -222,7 +222,6 @@
   ([]
      (rabbitmq-administrator-uris final-config))
   ([m]
-    (let [scheme (http-scheme m)]
-      (mapv
-        #(format "%s://%s:%d" scheme % management-ui-port)
-        (node-hosts m)))))
+     (mapv
+       #(format "http://%s:%d" % management-ui-port)
+       (node-hosts m))))
