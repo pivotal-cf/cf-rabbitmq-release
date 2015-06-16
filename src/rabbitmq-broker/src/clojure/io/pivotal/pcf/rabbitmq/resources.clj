@@ -83,9 +83,15 @@
   (hc/set-permissions vhost (cfg/rabbitmq-administrator) full-permissions))
 
 (defn ^String dashboard-url
+  ([m ^String scheme]
+    (let [host (cfg/management-domain m)]
+      (format "%s://%s/#/login/" scheme host)))
   ([m ^String scheme ^String username ^String password]
     (let [host (cfg/management-domain m)]
       (format "%s://%s/#/login/%s/%s" scheme host username password)))
+  ([^String scheme]
+    (let [host (cfg/management-domain)]
+      (format "%s://%s/#/login/" scheme host)))
   ([^String scheme ^String username ^String password]
     (let [host (cfg/management-domain)]
       (format "%s://%s/#/login/%s/%s" scheme host username password))))

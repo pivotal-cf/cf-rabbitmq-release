@@ -27,10 +27,14 @@
       (hc/delete-vhost vhost))))
 
 (deftest test-dashboard-url
-  (testing "returns a formatted dashboard url"
+  (testing "returns a formatted dashboard url without credentials"
     (let [m (load-config "config/valid.yml")]
-      (is (= (rs/dashboard-url m "scheme" "user" "pass")
-             "scheme://pivotal-rabbitmq.127.0.0.1/#/login/user/pass")))))
+      (is (= (rs/dashboard-url m "scheme")
+             "scheme://pivotal-rabbitmq.127.0.0.1/#/login/"))))
+  (testing "returns a formatted dashboard url with credentials"
+    (let [m (load-config "config/valid.yml")]
+      (is (= (rs/dashboard-url m "scheme" "user" "password")
+             "scheme://pivotal-rabbitmq.127.0.0.1/#/login/user/password")))))
 
 (deftest test-uri-for
   (are [m uri] (is (= uri (rs/uri-for (:scheme m)
