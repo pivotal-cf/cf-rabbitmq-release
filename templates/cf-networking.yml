@@ -1,0 +1,32 @@
+meta:
+  ipmask: (( merge ))
+  rs1_quad: (( merge ))
+  security_groups: (( merge ))
+  dns_servers: (( merge ))
+  subnet_ids:
+    rs1: (( merge ))
+  availability_zones:
+    rs1: ~
+
+networks:
+  - name: services1
+    type: manual
+    subnets:
+      - range: (( meta.ipmask meta.rs1_quad ".0/24" ))
+        name: default_unused
+        reserved:
+          - (( meta.ipmask meta.rs1_quad ".2 - " meta.ipmask meta.rs1_quad ".6" ))
+        static:
+          - (( meta.ipmask meta.rs1_quad ".10 - " meta.ipmask meta.rs1_quad ".50" ))
+        gateway: (( meta.ipmask meta.rs1_quad ".1" ))
+        dns: (( meta.dns_servers ))
+        cloud_properties:
+          security_groups: (( meta.security_groups ))
+          subnet: (( meta.subnet_ids.rs1 ))
+          net_id: (( meta.subnet_ids.rs1 ))
+          availability_zone: (( meta.availability_zones.rs1 ))
+
+  - name: floating
+    type: vip
+    cloud_properties: {}
+
