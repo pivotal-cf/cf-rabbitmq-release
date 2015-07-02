@@ -1,0 +1,62 @@
+meta:
+  fog_config:
+    provider: Local
+    local_root: /var/vcap/store
+  stemcell:
+    name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+    version: latest
+
+compilation:
+  workers: 6
+  network: services1
+  reuse_compilation_vms: true
+  cloud_properties:
+    name: random
+
+networks: (( merge ))
+
+resource_pools:
+  - name: services-small
+    stemcell: (( meta.stemcell ))
+    cloud_properties:
+      name: random
+
+  - name: small_z1
+    cloud_properties:
+      name: random
+
+  - name: small_z2
+    cloud_properties:
+      name: random
+
+  - name: medium_z1
+    cloud_properties:
+      name: random
+
+  - name: medium_z2
+    cloud_properties:
+      name: random
+
+  - name: large_z1
+    cloud_properties:
+      name: random
+
+  - name: large_z2
+    cloud_properties:
+      name: random
+
+  - name: runner_z1
+    cloud_properties:
+      name: random
+
+  - name: runner_z2
+    cloud_properties:
+      name: random
+
+  - name: router_z1
+    cloud_properties:
+      name: random
+
+  - name: router_z2
+    cloud_properties:
+      name: random
