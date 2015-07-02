@@ -83,18 +83,18 @@
   (hc/set-permissions vhost (cfg/rabbitmq-administrator) full-permissions))
 
 (defn ^String dashboard-url
-  ([m ^String scheme]
-    (let [host (cfg/management-domain m)]
-      (format "%s://%s/#/login/" scheme host)))
-  ([m ^String scheme ^String username ^String password]
-    (let [host (cfg/management-domain m)]
-      (format "%s://%s/#/login/%s/%s" scheme host username password)))
-  ([^String scheme]
+  ([]
     (let [host (cfg/management-domain)]
-      (format "%s://%s/#/login/" scheme host)))
-  ([^String scheme ^String username ^String password]
+      (format "https://%s/#/login/" host)))
+  ([m]
+    (let [host (cfg/management-domain m)]
+      (format "https://%s/#/login/" host)))
+  ([^String username ^String password]
     (let [host (cfg/management-domain)]
-      (format "%s://%s/#/login/%s/%s" scheme host username password))))
+      (format "https://%s/#/login/%s/%s" host username password)))
+  ([m ^String username ^String password]
+    (let [host (cfg/management-domain m)]
+      (format "https://%s/#/login/%s/%s" host username password))))
 
 (defn ^String uri-for
   [^String scheme ^String username ^String password ^String node-host ^String vhost]
@@ -253,4 +253,4 @@
      :http_api_uri  (http-api-uri-for (cfg/http-scheme) username password first-node-host)
      :http_api_uris (map #(http-api-uri-for (cfg/http-scheme) username password %) node-hosts)
      :protocols     (protocol-info-for node-hosts vhost username password protos tls?)
-     :dashboard_url (dashboard-url (cfg/http-scheme) username password)}))
+     :dashboard_url (dashboard-url username password)}))

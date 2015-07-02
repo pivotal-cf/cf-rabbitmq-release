@@ -29,12 +29,12 @@
 (deftest test-dashboard-url
   (testing "returns a formatted dashboard url without credentials"
     (let [m (load-config "config/valid.yml")]
-      (is (= (rs/dashboard-url m "scheme")
-             "scheme://pivotal-rabbitmq.127.0.0.1/#/login/"))))
+      (is (= (rs/dashboard-url m)
+             "https://pivotal-rabbitmq.127.0.0.1/#/login/"))))
   (testing "returns a formatted dashboard url with credentials"
     (let [m (load-config "config/valid.yml")]
-      (is (= (rs/dashboard-url m "scheme" "user" "password")
-             "scheme://pivotal-rabbitmq.127.0.0.1/#/login/user/password")))))
+      (is (= (rs/dashboard-url m "user" "password")
+             "https://pivotal-rabbitmq.127.0.0.1/#/login/user/password")))))
 
 (deftest test-uri-for
   (are [m uri] (is (= uri (rs/uri-for (:scheme m)
@@ -244,4 +244,4 @@
            :http_api_uri  "http://user:password@host-1:15672/api"
            :http_api_uris ["http://user:password@host-1:15672/api" "http://user:password@host-2:15672/api"]
            :protocols     "fake-protocol-info"
-           :dashboard_url "http://null/#/login/user/password"})))))
+           :dashboard_url "https://null/#/login/user/password"})))))
