@@ -1,5 +1,6 @@
 (ns io.pivotal.pcf.rabbitmq.integration-test
   (:require [clojure.test :refer :all]
+            [langohr.http :as hc]
             [io.pivotal.pcf.rabbitmq.test-helpers :refer [load-config has-policy? has-no-policy?] :as th]
             [io.pivotal.pcf.rabbitmq.config :as cfg]
             [io.pivotal.pcf.rabbitmq.server :as srv]
@@ -11,6 +12,10 @@
 ;;
 ;; Helpers
 ;;
+
+(def ^:dynamic *throw-exceptions* false)
+(def username "p1-rabbit")
+(def password "p1-rabbit-testpwd")
 
 (defn ^{:private true :tag Server} start-server
   ([]
@@ -103,7 +108,19 @@
                                          (is dbu)
                                          (is (.startsWith dbu "http://pivotal-rabbitmq.127.0.0.1/#/login/")))
                                        (is (rs/vhost-exists? id))
-                                       (th/has-policy? id (cfg/operator-set-policy-name)))))))
+                                       (th/has-policy? id (cfg/operator-set-policy-name))))))
+    (testing "when there's already a vhost registered"
+      (let [id (.toLowerCase ^String (str (UUID/randomUUID)))]
+        (with-server-running-operator-set-policy-config "config/valid_with_operator_set_policy.yml"
+          (provided-vhost-does-not-exist id
+                                         (hc/add-vhost "existing-vhost")
+                                         (hc/set-permissions "existing-vhost" "guest" {:configure ".*" :read ".*" :write ".*"})
+                                         (let [res         (th/put (format "v2/service_instances/%s" id))
+                                               ^String dbu (:dashboard_url res)]
+                                           (is dbu)
+                                           (is (.startsWith dbu "http://pivotal-rabbitmq.127.0.0.1/#/login/")))
+                                         (is (rs/vhost-exists? id))
+                                         (is (th/has-no-policy? "existing-vhost" (cfg/operator-set-policy-name))))))))
 
 (deftest test-create-service-without-operator-set-policy
   (testing "with provided service id that is NOT taken"
