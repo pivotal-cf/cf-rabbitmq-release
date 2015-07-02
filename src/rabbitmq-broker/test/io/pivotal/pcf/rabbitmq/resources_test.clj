@@ -2,6 +2,7 @@
   (:require [clojure.test :refer :all]
             [langohr.http :as hc]
             [io.pivotal.pcf.rabbitmq.test-helpers :refer [load-config has-policy-with-definition? has-no-policy?]]
+            [io.pivotal.pcf.rabbitmq.config :as cfg]
             [io.pivotal.pcf.rabbitmq.resources :as rs]))
 
 (deftest test-add-operator-set-policy
@@ -57,21 +58,22 @@
        "amqps://d786c13c-799d-45f7-b9c0-eb8aeb03e468:4d2f58c0-6c03-49a3-82b1-1f6a109b249b@rmq.pcf.megacorp.internal/df7a77c5-4f63-4a05-b587-43b9a04e4bc2"))
 
 (deftest test-http-api-uri-for
-  (are [m uri] (is (= uri (rs/http-api-uri-for (:scheme m)
-                                               (:username m)
+  (are [m uri] (is (= uri (rs/http-api-uri-for (:username m)
                                                (:password m)
                                                (:node-host m))))
-       {:scheme "http"
-        :username "guest"
+       {:username "guest"
         :password "guest"
         :node-host "mercurio.local"}
-       "http://guest:guest@mercurio.local:15672/api"
+       "http://guest:guest@mercurio.local:15672/api"))
 
-       {:scheme "https"
-        :username "d786c13c-799d-45f7-b9c0-eb8aeb03e468"
-        :password "4d2f58c0-6c03-49a3-82b1-1f6a109b249b"
-        :node-host "rmq.pcf.megacorp.internal"}
-       "https://d786c13c-799d-45f7-b9c0-eb8aeb03e468:4d2f58c0-6c03-49a3-82b1-1f6a109b249b@rmq.pcf.megacorp.internal:15672/api"))
+(deftest test-https-api-uri-for
+  (are [m uri] (is (= uri (rs/https-api-uri-for (:username m)
+                                               (:password m)
+                                               (:node-host m))))
+       {:username "guest"
+        :password "guest"
+        :node-host "mercurio.local"}
+       "https://guest:guest@mercurio.local/api"))
 
 (deftest test-protocol-ports
   (let [m (-> (rs/protocol-ports) keys set)]
@@ -210,15 +212,15 @@
                                     :hosts    ["mercurio.local" "other.local"]
                                     :port     61614
                                     :ssl      ssl?}
-                  "management+ssl" {:uri      "https://guest:guest@mercurio.local:15672/api"
-                                    :uris     ["https://guest:guest@mercurio.local:15672/api" "https://guest:guest@other.local:15672/api"]
+                  "management+ssl" {:uri      "http://guest:guest@mercurio.local:15672/api"
+                                    :uris     ["http://guest:guest@mercurio.local:15672/api" "http://guest:guest@other.local:15672/api"]
                                     :username "guest"
                                     :password "guest"
                                     :host     "mercurio.local"
                                     :hosts    ["mercurio.local" "other.local"]
                                     :port     15672
                                     :path     "/api"
-                                    :ssl      ssl?}}]
+                                    :ssl      false}}]
     (is (= (rs/protocol-info-for ["mercurio.local" "other.local"] "my-app" "guest" "guest"
                                  protos
                                  ssl?)
@@ -227,21 +229,23 @@
 (deftest test-credentials-for
   (testing "works"
     (with-redefs [rs/protocol-info-for (fn [node-hosts ^String vhost ^String username ^String password protos tls?] "fake-protocol-info")]
-      (is (= (rs/credentials-for ["host-1" "host-2"]
-                                "vhost-1"
-                                "user"
-                                "password"
-                                {"stomp/ssl" 61614 "mqtt/ssl" 8883  "amqp/ssl" 5671}
-                                true)
-          {:uri           "amqp://user:password@host-1/vhost-1"
-           :uris          ["amqp://user:password@host-1/vhost-1" "amqp://user:password@host-2/vhost-1"]
-           :username      "user"
-           :ssl           true
-           :password      "password"
-           :vhost         "vhost-1"
-           :hostname      "host-1"
-           :hostnames     ["host-1" "host-2"]
-           :http_api_uri  "http://user:password@host-1:15672/api"
-           :http_api_uris ["http://user:password@host-1:15672/api" "http://user:password@host-2:15672/api"]
-           :protocols     "fake-protocol-info"
-           :dashboard_url "https://null/#/login/user/password"})))))
+      (let [m (load-config "config/valid.yml")]
+        (cfg/init! m)
+        (is (= (rs/credentials-for ["host-1" "host-2"]
+                                  "vhost-1"
+                                  "user"
+                                  "password"
+                                  {"stomp/ssl" 61614 "mqtt/ssl" 8883  "amqp/ssl" 5671}
+                                  true)
+            {:uri           "amqp://user:password@host-1/vhost-1"
+             :uris          ["amqp://user:password@host-1/vhost-1" "amqp://user:password@host-2/vhost-1"]
+             :username      "user"
+             :ssl           true
+             :password      "password"
+             :vhost         "vhost-1"
+             :hostname      "host-1"
+             :hostnames     ["host-1" "host-2"]
+             :http_api_uri  "https://user:password@pivotal-rabbitmq.127.0.0.1/api"
+             :http_api_uris ["https://user:password@pivotal-rabbitmq.127.0.0.1/api"]
+             :protocols     "fake-protocol-info"
+             :dashboard_url "https://pivotal-rabbitmq.127.0.0.1/#/login/user/password"}))))))

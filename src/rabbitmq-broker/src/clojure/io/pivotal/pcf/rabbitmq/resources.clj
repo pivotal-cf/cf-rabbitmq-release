@@ -101,8 +101,12 @@
   (format "%s://%s:%s@%s/%s" scheme username password node-host (URLEncoder/encode vhost)))
 
 (defn ^String http-api-uri-for
-  [^String scheme ^String username ^String password ^String node-host]
-  (format "%s://%s:%s@%s:15672/api" scheme username password node-host))
+  [^String username ^String password ^String node-host]
+  (format "http://%s:%s@%s:15672/api" username password node-host))
+
+(defn ^String https-api-uri-for
+  [^String username ^String password ^String node-host]
+  (format "https://%s:%s@%s/api" username password node-host))
 
 (defn filter-protocol-ports
   [[k v]]
@@ -206,17 +210,15 @@
   [m node-hosts ^String username ^String password tls?]
   (let [first-node-host (get node-hosts 0)
         k (protocol-key-for "management" tls?)]
-    (assoc m k {:uri      (http-api-uri-for (if tls?
-                                              "https"
-                                              "http") username password first-node-host)
-                :uris     (map #(http-api-uri-for (if tls? "https" "http") username password %) node-hosts)
+    (assoc m k {:uri      (http-api-uri-for username password first-node-host)
+                :uris     (map #(http-api-uri-for username password %) node-hosts)
                 :username username
                 :password password
                 :host     first-node-host
                 :hosts    node-hosts
                 :port     management-ui-port
                 :path     "/api"
-                :ssl      (not (not tls?))})))
+                :ssl      false})))
 
 (defn protocol-info-for
   [node-hosts ^String vhost ^String username ^String password protos tls?]
@@ -250,7 +252,7 @@
      :password      password
      :hostname      first-node-host
      :hostnames     node-hosts
-     :http_api_uri  (http-api-uri-for (cfg/http-scheme) username password first-node-host)
-     :http_api_uris (map #(http-api-uri-for (cfg/http-scheme) username password %) node-hosts)
+     :http_api_uri  (https-api-uri-for username password (cfg/management-domain))
+     :http_api_uris [(https-api-uri-for username password (cfg/management-domain))]
      :protocols     (protocol-info-for node-hosts vhost username password protos tls?)
      :dashboard_url (dashboard-url username password)}))
