@@ -64,7 +64,7 @@
        {:username "guest"
         :password "guest"
         :node-host "mercurio.local"}
-       "http://guest:guest@mercurio.local:15672/api"))
+       "http://guest:guest@mercurio.local:15672/api/"))
 
 (deftest test-https-api-uri-for
   (are [m uri] (is (= uri (rs/https-api-uri-for (:username m)
@@ -73,7 +73,7 @@
        {:username "guest"
         :password "guest"
         :node-host "mercurio.local"}
-       "https://guest:guest@mercurio.local/api"))
+       "https://guest:guest@mercurio.local/api/"))
 
 (deftest test-protocol-ports
   (let [m (-> (rs/protocol-ports) keys set)]
@@ -170,14 +170,14 @@
                                 :hosts    ["mercurio.local" "other.local"]
                                 :port     61613
                                 :ssl      ssl?}
-                  "management" {:uri      "http://guest:guest@mercurio.local:15672/api"
-                                :uris     ["http://guest:guest@mercurio.local:15672/api" "http://guest:guest@other.local:15672/api"]
+                  "management" {:uri      "http://guest:guest@mercurio.local:15672/api/"
+                                :uris     ["http://guest:guest@mercurio.local:15672/api/" "http://guest:guest@other.local:15672/api/"]
                                 :username "guest"
                                 :password "guest"
                                 :host     "mercurio.local"
                                 :hosts    ["mercurio.local" "other.local"]
                                 :port     15672
-                                :path     "/api"
+                                :path     "/api/"
                                 :ssl      ssl?}}]
     (is (= (rs/protocol-info-for ["mercurio.local" "other.local"] "my-app" "guest" "guest"
                                  protos
@@ -212,14 +212,14 @@
                                     :hosts    ["mercurio.local" "other.local"]
                                     :port     61614
                                     :ssl      ssl?}
-                  "management+ssl" {:uri      "http://guest:guest@mercurio.local:15672/api"
-                                    :uris     ["http://guest:guest@mercurio.local:15672/api" "http://guest:guest@other.local:15672/api"]
+                  "management+ssl" {:uri      "http://guest:guest@mercurio.local:15672/api/"
+                                    :uris     ["http://guest:guest@mercurio.local:15672/api/" "http://guest:guest@other.local:15672/api/"]
                                     :username "guest"
                                     :password "guest"
                                     :host     "mercurio.local"
                                     :hosts    ["mercurio.local" "other.local"]
                                     :port     15672
-                                    :path     "/api"
+                                    :path     "/api/"
                                     :ssl      false}}]
     (is (= (rs/protocol-info-for ["mercurio.local" "other.local"] "my-app" "guest" "guest"
                                  protos
@@ -245,7 +245,7 @@
              :vhost         "vhost-1"
              :hostname      "host-1"
              :hostnames     ["host-1" "host-2"]
-             :http_api_uri  "https://user:password@pivotal-rabbitmq.127.0.0.1/api"
-             :http_api_uris ["https://user:password@pivotal-rabbitmq.127.0.0.1/api"]
+             :http_api_uri  "https://user:password@pivotal-rabbitmq.127.0.0.1/api/"
+             :http_api_uris ["https://user:password@pivotal-rabbitmq.127.0.0.1/api/"]
              :protocols     "fake-protocol-info"
              :dashboard_url "https://pivotal-rabbitmq.127.0.0.1/#/login/user/password"}))))))

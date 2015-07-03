@@ -102,11 +102,11 @@
 
 (defn ^String http-api-uri-for
   [^String username ^String password ^String node-host]
-  (format "http://%s:%s@%s:15672/api" username password node-host))
+  (format "http://%s:%s@%s:15672/api/" username password node-host))
 
 (defn ^String https-api-uri-for
   [^String username ^String password ^String node-host]
-  (format "https://%s:%s@%s/api" username password node-host))
+  (format "https://%s:%s@%s/api/" username password node-host))
 
 (defn filter-protocol-ports
   [[k v]]
@@ -217,7 +217,7 @@
                 :host     first-node-host
                 :hosts    node-hosts
                 :port     management-ui-port
-                :path     "/api"
+                :path     "/api/"
                 :ssl      false})))
 
 (defn protocol-info-for
