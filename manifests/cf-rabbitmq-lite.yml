@@ -169,6 +169,9 @@ properties:
         3nizs9vfxcMfGQ88CyUQSvZ4CVdF3lYbw8a96NHJH71ROQ==
         -----END CERTIFICATE-----
   rabbitmq-haproxy:
+    stats:
+      username: admin
+      password: c1oudc0w
     ports:
     - 5672
     - 5671
@@ -194,6 +197,7 @@ properties:
       username: "p1-rabbit"
       password: "p1-rabbit-devpwd"
       url: http://10.244.9.14:4567
+      uuid: 163b47c6-a2f3-43b1-97f7-b83b37ecabcd
     logging:
       level: debug
       print_stack_traces: false
