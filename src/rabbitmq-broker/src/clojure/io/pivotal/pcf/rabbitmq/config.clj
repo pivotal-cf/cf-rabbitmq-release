@@ -37,6 +37,7 @@
      (presence-of [:service :username] :message missing-msg)
      (presence-of [:service :password] :message missing-msg)
      (presence-of [:service :uuid] :message missing-msg)
+     (presence-of [:service :plan_uuid] :message missing-msg)
      ;; public management UI route
      (presence-of [:rabbitmq :management_domain] :message missing-msg)
      ;; rabbitmq info
