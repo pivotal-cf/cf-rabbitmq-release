@@ -31,3 +31,7 @@ cf-cli/cf-linux-amd64-6.10.tgz:
   object_id: cda6b19b-8df2-4583-a1b5-a0ab78ba191d
   sha: f845800310e4b702a39a2f1191e3d71862630103
   size: 4803309
+haproxy/haproxy-1.5.14.tar.gz:
+  object_id: 41da4b88-799e-4d52-bdf0-a0597bffc35a
+  sha: 159f5beb8fdc6b8059ae51b53dc935d91c0fb51f
+  size: 1345345
