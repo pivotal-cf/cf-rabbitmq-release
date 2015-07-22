@@ -34,7 +34,7 @@ template(name="CfLogTemplate" type="list") {
         property(name="pri")
         constant(value=">")
         property(name="timestamp" dateFormat="rfc3339")
-        constant(value="<%= job_ip %> ")
+        constant(value=" <%= job_ip %> ")
         property(name="programname")
         constant(value=" [job=<%= name %> index=<%= spec.index.to_i %>] ")
         property(name="msg")
