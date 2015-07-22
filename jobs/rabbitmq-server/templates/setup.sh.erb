@@ -7,8 +7,6 @@ set -e
 job = spec.job.name
 default_network = spec.networks.marshal_dump().detect { |_, network_spec| network_spec.default }.last
 job_ip = spec.networks.send(spec.networks.methods(false).first).ip
-dns_record_name = default_network.dns_record_name
-network = dns_record_name.split('.')[1..-1].join('.')
 
 ssl = false
 if_p("rabbitmq-server.ssl.key") do |key|
@@ -31,7 +29,7 @@ cookie = p('rabbitmq-server.cookie', Digest::MD5.hexdigest(ips.join))
 
 # TLS versions with a '.' character should include single quotes
 supported_tls_versions = %w{'tlsv1.2' 'tlsv1.1'}
-security_options = p('rabbitmq-server.ssl.security_options', [])
+security_options = p('rabbitmq-server.ssl.security_options')
 if security_options.include?('enable_tls1_0')
   supported_tls_versions << "tlsv1"
 end

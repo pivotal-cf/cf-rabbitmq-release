@@ -16,6 +16,7 @@ properties:
     description: "RabbitMQ server private key"
   rabbitmq-server.ssl.security_options:
     description: "SSL security options (currently only 'enable_tls1_0')"
+    default: []
 
   rabbitmq-server.plugins:
     description: "RabbitMQ plugins (array of strings)"
