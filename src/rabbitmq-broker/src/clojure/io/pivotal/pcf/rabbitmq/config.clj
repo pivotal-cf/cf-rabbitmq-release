@@ -116,7 +116,7 @@
      :bindable    true
      :requires    []
      :tags        ["rabbitmq" "messaging" "message-queue" "amqp" "stomp" "mqtt" "pivotal"]
-     :metadata    {"displayName"         "RabbitMQ for PCF"
+     :metadata    {"displayName"         "RabbitMQ"
                    "longDescription"     long-desc
                    "imageUrl"            img-url
                    ;; backwards compatibility
