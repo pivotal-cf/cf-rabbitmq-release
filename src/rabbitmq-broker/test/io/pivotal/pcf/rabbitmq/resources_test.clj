@@ -28,7 +28,7 @@
       (hc/delete-vhost vhost))))
 
 (deftest test-dashboard-url
-  (testing "returns a formatted dashboard url without credentials"
+  (testing "returns a formatted dashboard url"
     (let [m (load-config "config/valid.yml")]
       (is (= (rs/dashboard-url m)
              "https://pivotal-rabbitmq.127.0.0.1/#/login/"))))

@@ -160,7 +160,7 @@
             (log-exception e)
             (rs/delete-vhost id)
             (rs/delete-user mu mp)))
-        (created {:dashboard_url (rs/dashboard-url)})))
+        (created {:dashboard_url (rs/dashboard-url mu mp)})))
     (conflict)))
 
 (defn delete-service

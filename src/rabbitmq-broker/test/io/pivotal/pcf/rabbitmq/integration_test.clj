@@ -106,7 +106,7 @@
                                        (let [res         (th/put (format "v2/service_instances/%s" id))
                                              ^String dbu (:dashboard_url res)]
                                          (is dbu)
-                                         (is (.startsWith dbu "https://pivotal-rabbitmq.127.0.0.1/#/login/")))
+                                         (is (.startsWith dbu (format "https://pivotal-rabbitmq.127.0.0.1/#/login/mu-%s" id))))
                                        (is (rs/vhost-exists? id))
                                        (th/has-policy? id (cfg/operator-set-policy-name))))))
     (testing "when there's already a vhost registered"
@@ -130,7 +130,7 @@
                                        (let [res         (th/put (format "v2/service_instances/%s" id))
                                              ^String dbu (:dashboard_url res)]
                                          (is dbu)
-                                         (is (.startsWith dbu "https://pivotal-rabbitmq.127.0.0.1/#/login/")))
+                                         (is (.startsWith dbu (format "https://pivotal-rabbitmq.127.0.0.1/#/login/mu-%s" id))))
                                        (is (rs/vhost-exists? id))
                                        (is (th/has-no-policy? id (cfg/operator-set-policy-name)))))))
   (testing "with provided service id that IS taken"
@@ -183,7 +183,7 @@
                                  (is (= 200 status))
                                  (is (= (inc n) n'))
                                  (is (get res "credentials"))
-                                 (is (.startsWith dbu "https://pivotal-rabbitmq.127.0.0.1/#/login/"))
+                                 (is (.startsWith dbu (format "https://pivotal-rabbitmq.127.0.0.1/#/login/%s" bid)))
                                  (are [k] (get-in res ["credentials" k])
                                       "uri"
                                       "uris"
