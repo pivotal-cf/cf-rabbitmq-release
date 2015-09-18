@@ -1,0 +1,164 @@
+director_uuid: (( merge ))
+name: cf-rabbitmq
+
+releases:
+- name: cf-rabbitmq
+  version: latest
+
+compilation:
+  workers: 2
+  network: services1
+  reuse_compilation_vms: true
+  cloud_properties: (( merge ))
+
+update:
+  canaries: 1
+  canary_watch_time: 30000-600000
+  update_watch_time: 30000-600000
+  max_in_flight: 4
+
+networks: (( merge ))
+
+resource_pools:
+  - name: services-small
+    network: services1
+    stemcell: (( merge ))
+    cloud_properties: (( merge ))
+
+jobs:
+- name: rmq
+  release: cf-rabbitmq
+  template: rabbitmq-server
+  instances: 1
+  resource_pool: services-small
+  persistent_disk: 2048
+  networks:
+  - name: services1
+    static_ips: (( static_ips(0) ))
+
+- name: rmq-broker
+  release: cf-rabbitmq
+  template: rabbitmq-broker
+  instances: 1
+  resource_pool: services-small
+  networks:
+  - name: services1
+    static_ips: (( static_ips(1) ))
+
+- name: haproxy
+  release: cf-rabbitmq
+  template: rabbitmq-haproxy
+  instances: 1
+  resource_pool: services-small
+  networks:
+  - name: services1
+    static_ips: (( static_ips(2) ))
+
+- name: broker-registrar
+  release: cf-rabbitmq
+  template: broker-registrar
+  instances: 1
+  lifecycle: errand
+  networks:
+  - name: services1
+  properties:
+    broker:
+      protocol: http
+      host: (( jobs.[1].networks.services1.static_ips.[0] ))
+      port: 4567
+      name: p-rabbitmq
+      username: "p1-rabbit"
+      password: "p1-rabbit-default-password"
+  resource_pool: services-small
+
+- name: broker-deregistrar
+  release: cf-rabbitmq
+  template: broker-deregistrar
+  instances: 1
+  lifecycle: errand
+  networks:
+  - name: services1
+  properties:
+    broker:
+      protocol: http
+      host: (( jobs.[1].networks.services1.static_ips.[0] ))
+      port: 4567
+      name: p-rabbitmq
+      username: "p1-rabbit"
+      password: "p1-rabbit-default-password"
+  resource_pool: services-small
+
+properties:
+  # for broker and route registrars
+  cf:
+    domain: (( merge ))
+    api_url: (( merge ))
+    admin_username: (( merge ))
+    admin_password: (( merge ))
+    nats: (( merge ))
+  route-registrar:
+    target_ip: (( jobs.broker-registrar.networks.services1.static_ips.[0]
+  rabbitmq-server:
+    plugins:
+    - rabbitmq_management
+    - rabbitmq_mqtt
+    - rabbitmq_stomp
+    administrators:
+      broker:
+        username: (( merge ))
+        password: (( merge ))
+    static_ips:
+    - (( jobs.rmq.networks.services1.static_ips.[0]
+    ssl:
+      cert: |
+        -----BEGIN CERTIFICATE-----
+        -----END CERTIFICATE-----
+      key: |
+        -----BEGIN RSA PRIVATE KEY-----
+        -----END RSA PRIVATE KEY-----
+      cacert: |
+        -----BEGIN CERTIFICATE-----
+        -----END CERTIFICATE-----
+  rabbitmq-haproxy:
+    ports:
+    - 5672
+    - 5671
+    - 1883
+    - 8883
+    - 61613
+    - 61614
+    - 15672
+    - 15674
+    server_ips:
+    - (( jobs.rmq.networks.services1.static_ips.[0] ))
+    stats:
+      username: (( merge ))
+      password: (( merge ))
+  rabbitmq-broker:
+    cc_endpoint: (( merge ))
+    uaa_client:
+      client_id: cf
+      username: "admin"
+      password: "your-uaa-password"
+    service:
+      username: "p1-rabbit"
+      password: "p1-rabbit-default-password"
+      url: http://(( static_ips(1) )):4567
+    logging:
+      level: debug
+      print_stack_traces: false
+    rabbitmq:
+      mirrored_queues:
+        enabled: true
+        policy_name: "mirrored_queues"
+      management_domain: pivotal-rabbitmq.your_cc_endpoint.com
+      ssl: |
+        -----BEGIN CERTIFICATE-----
+        ****** KEY GOES HERE **********
+        -----END CERTIFICATE-----
+      hosts:
+        - (( jobs.haproxy.networks.services1.static_ips.[0] ))
+      administrator:
+        username: (( merge ))
+        password: (( merge ))
+
