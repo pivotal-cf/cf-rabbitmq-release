@@ -181,6 +181,9 @@ properties:
     server_ips:
     - 10.244.9.6
     - 10.244.9.10
+    stats:
+      username: admin
+      password: admin
   rabbitmq-broker:
     cc_endpoint: http://api.10.244.0.34.xip.io
     uaa_client:

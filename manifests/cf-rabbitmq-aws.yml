@@ -118,6 +118,9 @@ properties:
     - 15674
     server_ips:
     - 10.10.38.6
+    stats:
+      username: admin
+      password: admin
   rabbitmq-broker:
     cc_endpoint: http://your_cc_endpoint.com
     uaa_client:
