@@ -56,7 +56,7 @@ properties:
     description: "Operator policy priority"
     default: 50
   cf.domain:
-    description: "Domain shared by the UAA and CF API, e.g. '10.244.0.34.xip.io'"
+    description: "Domain shared by the UAA and CF API, e.g. 'bosh-lite.com'"
   cf.nats.host:
     description: "Hostname/IP of NATS"
   cf.nats.port:

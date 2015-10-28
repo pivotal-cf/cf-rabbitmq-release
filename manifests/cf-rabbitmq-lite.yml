@@ -80,8 +80,8 @@ properties:
   cf:
     admin_password: "admin"
     admin_username: "admin"
-    api_url: "http://api.10.244.0.34.xip.io"
-    domain: "10.244.0.34.xip.io"
+    api_url: "http://api.bosh-lite.com"
+    domain: "bosh-lite.com"
     nats:
       host: "10.244.0.6"
       port: "4222"
@@ -185,7 +185,7 @@ properties:
       username: admin
       password: admin
   rabbitmq-broker:
-    cc_endpoint: http://api.10.244.0.34.xip.io
+    cc_endpoint: http://api.bosh-lite.com
     uaa_client:
       client_id: cf
       username: "admin"
@@ -203,7 +203,7 @@ properties:
         policy_name: "operator_set_policy"
         policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
         policy_priority: 50
-      management_domain: pivotal-rabbitmq.10.244.0.34.xip.io
+      management_domain: pivotal-rabbitmq.bosh-lite.com
       ssl: |
         -----BEGIN CERTIFICATE-----
         MIIC+zCCAeOgAwIBAgIBAjANBgkqhkiG9w0BAQUFADAnMRUwEwYDVQQDEwxNeVRl

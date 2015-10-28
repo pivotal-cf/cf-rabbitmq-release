@@ -265,7 +265,7 @@ an organization and space.
 Below code assumes Cloud Foundry is running in a local [bosh-lite](https://github.com/cloudfoundry/bosh-lite) VM using [our development manifest](./manifests/cf-rabbitmq-lite.yml) and Cloud Foundry CLI v6 (the Go version) is used.
 
     # point cf at a CloudFoundry running in bosh-lite
-    cf api http://api.10.244.0.34.xip.io
+    cf api http://api.bosh-lite.com
     cf auth admin admin
     cf create-org pcf-rabbitmq
     cf target -o pcf-rabbitmq
@@ -320,7 +320,7 @@ in the deployment manifest:
       cf:
         admin_password: "admin"
         admin_username: "admin"
-        api_url: http://api.10.244.0.34.xip.io
+        api_url: http://api.bosh-lite.com
 
 If you use [cf-rabbitmq-lite.yml](./manifests/cf-rabbitmq-lite.yml), it includes the errand
 for you.

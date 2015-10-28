@@ -1,6 +1,6 @@
 ---
 # CC, default assumes bosh-lite is used
-cc_endpoint: http://api.10.244.0.34.xip.io
+cc_endpoint: http://api.bosh-lite.com
 # UAA
 uaa_client:
   client_id: cf
@@ -21,7 +21,7 @@ rabbitmq:
     policy_name: "operator_set_policy"
     policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
     policy_priority: 50
-  management_domain: pivotal-rabbitmq.10.244.0.34.xip.io
+  management_domain: pivotal-rabbitmq.bosh-lite.com
   hosts:
     - 10.244.9.50
   administrator:
