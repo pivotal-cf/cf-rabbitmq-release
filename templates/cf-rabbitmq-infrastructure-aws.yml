@@ -1,0 +1,22 @@
+meta:
+  networks: ~
+  availability_zone: (( merge || "us-east-1b" ))
+  instance_type: (( merge ))
+
+  stemcell:
+    name: bosh-aws-xen-ubuntu-trusty-go_agent
+    version: latest
+
+compilation:
+  cloud_properties:
+    instance_type: m1.medium
+    availability_zone: (( meta.availability_zone ))
+
+networks: (( merge ))
+
+resource_pools:
+  - name: services-small
+    stemcell: (( meta.stemcell ))
+    cloud_properties:
+      instance_type: (( meta.instance_type ))
+      availability_zone: (( meta.availability_zone ))
