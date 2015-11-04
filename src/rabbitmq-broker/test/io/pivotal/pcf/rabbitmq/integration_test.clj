@@ -94,7 +94,7 @@
       (let [res (th/get "v2/catalog")
             s1  (-> res :services first)]
         (are [k v] (is (= v (get s1 k)))
-             :id       "163b47c6-a2f3-43b1-97f7-b83b37ec8ad3"
+             :id       "00000000-0000-0000-0000-000000000000"
              :name     "p-rabbitmq"
              :bindable true)))))
 
