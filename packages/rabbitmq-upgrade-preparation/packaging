@@ -1,0 +1,17 @@
+#!/bin/bash -e
+
+PACKAGE_NAME=github.com/pivotal-cf/rabbitmq-upgrade-preparation
+PACKAGE_DIR=${BOSH_INSTALL_TARGET}/src/${PACKAGE_NAME}
+
+mkdir -p $(dirname $PACKAGE_DIR)
+
+cp -a $(basename $PACKAGE_NAME)/ $PACKAGE_DIR
+
+export GOROOT=$(readlink -nf /var/vcap/packages/golang)
+export GOPATH=$BOSH_INSTALL_TARGET
+export PATH=$GOROOT/bin:$PATH
+
+go install ${PACKAGE_NAME}
+
+# # clean up source artifacts
+rm -rf ${BOSH_INSTALL_TARGET}/src ${BOSH_INSTALL_TARGET}/pkg

@@ -1,0 +1,6 @@
+---
+name: rabbitmq-upgrade-preparation
+dependencies:
+- golang
+files:
+- rabbitmq-upgrade-preparation/**/*.go

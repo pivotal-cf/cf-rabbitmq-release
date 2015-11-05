@@ -7,3 +7,6 @@
 [submodule "src/rabbitmq-cluster-migration-tool"]
 	path = src/rabbitmq-cluster-migration-tool
 	url = git@github.com:pivotal-cf/rabbitmq-cluster-migration-tool.git
+[submodule "src/rabbitmq-upgrade-preparation"]
+	path = src/rabbitmq-upgrade-preparation
+	url = git@github.com:pivotal-cf/rabbitmq-upgrade-preparation.git

@@ -5,6 +5,7 @@ packages:
 - erlang
 - rabbitmq-server
 - rabbitmq-cluster-migration-tool
+- rabbitmq-upgrade-preparation
 - syslog_aggregator
 
 properties:
