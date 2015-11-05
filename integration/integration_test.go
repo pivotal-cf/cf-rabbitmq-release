@@ -124,6 +124,29 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		})
 	})
 
+	Context("when there is a new major version of rabbit", func() {
+		BeforeEach(func() {
+			cwd, err := os.Getwd()
+			Expect(err).NotTo(HaveOccurred())
+
+			args = []string{
+				"-rabbitmqctl-path", filepath.Join(cwd, "test-assets", "rabbitmqctl-dummy.sh"),
+				"-node", "my-node",
+				"-new-rabbitmq-version", "4.4.0.0",
+			}
+		})
+
+		itExitsWithZero()
+
+		It("calls stop app", func() {
+			Eventually(session).Should(gexec.Exit())
+
+			contents, err := ioutil.ReadFile(tmpFile)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(contents).To(Equal([]byte("-n my-node\n")))
+		})
+	})
+
 	Context("When the rabbitmqctl-path is not provided", func() {
 		BeforeEach(func() {
 			args = []string{

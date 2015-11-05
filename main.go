@@ -20,21 +20,15 @@ func main() {
 	assertFlag(*node, "node")
 	assertFlag(*newRabbitmqVersion, "new-rabbitmq-version")
 
-	rabbitmqctlStatusCommand := exec.Command(*rabbitmqctlPath, "status", "-n", *node)
-
-	out, err := rabbitmqctlStatusCommand.Output()
+	out, err := exec.Command(*rabbitmqctlPath, "status", "-n", *node).Output()
 	if err != nil {
 		panic(err)
 	}
 
-	rabbitMQVersionLine := findRabbitMQVersionLine(out)
-	regex := regexp.MustCompile(`^\{rabbit,"RabbitMQ","(.*)"\},$`)
-	rabbitMQVersion := regex.FindAllStringSubmatch(rabbitMQVersionLine, -1)[0][1]
-
 	newVersionComponents := strings.Split(*newRabbitmqVersion, ".")
-	remoteVersionComponents := strings.Split(rabbitMQVersion, ".")
+	remoteVersionComponents := strings.Split(parseRemoteRabbitMQVersion(out), ".")
 
-	if newVersionComponents[1] != remoteVersionComponents[1] {
+	if isMinorOrMajorUpgrade(newVersionComponents, remoteVersionComponents) {
 		if err := exec.Command(*rabbitmqctlPath, "stop_app", "-n", *node).Run(); err != nil {
 			panic(err)
 		}
@@ -56,4 +50,15 @@ func findRabbitMQVersionLine(out []byte) string {
 	}
 
 	return ""
+}
+
+func isMinorOrMajorUpgrade(newVersionComponents, remoteVersionComponents []string) bool {
+	return newVersionComponents[0] != remoteVersionComponents[0] ||
+		newVersionComponents[1] != remoteVersionComponents[1]
+}
+
+func parseRemoteRabbitMQVersion(rabbitMqctlStatusCommandOutput []byte) string {
+	rabbitMQVersionLine := findRabbitMQVersionLine(rabbitMqctlStatusCommandOutput)
+	regex := regexp.MustCompile(`^\{rabbit,"RabbitMQ","(.*)"\},$`)
+	return regex.FindAllStringSubmatch(rabbitMQVersionLine, -1)[0][1]
 }
