@@ -36,6 +36,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 	itExitsWithNonZero := func() {
 		It("exits with a non-zero exit code", func() {
+			Eventually(session).Should(gexec.Exit())
 			Expect(session.ExitCode()).NotTo(BeZero())
 		})
 	}
@@ -180,6 +181,26 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		})
 
 		itExitsWithZero()
+
+		It("doesn't call stop app", func() {
+			_, err := os.Stat(tmpFile)
+			Expect(os.IsNotExist(err)).To(BeTrue())
+		})
+	})
+
+	Context("When rabbitmqctl cannot reach the remote machine", func() {
+		BeforeEach(func() {
+			cwd, err := os.Getwd()
+			Expect(err).NotTo(HaveOccurred())
+
+			args = []string{
+				"-rabbitmqctl-path", filepath.Join(cwd, "test-assets", "rabbitmqctl-vm-unreachable.sh"),
+				"-node", "my-node",
+				"-new-rabbitmq-version", "3.4.3.1",
+			}
+		})
+
+		itExitsWithNonZero()
 
 		It("doesn't call stop app", func() {
 			_, err := os.Stat(tmpFile)

@@ -20,8 +20,12 @@ func main() {
 	assertFlag(*node, "node")
 	assertFlag(*newRabbitmqVersion, "new-rabbitmq-version")
 
-	out, err := exec.Command(*rabbitmqctlPath, "status", "-n", *node).Output()
+	out, err := exec.Command(*rabbitmqctlPath, "status", "-n", *node).CombinedOutput()
 	if err != nil {
+		if strings.Contains(string(out), "timeout") {
+			log.Fatalf("'rabbitmqctl status -n %s' returned with error '%s' and '%s', Unable to determine state of RabbitMQ, exiting with failure as it is not safe to proceed", *node, string(out), err)
+		}
+
 		log.Printf("'rabbitmqctl status -n %s' returned with error '%s' and '%s', Erlang VM likely down. Do not need to stop RabbitMQ", *node, string(out), err)
 		return
 	}
