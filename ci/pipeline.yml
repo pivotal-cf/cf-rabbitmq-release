@@ -12,10 +12,4 @@ jobs:
   - get: rabbitmq-upgrade-preparation
     trigger: true
   - task: run-tests
-    config:
-      platform: linux
-      image: docker:///cflondonservices/london-services-ci-base#stable
-      inputs:
-        - name: rabbitmq-upgrade-preparation
-      run:
-        path: rabbitmq-upgrade-preparation/ci/run-tests.sh
+    file: rabbitmq-upgrade-preparation/ci/run-tests.yml

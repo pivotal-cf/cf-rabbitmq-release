@@ -2,7 +2,7 @@
 
 project_dir=$(dirname $0)/..
 
-gopath_project=$GOPATH/src/github.com/pivotal-cf
+gopath_project=$GOPATH/src/github.com/pivotal-cf/rabbitmq-upgrade-preparation
 mkdir -p $gopath_project
 cp -r $project_dir $gopath_project/
 
