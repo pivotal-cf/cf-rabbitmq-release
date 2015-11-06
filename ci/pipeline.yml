@@ -1,0 +1,21 @@
+---
+resources:
+- name: rabbitmq-upgrade-preparation
+  type: git
+  source:
+    uri: git@github.com:pivotal-cf/rabbitmq-upgrade-preparation.git
+    private_key: {{git-private-key}}
+
+jobs:
+- name: run-tests
+  plan:
+  - get: rabbitmq-upgrade-preparation
+    trigger: true
+  - task: run-tests
+    config:
+      platform: linux
+      image: docker:///cflondonservices/london-services-ci-base#stable
+      inputs:
+        - name: rabbitmq-upgrade-preparation
+      run:
+        path: rabbitmq-upgrade-preparation/ci/run-tests.sh
