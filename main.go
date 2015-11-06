@@ -26,7 +26,12 @@ func main() {
 	}
 
 	newVersionComponents := strings.Split(*newRabbitmqVersion, ".")
-	remoteVersionComponents := strings.Split(parseRemoteRabbitMQVersion(out), ".")
+	remoteRabbitVersion, ok := parseRemoteRabbitMQVersion(out)
+	if !ok {
+		return
+	}
+
+	remoteVersionComponents := strings.Split(remoteRabbitVersion, ".")
 
 	if isMinorOrMajorUpgrade(newVersionComponents, remoteVersionComponents) {
 		if err := exec.Command(*rabbitmqctlPath, "stop_app", "-n", *node).Run(); err != nil {
@@ -57,8 +62,12 @@ func isMinorOrMajorUpgrade(newVersionComponents, remoteVersionComponents []strin
 		newVersionComponents[1] != remoteVersionComponents[1]
 }
 
-func parseRemoteRabbitMQVersion(rabbitMqctlStatusCommandOutput []byte) string {
+func parseRemoteRabbitMQVersion(rabbitMqctlStatusCommandOutput []byte) (string, bool) {
 	rabbitMQVersionLine := findRabbitMQVersionLine(rabbitMqctlStatusCommandOutput)
 	regex := regexp.MustCompile(`^\{rabbit,"RabbitMQ","(.*)"\},$`)
-	return regex.FindAllStringSubmatch(rabbitMQVersionLine, -1)[0][1]
+	matches := regex.FindAllStringSubmatch(rabbitMQVersionLine, -1)
+	if len(matches) > 0 {
+		return matches[0][1], true
+	}
+	return "", false
 }
