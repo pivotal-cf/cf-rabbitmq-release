@@ -22,12 +22,14 @@ func main() {
 
 	out, err := exec.Command(*rabbitmqctlPath, "status", "-n", *node).Output()
 	if err != nil {
-		panic(err)
+		log.Printf("'rabbitmqctl status -n %s' returned with error '%s' and '%s', Erlang VM likely down. Do not need to stop RabbitMQ", *node, string(out), err)
+		return
 	}
 
 	newVersionComponents := strings.Split(*newRabbitmqVersion, ".")
 	remoteRabbitVersion, ok := parseRemoteRabbitMQVersion(out)
 	if !ok {
+		log.Println("rabbitmqctl reported that rabbit is down, erlang VM still up. Do not need to stop RabbitMQ")
 		return
 	}
 

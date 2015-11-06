@@ -167,6 +167,26 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		})
 	})
 
+	Context("When the erlang VM is not running", func() {
+		BeforeEach(func() {
+			cwd, err := os.Getwd()
+			Expect(err).NotTo(HaveOccurred())
+
+			args = []string{
+				"-rabbitmqctl-path", filepath.Join(cwd, "test-assets", "rabbitmqctl-erlang-stopped.sh"),
+				"-node", "my-node",
+				"-new-rabbitmq-version", "3.4.3.1",
+			}
+		})
+
+		itExitsWithZero()
+
+		It("doesn't call stop app", func() {
+			_, err := os.Stat(tmpFile)
+			Expect(os.IsNotExist(err)).To(BeTrue())
+		})
+	})
+
 	Context("When the rabbitmqctl-path is not provided", func() {
 		BeforeEach(func() {
 			args = []string{
