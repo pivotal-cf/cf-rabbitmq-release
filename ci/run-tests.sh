@@ -6,7 +6,7 @@ gopath_project=$GOPATH/src/github.com/pivotal-cf/rabbitmq-upgrade-preparation
 mkdir -p $gopath_project
 cp -r $project_dir $gopath_project/
 
-pushd $gopath_project/rabbitmq-upgrade-preparation
+pushd $gopath_project
   export GOPATH=$PWD/Godeps/_workspace:$GOPATH
   export PATH=$PWD/Godeps/_workspace/bin:$PATH
   go install github.com/onsi/ginkgo/ginkgo
