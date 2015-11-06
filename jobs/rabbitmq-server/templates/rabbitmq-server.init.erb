@@ -15,8 +15,9 @@ set -ex
 PATH=/var/vcap/packages/erlang/bin:$PATH
 
 NAME=rabbitmq-server
-DAEMON=/var/vcap/packages/rabbitmq-server/bin/rabbitmq-server
-CONTROL=/var/vcap/packages/rabbitmq-server/bin/rabbitmqctl
+RMQ_SERVER_PACKAGE=/var/vcap/packages/rabbitmq-server
+DAEMON=${RMQ_SERVER_PACKAGE}/bin/rabbitmq-server
+CONTROL=${RMQ_SERVER_PACKAGE}/bin/rabbitmqctl
 DESC=rabbitmq-server
 USER=vcap
 INIT_LOG_DIR=/var/vcap/sys/log/rabbitmq-server
@@ -138,6 +139,18 @@ run_script() {
     esac
 }
 
+prepare_for_upgrade () {
+  echo "$("${TIMESTAMP}"): Preparing RabbitMQ for potential upgrade" >> "${INIT_LOG_DIR}/startup_stdout.log"
+  for remote_node in $(cat /var/vcap/data/upgrade_preparation_nodes); do
+    /var/vcap/packages/rabbitmq-upgrade-preparation/bin/rabbitmq-upgrade-preparation \
+      -rabbitmqctl-path $CONTROL \
+      -node $remote_node \
+      -new-rabbitmq-version $(cat ${RMQ_SERVER_PACKAGE}/rmq_version) \
+      1>> "${INIT_LOG_DIR}/startup_stdout.log" \
+      2>> "${INIT_LOG_DIR}/startup_stderr.log"
+  done
+}
+
 start_rabbitmq () {
     status_rabbitmq
     if [ "${RETVAL}" = 0 ] ; then
@@ -147,10 +160,11 @@ start_rabbitmq () {
         ensure_dirs
         run_script "${JOB_DIR}/bin/setup.sh"
         run_script "${JOB_DIR}/bin/plugins.sh"
+        prepare_for_upgrade
         echo "$("${TIMESTAMP}"): Starting RabbitMQ" >> "${INIT_LOG_DIR}/startup_stdout.log"
         RABBITMQ_PID_FILE="${PID_FILE}" "${START_PROG}" "${DAEMON}" \
             >> "${INIT_LOG_DIR}/startup_stdout.log" \
-            2> "${INIT_LOG_DIR}/startup_stderr.log" \
+            2>> "${INIT_LOG_DIR}/startup_stderr.log" \
             0<&- &
         set +e
         "${CONTROL}" wait "${PID_FILE}" >/dev/null 2>&1

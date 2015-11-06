@@ -56,6 +56,7 @@ end
   CLUSTER_CONFIG="${HOME_DIR}/etc/rabbitmq/cluster.config"
   SCRIPT_DIR="$(${DIRNAME} $0)"
   JOB_IP=<%= job_ip %>
+  RMQ_VERSION=3.5.6
 
   <% if_p("syslog_aggregator.address", "syslog_aggregator.port") do %>
   /var/vcap/packages/syslog_aggregator/setup_syslog_forwarder $JOB_DIR/config
@@ -84,8 +85,11 @@ end
   ${CP} ${DIR}/erl_inetrc ${ERL_INETRC}
 
   # If we are running on the old node naming strategy eg rabbit@node* then copy the new erl_inetrc for use later in the node name migration
-  [ -d ${MIGRATION_DIR} ] && ${CP} ${ERL_INETRC} ${MIGRATION_DIR}/erl_inetrc_new
-  echo $JOB_IP > ${MIGRATION_DIR}/self_ip
+  if [ -d ${MIGRATION_DIR} ]
+  then
+    ${CP} ${ERL_INETRC} ${MIGRATION_DIR}/erl_inetrc_new
+    echo $JOB_IP > ${MIGRATION_DIR}/self_ip
+  fi
 
   ${MKDIR} -p $(${DIRNAME} ${CONF_ENV_FILE})
 
@@ -140,8 +144,11 @@ end
   else \
     printf '' > ${DIR}/env.backup
   fi
+
+  RABBITMQ_BOOT_MODULE="RABBITMQ_BOOT_MODULE=rabbit_clusterer"
+  RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS="RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=\"-pa /var/vcap/packages/rabbitmq-server/plugins/rabbitmq_clusterer-${RMQ_VERSION}.ez/rabbitmq_clusterer-${RMQ_VERSION}/ebin\""
   ${SED} "/${PREFIX}/,/${SUFFIX}/d" < ${DIR}/env.backup > ${DIR}/env
-  printf "${PREFIX}\n${NODENAME}\n${CONFIG}\n${SERVER_START_ARGS}\n${SUFFIX}\n" >> ${DIR}/env
+  printf "${PREFIX}\n${NODENAME}\n${RABBITMQ_BOOT_MODULE}\n${RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS}\n${CONFIG}\n${SERVER_START_ARGS}\n${SUFFIX}\n" >> ${DIR}/env
 
   # set custom RabbitMQ db / plugin directory not specifying the node name
   printf "RABBITMQ_MNESIA_DIR=${RABBITMQ_MNESIA_DIR}\n" >> ${DIR}/env
@@ -169,9 +176,14 @@ end
   # 4. Write out the cluster_config
   ${MKDIR} -p $(${DIRNAME} ${CLUSTER_CONFIG})
   CONFIG_NODES=""
+  UPGRADE_PREPARATION_NODES_FILE=/var/vcap/data/upgrade_preparation_nodes
+  rm -f $UPGRADE_PREPARATION_NODES_FILE
   <% ips.each_index do |idx| %>
-  CONFIG_NODES="${CONFIG_NODES},{rabbit@<%= Digest::MD5.hexdigest(ips[idx]) %>,disc}"
+    node="rabbit@<%= Digest::MD5.hexdigest(ips[idx]) %>"
+    echo $node >> $UPGRADE_PREPARATION_NODES_FILE
+    CONFIG_NODES="${CONFIG_NODES},{rabbit@<%= Digest::MD5.hexdigest(ips[idx]) %>,disc}"
   <% end %>
+
   CONFIG_NODES=$(printf "${CONFIG_NODES}" | ${SED} -e 's/^,//')
   CONFIG_VERSION=$("${DATE}" +%s)
   # configure the gospel (seed) node. Other nodes will discover cluster members
