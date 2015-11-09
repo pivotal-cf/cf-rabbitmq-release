@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -41,6 +42,25 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		})
 	}
 
+	itCallsStopApp := func() {
+		It("calls stop app", func() {
+			Eventually(session).Should(gexec.Exit())
+
+			contents, err := ioutil.ReadFile(tmpFile)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(strings.Count(string(contents), "stop_app -n my-node\n")).To(Equal(1))
+			Eventually(session.Out).Should(gbytes.Say("Stopping RabbitMQ application"))
+		})
+	}
+
+	itDoesntCallStopApp := func() {
+		It("doesn't call stop app", func() {
+			_, err := os.Stat(tmpFile)
+			Expect(os.IsNotExist(err)).To(BeTrue())
+			Consistently(session.Out).ShouldNot(gbytes.Say("Stopping RabbitMQ application"))
+		})
+	}
+
 	JustBeforeEach(func() {
 		session = execBin(args...)
 	})
@@ -50,12 +70,13 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 			"-rabbitmqctl-path", "/idontexist/rabbitmqctl",
 			"-node", "node",
 			"-new-rabbitmq-version", "0.0.1",
+			"-new-erlang-version", "17",
 		}
 
 		var err error
 		tmpDir, err = ioutil.TempDir("", "rabbitmq-upgrade-tests")
 		Expect(err).NotTo(HaveOccurred())
-		tmpFile = filepath.Join(tmpDir, "dummy.txt")
+		tmpFile = filepath.Join(tmpDir, "erlang-17-rabbit-3.4.3.1.txt")
 
 		os.Setenv("TEST_OUTPUT_FILE", tmpFile)
 	})
@@ -70,6 +91,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 			Eventually(session.Out).Should(gbytes.Say("-rabbitmqctl-path /idontexist/rabbitmqctl"))
 			Eventually(session.Out).Should(gbytes.Say("-node node"))
 			Eventually(session.Out).Should(gbytes.Say("-new-rabbitmq-version 0.0.1"))
+			Eventually(session.Out).Should(gbytes.Say("-new-erlang-version 17"))
 		})
 	})
 
@@ -78,87 +100,81 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 			cwd, err := os.Getwd()
 			Expect(err).NotTo(HaveOccurred())
 			args = []string{
-				"-rabbitmqctl-path", filepath.Join(cwd, "test-assets", "rabbitmqctl-dummy.sh"),
+				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-erlang-17-rabbit-3.4.3.1.sh"),
 				"-node", "my-node",
 				"-new-rabbitmq-version", "3.4.3.1",
+				"-new-erlang-version", "17",
 			}
 		})
 
 		itExitsWithZero()
-
-		It("doesn't call stop app", func() {
-			_, err := os.Stat(tmpFile)
-			Expect(os.IsNotExist(err)).To(BeTrue())
-		})
+		itDoesntCallStopApp()
 	})
 
-	Context("when there is a new patch version of rabbit", func() {
+	Context("When there is no new version of Erlang", func() {
 		BeforeEach(func() {
 			cwd, err := os.Getwd()
 			Expect(err).NotTo(HaveOccurred())
 			args = []string{
-				"-rabbitmqctl-path", filepath.Join(cwd, "test-assets", "rabbitmqctl-dummy.sh"),
+				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-erlang-17-rabbit-3.4.3.1.sh"),
 				"-node", "my-node",
-				"-new-rabbitmq-version", "3.4.4.1",
+				"-new-rabbitmq-version", "3.4.3.1",
+				"-new-erlang-version", "17",
 			}
 		})
 
 		itExitsWithZero()
-
-		It("doesn't call stop app", func() {
-			_, err := os.Stat(tmpFile)
-			Expect(os.IsNotExist(err)).To(BeTrue())
-		})
+		itDoesntCallStopApp()
 	})
 
-	Context("when there is a new minor version of rabbit", func() {
+	Context("When upgrading Erlang", func() {
 		BeforeEach(func() {
 			cwd, err := os.Getwd()
 			Expect(err).NotTo(HaveOccurred())
 
 			args = []string{
-				"-rabbitmqctl-path", filepath.Join(cwd, "test-assets", "rabbitmqctl-dummy.sh"),
+				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-erlang-17-rabbit-3.4.3.1.sh"),
 				"-node", "my-node",
-				"-new-rabbitmq-version", "3.5.6",
+				"-new-rabbitmq-version", "3.4.3.1",
+				"-new-erlang-version", "17.1",
 			}
 		})
 
 		itExitsWithZero()
-
-		It("calls stop app", func() {
-			Eventually(session).Should(gexec.Exit())
-
-			contents, err := ioutil.ReadFile(tmpFile)
-			Expect(err).NotTo(HaveOccurred())
-			Expect(contents).To(Equal([]byte("-n my-node\n")))
-		})
-
-		It("logs to stdout that it's stopping Rabbit", func() {
-			Eventually(session.Out).Should(gbytes.Say("Stopping RabbitMQ"))
-		})
+		itCallsStopApp()
 	})
 
-	Context("when there is a new major version of rabbit", func() {
+	Context("When upgrading RabbitMQ", func() {
 		BeforeEach(func() {
 			cwd, err := os.Getwd()
 			Expect(err).NotTo(HaveOccurred())
 
 			args = []string{
-				"-rabbitmqctl-path", filepath.Join(cwd, "test-assets", "rabbitmqctl-dummy.sh"),
+				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-erlang-17-rabbit-3.4.3.1.sh"),
 				"-node", "my-node",
 				"-new-rabbitmq-version", "4.4.0.0",
+				"-new-erlang-version", "17",
 			}
 		})
 
 		itExitsWithZero()
+		itCallsStopApp()
+	})
 
-		It("calls stop app", func() {
-			Eventually(session).Should(gexec.Exit())
-
-			contents, err := ioutil.ReadFile(tmpFile)
+	Context("When upgrading both Erlang and RabbitMQ", func() {
+		BeforeEach(func() {
+			cwd, err := os.Getwd()
 			Expect(err).NotTo(HaveOccurred())
-			Expect(contents).To(Equal([]byte("-n my-node\n")))
+
+			args = []string{
+				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-erlang-17-rabbit-3.4.3.1.sh"),
+				"-node", "my-node",
+				"-new-rabbitmq-version", "4.4.0.0",
+				"-new-erlang-version", "17.1",
+			}
 		})
+
+		itCallsStopApp()
 	})
 
 	Context("When the rabbitmq app is not running", func() {
@@ -167,69 +183,60 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			args = []string{
-				"-rabbitmqctl-path", filepath.Join(cwd, "test-assets", "rabbitmqctl-rabbit-stopped.sh"),
+				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-rabbitmq-app-stopped.sh"),
 				"-node", "my-node",
 				"-new-rabbitmq-version", "3.4.3.1",
+				"-new-erlang-version", "17",
 			}
 		})
 
 		itExitsWithZero()
-
-		It("doesn't call stop app", func() {
-			_, err := os.Stat(tmpFile)
-			Expect(os.IsNotExist(err)).To(BeTrue())
-		})
+		itDoesntCallStopApp()
 
 		It("logs that RabbitMQ is down through stdout (no need to stop, not an error)", func() {
-			Eventually(session.Out).Should(gbytes.Say("Do not need to stop RabbitMQ"))
+			Eventually(session.Out).Should(gbytes.Say("Safe to proceed without stopping RabbitMQ application, exiting: RabbitMQ application already stopped"))
 		})
 	})
 
-	Context("When the erlang VM is not running", func() {
+	Context("When the 'rabbit' node is not running", func() {
 		BeforeEach(func() {
 			cwd, err := os.Getwd()
 			Expect(err).NotTo(HaveOccurred())
 
 			args = []string{
-				"-rabbitmqctl-path", filepath.Join(cwd, "test-assets", "rabbitmqctl-erlang-stopped.sh"),
+				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-stopped-rabbit-node.sh"),
 				"-node", "my-node",
 				"-new-rabbitmq-version", "3.4.3.1",
+				"-new-erlang-version", "17",
 			}
 		})
 
 		itExitsWithZero()
+		itDoesntCallStopApp()
 
-		It("doesn't call stop app", func() {
-			_, err := os.Stat(tmpFile)
-			Expect(os.IsNotExist(err)).To(BeTrue())
-		})
-
-		It("logs that the Erlang VM is down through stdout (no need to stop)", func() {
-			Eventually(session.Out).Should(gbytes.Say("Do not need to stop RabbitMQ"))
+		It("logs that the 'rabbit' node is down through stdout (no need to stop)", func() {
+			Eventually(session.Out).Should(gbytes.Say("Safe to proceed without stopping RabbitMQ application, exiting"))
 		})
 	})
 
-	Context("When rabbitmqctl cannot reach the remote machine", func() {
+	Context("When rabbitmqctl cannot reach the remote epmd", func() {
 		BeforeEach(func() {
 			cwd, err := os.Getwd()
 			Expect(err).NotTo(HaveOccurred())
 
 			args = []string{
-				"-rabbitmqctl-path", filepath.Join(cwd, "test-assets", "rabbitmqctl-vm-unreachable.sh"),
+				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-unreachable-epmd.sh"),
 				"-node", "my-node",
 				"-new-rabbitmq-version", "3.4.3.1",
+				"-new-erlang-version", "17",
 			}
 		})
 
 		itExitsWithNonZero()
-
-		It("doesn't call stop app", func() {
-			_, err := os.Stat(tmpFile)
-			Expect(os.IsNotExist(err)).To(BeTrue())
-		})
+		itDoesntCallStopApp()
 
 		It("logs to stderr, because we're in an unsafe state", func() {
-			Eventually(session.Err).Should(gbytes.Say("not safe to proceed"))
+			Eventually(session.Err).Should(gbytes.Say("Not safe to proceed, exiting"))
 		})
 	})
 
@@ -239,23 +246,17 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			args = []string{
-				"-rabbitmqctl-path", filepath.Join(cwd, "test-assets", "rabbitmqctl-stop_app-fails.sh"),
+				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-stop_app-fails.sh"),
 				"-node", "my-node",
 				"-new-rabbitmq-version", "3.5.6",
+				"-new-erlang-version", "17",
 			}
 		})
 
 		itExitsWithNonZero()
+		itCallsStopApp()
 
-		It("calls stop app", func() {
-			Eventually(session).Should(gexec.Exit())
-
-			contents, err := ioutil.ReadFile(tmpFile)
-			Expect(err).NotTo(HaveOccurred())
-			Expect(contents).To(Equal([]byte("-n my-node\n")))
-		})
-
-		It("provides a meaningful error", func() {
+		It("logs that it failed to stop RabbitMQ", func() {
 			Eventually(session.Err).Should(gbytes.Say("Failed to stop RabbitMQ"))
 		})
 	})
@@ -265,6 +266,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 			args = []string{
 				"-node", "node",
 				"-new-rabbitmq-version", "0.0.1",
+				"-new-erlang-version", "17",
 			}
 		})
 
@@ -280,6 +282,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 			args = []string{
 				"-rabbitmqctl-path", "/tmp/rabbitmqctl",
 				"-new-rabbitmq-version", "0.0.1",
+				"-new-erlang-version", "17",
 			}
 		})
 
@@ -290,11 +293,12 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		})
 	})
 
-	Context("When the rabbitmq-version is not provided", func() {
+	Context("When the new-rabbitmq-version is not provided", func() {
 		BeforeEach(func() {
 			args = []string{
 				"-rabbitmqctl-path", "/tmp/rabbitmqctl",
 				"-node", "node",
+				"-new-erlang-version", "17",
 			}
 		})
 
@@ -302,6 +306,22 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 		It("provides a meaningful error", func() {
 			Eventually(session.Err).Should(gbytes.Say("Missing -new-rabbitmq-version flag"))
+		})
+	})
+
+	Context("When the new-erlang-version argument is not provided", func() {
+		BeforeEach(func() {
+			args = []string{
+				"-rabbitmqctl-path", "/tmp/rabbitmqctl",
+				"-node", "node",
+				"-new-rabbitmq-version", "3.4.3.1",
+			}
+		})
+
+		itExitsWithNonZero()
+
+		It("provides a meaningful error", func() {
+			Eventually(session.Err).Should(gbytes.Say("Missing -new-erlang-version flag"))
 		})
 	})
 })

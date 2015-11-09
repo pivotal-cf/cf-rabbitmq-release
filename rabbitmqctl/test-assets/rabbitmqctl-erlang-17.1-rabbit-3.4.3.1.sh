@@ -27,7 +27,7 @@ Status of node rabbit@21b6557b73f343201277dbf290ae8b79 ...
       {kernel,"ERTS  CXC 138 10","3.0.1"}]},
  {os,{unix,linux}},
  {erlang_version,
-     "Erlang/OTP 17 [erts-6.1] [source] [64-bit] [smp:4:4] [async-threads:30] [hipe] [kernel-poll:true]\n"},
+     "Erlang/OTP 17.1 [erts-6.1] [source] [64-bit] [smp:4:4] [async-threads:30] [hipe] [kernel-poll:true]\n"},
  {memory,
      [{total,47905040},
       {connection_readers,0},
@@ -72,11 +72,11 @@ case $1 in
 
   status)
     echo "$status"
+    echo "status $2 $3" >> $TEST_OUTPUT_FILE
     ;;
 
   stop_app)
-    echo "$2 $3" >> $TEST_OUTPUT_FILE
-    exit 3 
+    echo "stop_app $2 $3" >> $TEST_OUTPUT_FILE
     ;;
 
   *)

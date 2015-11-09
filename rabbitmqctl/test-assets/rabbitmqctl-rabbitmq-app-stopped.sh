@@ -43,6 +43,7 @@ case $1 in
 
   status)
     echo "$status"
+    echo "status $2 $3" >> $TEST_OUTPUT_FILE
     ;;
 
   *)

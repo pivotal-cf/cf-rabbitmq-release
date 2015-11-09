@@ -72,10 +72,11 @@ case $1 in
 
   status)
     echo "$status"
+    echo "status $2 $3" >> $TEST_OUTPUT_FILE
     ;;
 
   stop_app)
-    echo "$2 $3" >> $TEST_OUTPUT_FILE
+    echo "stop_app $2 $3" >> $TEST_OUTPUT_FILE
     ;;
 
   *)
