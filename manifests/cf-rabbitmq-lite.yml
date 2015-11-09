@@ -169,9 +169,6 @@ properties:
         3nizs9vfxcMfGQ88CyUQSvZ4CVdF3lYbw8a96NHJH71ROQ==
         -----END CERTIFICATE-----
   rabbitmq-haproxy:
-    stats:
-      username: admin
-      password: c1oudc0w
     ports:
     - 5672
     - 5671
