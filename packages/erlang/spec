@@ -1,5 +1,5 @@
 ---
 name: erlang
 files:
-- erlang/otp_src_17.1.tar.gz
+- erlang/otp_src_18.1.tar.gz
 dependencies: []

@@ -1,8 +1,4 @@
 ---
-erlang/otp_src_17.1.tar.gz:
-  object_id: 75128d78-5cb1-4892-80db-111d80033084
-  sha: 3f5756c6ea4a6af5240412250224bd6e1c774f55
-  size: 66912681
 golang/go1.2.1.linux-amd64.tar.gz:
   object_id: c87bdd9b-8d34-43cc-b84c-bb3c493a1026
   sha: 7605f577ff6ac2d608a3a4e829b255ae2ebc8dcf
@@ -35,3 +31,7 @@ rabbitmq-server/rabbitmq_clusterer-3.5.6.ez:
   object_id: 266b0f34-871f-4b3a-9524-3305e97bbc68
   sha: c2d263b8dab2544ba9a5ce4cab326a3801073102
   size: 57463
+erlang/otp_src_18.1.tar.gz:
+  object_id: 0e56d3c4-78d4-45d1-8254-9f31f63d1b10
+  sha: 99361cb597548298cb14b104ebafa4e5a40ff442
+  size: 68231709

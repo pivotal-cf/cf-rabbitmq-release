@@ -2,7 +2,7 @@ set -e
 
 export HOME=${BOSH_INSTALL_DIR}
 
-VERSION="17.1"
+VERSION="18.1"
 
 tar xzf erlang/otp_src_${VERSION}.tar.gz
 cd otp_src_${VERSION}
