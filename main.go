@@ -3,12 +3,14 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
 	"os/exec"
 	"regexp"
 	"strings"
 )
 
 func main() {
+	stdoutLog := log.New(os.Stdout, "", 0)
 	log.SetFlags(0)
 
 	rabbitmqctlPath := flag.String("rabbitmqctl-path", "", "Path to rabbitmqctl")
@@ -26,14 +28,14 @@ func main() {
 			log.Fatalf("'rabbitmqctl status -n %s' returned with error '%s' and '%s', Unable to determine state of RabbitMQ, exiting with failure as it is not safe to proceed", *node, string(out), err)
 		}
 
-		log.Printf("'rabbitmqctl status -n %s' returned with error '%s' and '%s', Erlang VM likely down. Do not need to stop RabbitMQ", *node, string(out), err)
+		stdoutLog.Printf("'rabbitmqctl status -n %s' returned with error '%s' and '%s', Erlang VM likely down. Do not need to stop RabbitMQ", *node, string(out), err)
 		return
 	}
 
 	newVersionComponents := strings.Split(*newRabbitmqVersion, ".")
 	remoteRabbitVersion, ok := parseRemoteRabbitMQVersion(out)
 	if !ok {
-		log.Println("rabbitmqctl reported that rabbit is down, erlang VM still up. Do not need to stop RabbitMQ")
+		stdoutLog.Println("rabbitmqctl reported that rabbit is down, erlang VM still up. Do not need to stop RabbitMQ")
 		return
 	}
 

@@ -166,6 +166,10 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 			_, err := os.Stat(tmpFile)
 			Expect(os.IsNotExist(err)).To(BeTrue())
 		})
+
+		It("logs that RabbitMQ is down through stdout (no need to stop, not an error)", func() {
+			Eventually(session.Out).Should(gbytes.Say("Do not need to stop RabbitMQ"))
+		})
 	})
 
 	Context("When the erlang VM is not running", func() {
@@ -186,6 +190,10 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 			_, err := os.Stat(tmpFile)
 			Expect(os.IsNotExist(err)).To(BeTrue())
 		})
+
+		It("logs that the Erlang VM is down through stdout (no need to stop)", func() {
+			Eventually(session.Out).Should(gbytes.Say("Do not need to stop RabbitMQ"))
+		})
 	})
 
 	Context("When rabbitmqctl cannot reach the remote machine", func() {
@@ -205,6 +213,10 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		It("doesn't call stop app", func() {
 			_, err := os.Stat(tmpFile)
 			Expect(os.IsNotExist(err)).To(BeTrue())
+		})
+
+		It("logs to stderr, because we're in an unsafe state", func() {
+			Eventually(session.Err).Should(gbytes.Say("not safe to proceed"))
 		})
 	})
 
