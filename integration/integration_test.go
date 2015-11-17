@@ -64,6 +64,15 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		Expect(os.RemoveAll(tmpDir)).To(Succeed())
 	})
 
+	Context("Any time the tool is run", func() {
+		It("should log the arguments it has received", func() {
+			Eventually(session.Out).Should(gbytes.Say("Checking whether upgrade preparation is necessary:"))
+			Eventually(session.Out).Should(gbytes.Say("-rabbitmqctl-path /idontexist/rabbitmqctl"))
+			Eventually(session.Out).Should(gbytes.Say("-node node"))
+			Eventually(session.Out).Should(gbytes.Say("-new-rabbitmq-version 0.0.1"))
+		})
+	})
+
 	Context("When there is no new version of rabbit", func() {
 		BeforeEach(func() {
 			cwd, err := os.Getwd()
@@ -122,6 +131,10 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 			contents, err := ioutil.ReadFile(tmpFile)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(contents).To(Equal([]byte("-n my-node\n")))
+		})
+
+		It("logs to stdout that it's stopping Rabbit", func() {
+			Eventually(session.Out).Should(gbytes.Say("Stopping RabbitMQ"))
 		})
 	})
 
@@ -217,6 +230,33 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 		It("logs to stderr, because we're in an unsafe state", func() {
 			Eventually(session.Err).Should(gbytes.Say("not safe to proceed"))
+		})
+	})
+
+	Context("When the stop_app fails", func() {
+		BeforeEach(func() {
+			cwd, err := os.Getwd()
+			Expect(err).NotTo(HaveOccurred())
+
+			args = []string{
+				"-rabbitmqctl-path", filepath.Join(cwd, "test-assets", "rabbitmqctl-stop_app-fails.sh"),
+				"-node", "my-node",
+				"-new-rabbitmq-version", "3.5.6",
+			}
+		})
+
+		itExitsWithNonZero()
+
+		It("calls stop app", func() {
+			Eventually(session).Should(gexec.Exit())
+
+			contents, err := ioutil.ReadFile(tmpFile)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(contents).To(Equal([]byte("-n my-node\n")))
+		})
+
+		It("provides a meaningful error", func() {
+			Eventually(session.Err).Should(gbytes.Say("Failed to stop RabbitMQ"))
 		})
 	})
 
