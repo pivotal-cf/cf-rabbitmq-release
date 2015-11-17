@@ -81,7 +81,7 @@ end
   #    /etc/hosts.
   #    See http://erlang.org/doc/apps/erts/inet_cfg.html for more info.
   DIR=$(${MKTEMP} -d)
-  printf "${HOSTS}{lookup, [file]}.\n" >> ${DIR}/erl_inetrc
+  printf "${HOSTS}{lookup, [file, native]}.\n" >> ${DIR}/erl_inetrc
   ${CP} ${DIR}/erl_inetrc ${ERL_INETRC}
 
   # If we are running on the old node naming strategy eg rabbit@node* then copy the new erl_inetrc for use later in the node name migration
