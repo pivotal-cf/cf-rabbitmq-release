@@ -53,6 +53,8 @@ func main() {
 			return
 		}
 	}
+
+	stdoutLog.Println("Safe to proceed without stopping RabbitMQ application, exiting: No breaking upgrade")
 }
 
 type Args struct {

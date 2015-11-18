@@ -95,7 +95,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		})
 	})
 
-	Context("When there is no new version of rabbit", func() {
+	Context("When there is no new version of RabbitMQ or Erlang", func() {
 		BeforeEach(func() {
 			cwd, err := os.Getwd()
 			Expect(err).NotTo(HaveOccurred())
@@ -109,22 +109,10 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 		itExitsWithZero()
 		itDoesntCallStopApp()
-	})
 
-	Context("When there is no new version of Erlang", func() {
-		BeforeEach(func() {
-			cwd, err := os.Getwd()
-			Expect(err).NotTo(HaveOccurred())
-			args = []string{
-				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-erlang-17-rabbit-3.4.3.1.sh"),
-				"-node", "my-node",
-				"-new-rabbitmq-version", "3.4.3.1",
-				"-new-erlang-version", "17",
-			}
+		It("logs the fact that it doesn't need to stop RabbitMQ", func() {
+			Eventually(session.Out).Should(gbytes.Say("Safe to proceed without stopping RabbitMQ application, exiting: No breaking upgrade"))
 		})
-
-		itExitsWithZero()
-		itDoesntCallStopApp()
 	})
 
 	Context("When upgrading Erlang", func() {
