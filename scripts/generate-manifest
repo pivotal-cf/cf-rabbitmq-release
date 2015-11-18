@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -ef -o pipefail
+
+set -u
+
+root_dir=$(cd "$(dirname "$0")/.." && pwd)
+
+templates="${root_dir}/templates"
+
+infrastructure="${1:?}"
+
+shift
+
+if [ "$infrastructure" != "aws" ]; then
+  echo "usage: ./scripts/generate-manifest aws [stubs...]" 1>&2
+  exit 1
+fi
+
+spiff merge \
+  "${templates}/cf-rabbitmq-deployment.yml" \
+  "${templates}/cf-rabbitmq-infrastructure-${infrastructure}.yml" \
+  "$@"

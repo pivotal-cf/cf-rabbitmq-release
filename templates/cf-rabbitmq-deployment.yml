@@ -1,0 +1,168 @@
+director_uuid: uuid
+name: cf-rabbitmq
+
+releases:
+- name: cf-rabbitmq
+  version: latest
+
+jobs:
+- name: rmq_z1
+  release: cf-rabbitmq
+  template: rabbitmq-server
+  instances: 1
+  resource_pool: services-small-z1
+  persistent_disk: 2048
+  networks:
+  - name: rabbitmq_z1
+    static_ips: (( merge ))
+
+- name: rmq_z2
+  release: cf-rabbitmq
+  template: rabbitmq-server
+  instances: 1
+  resource_pool: services-small-z2
+  persistent_disk: 2048
+  networks:
+  - name: rabbitmq_z2
+    static_ips: (( merge ))
+
+- name: rmq-broker
+  release: cf-rabbitmq
+  template: rabbitmq-broker
+  instances: 1
+  resource_pool: services-small-z1
+  networks:
+  - name: rabbitmq_z1
+    static_ips: (( merge ))
+
+- name: haproxy_z1
+  release: cf-rabbitmq
+  template: rabbitmq-haproxy
+  instances: 1
+  resource_pool: services-small-z1
+  networks:
+  - name: rabbitmq_z1
+    static_ips: ((merge))
+
+- name: haproxy_z2
+  release: cf-rabbitmq
+  template: rabbitmq-haproxy
+  instances: 1
+  resource_pool: services-small-z2
+  networks:
+  - name: rabbitmq_z2
+    static_ips: ((merge))
+
+- name: broker-registrar
+  release: cf-rabbitmq
+  template: broker-registrar
+  instances: 1
+  lifecycle: errand
+  networks:
+  - name: rabbitmq_z1
+  properties:
+    broker:
+      protocol: http
+      host: (( jobs.[2].networks.[0].static_ips.[0] ))
+      port: 4567
+      name: p-rabbitmq
+      username: (( .properties.rabbitmq-broker.service.username ))
+      password: (( .properties.rabbitmq-broker.service.password ))
+  resource_pool: services-small-z1
+
+- name: broker-deregistrar
+  release: cf-rabbitmq
+  template: broker-deregistrar
+  instances: 1
+  lifecycle: errand
+  networks:
+  - name: rabbitmq_z1
+  properties:
+    broker:
+      protocol: http
+      host: (( jobs.[2].networks.[0].static_ips.[0] ))
+      port: 4567
+      name: (( jobs.[5].properties.broker.name ))
+      username: (( .properties.rabbitmq-broker.service.username ))
+      password: (( .properties.rabbitmq-broker.service.password ))
+  resource_pool: services-small-z1
+
+properties:
+  # for broker and route registrars
+  cf:
+    domain: cf_domain
+    admin_password: cf_password
+    admin_username: cf_username
+    api_url: cf_api_url
+    nats: 
+      host: "" 
+      port: "4222"
+      password: nats_password 
+      username: nats_username
+  route-registrar:
+    target_ip: (( jobs.[3].networks.[0].static_ips.[0] ))
+  rabbitmq-server:
+    plugins:
+    - rabbitmq_management
+    - rabbitmq_mqtt
+    - rabbitmq_stomp
+    administrators:
+      broker:
+        username: username
+        password: password
+    static_ips: (( merge )) 
+    ssl:
+      cert: 
+      key: 
+      cacert: 
+  rabbitmq-haproxy:
+    ports:
+    - 5672
+    - 5671
+    - 1883
+    - 8883
+    - 61613
+    - 61614
+    - 15672
+    - 15674
+    server_ips: (( .properties.rabbitmq-server.static_ips ))
+    stats:
+      username: username
+      password: password
+  rabbitmq-broker:
+    cc_endpoint: http://api.domain
+    uaa_client:
+      client_id: cf
+      username: (( .properties.cf.admin_username ))
+      password: (( .properties.cf.admin_password ))
+    service:
+      username: "p1-rabbit"
+      password: "p1-rabbit-default-password"
+      url: (( "http://" jobs.[2].networks.[0].static_ips.[0] ":4567" ))
+    logging:
+      level: debug
+      print_stack_traces: false
+    rabbitmq:
+      operator_set_policy:
+        enabled: true
+        policy_name: "operator_set_policy"
+        policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
+        policy_priority: 50
+      management_domain: pivotal-rabbitmq.(( .properties.cf.domain ))
+      ssl: true
+      hosts: (( merge ))
+      administrator:
+        username: (( .properties.rabbitmq-server.administrators.broker.username ))
+        password: (( .properties.rabbitmq-server.administrators.broker.password ))
+
+networks: (( merge ))
+
+resource_pools: (( merge ))
+
+update:
+  canaries: 1
+  canary_watch_time: 30000-180000
+  update_watch_time: 30000-180000
+  max_in_flight: 4
+
+compilation: (( merge ))
