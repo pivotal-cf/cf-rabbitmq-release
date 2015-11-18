@@ -29,7 +29,18 @@ In your inception VM...
 
 ### Create a deployment and deploy it
 
-#### AWS
+#### Using spiff templates to generate deployment manifest
+
+##### AWS
+
+- adjust `templates/stubs/sample-aws.yml` to your needs
+- generate deployment manifest: `./scripts/generate-manifest aws <your stub> > /path/to/generated/manifest`
+- set Bosh deployment: `bosh deployment /path/to/generated/manifest`
+- deploy: `bosh deploy`
+
+#### Using a handcrafted deployment manifest 
+
+##### AWS
 
 - edit [`manifests/cf-rabbitmq-aws.yml`](https://github.com/pivotal-cf/cf-rabbitmq-release/blob/master/manifests/cf-rabbitmq-aws.yml)
   - set the `director_uuid` to the value shown by `bosh status --uuid`
@@ -71,7 +82,7 @@ In your inception VM...
 
 Note: TLS versions 1.1 and 1.2 are enabled by default.
 
-#### vSphere
+##### vSphere
 
 For vSphere, you similarly want to prepare a deployment
 manifest. Essentially it's a broadly similar process to AWS with
