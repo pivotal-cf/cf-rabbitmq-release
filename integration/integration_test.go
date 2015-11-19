@@ -207,13 +207,13 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		})
 	})
 
-	Context("When rabbitmqctl cannot reach the remote epmd but VM is up", func() {
+	Context("When rabbitmqctl cannot reach the remote epmd but host seems up", func() {
 		BeforeEach(func() {
 			cwd, err := os.Getwd()
 			Expect(err).NotTo(HaveOccurred())
 
 			args = []string{
-				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-epmd-down-vm-up.sh"),
+				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-epmd-down-host-up.sh"),
 				"-node", "my-node",
 				"-new-rabbitmq-version", "3.4.3.1",
 				"-new-erlang-version", "17",
@@ -228,13 +228,13 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		})
 	})
 
-	Context("When rabbitmqctl cannot reach the remote vm", func() {
+	Context("When rabbitmqctl cannot reach the remote host", func() {
 		BeforeEach(func() {
 			cwd, err := os.Getwd()
 			Expect(err).NotTo(HaveOccurred())
 
 			args = []string{
-				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-vm-down.sh"),
+				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-host-down.sh"),
 				"-node", "my-node",
 				"-new-rabbitmq-version", "3.4.3.1",
 				"-new-erlang-version", "17",

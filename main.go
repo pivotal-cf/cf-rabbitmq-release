@@ -23,15 +23,13 @@ func main() {
 	rabbitMQCtl := rabbitmqctl.New(args.rabbitmqctlPath)
 
 	status, err := rabbitMQCtl.Status(args.node)
-	if _, ok := err.(*rabbitmqctl.UnreachableVMError); ok {
-		log.Fatalf("Not safe to proceed, exiting: %s", err)
-	}
-	if _, ok := err.(*rabbitmqctl.UnreachableEpmdError); ok {
-		stdoutLog.Printf("Safe to proceed without stopping RabbitMQ application, exiting: %s", err)
-		return
-	} else if _, ok := err.(*rabbitmqctl.StoppedRabbitNodeError); ok {
-		stdoutLog.Printf("Safe to proceed without stopping RabbitMQ application, exiting: %s", err)
-		return
+	if err != nil {
+		if err.Status == rabbitmqctl.UnreachableHost {
+			log.Fatalf("Not safe to proceed, exiting: %s", err)
+		} else if err.Status == rabbitmqctl.UnreachableEpmd || err.Status == rabbitmqctl.StoppedRabbitNode {
+			stdoutLog.Printf("Safe to proceed without stopping RabbitMQ application, exiting: %s", err)
+			return
+		}
 	}
 
 	deployedRabbitVersion, ok := status.RabbitMQVersion()

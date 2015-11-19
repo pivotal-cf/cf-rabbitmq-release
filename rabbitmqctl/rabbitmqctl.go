@@ -8,27 +8,21 @@ import (
 	"strings"
 )
 
-type UnreachableVMError struct {
+type Status int
+
+const (
+	UnreachableHost Status = iota
+	UnreachableEpmd
+	StoppedRabbitNode
+	Unknown
+)
+
+type Error struct {
 	Message string
+	Status  Status
 }
 
-func (e *UnreachableVMError) Error() string {
-	return e.Message
-}
-
-type UnreachableEpmdError struct {
-	Message string
-}
-
-func (e *UnreachableEpmdError) Error() string {
-	return e.Message
-}
-
-type StoppedRabbitNodeError struct {
-	Message string
-}
-
-func (e *StoppedRabbitNodeError) Error() string {
+func (e *Error) Error() string {
 	return e.Message
 }
 
@@ -40,19 +34,19 @@ func New(path string) *RabbitMQCtl {
 	return &RabbitMQCtl{path}
 }
 
-func (r *RabbitMQCtl) Status(node string) (RabbitMQCtlStatus, error) {
+func (r *RabbitMQCtl) Status(node string) (RabbitMQCtlStatus, *Error) {
 	out, err := exec.Command(r.path, "status", "-n", node).CombinedOutput()
 
 	if err != nil {
 		if strings.Contains(string(out), "timeout (timed out)") {
-			return RabbitMQCtlStatus{}, &UnreachableVMError{"Unable to reach epmd and VM seems down"}
+			return RabbitMQCtlStatus{}, &Error{Message: "Unable to reach epmd and host seems down", Status: UnreachableHost}
 		} else if strings.Contains(string(out), "address (cannot connect to host/port") {
-			return RabbitMQCtlStatus{}, &UnreachableEpmdError{"Unable to reach epmd but VM seems up"}
+			return RabbitMQCtlStatus{}, &Error{Message: "Unable to reach epmd but host seems up", Status: UnreachableEpmd}
 		} else if strings.Contains(string(out), "node 'rabbit' not running at all") {
-			return RabbitMQCtlStatus{}, &StoppedRabbitNodeError{"No rabbit node running"}
+			return RabbitMQCtlStatus{}, &Error{Message: "No rabbit node running", Status: StoppedRabbitNode}
 		}
 
-		return RabbitMQCtlStatus{}, errors.New("Unknown error")
+		return RabbitMQCtlStatus{}, &Error{Message: "Unknown error", Status: Unknown}
 	}
 
 	return RabbitMQCtlStatus{string(out)}, nil

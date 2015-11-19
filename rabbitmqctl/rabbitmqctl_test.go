@@ -50,13 +50,13 @@ var _ = Describe("Rabbitmqctl", func() {
 	})
 
 	Describe("Status", func() {
-		statusForScriptWithNode := func(script, node string) (RabbitMQCtlStatus, error) {
+		statusForScriptWithNode := func(script, node string) (RabbitMQCtlStatus, *Error) {
 			cwd, _ := os.Getwd()
 			path := filepath.Join(cwd, "test-assets", script)
 			return New(path).Status(node)
 		}
 
-		statusForScript := func(script string) (RabbitMQCtlStatus, error) {
+		statusForScript := func(script string) (RabbitMQCtlStatus, *Error) {
 			return statusForScriptWithNode(script, "some-node")
 		}
 
@@ -64,31 +64,35 @@ var _ = Describe("Rabbitmqctl", func() {
 			_, err := statusForScriptWithNode("rabbitmqctl-erlang-17-rabbit-3.4.3.1.sh", "my-node")
 			Expect(err).NotTo(HaveOccurred())
 
-			contents, err := ioutil.ReadFile(tmpFile)
-			Expect(err).NotTo(HaveOccurred())
+			contents, ioErr := ioutil.ReadFile(tmpFile)
+			Expect(ioErr).NotTo(HaveOccurred())
 
 			Expect(string(contents)).To(ContainSubstring("status -n my-node\n"))
 		})
 
 		Context("Status cannot be retrieved", func() {
-			It("returns a UnreachableVMError when the call returns nonzero due to timeout", func() {
-				_, err := statusForScript("rabbitmqctl-vm-down.sh")
-				Expect(err).To(MatchError(&UnreachableVMError{"Unable to reach epmd and VM seems down"}))
+			It("returns UnreachableHost when the call returns nonzero due to timeout", func() {
+				_, err := statusForScript("rabbitmqctl-host-down.sh")
+				Expect(err).To(MatchError("Unable to reach epmd and host seems down"))
+				Expect(err.Status).To(Equal(UnreachableHost))
 			})
 
 			It("returns a UnreachableEpmdError when the call returns nonzero due to epmd not running", func() {
-				_, err := statusForScript("rabbitmqctl-epmd-down-vm-up.sh")
-				Expect(err).To(MatchError(&UnreachableEpmdError{"Unable to reach epmd but VM seems up"}))
+				_, err := statusForScript("rabbitmqctl-epmd-down-host-up.sh")
+				Expect(err).To(MatchError("Unable to reach epmd but host seems up"))
+				Expect(err.Status).To(Equal(UnreachableEpmd))
 			})
 
 			It("returns a StoppedRabbitNodeError when there's no 'rabbit' node running", func() {
 				_, err := statusForScript("rabbitmqctl-stopped-rabbit-node.sh")
-				Expect(err).To(MatchError(&StoppedRabbitNodeError{"No rabbit node running"}))
+				Expect(err).To(MatchError("No rabbit node running"))
+				Expect(err.Status).To(Equal(StoppedRabbitNode))
 			})
 
 			It("returns a generic error when there is some unspecified error", func() {
 				_, err := statusForScript("rabbitmqctl-unknown-error.sh")
-				Expect(err).To(MatchError(errors.New("Unknown error")))
+				Expect(err).To(MatchError("Unknown error"))
+				Expect(err.Status).To(Equal(Unknown))
 			})
 		})
 
