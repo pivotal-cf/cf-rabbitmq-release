@@ -1,0 +1,21 @@
+---
+name: smoke-tests
+packages:
+- golang
+- cf-rabbitmq-smoke-tests
+- cf-cli
+templates:
+  config.json.erb: config.json
+  errand.sh.erb: bin/run
+properties:
+  cf.api_url:
+    description: 'Full URL of Cloud Foundry API'
+  cf.domain:
+    description: 'App domain for Cloud Foundry'
+  cf.admin_username:
+    description: 'Username of the admin user'
+  cf.admin_password:
+    description: 'Password of the admin user'
+  broker.service_name:
+    description: Service name displayed in the catalog metadata
+    default: p-rabbitmq

@@ -75,6 +75,18 @@ jobs:
       password: "p1-rabbit-devpwd"
   resource_pool: services-small
 
+- name: smoke-tests
+  release: cf-rabbitmq
+  template: smoke-tests
+  instances: 1
+  lifecycle: errand
+  networks:
+  - name: services1
+  properties:
+    broker:
+      name: p-rabbitmq
+  resource_pool: services-small
+
 properties:
   # for broker and route registrars
   cf:

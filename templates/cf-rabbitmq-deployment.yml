@@ -96,6 +96,18 @@ jobs:
       password: (( .properties.rabbitmq-broker.service.password ))
   resource_pool: services-small-z1
 
+- name: smoke-tests
+  release: cf-rabbitmq
+  template: smoke-tests
+  instances: 1
+  lifecycle: errand
+  networks:
+  - name: rabbitmq_z1
+  properties:
+    broker:
+      name: (( jobs.[5].properties.broker.name ))
+  resource_pool: services-small-z1
+
 properties:
   <<: (( merge ))
   cf:

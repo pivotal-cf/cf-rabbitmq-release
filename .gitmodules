@@ -10,3 +10,6 @@
 [submodule "src/rabbitmq-upgrade-preparation"]
 	path = src/rabbitmq-upgrade-preparation
 	url = git@github.com:pivotal-cf/rabbitmq-upgrade-preparation.git
+[submodule "src/cf-rabbitmq-smoke-tests"]
+	path = src/cf-rabbitmq-smoke-tests
+	url = git@github.com:pivotal-cf/cf-rabbitmq-smoke-tests.git

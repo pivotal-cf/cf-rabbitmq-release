@@ -1,0 +1,4 @@
+---
+name: cf-rabbitmq-smoke-tests
+files:
+- cf-rabbitmq-smoke-tests/**/*
