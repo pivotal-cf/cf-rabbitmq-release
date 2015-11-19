@@ -71,9 +71,14 @@ var _ = Describe("Rabbitmqctl", func() {
 		})
 
 		Context("Status cannot be retrieved", func() {
-			It("returns a UnreachableEpmdError when the call returns nonzero due to timeout", func() {
-				_, err := statusForScript("rabbitmqctl-unreachable-epmd.sh")
-				Expect(err).To(MatchError(&UnreachableEpmdError{"Unable to reach epmd"}))
+			It("returns a UnreachableVMError when the call returns nonzero due to timeout", func() {
+				_, err := statusForScript("rabbitmqctl-vm-down.sh")
+				Expect(err).To(MatchError(&UnreachableVMError{"Unable to reach epmd and VM seems down"}))
+			})
+
+			It("returns a UnreachableEpmdError when the call returns nonzero due to epmd not running", func() {
+				_, err := statusForScript("rabbitmqctl-epmd-down-vm-up.sh")
+				Expect(err).To(MatchError(&UnreachableEpmdError{"Unable to reach epmd but VM seems up"}))
 			})
 
 			It("returns a StoppedRabbitNodeError when there's no 'rabbit' node running", func() {
