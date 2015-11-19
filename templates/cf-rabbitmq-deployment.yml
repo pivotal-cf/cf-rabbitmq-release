@@ -1,30 +1,39 @@
+meta:
+  default:
+    rabbitmq_server:
+      properties: {}
+      templates: 
+      - release: cf-rabbitmq
+        name: rabbitmq-server
+
 director_uuid: uuid
 name: cf-rabbitmq
 
-releases:
-- name: cf-rabbitmq
-  version: latest
+releases: 
+  - <<: (( merge ))
+  - name: cf-rabbitmq
+    version: latest
 
 jobs:
 - name: rmq_z1
-  release: cf-rabbitmq
-  template: rabbitmq-server
+  templates: (( merge || meta.default.rabbitmq_server.templates ))
   instances: 1
   resource_pool: services-small-z1
   persistent_disk: 2048
   networks:
   - name: rabbitmq_z1
     static_ips: (( merge ))
+  properties: (( merge || meta.default.rabbitmq_server.properties ))
 
 - name: rmq_z2
-  release: cf-rabbitmq
-  template: rabbitmq-server
+  templates: (( merge || meta.default.rabbitmq_server.templates ))
   instances: 1
   resource_pool: services-small-z2
   persistent_disk: 2048
   networks:
   - name: rabbitmq_z2
     static_ips: (( merge ))
+  properties: (( merge || meta.default.rabbitmq_server.properties ))
 
 - name: rmq-broker
   release: cf-rabbitmq
@@ -88,7 +97,7 @@ jobs:
   resource_pool: services-small-z1
 
 properties:
-  # for broker and route registrars
+  <<: (( merge ))
   cf:
     domain: cf_domain
     admin_password: cf_password
@@ -154,7 +163,7 @@ properties:
       administrator:
         username: (( .properties.rabbitmq-server.administrators.broker.username ))
         password: (( .properties.rabbitmq-server.administrators.broker.password ))
-
+  
 networks: (( merge ))
 
 resource_pools: (( merge ))
