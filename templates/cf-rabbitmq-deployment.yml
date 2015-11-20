@@ -123,6 +123,7 @@ properties:
   route-registrar:
     target_ip: (( jobs.[3].networks.[0].static_ips.[0] ))
   rabbitmq-server:
+    config: (( merge || nil ))
     plugins:
     - rabbitmq_management
     - rabbitmq_mqtt
