@@ -38,7 +38,7 @@ RETVAL=0
 
 ensure_dir() {
     DIR=$1
-    if [ ! -d "${DIR}" ] ; then
+    if [ ! -d "${DIR}" ]; then
         mkdir -p "${DIR}"
         chown -R "${USER}":"${USER}" "${DIR}"
         chmod 755 "${DIR}"
@@ -154,8 +154,8 @@ prepare_for_upgrade () {
 
 start_rabbitmq () {
     status_rabbitmq
-    if [ "${RETVAL}" = 0 ] ; then
-        echo "RabbitMQ is currently running"
+    if [ "${RETVAL}" = 0 ]; then
+      echo "RabbitMQ is currently running" | tee -a "${INIT_LOG_DIR}/startup_stdout.log"
     else
         RETVAL=0
         ensure_dirs
@@ -179,13 +179,13 @@ start_rabbitmq () {
                 create_operator_admin
                 create_broker_admin
                 echo "$("${TIMESTAMP}"): Finished starting RabbitMQ" >> "${INIT_LOG_DIR}/startup_stdout.log"
-                echo "SUCCESS"
+                echo "SUCCESS" | tee -a "${INIT_LOG_DIR}/startup_stdout.log"
                 ;;
             *)
                 echo "$("${TIMESTAMP}"): Errored starting RabbitMQ" >> "${INIT_LOG_DIR}/startup_stdout.log"
                 echo "$("${TIMESTAMP}"): Errored starting RabbitMQ" >> "${INIT_LOG_DIR}/startup_stderr.log"
                 remove_pid
-                echo "FAILED - check ${INIT_LOG_DIR}/startup_std*.log"
+                echo "FAILED - check ${INIT_LOG_DIR}/startup_std*.log" | tee -a "${INIT_LOG_DIR}/startup_stderr.log"
                 RETVAL=1
                 ;;
         esac
@@ -194,30 +194,32 @@ start_rabbitmq () {
 
 stop_rabbitmq() {
     status_rabbitmq
-    if [ "${RETVAL}" = 0 ] ; then
+    if [ "${RETVAL}" = 0 ]; then
         set +e
         "${CONTROL}" stop "${PID_FILE}" > "${INIT_LOG_DIR}/shutdown_log" 2> "${INIT_LOG_DIR}/shutdown_err"
         RETVAL=$?
         set -e
-        if [ "${RETVAL}" = 0 ] ; then
+        if [ "${RETVAL}" = 0 ]; then
+            echo "RabbitMQ stopped, removing pidfile" | tee -a "${INIT_LOG_DIR}/shutdown_log"
             remove_pid
         else
-            echo "FAILED - check ${INIT_LOG_DIR}/shutdown_log, _err"
+            echo "FAILED - check ${INIT_LOG_DIR}/shutdown_log, _err" | tee -a "${INIT_LOG_DIR}/shutdown_err"
+            exit ${RETVAL}
         fi
     else
-        echo "RabbitMQ is not running"
+        echo "RabbitMQ is not running" | tee -a "${INIT_LOG_DIR}/shutdown_log"
         RETVAL=0
     fi
 }
 
 status_rabbitmq() {
     set +e
-    if [ "$1" != "quiet" ] ; then
+    if [ "$1" != "quiet" ]; then
         "${CONTROL}" status 2>&1
     else
         "${CONTROL}" status > /dev/null 2>&1
     fi
-    if [ $? != 0 ] ; then
+    if [ $? != 0 ]; then
         RETVAL=3
     fi
     set -e
@@ -225,10 +227,10 @@ status_rabbitmq() {
 
 restart_running_rabbitmq () {
     status_rabbitmq
-    if [ "${RETVAL}" = 0 ] ; then
+    if [ "${RETVAL}" = 0 ]; then
         restart_rabbitmq
     else
-        echo "RabbitMQ is not runnning"
+        echo "RabbitMQ is not running"
         RETVAL=0
     fi
 }
