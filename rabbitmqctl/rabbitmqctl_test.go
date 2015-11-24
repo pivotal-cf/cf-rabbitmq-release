@@ -137,12 +137,6 @@ var _ = Describe("Rabbitmqctl", func() {
 				Expect(version).To(Equal("17"))
 			})
 
-			It("returns a status with major and minor version of Erlang", func() {
-				status, _ := statusForScript("rabbitmqctl-erlang-17.1-rabbit-3.4.3.1.sh")
-				version, _ := status.ErlangVersion()
-				Expect(version).To(Equal("17.1"))
-			})
-
 			It("doesn't return an error from an Erlang version query", func() {
 				status, _ := statusForScript("rabbitmqctl-erlang-17-rabbit-3.4.3.1.sh")
 				_, err := status.ErlangVersion()

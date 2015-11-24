@@ -17,22 +17,22 @@ type ErlangVersions struct {
 }
 
 func (v *RabbitVersions) PreparationRequired() bool {
-	return isMinorOrMajorRabbitUpgrade(v.desiredVersionComponents(), v.deployedVersionComponents())
+	return isMinorOrMajorRabbitUpgrade(versionComponents(v.Desired), versionComponents(v.Deployed))
 }
 
-func (v *RabbitVersions) desiredVersionComponents() []string {
-	return strings.Split(v.Desired, ".")
-}
-
-func (v *RabbitVersions) deployedVersionComponents() []string {
-	return strings.Split(v.Deployed, ".")
-}
-
-func isMinorOrMajorRabbitUpgrade(newRabbitVersionComponents, remoteRabbitVersionComponents []string) bool {
-	return newRabbitVersionComponents[0] != remoteRabbitVersionComponents[0] ||
-		newRabbitVersionComponents[1] != remoteRabbitVersionComponents[1]
+func isMinorOrMajorRabbitUpgrade(desiredRabbitVersionComponents, deployedRabbitVersionComponents []string) bool {
+	return desiredRabbitVersionComponents[0] != deployedRabbitVersionComponents[0] ||
+		desiredRabbitVersionComponents[1] != deployedRabbitVersionComponents[1]
 }
 
 func (v *ErlangVersions) PreparationRequired() bool {
-	return v.Desired != v.Deployed
+	return isMajorErlangUpgrade(versionComponents(v.Desired), versionComponents(v.Deployed))
+}
+
+func isMajorErlangUpgrade(desiredErlangVersionComponents, deployedErlangVersionComponents []string) bool {
+	return desiredErlangVersionComponents[0] != deployedErlangVersionComponents[0]
+}
+
+func versionComponents(version string) []string {
+	return strings.Split(version, ".")
 }

@@ -129,7 +129,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		})
 
 		itExitsWithZero()
-		itCallsStopApp()
+		itDoesntCallStopApp()
 	})
 
 	Context("When upgrading RabbitMQ", func() {
