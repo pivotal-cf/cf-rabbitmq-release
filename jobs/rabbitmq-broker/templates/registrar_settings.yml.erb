@@ -3,6 +3,6 @@ message_bus_servers:
   - host: <%= p('cf.nats.host') %>:<%= p('cf.nats.port') %>
     user: <%= p('cf.nats.username') %>
     password: <%= p('cf.nats.password') %>
-external_host: pivotal-rabbitmq.<%= p('cf.domain') %>
+external_host: <%= p('route-registrar.host') %>.<%= p('cf.domain') %>
 external_ip: <%= p('route-registrar.target_ip') %>
 port: 15672

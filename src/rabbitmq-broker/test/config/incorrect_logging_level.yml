@@ -8,6 +8,9 @@ service:
   username: "p1-rabbit"
   password: "p1-rabbit-testpwd"
   url: http://127.0.0.1:4567
+  name: "p-rabbitmq"
+  uuid: 00000000-0000-0000-0000-000000000000
+  plan_uuid: 11111111-1111-1111-1111-111111111111
 logging:
   level: lolwut
 pid: /tmp/rabbitmq_gateway.pid

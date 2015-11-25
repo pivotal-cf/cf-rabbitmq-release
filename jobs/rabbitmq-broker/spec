@@ -44,6 +44,9 @@ properties:
     description: "Username used by Cloud Controller for authentication"
   rabbitmq-broker.service.password:
     description: "Password used by Cloud Controller for authentication"
+  rabbitmq-broker.service.name:
+    description: "Name of the service"
+    default: "p-rabbitmq"
   rabbitmq-broker.service.uuid:
     description: "UUID of the service"
     default: "163b47c6-a2f3-43b1-97f7-b83b37ec8ad3"
@@ -73,6 +76,9 @@ properties:
     description: "The password to use when authenticating with NATS"
   route-registrar.target_ip:
     description: "IP address RabbitMQ management UI requests will be routed to, typically that of RabbitMQ HAproxy VM"
+  route-registrar.host:
+    description: "Hostname at which to access the RabbitMQ management UI"
+    default: "pivotal-rabbitmq"
 
 templates:
   broker_config.yml.erb:    config/rabbitmq_broker.yml
