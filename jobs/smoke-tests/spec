@@ -19,3 +19,9 @@ properties:
   broker.service_name:
     description: Service name displayed in the catalog metadata
     default: p-rabbitmq
+  smoke_tests.org:
+    description: Pre-existing CF organization to be used by the smoke tests errand
+    default: ""
+  smoke_tests.timeout_scale:
+    description: Timeout scale to be used by the smoke tests errand
+    default: 3
