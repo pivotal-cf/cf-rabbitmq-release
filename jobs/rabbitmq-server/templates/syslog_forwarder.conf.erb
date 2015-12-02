@@ -29,6 +29,10 @@ input(type="imfile"
       StateFile="startup_out.log.statefile"
       Tag="rabbitmq_startup_stdout")
 
+input(type="imfile"
+      File="/var/vcap/sys/log/rabbitmq-server/access.log*"
+      Tag="rabbitmq_management_access")
+
 template(name="CfLogTemplate" type="list") {
         constant(value="<")
         property(name="pri")
