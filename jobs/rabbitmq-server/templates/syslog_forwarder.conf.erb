@@ -31,7 +31,7 @@ input(type="imfile"
 
 input(type="imfile"
       File="/var/vcap/sys/log/rabbitmq-server/access.log*"
-      Tag="rabbitmq_management_access")
+      Tag="rabbitmq_http_api_access")
 
 template(name="CfLogTemplate" type="list") {
         constant(value="<")
