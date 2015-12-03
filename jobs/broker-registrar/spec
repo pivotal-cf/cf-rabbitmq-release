@@ -25,3 +25,6 @@ properties:
     description: 'Basic Auth username for the service broker'
   broker.password:
     description: 'Basic Auth password for the service broker'
+  broker-registrar.orgs:
+    description: 'Enable service access for specific organizations. By default, access is enabled for all orgs.'
+    default: []
