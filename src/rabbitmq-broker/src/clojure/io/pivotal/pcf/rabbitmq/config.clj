@@ -133,11 +133,11 @@
                    "supportUrl"          "https://support.pivotal.io"
                    "provider"            {"name" provider-name}}
      :plans       [{:id plan-uuid
-                    :name "standard"
-                    :description "Provides a multi-tenant RabbitMQ cluster, suitable for production workloads"
+                    :name "Standard"
+                    :description "Provides a multi-tenant RabbitMQ cluster"
                     :metadata    {"displayName" "Production"
                                   "costs"       [pcf-product-cost]
-                                  "bullets"     ["RabbitMQ 3.3.5" "Multi-tenant"]}}]}))
+                                  "bullets"     ["RabbitMQ 3.5.6" "Multi-tenant"]}}]}))
 
 (defn using-tls?
   ([]
