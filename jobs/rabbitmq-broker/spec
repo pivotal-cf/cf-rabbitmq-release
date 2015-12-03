@@ -9,6 +9,11 @@ packages:
 - route-registrar
 
 properties:
+  rabbitmq-broker.route:
+    default: "pivotal-rabbitmq-broker"
+    description: "Hostname at which broker will be accessed"
+  rabbitmq-broker.ip:
+    description: "Broker IP"
   rabbitmq-broker.cc_endpoint:
     description: "URL for CC"
   rabbitmq-broker.uaa_endpoint:
@@ -32,6 +37,8 @@ properties:
     description: "Set to true if RabbitMQ cluster is configured to use TLS/SSL"
   rabbitmq-broker.rabbitmq.management_domain:
     description: "Domain that will be used to access RabbitMQ management UI, typically the system CF/CC domain."
+  rabbitmq-broker.rabbitmq.management_ip:
+    description: "IP address RabbitMQ management UI requests will be routed to, typically that of RabbitMQ HAproxy VM"
   rabbitmq-broker.logging.level:
     default: "info"
     description: "Logging level"
@@ -74,14 +81,10 @@ properties:
     description: "The user to use when authenticating with NATS"
   cf.nats.password:
     description: "The password to use when authenticating with NATS"
-  route-registrar.target_ip:
-    description: "IP address RabbitMQ management UI requests will be routed to, typically that of RabbitMQ HAproxy VM"
-  route-registrar.host:
-    description: "Hostname at which to access the RabbitMQ management UI"
-    default: "pivotal-rabbitmq"
 
 templates:
   broker_config.yml.erb:    config/rabbitmq_broker.yml
   broker_ctl.erb: bin/rabbitmq_broker_ctl
   route_registrar_ctl.erb: bin/route_registrar_ctl
-  registrar_settings.yml.erb: config/registrar_settings.yml
+  broker_registrar_settings.yml.erb: config/broker_registrar_settings.yml
+  management_registrar_settings.yml.erb: config/management_registrar_settings.yml

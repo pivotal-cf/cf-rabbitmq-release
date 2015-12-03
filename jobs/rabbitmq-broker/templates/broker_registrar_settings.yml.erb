@@ -1,0 +1,8 @@
+---
+message_bus_servers:
+  - host: <%= p('cf.nats.host') %>:<%= p('cf.nats.port') %>
+    user: <%= p('cf.nats.username') %>
+    password: <%= p('cf.nats.password') %>
+external_host: <%= p('rabbitmq-broker.route') %>.<%= p('cf.domain') %>
+external_ip: <%= p('rabbitmq-broker.ip') %>
+port: 4567 

@@ -51,8 +51,8 @@ jobs:
   properties:
     broker:
       protocol: http
-      host: 10.244.9.14
-      port: 4567
+      host: pivotal-rabbitmq-broker.bosh-lite.com
+      port: 80
       name: p-rabbitmq
       username: "p1-rabbit"
       password: "p1-rabbit-devpwd"
@@ -68,8 +68,8 @@ jobs:
   properties:
     broker:
       protocol: http
-      host: 10.244.9.14
-      port: 4567
+      host: pivotal-rabbitmq-broker.bosh-lite.com
+      port: 80
       name: p-rabbitmq
       username: "p1-rabbit"
       password: "p1-rabbit-devpwd"
@@ -99,9 +99,6 @@ properties:
       port: "4222"
       username: "nats"
       password: "nats"
-  route-registrar:
-    target_ip: "10.244.9.50"
-    host: pivotal-rabbitmq
   rabbitmq-server:
     plugins:
     - rabbitmq_management
@@ -198,6 +195,8 @@ properties:
       username: admin
       password: admin
   rabbitmq-broker:
+    route: pivotal-rabbitmq-broker
+    ip: 10.244.9.14
     cc_endpoint: http://api.bosh-lite.com
     uaa_client:
       client_id: cf
@@ -206,7 +205,6 @@ properties:
     service:
       username: "p1-rabbit"
       password: "p1-rabbit-devpwd"
-      url: http://10.244.9.14:4567
       name: p-rabbitmq
       uuid: 163b47c6-a2f3-43b1-97f7-b83b37ecabcd
       plan_uuid: 4e816145-4e71-4e24-a402-0c686b868e2d
@@ -220,6 +218,7 @@ properties:
         policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
         policy_priority: 50
       management_domain: pivotal-rabbitmq.bosh-lite.com
+      management_ip: "10.244.9.50"
       ssl: |
         -----BEGIN CERTIFICATE-----
         MIIC+zCCAeOgAwIBAgIBAjANBgkqhkiG9w0BAQUFADAnMRUwEwYDVQQDEwxNeVRl

@@ -47,8 +47,8 @@ jobs:
   properties:
     broker:
       protocol: http
-      host: 10.10.38.7
-      port: 4567
+      host: pivotal-rabbitmq-broker.your_cc_endpoint.com
+      port: 80
       name: p-rabbitmq
       username: "p1-rabbit"
       password: "p1-rabbit-default-password"
@@ -64,8 +64,8 @@ jobs:
   properties:
     broker:
       protocol: http
-      host: 10.10.38.7
-      port: 4567
+      host: pivotal-rabbitmq-broker.your_cc_endpoint.com
+      port: 80
       name: p-rabbitmq
       username: "p1-rabbit"
       password: "p1-rabbit-default-password"
@@ -95,9 +95,6 @@ properties:
       port: "4222"
       password: your-nats-password
       username: your-nats-username
-  route-registrar:
-    target_ip: "10.10.38.8"
-    host: pivotal-rabbitmq
   rabbitmq-server:
     plugins:
     - rabbitmq_management
@@ -135,6 +132,8 @@ properties:
       username: admin
       password: admin
   rabbitmq-broker:
+    route: pivotal-rabbitmq-broker
+    ip: 10.10.38.7
     cc_endpoint: http://your_cc_endpoint.com
     uaa_client:
       client_id: cf
@@ -143,7 +142,6 @@ properties:
     service:
       username: "p1-rabbit"
       password: "p1-rabbit-default-password"
-      url: http://10.10.38.7:4567
       name: p-rabbitmq
       uuid: 163b47c6-a2f3-43b1-97f7-b83b37ecabcd
       plan_uuid: 4e816145-4e71-4e24-a402-0c686b868e2d
@@ -157,6 +155,7 @@ properties:
         policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
         policy_priority: 50
       management_domain: pivotal-rabbitmq.your_cc_endpoint.com
+      management_ip: "10.10.38.8"
       ssl: |
         -----BEGIN CERTIFICATE-----
         ****** KEY GOES HERE **********

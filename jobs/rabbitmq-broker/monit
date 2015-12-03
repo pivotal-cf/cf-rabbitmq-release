@@ -4,8 +4,14 @@ check process rabbitmq-broker
   stop  program "/var/vcap/jobs/rabbitmq-broker/bin/rabbitmq_broker_ctl stop"  with timeout 30 seconds
   group vcap
 
-check process route-registrar
-  with pidfile  "/var/vcap/sys/run/route-registrar/route-registrar.pid"
-  start program "/var/vcap/jobs/rabbitmq-broker/bin/route_registrar_ctl start" with timeout 10 seconds
-  stop  program "/var/vcap/jobs/rabbitmq-broker/bin/route_registrar_ctl stop"  with timeout 10 seconds
+check process broker-route-registrar
+  with pidfile  "/var/vcap/sys/run/broker-route-registrar/broker-route-registrar.pid"
+  start program "/var/vcap/jobs/rabbitmq-broker/bin/route_registrar_ctl start broker" with timeout 10 seconds
+  stop  program "/var/vcap/jobs/rabbitmq-broker/bin/route_registrar_ctl stop broker"  with timeout 10 seconds
+  group vcap
+
+check process management-route-registrar
+  with pidfile  "/var/vcap/sys/run/management-route-registrar/management-route-registrar.pid"
+  start program "/var/vcap/jobs/rabbitmq-broker/bin/route_registrar_ctl start management" with timeout 10 seconds
+  stop  program "/var/vcap/jobs/rabbitmq-broker/bin/route_registrar_ctl stop management"  with timeout 10 seconds
   group vcap
