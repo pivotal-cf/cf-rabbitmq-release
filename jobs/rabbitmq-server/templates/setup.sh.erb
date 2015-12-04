@@ -59,9 +59,9 @@ end
   JOB_IP=<%= job_ip %>
   RMQ_VERSION=3.5.6
 
-  <% if_p("syslog_aggregator.address", "syslog_aggregator.port") do %>
+  # syslog forwarding
+  /var/vcap/packages/syslog_aggregator/enable_rabbitmq_syslog $JOB_DIR/config
   /var/vcap/packages/syslog_aggregator/setup_syslog_forwarder $JOB_DIR/config
-  <% end %>
 
   # Unfortunate tight coupling. Beware.
   # We need this for CONF_ENV_FILE, HOME, ERL_INETRC, and for MNESIA_BASE
