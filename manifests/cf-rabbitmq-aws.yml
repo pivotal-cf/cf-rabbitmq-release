@@ -46,9 +46,7 @@ jobs:
   - name: services1
   properties:
     broker:
-      protocol: http
       host: pivotal-rabbitmq-broker.your_cc_endpoint.com
-      port: 80
       name: p-rabbitmq
       username: "p1-rabbit"
       password: "p1-rabbit-default-password"
@@ -63,9 +61,7 @@ jobs:
   - name: services1
   properties:
     broker:
-      protocol: http
       host: pivotal-rabbitmq-broker.your_cc_endpoint.com
-      port: 80
       name: p-rabbitmq
       username: "p1-rabbit"
       password: "p1-rabbit-default-password"
