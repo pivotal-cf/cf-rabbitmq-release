@@ -1,0 +1,10 @@
+#!/bin/bash
+set -ex
+
+cd src/rabbitmq-broker
+
+docker run --rm \
+  -v $PWD:$PWD \
+  -w $PWD \
+  cflondonservices/london-services-ci-rabbitmq:stable \
+  bash -c "bin/test"
