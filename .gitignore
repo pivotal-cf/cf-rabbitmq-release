@@ -16,3 +16,4 @@ releases/**/*.tgz
 *~
 *#
 #*
+rspec.xml
