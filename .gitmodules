@@ -13,3 +13,9 @@
 [submodule "src/cf-rabbitmq-smoke-tests"]
 	path = src/cf-rabbitmq-smoke-tests
 	url = git@github.com:pivotal-cf/cf-rabbitmq-smoke-tests.git
+[submodule "system_test/test_app"]
+	path = system_test/test_app
+	url = git://github.com/pivotal-cf/rabbit-labrat.git
+[submodule "system_test/rabbit-example-app"]
+	path = system_test/rabbit-example-app
+	url = git@github.com:pivotal-cf/rabbit-example-app.git
