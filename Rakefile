@@ -68,7 +68,7 @@ task :deploy, [
   sh "bosh -n target #{args[:bosh_target]}"
   sh "bosh -n login #{args[:bosh_username]} #{args[:bosh_password]}"
   sh "bosh -n create release --force --name cf-rabbitmq-os"
-  sh "bosh -n upload release --rebase --name cf-rabbitmq-os"
+  sh "bosh -n upload release --rebase"
   sh "bosh -n --deployment #{args[:bosh_manifest]} deploy"
 end
 
