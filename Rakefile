@@ -1,6 +1,6 @@
 require 'yaml'
 
-RELEASE_FOLDER = "./"
+RELEASE_FOLDER = "./release"
 
 load 'pipeline/release/tasks/build_final.rake'
 load 'pipeline/release/tasks/audit.rake'
