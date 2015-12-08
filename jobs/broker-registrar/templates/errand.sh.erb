@@ -16,9 +16,22 @@ BROKER_PASSWORD='<%= p("broker.password") %>'
 cf --version
 cf api --skip-ssl-validation $CF_API_URL
 cf auth $CF_ADMIN_USERNAME $CF_ADMIN_PASSWORD
+
+# Get all service brokers before we register this service
+EXISTING_SERVICE_BROKERS="$(cf service-brokers)"
+
 cf create-service-broker $BROKER_NAME $BROKER_USERNAME $BROKER_PASSWORD $BROKER_URL || cf update-service-broker $BROKER_NAME $BROKER_USERNAME $BROKER_PASSWORD $BROKER_URL
 
 <% if p("broker-registrar.orgs").empty? %>
+
+  # If the broker has already been registered, don't do service enablement
+  while read line; do
+    if [[ "$line" == "$BROKER_NAME "* ]]; then
+      echo "Service previously enabled, exiting successfully to avoid overwriting previous org"
+      exit 0
+    fi
+  done <<< "$EXISTING_SERVICE_BROKERS"
+
   cf enable-service-access $BROKER_NAME
 <% else %>
   <% p("broker-registrar.orgs").each do |org| %>
