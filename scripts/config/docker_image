@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+
+export DOCKER_IMAGE=cflondonservices/london-services-ci-rabbitmq:stable
