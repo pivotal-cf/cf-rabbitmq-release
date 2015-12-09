@@ -7,7 +7,7 @@ set -xe
 docker run --rm \
   -e BUNDLE_GEM__FURY__IO=${BUNDLE_GEM__FURY__IO} \
   -v $PWD:$PWD \
-  -v $PWD/../$BOSH_MANIFEST:/manifest \
+  -v $PWD/$BOSH_MANIFEST:/manifest \
   -w $PWD \
   $DOCKER_IMAGE \
   bash -c "bundle install && bundle exec rake --trace deploy[/manifest,$BOSH_USERNAME,$BOSH_PASSWORD,$BOSH_TARGET]"
