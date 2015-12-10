@@ -7,7 +7,7 @@ export BOSH_MANIFEST=${PWD}/${BOSH_MANIFEST}
 
 docker run --rm \
   -v $PWD:$PWD \
-  -v "${PRIVATE_KEY}:/key" \
+  -v "${BOSH_INSTANCE_SSH_KEY}:/key" \
   -v "${BOSH_MANIFEST}:/manifest" \
   -w $PWD \
   -e PROF_CF_DOMAIN=${PROF_CF_DOMAIN} \
