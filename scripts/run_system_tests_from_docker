@@ -9,7 +9,7 @@ docker run --rm \
   -v "${PWD}/${BOSH_MANIFEST}:/manifest" \
   -w $PWD \
   -e CF_DOMAIN=${CF_DOMAIN} \
-  -e CF_URL=${CF_URL} \
+  -e CF_API=${CF_API} \
   -e CF_USERNAME=${CF_USERNAME} \
   -e CF_PASSWORD=${CF_PASSWORD} \
   -e BOSH_TARGET=${BOSH_TARGET} \
