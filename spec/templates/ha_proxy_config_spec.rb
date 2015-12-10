@@ -11,7 +11,7 @@ describe 'Cluster' do
 
     [5672, 5671, 1883, 8883, 61613, 61614, 15672, 15674].each do |port|
       expect(rendered_template).to include("server node0 10.244.9.6:#{port} check inter 5000")
-      expect(rendered_template).to include("server node1 10.244.9.18:#{port} check inter 5000")
+      expect(rendered_template).to include("server node1 10.244.9.10:#{port} check inter 5000")
     end
   end
 end
