@@ -22,6 +22,8 @@ describe 'Broker Registrar' do
     end
   end
 
+  let(:broker_name) { environment.bosh_manifest.property('broker.name') }
+
   context 'when the orgs propery is not set' do
     before(:all) do
       register_broker
@@ -36,12 +38,12 @@ describe 'Broker Registrar' do
       @orgs.each do |org|
         cf.target_org(org)
         cf.target_space(@space)
-        expect(broker_available?('p-rabbitmq')).to be_truthy
+        expect(broker_available?(broker_name)).to be_truthy
       end
 
       cf.create_and_target_org(@new_org)
       cf.create_and_target_space(@space)
-      expect(broker_available?('p-rabbitmq')).to be_truthy
+      expect(broker_available?(broker_name)).to be_truthy
     end
   end
 
@@ -68,18 +70,18 @@ describe 'Broker Registrar' do
       @enabled_orgs.each do |org|
         cf.target_org(org)
         cf.target_space(@space)
-        expect(broker_available?('p-rabbitmq')).to be_truthy
+        expect(broker_available?(broker_name)).to be_truthy
       end
 
       @disabled_orgs.each do |org|
         cf.target_org(org)
         cf.target_space(@space)
-        expect(broker_available?('p-rabbitmq')).to be_falsey
+        expect(broker_available?(broker_name)).to be_falsey
       end
 
       cf.create_and_target_org(@new_org)
       cf.create_and_target_space(@space)
-      expect(broker_available?('p-rabbitmq')).to be_falsey
+      expect(broker_available?(broker_name)).to be_falsey
     end
   end
 

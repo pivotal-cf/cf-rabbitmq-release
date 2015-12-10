@@ -26,9 +26,11 @@ describe 'Using a Cloud Foundry service broker' do
     deregister_broker
   end
 
+  let(:service_name) { environment.bosh_manifest.property('broker.service.name') }
+
   let(:service) do
     Prof::MarketplaceService.new(
-      name: 'p-rabbitmq',
+      name: service_name,
       plan: 'Standard'
     )
   end
@@ -242,7 +244,7 @@ end
 
 def provides_mirrored_queue_policy_as_a_default(app)
   credentials = cf.app_vcap_services(app.name)
-  management_credentials = credentials['p-rabbitmq'].first['credentials']['protocols']['management+ssl']
+  management_credentials = credentials[service_name].first['credentials']['protocols']['management+ssl']
 
   ssh_gateway.with_port_forwarded_to(management_credentials['host'], management_credentials['port']) do |port|
     endpoint = "http://localhost:#{port}"
@@ -254,7 +256,7 @@ def provides_mirrored_queue_policy_as_a_default(app)
                                           verify: false
                                         })
 
-    vhost = credentials['p-rabbitmq'].first['credentials']['protocols']['amqp+ssl']['vhost']
+    vhost = credentials[service_name].first['credentials']['protocols']['amqp+ssl']['vhost']
     policy = client.list_policies(vhost).find do |policy|
       policy['name'] == 'operator_set_policy'
     end
