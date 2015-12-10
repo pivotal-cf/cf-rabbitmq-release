@@ -26,7 +26,7 @@ describe 'Using a Cloud Foundry service broker' do
     deregister_broker
   end
 
-  let(:service_name) { environment.bosh_manifest.property('broker.service.name') }
+  let(:service_name) { environment.bosh_manifest.property('rabbitmq-broker.service.name') }
 
   let(:service) do
     Prof::MarketplaceService.new(
