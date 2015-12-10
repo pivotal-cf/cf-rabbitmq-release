@@ -30,10 +30,10 @@ def environment
       bosh_service_broker_job_name: 'cf-rabbitmq-broker'
     }
 
-    options[:cloud_foundry_domain]   = ENV['PROF_CF_DOMAIN']   ? ENV['PROF_CF_DOMAIN']   : 'bosh-lite.com'
-    options[:cloud_foundry_username] = ENV['PROF_CF_USERNAME'] ? ENV['PROF_CF_USERNAME'] : 'admin'
-    options[:cloud_foundry_password] = ENV['PROF_CF_PASSWORD'] ? ENV['PROF_CF_PASSWORD'] : 'admin'
-    options[:cloud_foundry_api_url]  = ENV['PROF_CF_URL']      ? ENV['PROF_CF_URL']      : 'api.bosh-lite.com'
+    options[:cloud_foundry_domain]   = ENV['CF_DOMAIN']   ? ENV['CF_DOMAIN']   : 'bosh-lite.com'
+    options[:cloud_foundry_username] = ENV['CF_USERNAME'] ? ENV['CF_USERNAME'] : 'admin'
+    options[:cloud_foundry_password] = ENV['CF_PASSWORD'] ? ENV['CF_PASSWORD'] : 'admin'
+    options[:cloud_foundry_api_url]  = ENV['CF_API']      ? ENV['CF_API']      : 'api.bosh-lite.com'
 
     options[:bosh_target]          = ENV['BOSH_TARGET']   if ENV.key?('BOSH_TARGET')
     options[:bosh_username]        = ENV['BOSH_USERNAME'] if ENV.key?('BOSH_USERNAME')
