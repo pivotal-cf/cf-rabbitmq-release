@@ -3,12 +3,10 @@ set -ex
 
 . scripts/config/docker_image
 
-export BOSH_MANIFEST=${PWD}/${BOSH_MANIFEST}
-
 docker run --rm \
   -v $PWD:$PWD \
-  -v "${BOSH_INSTANCE_SSH_KEY}:/key" \
-  -v "${BOSH_MANIFEST}:/manifest" \
+  -v "${PWD}/${BOSH_INSTANCE_SSH_KEY}:/key" \
+  -v "${PWD}/${BOSH_MANIFEST}:/manifest" \
   -w $PWD \
   -e CF_DOMAIN=${CF_DOMAIN} \
   -e CF_URL=${CF_URL} \
