@@ -26,9 +26,11 @@ describe 'Using a Cloud Foundry service broker' do
     deregister_broker
   end
 
+  let(:service_name) { environment.bosh_manifest.property('rabbitmq-broker.service.name') }
+
   let(:service) do
     Prof::MarketplaceService.new(
-      name: 'p-rabbitmq',
+      name: service_name,
       plan: 'Standard'
     )
   end
@@ -50,7 +52,7 @@ describe 'Using a Cloud Foundry service broker' do
     end
 
     it 'enables TLS 1.0' do
-      rabbitmq_host = bosh_director.ips_for_job('rmq_z1', 'cf-rabbitmq').first
+      rabbitmq_host = bosh_director.ips_for_job('rmq_z1', environment.bosh_manifest.deployment_name).first
 
       expect(tls_version_enabled?(rabbitmq_host, 'tls1')).to be_truthy
       expect(tls_version_enabled?(rabbitmq_host, 'tls1_1')).to be_truthy
@@ -91,8 +93,8 @@ describe 'Using a Cloud Foundry service broker' do
       port = 12_345
       @rmq = 'rmq_z1'
       @index = 0
-      @rmq_host = bosh_director.ips_for_job(@rmq, 'cf-rabbitmq')[@index]
-      @ha_host = bosh_director.ips_for_job('haproxy_z1', 'cf-rabbitmq')[0]
+      @rmq_host = bosh_director.ips_for_job(@rmq, environment.bosh_manifest.deployment_name)[@index]
+      @ha_host = bosh_director.ips_for_job('haproxy_z1', environment.bosh_manifest.deployment_name)[0]
       @new_username = 'newusername'
       @new_password = 'newpassword'
       @nc_command = "nc -k -l #{address} #{port}"
@@ -242,7 +244,7 @@ end
 
 def provides_mirrored_queue_policy_as_a_default(app)
   credentials = cf.app_vcap_services(app.name)
-  management_credentials = credentials['p-rabbitmq'].first['credentials']['protocols']['management+ssl']
+  management_credentials = credentials[service_name].first['credentials']['protocols']['management+ssl']
 
   ssh_gateway.with_port_forwarded_to(management_credentials['host'], management_credentials['port']) do |port|
     endpoint = "http://localhost:#{port}"
@@ -254,7 +256,7 @@ def provides_mirrored_queue_policy_as_a_default(app)
                                           verify: false
                                         })
 
-    vhost = credentials['p-rabbitmq'].first['credentials']['protocols']['amqp+ssl']['vhost']
+    vhost = credentials[service_name].first['credentials']['protocols']['amqp+ssl']['vhost']
     policy = client.list_policies(vhost).find do |policy|
       policy['name'] == 'operator_set_policy'
     end

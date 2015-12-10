@@ -12,6 +12,7 @@ BROKER_NAME='<%= p("broker.name") %>'
 BROKER_URL='<%= p("broker.protocol") %>://<%= p("broker.host") %>'
 BROKER_USERNAME='<%= p("broker.username") %>'
 BROKER_PASSWORD='<%= p("broker.password") %>'
+SERVICE_NAME='<%= p("broker.service.name") %>'
 
 cf --version
 cf api --skip-ssl-validation $CF_API_URL
@@ -32,9 +33,9 @@ cf create-service-broker $BROKER_NAME $BROKER_USERNAME $BROKER_PASSWORD $BROKER_
     fi
   done <<< "$EXISTING_SERVICE_BROKERS"
 
-  cf enable-service-access $BROKER_NAME
+  cf enable-service-access $SERVICE_NAME
 <% else %>
   <% p("broker-registrar.orgs").each do |org| %>
-    cf enable-service-access $BROKER_NAME -o <%= org %>
+    cf enable-service-access $SERVICE_NAME -o <%= org %>
   <% end %>
 <% end %>

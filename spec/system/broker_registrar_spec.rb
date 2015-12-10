@@ -22,6 +22,8 @@ describe 'Broker Registrar' do
     end
   end
 
+  let(:service_name) { environment.bosh_manifest.property('rabbitmq-broker.service.name') }
+
   context 'when the orgs propery is not set' do
     before(:all) do
       register_broker
@@ -36,12 +38,12 @@ describe 'Broker Registrar' do
       @orgs.each do |org|
         cf.target_org(org)
         cf.target_space(@space)
-        expect(broker_available?('p-rabbitmq')).to be_truthy
+        expect(service_available?(service_name)).to be_truthy
       end
 
       cf.create_and_target_org(@new_org)
       cf.create_and_target_space(@space)
-      expect(broker_available?('p-rabbitmq')).to be_truthy
+      expect(service_available?(service_name)).to be_truthy
     end
   end
 
@@ -68,24 +70,24 @@ describe 'Broker Registrar' do
       @enabled_orgs.each do |org|
         cf.target_org(org)
         cf.target_space(@space)
-        expect(broker_available?('p-rabbitmq')).to be_truthy
+        expect(service_available?(service_name)).to be_truthy
       end
 
       @disabled_orgs.each do |org|
         cf.target_org(org)
         cf.target_space(@space)
-        expect(broker_available?('p-rabbitmq')).to be_falsey
+        expect(service_available?(service_name)).to be_falsey
       end
 
       cf.create_and_target_org(@new_org)
       cf.create_and_target_space(@space)
-      expect(broker_available?('p-rabbitmq')).to be_falsey
+      expect(service_available?(service_name)).to be_falsey
     end
   end
 
 end
 
-def broker_available?(name)
+def service_available?(name)
   return (cf.marketplace).include?(name)
 end
 
