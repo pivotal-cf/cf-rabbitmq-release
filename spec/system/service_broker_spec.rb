@@ -52,7 +52,7 @@ describe 'Using a Cloud Foundry service broker' do
     end
 
     it 'enables TLS 1.0' do
-      rabbitmq_host = bosh_director.ips_for_job('rmq_z1', 'cf-rabbitmq').first
+      rabbitmq_host = bosh_director.ips_for_job('rmq_z1', environment.bosh_manifest.deployment_name).first
 
       expect(tls_version_enabled?(rabbitmq_host, 'tls1')).to be_truthy
       expect(tls_version_enabled?(rabbitmq_host, 'tls1_1')).to be_truthy
@@ -93,8 +93,8 @@ describe 'Using a Cloud Foundry service broker' do
       port = 12_345
       @rmq = 'rmq_z1'
       @index = 0
-      @rmq_host = bosh_director.ips_for_job(@rmq, 'cf-rabbitmq')[@index]
-      @ha_host = bosh_director.ips_for_job('haproxy_z1', 'cf-rabbitmq')[0]
+      @rmq_host = bosh_director.ips_for_job(@rmq, environment.bosh_manifest.deployment_name)[@index]
+      @ha_host = bosh_director.ips_for_job('haproxy_z1', environment.bosh_manifest.deployment_name)[0]
       @new_username = 'newusername'
       @new_password = 'newpassword'
       @nc_command = "nc -k -l #{address} #{port}"
