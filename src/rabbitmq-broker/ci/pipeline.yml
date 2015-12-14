@@ -4,7 +4,7 @@ resources:
   type: git
   source:
     uri: git@github.com:pivotal-cf/cf-rabbitmq-release.git
-    branch: concourse
+    branch: develop
     private_key: {{git-ssh-key}}
 
 jobs:
