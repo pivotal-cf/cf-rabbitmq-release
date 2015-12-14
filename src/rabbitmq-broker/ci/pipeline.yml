@@ -1,0 +1,23 @@
+--- 
+resources:
+- name: cf-rabbitmq-release
+  type: git
+  source:
+    uri: git@github.com:pivotal-cf/cf-rabbitmq-release.git
+    branch: concourse
+    private_key: {{git-ssh-key}}
+
+jobs:
+- name: test
+  plan:
+  - get: cf-rabbitmq-release
+    trigger: true
+  - task: test
+    config:
+      inputs:
+      - name: cf-rabbitmq-release
+      platform: linux
+      image: docker:///cflondonservices/london-services-ci-rabbitmq#stable
+      run:
+        path: cf-rabbitmq-release/src/rabbitmq-broker/bin/test
+
