@@ -40,9 +40,18 @@ describe 'RabbitMQ cluster status during upgrade' do
       end
 
       log("Comparing running versions found: #{versions}")
-      # TODO: Sometimes we can have an empty array
+
       break if versions.all? {|version| version == upgraded_rabbitmq_version}
-      expect(versions.all? {|version| version.nil? || version == versions[-1]}).to be_truthy
+
+      # Makes sure we don't run nodes in different versions
+      # Example inputs for versions:
+      # ["3.4.3.1", "3.4.3.1"]
+      # [nil, "3.4.3.1"]
+      # [nil, nil]
+      # ["3.5.6", nil]
+      # ["3.5.6", "3.5.6"]
+      # [nil, "a", "a", "b"] => Failing example
+      expect(versions.uniq.compact.count).to be <= 1
 
       log("Sleeping #{sleep_interval} seconds")
       sleep sleep_interval
