@@ -17,7 +17,7 @@ jobs:
   - name: services1
     static_ips:
     - 10.244.9.6
-    - 10.244.9.18
+    - 10.244.9.10
 
 - name: rmq-broker
   release: cf-rabbitmq
@@ -106,7 +106,7 @@ properties:
         password: CkY26kTuAyZT8r2
     static_ips:
     - 10.244.9.6
-    - 10.244.9.18
+    - 10.244.9.10
     ssl:
       cert: |
         -----BEGIN CERTIFICATE-----
