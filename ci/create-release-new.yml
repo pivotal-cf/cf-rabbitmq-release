@@ -1,7 +1,7 @@
 ---
 platform: linux
 
-image: docker:///cflondonservices/london-services-ci-rabbitmq#stable
+image: docker:///cflondonservices/london-services-ci-release-builder#latest
 
 inputs:
 - name: git-develop 
