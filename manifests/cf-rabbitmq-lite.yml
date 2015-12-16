@@ -188,7 +188,7 @@ properties:
     - 15674
     server_ips:
     - 10.244.9.6
-    - 10.244.9.18
+    - 10.244.9.10
     stats:
       username: admin
       password: admin
