@@ -88,6 +88,6 @@ describe 'Broker Registrar' do
 end
 
 def service_available?(name)
-  return (cf.marketplace).include?(name)
+  !! (cf.marketplace).match(/^#{name}\s+/)
 end
 
