@@ -36,7 +36,7 @@ end
 desc 'Create the RabbitMQ BOSH release'
 task :create_release do
   Dir.chdir(RELEASE_FOLDER)
-  sh 'bosh -n create release --force --name cf-rabbitmq-os'
+  sh 'bosh -n create release --force'
 end
 
 desc 'Upload the release to the BOSH director'
