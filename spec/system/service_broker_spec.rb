@@ -31,7 +31,7 @@ describe 'Using a Cloud Foundry service broker' do
   let(:service) do
     Prof::MarketplaceService.new(
       name: service_name,
-      plan: 'Standard'
+      plan: 'standard'
     )
   end
 

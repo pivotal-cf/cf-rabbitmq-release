@@ -133,9 +133,9 @@
                    "supportUrl"          "https://support.pivotal.io"
                    "provider"            {"name" provider-name}}
      :plans       [{:id plan-uuid
-                    :name "Standard"
+                    :name "standard"
                     :description "Provides a multi-tenant RabbitMQ cluster"
-                    :metadata    {"displayName" "Production"
+                    :metadata    {"displayName" "Standard"
                                   "costs"       [pcf-product-cost]
                                   "bullets"     ["RabbitMQ 3.5.6" "Multi-tenant"]}}]}))
 

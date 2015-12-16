@@ -98,7 +98,7 @@
              :id       "00000000-0000-0000-0000-000000000000"
              :name     "p-rabbitmq"
              :bindable true)
-        (is (= "Standard"  (get plan :name)))
+        (is (= "standard"  (get plan :name)))
         (is (= "Provides a multi-tenant RabbitMQ cluster"  (get plan :description)))
         (is (some #(= "RabbitMQ 3.5.6" %) (get (get plan :metadata) :bullets)))
         ))))
