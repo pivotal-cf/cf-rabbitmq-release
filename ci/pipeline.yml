@@ -14,6 +14,13 @@ resources:
     private_key: {{git-private-key}}
     uri: git@github.com:pivotal-cf/cf-rabbitmq-release.git
 
+- name: git-london-ci-tools
+  type: git
+  source:
+    branch: develop
+    private_key: {{git-private-key}}
+    uri: git@github.com:pivotal-cf/london-ci-tools.git
+
 - name: git-london-meta
   type: git
   source:
@@ -48,6 +55,7 @@ jobs:
       trigger: true
     - get: git-develop
       trigger: true
+    - get: git-london-ci-tools
   - task: pull-stemcell
     file: git-develop/ci/pull-stemcell.yml
     config:
@@ -64,7 +72,7 @@ jobs:
         BUNDLE_GEM__FURY__IO: {{gemfury-token}}
   - put: bosh-aws
     params:
-      manifest: git-develop/manifests/cf-rabbitmq-aws-upgrade-test-src.yml
+      manifest: git-london-ci-tools/manifests/rabbitmq/develop/ci/cf-rabbitmq-aws-upgrade-test-src.yml
       stemcells:
       - pull-stemcell/stemcells/*.tgz
       releases:
@@ -74,7 +82,7 @@ jobs:
     config:
       params:
         ERRAND: broker-registrar
-        BOSH_MANIFEST: manifests/cf-rabbitmq-aws-upgrade-test-src.yml
+        BOSH_MANIFEST: ../git-london-ci-tools/manifests/rabbitmq/develop/ci/cf-rabbitmq-aws-upgrade-test-src.yml
         BOSH_TARGET: {{bosh-target-us}}
         BOSH_USERNAME: {{bosh-username-us}}
         BOSH_PASSWORD: {{bosh-password-us}}
@@ -130,6 +138,7 @@ jobs:
     - get: bosh-aws
       passed: [write-message]
     - get: git-london-meta
+    - get: git-london-ci-tools
   - task: pull-stemcell
     file: git-develop/ci/pull-stemcell.yml
     config:
@@ -147,7 +156,7 @@ jobs:
   - aggregate:
     - put: bosh-aws
       params:
-        manifest: git-develop/manifests/cf-rabbitmq-aws-upgrade-test-dst.yml
+        manifest: git-london-ci-tools/manifests/rabbitmq/develop/ci/cf-rabbitmq-aws-upgrade-test-dst.yml
         stemcells:
         - pull-stemcell/stemcells/*.tgz
         releases:
@@ -157,7 +166,7 @@ jobs:
       file: git-develop/ci/check-cluster-status.yml
       config:
         params:
-          BOSH_MANIFEST: manifests/cf-rabbitmq-aws-upgrade-test-dst.yml
+          BOSH_MANIFEST: ../git-london-ci-tools/manifests/rabbitmq/develop/ci/cf-rabbitmq-aws-upgrade-test-dst.yml
           BOSH_TARGET: {{bosh-target-us}}
           BOSH_USERNAME: {{bosh-username-us}}
           BOSH_PASSWORD: {{bosh-password-us}}
@@ -204,12 +213,13 @@ jobs:
     - get: git-develop
       passed: [delete-test-app]
       trigger: true
+    - get: git-london-ci-tools
   - task: deregister-broker
     file: git-develop/ci/run-errand.yml
     config:
       params:
         ERRAND: broker-deregistrar
-        BOSH_MANIFEST: manifests/cf-rabbitmq-aws-upgrade-test-src.yml
+        BOSH_MANIFEST: ../git-london-ci-tools/manifests/rabbitmq/develop/ci/cf-rabbitmq-aws-upgrade-test-src.yml
         BOSH_TARGET: {{bosh-target-us}}
         BOSH_USERNAME: {{bosh-username-us}}
         BOSH_PASSWORD: {{bosh-password-us}}

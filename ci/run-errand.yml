@@ -5,6 +5,7 @@ image: docker:///cflondonservices/london-services-ci-base#stable
 
 inputs:
   - name: git-develop
+  - name: git-london-ci-tools
 
 run:
   path: git-develop/ci/scripts/run-errand
