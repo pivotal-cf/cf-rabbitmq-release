@@ -6,7 +6,6 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE_DIR="$( cd "${MY_DIR}/../../../${GIT_REPO}" && pwd )"
 
 pushd "${BASE_DIR}"
-  bundle install
-  bundle exec bosh -n create release --force --with-tarball --name ${NAME}
+  bosh -n create release --force --with-tarball --name ${NAME}
 popd
 
