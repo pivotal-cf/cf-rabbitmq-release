@@ -1,0 +1,19 @@
+#!/bin/bash -eux
+
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# This script expects to live two directories below the base directory.
+BASE_DIR="$( cd "${MY_DIR}/../.." && pwd )"
+
+pushd "${BASE_DIR}"
+  CF_ORG="test-org"
+  SG_NAME="allow-all-sg"
+
+  cf api --skip-ssl-validation $CF_API
+  cf auth $CF_USERNAME $CF_PASSWORD
+
+  cf delete-security-group $SG_NAME -f
+
+  cf delete-org $CF_ORG -f 
+popd
+

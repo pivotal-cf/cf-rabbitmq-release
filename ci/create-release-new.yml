@@ -1,0 +1,15 @@
+---
+platform: linux
+
+image: docker:///cflondonservices/london-services-ci-rabbitmq#stable
+
+inputs:
+- name: git-develop 
+
+run:
+  path: git-develop/ci/scripts/create-release
+
+params:
+  NAME:
+  GIT_REPO:
+  BUNDLE_GEM__FURY__IO:

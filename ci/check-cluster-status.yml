@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image: docker:///cflondonservices/london-services-ci-base#stable
+
+inputs:
+- name: git-develop
+- name: git-london-meta
+
+run:
+  path: git-develop/ci/scripts/check-cluster-status
+
+params:
+  BOSH_MANIFEST:
+  BOSH_TARGET:
+  BOSH_USERNAME:
+  BOSH_PASSWORD:
+  BUNDLE_GEM__FURY__IO:

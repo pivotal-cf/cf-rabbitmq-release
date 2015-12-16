@@ -1,0 +1,227 @@
+---
+resources:
+- name: git-v168.x
+  type: git
+  source:
+    branch: v168.x
+    private_key: {{git-private-key}}
+    uri: git@github.com:pivotal-cf/cf-rabbitmq-release.git
+
+- name: git-develop
+  type: git
+  source:
+    branch: develop
+    private_key: {{git-private-key}}
+    uri: git@github.com:pivotal-cf/cf-rabbitmq-release.git
+
+- name: git-london-meta
+  type: git
+  source:
+    branch: develop
+    private_key: {{git-private-key}}
+    uri: git@github.com:pivotal-cf/london-meta.git
+
+- name: bosh-aws
+  type: bosh-deployment
+  source:
+    target: {{bosh-target-us}}
+    username: {{bosh-username-us}}
+    password: {{bosh-password-us}}
+    deployment: cf-rabbitmq-upgrade-test
+    ignore_ssl: true
+
+- name: bosh-lock
+  type: pool
+  source:
+    uri: git@github.com:pivotal-cf-experimental/london-services-locks.git
+    branch: master
+    pool: cf-rabbitmq-upgrade-test
+    private_key: {{git-private-key}}
+
+jobs:
+- name: deploy-old-release
+  plan:
+  - aggregate:
+    - put: bosh-lock
+      params: {acquire: true}
+    - get: git-v168.x
+      trigger: true
+    - get: git-develop
+      trigger: true
+  - task: pull-stemcell
+    file: git-develop/ci/pull-stemcell.yml
+    config:
+      params:
+        OUTPUT_PATH: stemcells
+        STEMCELL_NAME: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+        STEMCELL_VERSION: 3146
+  - task: create-old-release
+    file: git-develop/ci/create-release-old.yml
+    config:
+      params:
+        NAME: cf-rabbitmq
+        GIT_REPO: git-v168.x
+        BUNDLE_GEM__FURY__IO: {{gemfury-token}}
+  - put: bosh-aws
+    params:
+      manifest: git-develop/manifests/cf-rabbitmq-aws-upgrade-test-src.yml
+      stemcells:
+      - pull-stemcell/stemcells/*.tgz
+      releases:
+      - create-old-release/git-v168.x/dev_releases/**/*.tgz
+  - task: register-broker
+    file: git-develop/ci/run-errand.yml
+    config:
+      params:
+        ERRAND: broker-registrar
+        BOSH_MANIFEST: manifests/cf-rabbitmq-aws-upgrade-test-src.yml
+        BOSH_TARGET: {{bosh-target-us}}
+        BOSH_USERNAME: {{bosh-username-us}}
+        BOSH_PASSWORD: {{bosh-password-us}}
+        BUNDLE_GEM__FURY__IO: {{gemfury-token}}
+
+- name: deploy-test-app
+  plan:
+  - aggregate:
+    - get: bosh-lock
+      passed: [deploy-old-release]
+      trigger: true
+    - get: git-develop
+      passed: [deploy-old-release]
+      trigger: true
+    - get: bosh-aws
+      passed: [deploy-old-release]
+  - task: deploy-test-app
+    file: git-develop/ci/deploy-test-app.yml
+    config:
+      params:
+        CF_API: {{cf-api-us}}
+        CF_USERNAME: {{cf-username-us}}
+        CF_PASSWORD: {{cf-password-us}}
+        SERVICE_NAME: p-rabbitmq
+        SERVICE_PLAN: standard
+
+- name: write-message
+  plan:
+  - aggregate:
+    - get: bosh-lock
+      passed: [deploy-test-app]
+      trigger: true
+    - get: git-develop
+      passed: [deploy-test-app]
+      trigger: true
+    - get: bosh-aws
+      passed: [deploy-test-app]
+  - task: write-message
+    file: git-develop/ci/write-message.yml
+    config:
+      params:
+        CF_DOMAIN: {{cf-domain-us}}
+
+- name: upgrade-to-new-release
+  plan:
+  - aggregate:
+    - get: bosh-lock
+      trigger: true
+      passed: [write-message]
+    - get: git-develop
+      passed: [write-message]
+      trigger: true
+    - get: bosh-aws
+      passed: [write-message]
+    - get: git-london-meta
+  - task: pull-stemcell
+    file: git-develop/ci/pull-stemcell.yml
+    config:
+      params:
+        OUTPUT_PATH: stemcells
+        STEMCELL_NAME: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+        STEMCELL_VERSION: 3147
+  - task: create-new-release
+    file: git-develop/ci/create-release-new.yml
+    config:
+      params:
+        NAME: cf-rabbitmq
+        GIT_REPO: git-develop
+        BUNDLE_GEM__FURY__IO: {{gemfury-token}}
+  - aggregate:
+    - put: bosh-aws
+      params:
+        manifest: git-develop/manifests/cf-rabbitmq-aws-upgrade-test-dst.yml
+        stemcells:
+        - pull-stemcell/stemcells/*.tgz
+        releases:
+        - create-new-release/git-develop/dev_releases/**/*.tgz
+    - task: check-cluster-status
+      privileged: true
+      file: git-develop/ci/check-cluster-status.yml
+      config:
+        params:
+          BOSH_MANIFEST: manifests/cf-rabbitmq-aws-upgrade-test-dst.yml
+          BOSH_TARGET: {{bosh-target-us}}
+          BOSH_USERNAME: {{bosh-username-us}}
+          BOSH_PASSWORD: {{bosh-password-us}}
+          BUNDLE_GEM__FURY__IO: {{gemfury-token}}
+
+- name: read-message
+  plan:
+  - aggregate:
+    - get: bosh-lock
+      trigger: true
+      passed: [upgrade-to-new-release]
+    - get: git-develop
+      passed: [upgrade-to-new-release]
+      trigger: true
+  - task: read-message
+    file: git-develop/ci/read-message.yml
+    config:
+      params:
+        CF_DOMAIN: {{cf-domain-us}}
+
+- name: delete-test-app
+  plan:
+  - aggregate:
+    - get: bosh-lock
+      trigger: true
+      passed: [read-message]
+    - get: git-develop
+      passed: [read-message]
+      trigger: true
+  - task: delete-test-app
+    file: git-develop/ci/delete-test-app.yml
+    config:
+      params:
+        CF_API: {{cf-api-us}}
+        CF_USERNAME: {{cf-username-us}}
+        CF_PASSWORD: {{cf-password-us}}
+
+- name: delete-deployment
+  plan:
+  - aggregate:
+    - get: bosh-lock
+      trigger: true
+      passed: [delete-test-app]
+    - get: git-develop
+      passed: [delete-test-app]
+      trigger: true
+  - task: deregister-broker
+    file: git-develop/ci/run-errand.yml
+    config:
+      params:
+        ERRAND: broker-deregistrar
+        BOSH_MANIFEST: manifests/cf-rabbitmq-aws-upgrade-test-src.yml
+        BOSH_TARGET: {{bosh-target-us}}
+        BOSH_USERNAME: {{bosh-username-us}}
+        BOSH_PASSWORD: {{bosh-password-us}}
+        BUNDLE_GEM__FURY__IO: {{gemfury-token}}
+  - task: delete-deployment
+    file: git-develop/ci/delete-deployment.yml
+    config:
+      params:
+        NAME: cf-rabbitmq-upgrade-test
+        BOSH_TARGET: {{bosh-target-us}}
+        BOSH_USERNAME: {{bosh-username-us}}
+        BOSH_PASSWORD: {{bosh-password-us}}
+        BUNDLE_GEM__FURY__IO: {{gemfury-token}}
+  - put: bosh-lock
+    params: {release: bosh-lock}

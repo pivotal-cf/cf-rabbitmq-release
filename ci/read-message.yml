@@ -1,0 +1,13 @@
+---
+platform: linux
+
+image: docker:///cflondonservices/london-services-ci-base#stable
+
+inputs:
+  - name: git-develop
+
+run:
+  path: git-develop/ci/scripts/read-message
+
+params:
+  CF_DOMAIN:

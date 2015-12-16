@@ -1,0 +1,16 @@
+---
+platform: linux
+
+image: docker:///cflondonservices/london-services-ci-base#stable
+
+inputs:
+- name: git-develop
+
+run:
+  path: git-develop/ci/scripts/pull-stemcell
+
+params:
+  OUTPUT_PATH:
+  STEMCELL_NAME:
+  STEMCELL_VERSION:
+

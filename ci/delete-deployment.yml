@@ -1,0 +1,17 @@
+---
+platform: linux
+
+image: docker:///cflondonservices/london-services-ci-base#stable
+
+inputs:
+- name: git-develop
+
+run:
+  path: git-develop/ci/scripts/delete-deployment
+
+params:
+  NAME:
+  BOSH_TARGET:
+  BOSH_USERNAME:
+  BOSH_PASSWORD:
+  BUNDLE_GEM__FURY__IO:

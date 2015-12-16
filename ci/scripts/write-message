@@ -1,0 +1,5 @@
+#!/bin/bash -eu
+
+APP_URI="http://test-app.${CF_DOMAIN}/store"
+
+curl -XPOST -d 'original_message' ${APP_URI} 

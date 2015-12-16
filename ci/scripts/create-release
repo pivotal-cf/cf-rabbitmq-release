@@ -1,0 +1,12 @@
+#!/bin/bash -eux
+
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# This script expects to live two directories below the base directory.
+BASE_DIR="$( cd "${MY_DIR}/../../../${GIT_REPO}" && pwd )"
+
+pushd "${BASE_DIR}"
+  bundle install --path vendor/bundle
+  bundle exec bosh -n create release --force --with-tarball --name ${NAME}
+popd
+

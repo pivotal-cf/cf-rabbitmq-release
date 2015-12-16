@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image: docker:///cflondonservices/london-services-ci-base#stable
+
+inputs:
+- name: git-develop
+
+run:
+  path: git-develop/ci/scripts/deploy-test-app
+
+params:
+  CF_API:
+  CF_USERNAME:
+  CF_PASSWORD:
+  SERVICE_NAME:
+  SERVICE_PLAN:
+
+

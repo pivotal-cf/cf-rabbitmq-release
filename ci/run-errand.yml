@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image: docker:///cflondonservices/london-services-ci-base#stable
+
+inputs:
+  - name: git-develop
+
+run:
+  path: git-develop/ci/scripts/run-errand
+
+params:
+  ERRAND:
+  BOSH_MANIFEST:
+  BOSH_TARGET:
+  BOSH_USERNAME:
+  BOSH_PASSWORD:
+  BUNDLE_GEM__FURY__IO:
+

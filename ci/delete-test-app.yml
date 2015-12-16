@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image: docker:///cflondonservices/london-services-ci-base#stable
+
+inputs:
+- name: git-develop
+
+run:
+  path: git-develop/ci/scripts/delete-test-app
+
+params:
+  CF_API:
+  CF_USERNAME:
+  CF_PASSWORD:
+  CF_ORG:
+
+

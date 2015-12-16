@@ -1,0 +1,16 @@
+#!/bin/bash -eu
+
+APP_URI="http://test-app.${CF_DOMAIN}/store"
+
+EXPECTED="original_message"
+ACTUAL=`curl -s -f -XGET ${APP_URI}` 
+
+echo "Expected message: '$EXPECTED'"
+echo "Actual message: '$ACTUAL'"
+
+if [ "$EXPECTED" != "$ACTUAL" ]; then
+  echo "FAILURE: Did not get original message."
+  exit -1
+fi
+
+echo "SUCCESS"
