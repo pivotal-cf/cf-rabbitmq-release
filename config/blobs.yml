@@ -23,15 +23,15 @@ haproxy/haproxy-1.5.14.tar.gz:
   object_id: 41da4b88-799e-4d52-bdf0-a0597bffc35a
   sha: 159f5beb8fdc6b8059ae51b53dc935d91c0fb51f
   size: 1345345
-rabbitmq-server/rabbitmq-server-generic-unix-3.5.6.tar.gz:
-  object_id: 662b37f2-423c-4326-95dc-3c13751c6252
-  sha: 54cb9039f12bcea93baae73f9a66de3b6f607305
-  size: 4216909
-rabbitmq-server/rabbitmq_clusterer-3.5.6.ez:
-  object_id: 266b0f34-871f-4b3a-9524-3305e97bbc68
-  sha: c2d263b8dab2544ba9a5ce4cab326a3801073102
-  size: 57463
 erlang/otp_src_18.1.tar.gz:
   object_id: 0e56d3c4-78d4-45d1-8254-9f31f63d1b10
   sha: 99361cb597548298cb14b104ebafa4e5a40ff442
   size: 68231709
+rabbitmq-server/rabbitmq-server-generic-unix-3.5.7.tar.gz:
+  object_id: 3523a3ad-bd27-4729-8406-a9f58179953e
+  sha: 9a607ffc85f1eeaa95abf93fe8af5b6dfcc1cecd
+  size: 4222515
+rabbitmq-server/rabbitmq_clusterer-3.5.7.ez:
+  object_id: 6a564af0-06cd-4b4a-bf2f-17ecb6215cfe
+  sha: 2df9cd942c8edbd00b10530b8af63c73d49ad153
+  size: 57497
