@@ -57,7 +57,7 @@ end
   CLUSTER_CONFIG="${HOME_DIR}/etc/rabbitmq/cluster.config"
   SCRIPT_DIR="$(${DIRNAME} $0)"
   JOB_IP=<%= job_ip %>
-  RMQ_VERSION=3.5.6
+  RMQ_VERSION=3.5.7
 
   <% if_p("syslog_aggregator.address", "syslog_aggregator.port") do %>
   /var/vcap/packages/syslog_aggregator/setup_syslog_forwarder $JOB_DIR/config
