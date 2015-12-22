@@ -9,3 +9,4 @@ gem 'rspec','~> 3.1.0'
 gem "bunny", "~> 1.6.3"
 gem "mqtt",  "~> 0.1.0"
 gem "stomp", "~> 1.3.1"
+gem "prof", '~> 0.29.2'
