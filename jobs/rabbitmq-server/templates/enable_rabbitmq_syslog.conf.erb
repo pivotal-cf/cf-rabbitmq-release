@@ -1,0 +1,32 @@
+<%
+  require 'digest'
+  job_ip = spec.networks.send(spec.networks.methods(false).first).ip
+  job_ip_md5sum = Digest::MD5.hexdigest(job_ip)
+%>
+
+module(load="imfile")
+
+input(type="imfile"
+      File="/var/vcap/sys/log/rabbitmq-server/rabbit@<%= job_ip_md5sum %>.log"
+      StateFile="rabbit.log.statefile"
+      Tag="rabbitmq")
+
+input(type="imfile"
+      File="/var/vcap/sys/log/rabbitmq-server/rabbit@<%= job_ip_md5sum %>-sasl.log"
+      StateFile="rabbitsasl.log.statefile"
+      Tag="rabbitmq_sasl")
+
+input(type="imfile"
+      File="/var/vcap/sys/log/rabbitmq-server/startup_stderr.log"
+      StateFile="startup_err.log.statefile"
+      Tag="rabbitmq_startup_stderr")
+
+input(type="imfile"
+      File="/var/vcap/sys/log/rabbitmq-server/startup_stdout.log"
+      StateFile="startup_out.log.statefile"
+      Tag="rabbitmq_startup_stdout")
+
+input(type="imfile"
+      File="/var/vcap/sys/log/rabbitmq-server/access.log*"
+      Tag="rabbitmq_http_api_access")
+
