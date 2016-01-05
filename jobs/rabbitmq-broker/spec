@@ -7,6 +7,7 @@ packages:
 - util-linux
 - golang
 - route-registrar
+- syslog_aggregator
 
 properties:
   rabbitmq-broker.route:
@@ -82,9 +83,16 @@ properties:
   cf.nats.password:
     description: "The password to use when authenticating with NATS"
 
+  syslog_aggregator.address:
+    description: "Syslog drain hostname"
+  syslog_aggregator.port:
+    description: "Syslog drain port"
+
 templates:
   broker_config.yml.erb:    config/rabbitmq_broker.yml
   broker_ctl.erb: bin/rabbitmq_broker_ctl
   route_registrar_ctl.erb: bin/route_registrar_ctl
   broker_registrar_settings.yml.erb: config/broker_registrar_settings.yml
   management_registrar_settings.yml.erb: config/management_registrar_settings.yml
+  syslog_forwarder.conf.erb: config/syslog_forwarder.conf
+  broker_syslog.conf.erb:  config/broker_syslog.conf

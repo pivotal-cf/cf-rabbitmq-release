@@ -92,17 +92,25 @@ describe 'Using a Cloud Foundry service broker' do
       address = '127.0.0.1'
       port = 12_345
       @rmq = 'rmq_z1'
+      @rmq_broker = 'rmq-broker'
       @index = 0
       @rmq_host = bosh_director.ips_for_job(@rmq, environment.bosh_manifest.deployment_name)[@index]
+      @broker_host = bosh_director.ips_for_job(@rmq_broker, environment.bosh_manifest.deployment_name)[@index]
       @ha_host = bosh_director.ips_for_job('haproxy_z1', environment.bosh_manifest.deployment_name)[0]
       @new_username = 'newusername'
       @new_password = 'newpassword'
       @nc_command = "nc -k -l #{address} #{port}"
 
-      @log_listener_thread = Thread.new do
+      @rmq_server_listener_thread = Thread.new do
         ssh_gateway.execute_on(@rmq_host, 'rm log.txt')
         ssh_gateway.execute_on(@rmq_host, "pkill -f '#{@nc_command}'")
         ssh_gateway.execute_on(@rmq_host, "#{@nc_command} > log.txt")
+      end
+
+      @rmq_broker_listener_thread = Thread.new do
+        ssh_gateway.execute_on(@broker_host, 'rm log.txt')
+        ssh_gateway.execute_on(@broker_host, "pkill -f '#{@nc_command}'")
+        ssh_gateway.execute_on(@broker_host, "#{@nc_command} > log.txt")
       end
 
       modify_and_deploy_manifest do |manifest|
@@ -119,7 +127,8 @@ describe 'Using a Cloud Foundry service broker' do
     end
 
     after :context do
-      @log_listener_thread.kill
+      @rmq_server_listener_thread.kill
+      @rmq_broker_listener_thread.kill
       ssh_gateway.execute_on(@rmq_host, "pkill -f '#{@nc_command}'")
       bosh_director.deploy(environment.bosh_manifest.path)
     end
@@ -133,7 +142,7 @@ describe 'Using a Cloud Foundry service broker' do
         end
       end
 
-      it 'can configure syslog aggregator' do
+      it 'sends rabbitmq-server logs to configured syslog endpoint' do
         ssh_gateway.execute_on(@rmq_host, "curl -u #{@new_username}:#{@new_password} http://#{@rmq_host}:15672/api/overview -s")
         output = ssh_gateway.execute_on(@rmq_host, 'cat log.txt')
 
@@ -141,6 +150,13 @@ describe 'Using a Cloud Foundry service broker' do
         expect(output).to include "rabbitmq [job=#{@rmq} index=#{@index}]"
 
         expect(output).to include "rabbitmq_http_api_access [job=#{@rmq} index=#{@index}]"
+      end
+
+      it 'sends rabbitmq-broker logs to configured syslog endpoint' do
+        output = ssh_gateway.execute_on(@broker_host, 'cat log.txt')
+
+        expect(output).to include "rabbitmq_broker_startup_stdout [job=#{@rmq_broker} index=#{@index}]"
+        expect(output).to include "rabbitmq_broker_startup_stderr [job=#{@rmq_broker} index=#{@index}]"
       end
 
       it 'can change the credentials for RabbitMQ' do

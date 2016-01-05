@@ -60,7 +60,7 @@ end
   RMQ_VERSION=3.5.7
 
   # syslog forwarding
-  /var/vcap/packages/syslog_aggregator/enable_rabbitmq_syslog $JOB_DIR/config
+  /var/vcap/packages/syslog_aggregator/enable_syslog_config rabbitmq_syslog.conf $JOB_DIR/config
   /var/vcap/packages/syslog_aggregator/setup_syslog_forwarder $JOB_DIR/config
 
   # Unfortunate tight coupling. Beware.

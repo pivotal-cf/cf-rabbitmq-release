@@ -1,0 +1,11 @@
+module(load="imfile")
+
+input(type="imfile"
+      File="/var/vcap/sys/log/rabbitmq-broker/startup_stdout.log"
+      StateFile="rabbitmq-broker-startup_stdout.statefile"
+      Tag="rabbitmq_broker_startup_stdout")
+
+input(type="imfile"
+      File="/var/vcap/sys/log/rabbitmq-broker/startup_stderr.log"
+      StateFile="rabbitmq-broker-startup_stderr.statefile"
+      Tag="rabbitmq_broker_startup_stderr")

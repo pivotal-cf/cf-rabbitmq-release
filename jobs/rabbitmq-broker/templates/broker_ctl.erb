@@ -8,10 +8,11 @@ set -e
 
 NAME=rabbitmq_broker
 BROKER=/var/vcap/packages/rabbitmq-broker/bin/cf_rabbitmq_broker
-CONFIG=/var/vcap/jobs/rabbitmq-broker/config/rabbitmq_broker.yml
 DESC="RabbitMQ service broker"
 USER=vcap
 
+JOB_DIR=/var/vcap/jobs/rabbitmq-broker
+CONFIG=$JOB_DIR/config/rabbitmq_broker.yml
 INIT_LOG_DIR=/var/vcap/sys/log/rabbitmq-broker
 
 PID_FILE=/var/vcap/sys/run/rabbitmq-broker/pid
@@ -50,6 +51,11 @@ start_broker() {
         echo "RabbitMQ service broker is currently running"
     else
         RETVAL=0
+        
+        # syslog forwarding
+        /var/vcap/packages/syslog_aggregator/enable_syslog_config broker_syslog.conf $JOB_DIR/config
+        /var/vcap/packages/syslog_aggregator/setup_syslog_forwarder $JOB_DIR/config
+        
         ensure_dirs
         echo "$("${TIMESTAMP}"): Starting RabbitMQ service broker" >> "${INIT_LOG_DIR}/startup_stdout.log"
         set +e

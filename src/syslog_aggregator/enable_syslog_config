@@ -2,11 +2,13 @@
 
 set -e
 
-CONFIG_DIR=$1
+SYSLOG_FILE_NAME=$1
+CONFIG_DIR=$2
+
 
 if [[ -z $CONFIG_DIR ]]
 then
-  echo "Usage: enable_rabbitmq_syslog [config dir]"
+  echo "Usage: enable_syslog_config [config_file_name] [config dir]"
   exit 1
 fi
 
@@ -20,7 +22,7 @@ fi
 chmod 755 /var/vcap/data/sys/
 chmod 755 /var/vcap/data/sys/log/
 
-cp $CONFIG_DIR/enable_rabbitmq_syslog.conf /etc/rsyslog.d/enable_rabbitmq_syslog.conf
+cp $CONFIG_DIR/$SYSLOG_FILE_NAME /etc/rsyslog.d/$SYSLOG_FILE_NAME
 
 /usr/sbin/service rsyslog restart
 

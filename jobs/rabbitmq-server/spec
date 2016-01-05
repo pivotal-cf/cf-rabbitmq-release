@@ -55,4 +55,4 @@ templates:
   cert.pem.erb:                     etc/cert.pem
   key.pem.erb:                      etc/key.pem
   syslog_forwarder.conf.erb:        config/syslog_forwarder.conf
-  enable_rabbitmq_syslog.conf.erb:  config/enable_rabbitmq_syslog.conf
+  rabbitmq_syslog.conf.erb:         config/rabbitmq_syslog.conf
