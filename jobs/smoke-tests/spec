@@ -11,7 +11,7 @@ properties:
   cf.api_url:
     description: 'Full URL of Cloud Foundry API'
   cf.domain:
-    description: 'App domain for Cloud Foundry'
+    description: 'Sys domain for Cloud Foundry'
   cf.admin_username:
     description: 'Username of the admin user'
   cf.admin_password:
@@ -19,6 +19,9 @@ properties:
   broker.service_name:
     description: Service name displayed in the catalog metadata
     default: p-rabbitmq
+  smoke_tests.apps_domain:
+    description: 'App domain for Cloud Foundry. Defaults to cf.domain.'
+    default: ""
   smoke_tests.org:
     description: Pre-existing CF organization to be used by the smoke tests errand
     default: ""
