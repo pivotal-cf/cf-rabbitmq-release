@@ -4,10 +4,10 @@ platform: linux
 image: docker:///cflondonservices/london-services-ci-base#stable
 
 inputs:
-- name: git-develop
+- name: git-master
 
 run:
-  path: git-develop/ci/scripts/delete-test-app
+  path: git-master/ci/scripts/delete-test-app
 
 params:
   CF_API:

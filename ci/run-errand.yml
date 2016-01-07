@@ -4,11 +4,11 @@ platform: linux
 image: docker:///cflondonservices/london-services-ci-base#stable
 
 inputs:
-  - name: git-develop
+  - name: git-master
   - name: git-london-ci-tools
 
 run:
-  path: git-develop/ci/scripts/run-errand
+  path: git-master/ci/scripts/run-errand
 
 params:
   ERRAND:

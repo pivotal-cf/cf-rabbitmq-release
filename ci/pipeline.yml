@@ -7,10 +7,10 @@ resources:
     private_key: {{git-private-key}}
     uri: git@github.com:pivotal-cf/cf-rabbitmq-release.git
 
-- name: git-develop
+- name: git-master
   type: git
   source:
-    branch: develop
+    branch: master
     private_key: {{git-private-key}}
     uri: git@github.com:pivotal-cf/cf-rabbitmq-release.git
 
@@ -53,18 +53,18 @@ jobs:
       params: {acquire: true}
     - get: git-v168.x
       trigger: true
-    - get: git-develop
+    - get: git-master
       trigger: true
     - get: git-london-ci-tools
   - task: pull-stemcell
-    file: git-develop/ci/pull-stemcell.yml
+    file: git-master/ci/pull-stemcell.yml
     config:
       params:
         OUTPUT_PATH: stemcells
         STEMCELL_NAME: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
         STEMCELL_VERSION: 3146
   - task: create-old-release
-    file: git-develop/ci/create-release-old.yml
+    file: git-master/ci/create-release-old.yml
     config:
       params:
         NAME: cf-rabbitmq
@@ -78,7 +78,7 @@ jobs:
       releases:
       - create-old-release/git-v168.x/dev_releases/**/*.tgz
   - task: register-broker
-    file: git-develop/ci/run-errand.yml
+    file: git-master/ci/run-errand.yml
     config:
       params:
         ERRAND: broker-registrar
@@ -94,13 +94,13 @@ jobs:
     - get: bosh-lock
       passed: [deploy-old-release]
       trigger: true
-    - get: git-develop
+    - get: git-master
       passed: [deploy-old-release]
       trigger: true
     - get: bosh-aws
       passed: [deploy-old-release]
   - task: deploy-test-app
-    file: git-develop/ci/deploy-test-app.yml
+    file: git-master/ci/deploy-test-app.yml
     config:
       params:
         CF_API: {{cf-api-us}}
@@ -115,13 +115,13 @@ jobs:
     - get: bosh-lock
       passed: [deploy-test-app]
       trigger: true
-    - get: git-develop
+    - get: git-master
       passed: [deploy-test-app]
       trigger: true
     - get: bosh-aws
       passed: [deploy-test-app]
   - task: write-message
-    file: git-develop/ci/write-message.yml
+    file: git-master/ci/write-message.yml
     config:
       params:
         CF_DOMAIN: {{cf-domain-us}}
@@ -132,7 +132,7 @@ jobs:
     - get: bosh-lock
       trigger: true
       passed: [write-message]
-    - get: git-develop
+    - get: git-master
       passed: [write-message]
       trigger: true
     - get: bosh-aws
@@ -140,18 +140,18 @@ jobs:
     - get: git-london-meta
     - get: git-london-ci-tools
   - task: pull-stemcell
-    file: git-develop/ci/pull-stemcell.yml
+    file: git-master/ci/pull-stemcell.yml
     config:
       params:
         OUTPUT_PATH: stemcells
         STEMCELL_NAME: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
         STEMCELL_VERSION: 3153
   - task: create-new-release
-    file: git-develop/ci/create-release-new.yml
+    file: git-master/ci/create-release-new.yml
     config:
       params:
         NAME: cf-rabbitmq
-        GIT_REPO: git-develop
+        GIT_REPO: git-master
         BUNDLE_GEM__FURY__IO: {{gemfury-token}}
   - aggregate:
     - put: bosh-aws
@@ -160,10 +160,10 @@ jobs:
         stemcells:
         - pull-stemcell/stemcells/*.tgz
         releases:
-        - create-new-release/git-develop/dev_releases/**/*.tgz
+        - create-new-release/git-master/dev_releases/**/*.tgz
     - task: check-cluster-status
       privileged: true
-      file: git-develop/ci/check-cluster-status.yml
+      file: git-master/ci/check-cluster-status.yml
       config:
         params:
           BOSH_MANIFEST: ../git-london-ci-tools/manifests/rabbitmq/develop/ci/cf-rabbitmq-aws-upgrade-test-dst.yml
@@ -178,11 +178,11 @@ jobs:
     - get: bosh-lock
       trigger: true
       passed: [upgrade-to-new-release]
-    - get: git-develop
+    - get: git-master
       passed: [upgrade-to-new-release]
       trigger: true
   - task: read-message
-    file: git-develop/ci/read-message.yml
+    file: git-master/ci/read-message.yml
     config:
       params:
         CF_DOMAIN: {{cf-domain-us}}
@@ -193,11 +193,11 @@ jobs:
     - get: bosh-lock
       trigger: true
       passed: [read-message]
-    - get: git-develop
+    - get: git-master
       passed: [read-message]
       trigger: true
   - task: delete-test-app
-    file: git-develop/ci/delete-test-app.yml
+    file: git-master/ci/delete-test-app.yml
     config:
       params:
         CF_API: {{cf-api-us}}
@@ -210,12 +210,12 @@ jobs:
     - get: bosh-lock
       trigger: true
       passed: [delete-test-app]
-    - get: git-develop
+    - get: git-master
       passed: [delete-test-app]
       trigger: true
     - get: git-london-ci-tools
   - task: deregister-broker
-    file: git-develop/ci/run-errand.yml
+    file: git-master/ci/run-errand.yml
     config:
       params:
         ERRAND: broker-deregistrar
@@ -225,7 +225,7 @@ jobs:
         BOSH_PASSWORD: {{bosh-password-us}}
         BUNDLE_GEM__FURY__IO: {{gemfury-token}}
   - task: delete-deployment
-    file: git-develop/ci/delete-deployment.yml
+    file: git-master/ci/delete-deployment.yml
     config:
       params:
         NAME: cf-rabbitmq-upgrade-test

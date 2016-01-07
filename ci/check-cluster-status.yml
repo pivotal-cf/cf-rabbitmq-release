@@ -4,12 +4,12 @@ platform: linux
 image: docker:///cflondonservices/london-services-ci-base#stable
 
 inputs:
-- name: git-develop
+- name: git-master
 - name: git-london-meta
 - name: git-london-ci-tools
 
 run:
-  path: git-develop/ci/scripts/check-cluster-status
+  path: git-master/ci/scripts/check-cluster-status
 
 params:
   BOSH_MANIFEST:

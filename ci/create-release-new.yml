@@ -4,10 +4,10 @@ platform: linux
 image: docker:///cflondonservices/london-services-ci-release-builder#latest
 
 inputs:
-- name: git-develop 
+- name: git-master
 
 run:
-  path: git-develop/ci/scripts/create-release
+  path: git-master/ci/scripts/create-release
 
 params:
   NAME:
