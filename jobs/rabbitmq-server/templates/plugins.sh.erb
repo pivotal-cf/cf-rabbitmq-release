@@ -3,7 +3,9 @@
 set -e
 
 (
-  RABBITMQ_PLUGINS=/var/vcap/packages/rabbitmq-server/bin/rabbitmq-plugins
+  if [ -z $RABBITMQ_PLUGINS ]; then
+    RABBITMQ_PLUGINS=/var/vcap/packages/rabbitmq-server/bin/rabbitmq-plugins
+  fi
   PATH=$RABBITMQ_HOME/bin:$ERLANG_HOME/bin:/var/vcap/packages/ruby/bin:$PATH
 
   # This is shorthand to disable all plugins
@@ -15,7 +17,7 @@ set -e
 
   <% if_p("rabbitmq-server.plugins") do |plugins|
     plugins.each do |plugin| %>
-      REMAINING_PLUGINS=$(echo "${PLUGINS}" | sed -e 's/^\(.*\)<%= plugin %>\(.*\)$/\1\2/gm')
+      REMAINING_PLUGINS=$(echo "${PLUGINS}" | grep -v '^<%= plugin %>$')
       if [ "${REMAINING_PLUGINS}" = "${PLUGINS}" ]; then
         echo "Ignoring unrecognised plugin: <%= plugin %>"
       else
