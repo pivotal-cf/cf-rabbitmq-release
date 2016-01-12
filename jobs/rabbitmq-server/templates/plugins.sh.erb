@@ -6,10 +6,8 @@ set -e
   RABBITMQ_PLUGINS=/var/vcap/packages/rabbitmq-server/bin/rabbitmq-plugins
   PATH=$RABBITMQ_HOME/bin:$ERLANG_HOME/bin:/var/vcap/packages/ruby/bin:$PATH
 
-  for plugin in $($RABBITMQ_PLUGINS list -m -E)
-  do \
-      $RABBITMQ_PLUGINS disable ${plugin}
-  done
+  # This is shorthand to disable all plugins
+  $RABBITMQ_PLUGINS set
 
   $RABBITMQ_PLUGINS enable rabbitmq_clusterer
 
