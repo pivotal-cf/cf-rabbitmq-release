@@ -5,7 +5,7 @@ It is deployable by BOSH in the usual way.
 
 ## Updating
 
-Clone the repository and run `git submodule update --init --recursive`.
+Clone the repository and run `./scripts/update-release`.
 
 ## Documentation
 
