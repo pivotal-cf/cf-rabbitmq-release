@@ -9,3 +9,23 @@ input(type="imfile"
       File="/var/vcap/sys/log/rabbitmq-broker/startup_stderr.log"
       StateFile="rabbitmq-broker-startup_stderr.statefile"
       Tag="rabbitmq_broker_startup_stderr")
+
+input(type="imfile"
+      File="/var/vcap/sys/log/management-route-registrar/route-registrar.stdout.log"
+      StateFile="rabbitmq-broker-management-route-registrar_stdout.statefile"
+      Tag="rabbitmq_broker_management_route_registrar_stdout")
+
+input(type="imfile"
+      File="/var/vcap/sys/log/management-route-registrar/route-registrar.stderr.log"
+      StateFile="rabbitmq-broker-management-route-registrar_stderr.statefile"
+      Tag="rabbitmq_broker_management_route_registrar_stderr")
+
+input(type="imfile"
+      File="/var/vcap/sys/log/broker-route-registrar/route-registrar.stdout.log"
+      StateFile="rabbitmq-broker-broker-route-registrar_stdout.statefile"
+      Tag="rabbitmq_broker_broker_route_registrar_stdout")
+
+input(type="imfile"
+      File="/var/vcap/sys/log/broker-route-registrar/route-registrar.stderr.log"
+      StateFile="rabbitmq-broker-broker-route-registrar_stderr.statefile"
+      Tag="rabbitmq_broker_broker_route_registrar_stderr")

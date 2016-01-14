@@ -124,6 +124,10 @@ describe 'Using a Cloud Foundry service broker' do
 
         manifest['properties']['syslog_aggregator'] = { 'address' => address, 'port' => port }
       end
+
+      ssh_gateway.execute_on(@rmq_host, "curl -u #{@new_username}:#{@new_password} http://#{@rmq_host}:15672/api/overview -s")
+      ssh_gateway.execute_on(@broker_host, 'echo "This is a test log" >> /var/vcap/sys/log/management-route-registrar/route-registrar.stderr.log')
+      ssh_gateway.execute_on(@broker_host, 'echo "This is a test log" >> /var/vcap/sys/log/broker-route-registrar/route-registrar.stderr.log')
     end
 
     after :context do
@@ -143,7 +147,6 @@ describe 'Using a Cloud Foundry service broker' do
       end
 
       it 'sends rabbitmq-server logs to configured syslog endpoint' do
-        ssh_gateway.execute_on(@rmq_host, "curl -u #{@new_username}:#{@new_password} http://#{@rmq_host}:15672/api/overview -s")
         output = ssh_gateway.execute_on(@rmq_host, 'cat log.txt')
 
         expect(output).to include "rabbitmq_startup_stdout [job=#{@rmq} index=#{@index}]"
@@ -157,6 +160,10 @@ describe 'Using a Cloud Foundry service broker' do
 
         expect(output).to include "rabbitmq_broker_startup_stdout [job=#{@rmq_broker} index=#{@index}]"
         expect(output).to include "rabbitmq_broker_startup_stderr [job=#{@rmq_broker} index=#{@index}]"
+        expect(output).to include "rabbitmq_broker_management_route_registrar_stdout [job=#{@rmq_broker} index=#{@index}]"
+        expect(output).to include "rabbitmq_broker_management_route_registrar_stderr [job=#{@rmq_broker} index=#{@index}]"
+        expect(output).to include "rabbitmq_broker_broker_route_registrar_stdout [job=#{@rmq_broker} index=#{@index}]"
+        expect(output).to include "rabbitmq_broker_broker_route_registrar_stderr [job=#{@rmq_broker} index=#{@index}]"
       end
 
       it 'can change the credentials for RabbitMQ' do

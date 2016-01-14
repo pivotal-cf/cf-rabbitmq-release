@@ -108,6 +108,7 @@ case $1 in
 start)
   mkdir -p $RUN_DIR
   mkdir -p $LOG_DIR
+  chown vcap:vcap $LOG_DIR
 
   pid_guard $PIDFILE $JOB_NAME
   echo $$ > $PIDFILE
