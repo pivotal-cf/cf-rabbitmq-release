@@ -126,6 +126,10 @@ describe 'Using a Cloud Foundry service broker' do
       end
 
       ssh_gateway.execute_on(@rmq_host, "curl -u #{@new_username}:#{@new_password} http://#{@rmq_host}:15672/api/overview -s")
+
+      # Generate some logs in the shutdown_err/stderr files to test against.
+      # These files are empty at normal startup/shutdown.
+      ssh_gateway.execute_on(@rmq_host, 'echo "This is a test log" >> /var/vcap/sys/log/rabbitmq-server/shutdown_err')
       ssh_gateway.execute_on(@broker_host, 'echo "This is a test log" >> /var/vcap/sys/log/management-route-registrar/route-registrar.stderr.log')
       ssh_gateway.execute_on(@broker_host, 'echo "This is a test log" >> /var/vcap/sys/log/broker-route-registrar/route-registrar.stderr.log')
     end
@@ -150,9 +154,16 @@ describe 'Using a Cloud Foundry service broker' do
         output = ssh_gateway.execute_on(@rmq_host, 'cat log.txt')
 
         expect(output).to include "rabbitmq_startup_stdout [job=#{@rmq} index=#{@index}]"
+        expect(output).to include "rabbitmq_startup_stderr [job=#{@rmq} index=#{@index}]"
         expect(output).to include "rabbitmq [job=#{@rmq} index=#{@index}]"
 
         expect(output).to include "rabbitmq_http_api_access [job=#{@rmq} index=#{@index}]"
+
+        # NB: The following 2 expectations only work because we do a deployment
+        # as part of the test suite. This causes rabbit to be restarted, hence
+        # these files get populated.
+        expect(output).to include "rabbitmq_shutdown_log [job=#{@rmq} index=#{@index}] Stopping and halting node"
+        expect(output).to include "rabbitmq_shutdown_err [job=#{@rmq} index=#{@index}] This is a test log"
       end
 
       it 'sends rabbitmq-broker logs to configured syslog endpoint' do

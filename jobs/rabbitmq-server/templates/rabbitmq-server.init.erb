@@ -51,6 +51,11 @@ ensure_dirs() {
     ensure_dir "${HOME_DIR}"
 }
 
+chown_log_files() {
+  chown vcap:vcap "${INIT_LOG_DIR}"/startup*
+  chown vcap:vcap "${INIT_LOG_DIR}"/shutdown*
+}
+
 remove_pid() {
     rm -f "${PID_FILE}"
     rmdir "$(dirname "${PID_FILE}")" || :
@@ -159,6 +164,7 @@ start_rabbitmq () {
     else
         RETVAL=0
         ensure_dirs
+        chown_log_files
         run_script "${JOB_DIR}/bin/setup.sh"
         run_script "${JOB_DIR}/bin/plugins.sh"
         prepare_for_upgrade

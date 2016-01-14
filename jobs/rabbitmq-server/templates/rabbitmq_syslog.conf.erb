@@ -27,6 +27,16 @@ input(type="imfile"
       Tag="rabbitmq_startup_stdout")
 
 input(type="imfile"
+      File="/var/vcap/sys/log/rabbitmq-server/shutdown_log"
+      StateFile="shutdown_log.statefile"
+      Tag="rabbitmq_shutdown_log")
+
+input(type="imfile"
+      File="/var/vcap/sys/log/rabbitmq-server/shutdown_err"
+      StateFile="shutdown_err.statefile"
+      Tag="rabbitmq_shutdown_err")
+
+input(type="imfile"
       File="/var/vcap/sys/log/rabbitmq-server/access.log*"
       Tag="rabbitmq_http_api_access")
 
