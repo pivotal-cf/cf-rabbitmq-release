@@ -169,12 +169,12 @@ describe 'Using a Cloud Foundry service broker' do
       it 'sends rabbitmq-broker logs to configured syslog endpoint' do
         output = ssh_gateway.execute_on(@broker_host, 'cat log.txt')
 
-        expect(output).to include "rabbitmq_broker_startup_stdout [job=#{@rmq_broker} index=#{@index}]"
-        expect(output).to include "rabbitmq_broker_startup_stderr [job=#{@rmq_broker} index=#{@index}]"
-        expect(output).to include "rabbitmq_broker_management_route_registrar_stdout [job=#{@rmq_broker} index=#{@index}]"
-        expect(output).to include "rabbitmq_broker_management_route_registrar_stderr [job=#{@rmq_broker} index=#{@index}]"
-        expect(output).to include "rabbitmq_broker_broker_route_registrar_stdout [job=#{@rmq_broker} index=#{@index}]"
-        expect(output).to include "rabbitmq_broker_broker_route_registrar_stderr [job=#{@rmq_broker} index=#{@index}]"
+        expect(output).to include "rabbitmq-service-broker_startup_stdout [job=#{@rmq_broker} index=#{@index}]"
+        expect(output).to include "rabbitmq-service-broker_startup_stderr [job=#{@rmq_broker} index=#{@index}]"
+        expect(output).to include "rabbitmq-management-route-registrar_stdout [job=#{@rmq_broker} index=#{@index}]"
+        expect(output).to include "rabbitmq-management-route-registrar_stderr [job=#{@rmq_broker} index=#{@index}]"
+        expect(output).to include "rabbitmq-broker-route-registrar_stdout [job=#{@rmq_broker} index=#{@index}]"
+        expect(output).to include "rabbitmq-broker-route-registrar_stderr [job=#{@rmq_broker} index=#{@index}]"
       end
 
       it 'can change the credentials for RabbitMQ' do
