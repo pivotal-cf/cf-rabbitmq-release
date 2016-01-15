@@ -51,7 +51,11 @@ ensure_dirs() {
     ensure_dir "${HOME_DIR}"
 }
 
-chown_log_files() {
+ensure_log_files() {
+  touch "${INIT_LOG_DIR}"/startup_stdout.log
+  touch "${INIT_LOG_DIR}"/startup_stderr.log
+  touch "${INIT_LOG_DIR}"/shutdown_log
+  touch "${INIT_LOG_DIR}"/shutdown_err
   chown vcap:vcap "${INIT_LOG_DIR}"/startup*
   chown vcap:vcap "${INIT_LOG_DIR}"/shutdown*
 }
@@ -164,7 +168,7 @@ start_rabbitmq () {
     else
         RETVAL=0
         ensure_dirs
-        chown_log_files
+        ensure_log_files
         run_script "${JOB_DIR}/bin/setup.sh"
         run_script "${JOB_DIR}/bin/plugins.sh"
         prepare_for_upgrade
