@@ -173,8 +173,8 @@ describe 'Using a Cloud Foundry service broker' do
         expect(output).to include "rabbitmq-service-broker_startup_stderr [job=#{@rmq_broker} index=#{@index}]"
         expect(output).to include "rabbitmq-management-route-registrar_stdout [job=#{@rmq_broker} index=#{@index}]"
         expect(output).to include "rabbitmq-management-route-registrar_stderr [job=#{@rmq_broker} index=#{@index}]"
-        expect(output).to include "rabbitmq-broker-route-registrar_stdout [job=#{@rmq_broker} index=#{@index}]"
-        expect(output).to include "rabbitmq-broker-route-registrar_stderr [job=#{@rmq_broker} index=#{@index}]"
+        expect(output).to include "rabbitmq-service-broker-route-registrar_stdout [job=#{@rmq_broker} index=#{@index}]"
+        expect(output).to include "rabbitmq-service-broker-route-registrar_stderr [job=#{@rmq_broker} index=#{@index}]"
       end
 
       it 'can change the credentials for RabbitMQ' do
