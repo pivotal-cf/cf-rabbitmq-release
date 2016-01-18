@@ -88,6 +88,7 @@ properties:
       username: username
       password: password
   rabbitmq-broker:
+    ip: 10.10.38.7
     cc_endpoint: http://api.your.domain.com
     service:
       username: "p1-rabbit"
@@ -97,6 +98,7 @@ properties:
       print_stack_traces: false
     rabbitmq:
       management_domain: pivotal-rabbitmq.your.domain.com
+      management_ip: 10.10.38.8
       ssl: true
       hosts:
         - 10.10.38.8

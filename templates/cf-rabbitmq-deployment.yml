@@ -71,9 +71,7 @@ jobs:
   - name: rabbitmq_z1
   properties:
     broker:
-      protocol: http
-      host: (( jobs.[2].networks.[0].static_ips.[0] ))
-      port: 4567
+      host: pivotal-rabbitmq-broker.(( .properties.cf.domain ))
       name: p-rabbitmq
       username: (( .properties.rabbitmq-broker.service.username ))
       password: (( .properties.rabbitmq-broker.service.password ))
@@ -88,9 +86,7 @@ jobs:
   - name: rabbitmq_z1
   properties:
     broker:
-      protocol: http
-      host: (( jobs.[2].networks.[0].static_ips.[0] ))
-      port: 4567
+      host: pivotal-rabbitmq-broker.(( .properties.cf.domain ))
       name: (( jobs.[5].properties.broker.name ))
       username: (( .properties.rabbitmq-broker.service.username ))
       password: (( .properties.rabbitmq-broker.service.password ))
@@ -120,8 +116,6 @@ properties:
       port: "4222"
       password: nats_password 
       username: nats_username
-  route-registrar:
-    target_ip: (( jobs.[3].networks.[0].static_ips.[0] ))
   rabbitmq-server:
     config: (( merge || nil ))
     plugins:
@@ -152,6 +146,8 @@ properties:
       username: username
       password: password
   rabbitmq-broker:
+    route: pivotal-rabbitmq-broker
+    ip: (( jobs.[2].networks.[0].static_ips.[0] ))
     cc_endpoint: http://api.domain
     uaa_client:
       client_id: cf
@@ -171,6 +167,7 @@ properties:
         policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
         policy_priority: 50
       management_domain: pivotal-rabbitmq.(( .properties.cf.domain ))
+      management_ip: (( jobs.[3].networks.[0].static_ips.[0] ))
       ssl: true
       hosts: (( merge ))
       administrator:
