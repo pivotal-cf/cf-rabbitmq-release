@@ -1,0 +1,22 @@
+#!/bin/bash
+
+docker_status=$(boot2docker status)
+
+if [ "$docker_status" != "running" ]; then
+  echo -e "Docker is not running. You can start it up by running:\n\nboot2docker start"
+  exit 1
+fi
+
+set -ex
+
+if [ -z "$DOCKER_IMAGE" ]; then
+  DOCKER_IMAGE=cflondonservices/london-services-ci-base
+fi
+
+docker_dir=/home/vcap/pivotal-product
+
+pushd "$(dirname "$0")/.."
+  docker run --rm --volume "$PWD":"$docker_dir" --workdir "$docker_dir" \
+    "$DOCKER_IMAGE" \
+    bash -c "bundle install && function be { bundle exec \"\$*\" ; } && eval \"$*\""
+popd

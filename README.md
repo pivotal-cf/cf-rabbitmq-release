@@ -7,6 +7,14 @@ It is deployable by BOSH in the usual way.
 
 Clone the repository and run `./scripts/update-release`.
 
+## Testing
+
+### Unit Tests
+
+To run the unit tests locally, just run: `bundle exec rake spec:unit`.
+
+You can run it from docker by using `./scripts/from-docker bundle exec rake spec:unit`.
+
 ## Documentation
 
  * [BOSH Installation](docs/bosh_install.md)
