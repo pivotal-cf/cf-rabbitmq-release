@@ -71,7 +71,7 @@ jobs:
   - name: rabbitmq_z1
   properties:
     broker:
-      host: pivotal-rabbitmq-broker.(( .properties.cf.domain ))
+      host: (( "pivotal-rabbitmq-broker." .properties.cf.domain ))
       name: p-rabbitmq
       username: (( .properties.rabbitmq-broker.service.username ))
       password: (( .properties.rabbitmq-broker.service.password ))
@@ -86,7 +86,7 @@ jobs:
   - name: rabbitmq_z1
   properties:
     broker:
-      host: pivotal-rabbitmq-broker.(( .properties.cf.domain ))
+      host: (( "pivotal-rabbitmq-broker." .properties.cf.domain ))
       name: (( jobs.[5].properties.broker.name ))
       username: (( .properties.rabbitmq-broker.service.username ))
       password: (( .properties.rabbitmq-broker.service.password ))
