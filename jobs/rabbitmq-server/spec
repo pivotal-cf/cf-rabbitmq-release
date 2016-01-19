@@ -40,6 +40,10 @@ properties:
   rabbitmq-server.static_ips:
     description: "Cluster node IPs"
 
+  rabbitmq-server.fd_limit:
+    description: "The file descriptor limit for the RabbitMQ process"
+    default: 300000
+
   syslog_aggregator.address:
     description: "Syslog drain hostname"
   syslog_aggregator.port:
