@@ -37,6 +37,16 @@ describe 'Using a Cloud Foundry service broker' do
 
   let(:session) { Capybara::Session.new(:poltergeist) }
 
+  before :all do
+    @rmq = 'rmq_z1'
+    @rmq_broker = 'rmq-broker'
+    @index = 0
+    @rmq_host = bosh_director.ips_for_job(@rmq, environment.bosh_manifest.deployment_name)[@index]
+    @broker_host = bosh_director.ips_for_job(@rmq_broker, environment.bosh_manifest.deployment_name)[@index]
+    @rmq_admin_broker_username = environment.bosh_manifest.property('rabbitmq-server.administrators.broker.username')
+    @rmq_admin_broker_password = environment.bosh_manifest.property('rabbitmq-server.administrators.broker.password')
+  end
+
   context 'default deployment'  do
     it 'provides defaults', :pushes_cf_app do
       cf.push_app_and_bind_with_service(test_app, service) do |app, _|
@@ -91,11 +101,6 @@ describe 'Using a Cloud Foundry service broker' do
     before :context do
       address = '127.0.0.1'
       port = 12_345
-      @rmq = 'rmq_z1'
-      @rmq_broker = 'rmq-broker'
-      @index = 0
-      @rmq_host = bosh_director.ips_for_job(@rmq, environment.bosh_manifest.deployment_name)[@index]
-      @broker_host = bosh_director.ips_for_job(@rmq_broker, environment.bosh_manifest.deployment_name)[@index]
       @ha_host = bosh_director.ips_for_job('haproxy_z1', environment.bosh_manifest.deployment_name)[0]
       @new_username = 'newusername'
       @new_password = 'newpassword'
@@ -124,14 +129,6 @@ describe 'Using a Cloud Foundry service broker' do
 
         manifest['properties']['syslog_aggregator'] = { 'address' => address, 'port' => port }
       end
-
-      ssh_gateway.execute_on(@rmq_host, "curl -u #{@new_username}:#{@new_password} http://#{@rmq_host}:15672/api/overview -s")
-
-      # Generate some logs in the shutdown_err/stderr files to test against.
-      # These files are empty at normal startup/shutdown.
-      ssh_gateway.execute_on(@rmq_host, 'echo "This is a test log" >> /var/vcap/sys/log/rabbitmq-server/shutdown_err')
-      ssh_gateway.execute_on(@broker_host, 'echo "This is a test log" >> /var/vcap/sys/log/management-route-registrar/route-registrar.stderr.log')
-      ssh_gateway.execute_on(@broker_host, 'echo "This is a test log" >> /var/vcap/sys/log/broker-route-registrar/route-registrar.stderr.log')
     end
 
     after :context do
@@ -151,6 +148,13 @@ describe 'Using a Cloud Foundry service broker' do
       end
 
       it 'sends rabbitmq-server logs to configured syslog endpoint' do
+        # Hit the HTTP Management endpoint to generate access log
+        ssh_gateway.execute_on(@rmq_host, "curl -u #{@new_username}:#{@new_password} http://#{@rmq_host}:15672/api/overview -s")
+
+        # Generate some logs in the shutdown_err files to test against.
+        # These files are empty at normal startup/shutdown.
+        ssh_gateway.execute_on(@rmq_host, 'echo "This is a test log" >> /var/vcap/sys/log/rabbitmq-server/shutdown_err')
+
         output = ssh_gateway.execute_on(@rmq_host, 'cat log.txt')
 
         expect(output).to include "rabbitmq_startup_stdout [job=#{@rmq} index=#{@index}]"
@@ -167,6 +171,11 @@ describe 'Using a Cloud Foundry service broker' do
       end
 
       it 'sends rabbitmq-broker logs to configured syslog endpoint' do
+        # Generate some logs in the shutdown_err files to test against.
+        # These files are empty at normal startup/shutdown.
+        ssh_gateway.execute_on(@broker_host, 'echo "This is a test log" >> /var/vcap/sys/log/management-route-registrar/route-registrar.stderr.log')
+        ssh_gateway.execute_on(@broker_host, 'echo "This is a test log" >> /var/vcap/sys/log/broker-route-registrar/route-registrar.stderr.log')
+
         output = ssh_gateway.execute_on(@broker_host, 'cat log.txt')
 
         expect(output).to include "rabbitmq-service-broker_startup_stdout [job=#{@rmq_broker} index=#{@index}]"
@@ -228,6 +237,12 @@ def provides_mqtt_connectivity(session, app)
   expect(session.status_code).to eql(200)
   expect(session).to have_content('mqtt://')
   expect(session).to have_content('Payload published')
+
+  queues = ssh_gateway.execute_on(@broker_host, "curl -u #{@rmq_admin_broker_username}:#{@rmq_admin_broker_password} http://#{@rmq_host}:15672/api/queues -s")
+  json = JSON.parse(queues)
+  json.select!{ |queue| queue["name"] == "mqtt-subscription-mqtt_test_clientqos1" }
+  expect(json.length).to eql(1)
+  expect(json[0]["arguments"]["x-expires"]).to eql(1800000)
 end
 
 def provides_stomp_connectivity(session, app)
