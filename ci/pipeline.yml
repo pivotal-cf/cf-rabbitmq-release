@@ -145,7 +145,7 @@ jobs:
       params:
         OUTPUT_PATH: stemcells
         STEMCELL_NAME: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-        STEMCELL_VERSION: 3146.3
+        STEMCELL_VERSION: 3146.5
   - task: create-new-release
     file: git-master/ci/create-release-new.yml
     config:
