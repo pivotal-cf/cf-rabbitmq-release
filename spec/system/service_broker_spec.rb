@@ -37,17 +37,13 @@ describe 'Using a Cloud Foundry service broker' do
 
   let(:session) { Capybara::Session.new(:poltergeist) }
 
-  before :all do
-    @rmq = 'rmq_z1'
-    @rmq_broker = 'rmq-broker'
-    @index = 0
-    @rmq_host = bosh_director.ips_for_job(@rmq, environment.bosh_manifest.deployment_name)[@index]
-    @broker_host = bosh_director.ips_for_job(@rmq_broker, environment.bosh_manifest.deployment_name)[@index]
-    @rmq_admin_broker_username = environment.bosh_manifest.property('rabbitmq-server.administrators.broker.username')
-    @rmq_admin_broker_password = environment.bosh_manifest.property('rabbitmq-server.administrators.broker.password')
-  end
-
   context 'default deployment'  do
+    before :context do
+      @rmq_host = bosh_director.ips_for_job("rmq_z1", environment.bosh_manifest.deployment_name)[0]
+      @rmq_admin_broker_username = environment.bosh_manifest.property('rabbitmq-server.administrators.broker.username')
+      @rmq_admin_broker_password = environment.bosh_manifest.property('rabbitmq-server.administrators.broker.password')
+    end
+
     it 'provides defaults', :pushes_cf_app do
       cf.push_app_and_bind_with_service(test_app, service) do |app, _|
 
@@ -97,106 +93,63 @@ describe 'Using a Cloud Foundry service broker' do
     end
   end
 
-  context 'customised deployment' do
+  context 'when a dns host is configured' do
     before :context do
-      address = '127.0.0.1'
-      port = 12_345
-      @ha_host = bosh_director.ips_for_job('haproxy_z1', environment.bosh_manifest.deployment_name)[0]
-      @new_username = 'newusername'
-      @new_password = 'newpassword'
-      @nc_command = "nc -k -l #{address} #{port}"
-
-      @rmq_server_listener_thread = Thread.new do
-        ssh_gateway.execute_on(@rmq_host, 'rm log.txt')
-        ssh_gateway.execute_on(@rmq_host, "pkill -f '#{@nc_command}'")
-        ssh_gateway.execute_on(@rmq_host, "#{@nc_command} > log.txt")
-      end
-
-      @rmq_broker_listener_thread = Thread.new do
-        ssh_gateway.execute_on(@broker_host, 'rm log.txt')
-        ssh_gateway.execute_on(@broker_host, "pkill -f '#{@nc_command}'")
-        ssh_gateway.execute_on(@broker_host, "#{@nc_command} > log.txt")
-      end
-
       modify_and_deploy_manifest do |manifest|
         rabbit_manifest = manifest['properties']['rabbitmq-broker']['rabbitmq']
         rabbit_manifest['dns_host'] = rabbit_manifest['hosts'].first
         rabbit_manifest['hosts'] = ['Verify that this ip is not used over the dns_host']
-
-        ops_manager_credentials = manifest['properties']['rabbitmq-server']['administrators']['management']
-        ops_manager_credentials['username'] = @new_username
-        ops_manager_credentials['password'] = @new_password
-
-        manifest['properties']['syslog_aggregator'] = { 'address' => address, 'port' => port }
       end
     end
 
     after :context do
-      @rmq_server_listener_thread.kill
-      @rmq_broker_listener_thread.kill
-      ssh_gateway.execute_on(@rmq_host, "pkill -f '#{@nc_command}'")
       bosh_director.deploy(environment.bosh_manifest.path)
     end
 
-    context 'when a dns host is configured' do
-      it 'is still possible to read and write to a queue', :pushes_cf_app do
-        cf.push_app_and_bind_with_service(test_app, service) do |app, _|
-          session.visit "#{app.url}/services/rabbitmq/protocols/amqp091"
-          expect(session.status_code).to eql(200)
-          expect(session).to have_content('amq.gen')
-        end
+    it 'is still possible to read and write to a queue', :pushes_cf_app do
+      cf.push_app_and_bind_with_service(test_app, service) do |app, _|
+        session.visit "#{app.url}/services/rabbitmq/protocols/amqp091"
+        expect(session.status_code).to eql(200)
+        expect(session).to have_content('amq.gen')
       end
+    end
+  end
 
-      it 'sends rabbitmq-server logs to configured syslog endpoint' do
-        # Hit the HTTP Management endpoint to generate access log
-        ssh_gateway.execute_on(@rmq_host, "curl -u #{@new_username}:#{@new_password} http://#{@rmq_host}:15672/api/overview -s")
+  context 'when the RabbitMQ management credentials are changed' do
+    before :context do
+      @ha_host = bosh_director.ips_for_job('haproxy_z1', environment.bosh_manifest.deployment_name)[0]
+      @old_username = environment.bosh_manifest.property("rabbitmq-server.administrators.management.username")
+      @old_password = environment.bosh_manifest.property("rabbitmq-server.administrators.management.password")
 
-        # Generate some logs in the shutdown_err files to test against.
-        # These files are empty at normal startup/shutdown.
-        ssh_gateway.execute_on(@rmq_host, 'echo "This is a test log" >> /var/vcap/sys/log/rabbitmq-server/shutdown_err')
+      @new_username = 'newusername'
+      @new_password = 'newpassword'
 
-        output = ssh_gateway.execute_on(@rmq_host, 'cat log.txt')
-
-        expect(output).to include "rabbitmq_startup_stdout [job=#{@rmq} index=#{@index}]"
-        expect(output).to include "rabbitmq_startup_stderr [job=#{@rmq} index=#{@index}]"
-        expect(output).to include "rabbitmq [job=#{@rmq} index=#{@index}]"
-
-        expect(output).to include "rabbitmq_http_api_access [job=#{@rmq} index=#{@index}]"
-
-        # NB: The following 2 expectations only work because we do a deployment
-        # as part of the test suite. This causes rabbit to be restarted, hence
-        # these files get populated.
-        expect(output).to include "rabbitmq_shutdown_log [job=#{@rmq} index=#{@index}] Stopping and halting node"
-        expect(output).to include "rabbitmq_shutdown_err [job=#{@rmq} index=#{@index}] This is a test log"
+      modify_and_deploy_manifest do |manifest|
+        management_credentials = manifest['properties']['rabbitmq-server']['administrators']['management']
+        management_credentials['username'] = @new_username
+        management_credentials['password'] = @new_password
       end
+    end
 
-      it 'sends rabbitmq-broker logs to configured syslog endpoint' do
-        # Generate some logs in the shutdown_err files to test against.
-        # These files are empty at normal startup/shutdown.
-        ssh_gateway.execute_on(@broker_host, 'echo "This is a test log" >> /var/vcap/sys/log/management-route-registrar/route-registrar.stderr.log')
-        ssh_gateway.execute_on(@broker_host, 'echo "This is a test log" >> /var/vcap/sys/log/broker-route-registrar/route-registrar.stderr.log')
+    after :context do
+      bosh_director.deploy(environment.bosh_manifest.path)
+    end
 
-        output = ssh_gateway.execute_on(@broker_host, 'cat log.txt')
+    it 'it can only access the management HTTP API with the new credentials' do
+      ssh_gateway.with_port_forwarded_to(@ha_host, 15_672) do |port|
 
-        expect(output).to include "rabbitmq-service-broker_startup_stdout [job=#{@rmq_broker} index=#{@index}]"
-        expect(output).to include "rabbitmq-service-broker_startup_stderr [job=#{@rmq_broker} index=#{@index}]"
-        expect(output).to include "rabbitmq-management-route-registrar_stdout [job=#{@rmq_broker} index=#{@index}]"
-        expect(output).to include "rabbitmq-management-route-registrar_stderr [job=#{@rmq_broker} index=#{@index}]"
-        expect(output).to include "rabbitmq-service-broker-route-registrar_stdout [job=#{@rmq_broker} index=#{@index}]"
-        expect(output).to include "rabbitmq-service-broker-route-registrar_stderr [job=#{@rmq_broker} index=#{@index}]"
-      end
+        uri = URI("http://localhost:#{port}/api/whoami")
+        code = response_code(uri, {
+          :username => @new_username,
+          :password => @new_password
+        })
+        expect(code).to eq "200"
 
-      it 'can change the credentials for RabbitMQ' do
-        ssh_gateway.with_port_forwarded_to(@ha_host, 15_672) do |port|
-          session = Capybara::Session.new(:poltergeist)
-          session.driver.basic_authorize(@new_username, @new_password)
-          session.visit "http://localhost:#{port}/api/whoami"
-          expect(session.status_code).to eq 200
-
-          session.driver.basic_authorize('admin', 'admin')
-          session.visit "http://localhost:#{port}/api/whoami"
-          expect(session.status_code).to eq 401
-        end
+        code = response_code(uri, {
+          :username => @old_username,
+          :password => @old_password
+        })
+        expect(code).to eq "401"
       end
     end
   end
@@ -224,6 +177,17 @@ describe 'Using a Cloud Foundry service broker' do
   end
 end
 
+def response_code(uri, credentials)
+  req = Net::HTTP::Get.new(uri)
+  req.basic_auth credentials[:username], credentials[:password]
+
+  res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+    http.request(req)
+  end
+
+  return res.code
+end
+
 def provides_amqp_connectivity(session, app)
   session.visit "#{app.url}/services/rabbitmq/protocols/amqp091"
 
@@ -238,7 +202,7 @@ def provides_mqtt_connectivity(session, app)
   expect(session).to have_content('mqtt://')
   expect(session).to have_content('Payload published')
 
-  queues = ssh_gateway.execute_on(@broker_host, "curl -u #{@rmq_admin_broker_username}:#{@rmq_admin_broker_password} http://#{@rmq_host}:15672/api/queues -s")
+  queues = ssh_gateway.execute_on(@rmq_host, "curl -u #{@rmq_admin_broker_username}:#{@rmq_admin_broker_password} http://#{@rmq_host}:15672/api/queues -s")
   json = JSON.parse(queues)
   json.select!{ |queue| queue["name"] == "mqtt-subscription-mqtt_test_clientqos1" }
   expect(json.length).to eql(1)
