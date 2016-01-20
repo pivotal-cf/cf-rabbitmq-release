@@ -56,14 +56,6 @@ describe 'Using a Cloud Foundry service broker' do
         provides_mirrored_queue_policy_as_a_default(app)
       end
     end
-
-    it 'enables TLS 1.0' do
-      rabbitmq_host = bosh_director.ips_for_job('rmq_z1', environment.bosh_manifest.deployment_name).first
-
-      expect(tls_version_enabled?(rabbitmq_host, 'tls1')).to be_truthy
-      expect(tls_version_enabled?(rabbitmq_host, 'tls1_1')).to be_truthy
-      expect(tls_version_enabled?(rabbitmq_host, 'tls1_2')).to be_truthy
-    end
   end
 
   context 'when provisioning a service key' do
@@ -114,78 +106,6 @@ describe 'Using a Cloud Foundry service broker' do
       end
     end
   end
-
-  context 'when the RabbitMQ management credentials are changed' do
-    before :context do
-      @ha_host = bosh_director.ips_for_job('haproxy_z1', environment.bosh_manifest.deployment_name)[0]
-      @old_username = environment.bosh_manifest.property("rabbitmq-server.administrators.management.username")
-      @old_password = environment.bosh_manifest.property("rabbitmq-server.administrators.management.password")
-
-      @new_username = 'newusername'
-      @new_password = 'newpassword'
-
-      modify_and_deploy_manifest do |manifest|
-        management_credentials = manifest['properties']['rabbitmq-server']['administrators']['management']
-        management_credentials['username'] = @new_username
-        management_credentials['password'] = @new_password
-      end
-    end
-
-    after :context do
-      bosh_director.deploy(environment.bosh_manifest.path)
-    end
-
-    it 'it can only access the management HTTP API with the new credentials' do
-      ssh_gateway.with_port_forwarded_to(@ha_host, 15_672) do |port|
-
-        uri = URI("http://localhost:#{port}/api/whoami")
-        code = response_code(uri, {
-          :username => @new_username,
-          :password => @new_password
-        })
-        expect(code).to eq "200"
-
-        code = response_code(uri, {
-          :username => @old_username,
-          :password => @old_password
-        })
-        expect(code).to eq "401"
-      end
-    end
-  end
-
-  describe 'high availability' do
-    %w(rmq_z1 rmq_z2).each do |job_name|
-      context "when the job #{job_name}/0 is down", :pushes_cf_app do
-        before(:all) do
-          bosh_director.stop(job_name, 0)
-        end
-
-        after(:all) do
-          bosh_director.start(job_name, 0)
-        end
-
-        it 'is still possible to read and write to a queue' do
-          cf.push_app_and_bind_with_service(test_app, service) do |app, _|
-            session.visit "#{app.url}/services/rabbitmq/protocols/amqp091"
-            expect(session.status_code).to eql(200)
-            expect(session).to have_content('amq.gen')
-          end
-        end
-      end
-    end
-  end
-end
-
-def response_code(uri, credentials)
-  req = Net::HTTP::Get.new(uri)
-  req.basic_auth credentials[:username], credentials[:password]
-
-  res = Net::HTTP.start(uri.hostname, uri.port) do |http|
-    http.request(req)
-  end
-
-  return res.code
 end
 
 def provides_amqp_connectivity(session, app)
@@ -280,11 +200,4 @@ def provides_mirrored_queue_policy_as_a_default(app)
     expect(policy['definition']).to eq('ha-mode' => 'exactly', 'ha-params' => 2, 'ha-sync-mode' => 'automatic')
     expect(policy['priority']).to eq(50)
   end
-end
-
-def tls_version_enabled?(host, version)
-  cmd = "openssl s_client -#{version} -connect 127.0.0.1:5671"
-
-  output = ssh_gateway.execute_on(host, cmd)
-  (output =~ /BEGIN CERTIFICATE/ && output =~ /END CERTIFICATE/) != nil
 end
