@@ -2,6 +2,7 @@
 name: rabbitmq-haproxy
 packages:
 - haproxy
+- syslog_aggregator
 properties:
   rabbitmq-haproxy.server_ips:
     description: "List of IP addresses for the RabbitMQ cluster to proxy"
@@ -11,6 +12,13 @@ properties:
     description: "Admin username to access HaProxy stats dashboard"
   rabbitmq-haproxy.stats.password:
     description: "Admin password to access HaProxy stats dashboard"
+
+  syslog_aggregator.address:
+    description: "Syslog drain hostname"
+  syslog_aggregator.port:
+    description: "Syslog drain port"
 templates:
   rabbitmq-haproxy.init.erb:   bin/rabbitmq-haproxy.init
   haproxy.config.erb: haproxy.config
+  syslog_forwarder.conf.erb: config/syslog_forwarder.conf
+  haproxy_syslog.conf.erb:  config/haproxy_syslog.conf

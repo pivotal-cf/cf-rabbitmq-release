@@ -5,9 +5,11 @@ set -e
 
 NAME=rabbitmq-haproxy
 DAEMON=/var/vcap/packages/haproxy/bin/haproxy
-CONFIG=/var/vcap/jobs/rabbitmq-haproxy/haproxy.config
 DESC="RabbitMQ-HAProxy"
 USER=vcap
+
+JOB_DIR=/var/vcap/jobs/rabbitmq-haproxy
+CONFIG=${JOB_DIR}/haproxy.config
 
 INIT_LOG_DIR=/var/vcap/sys/log/rabbitmq-haproxy
 
@@ -25,13 +27,19 @@ ensure_dir() {
     if [ ! -d "${DIR}" ] ; then
         mkdir -p "${DIR}"
         chown -R "${USER}":"${USER}" "${DIR}"
-        chmod 755 "${DIR}"
+        chmod 775 "${DIR}"
     fi
 }
 
 ensure_dirs() {
     ensure_dir "$(dirname "${PID_FILE}")"
     ensure_dir "${INIT_LOG_DIR}"
+}
+
+ensure_log_files() {
+  touch "${INIT_LOG_DIR}"/haproxy.log
+  chown vcap:vcap "${INIT_LOG_DIR}"/haproxy.log
+  chmod 664 "${INIT_LOG_DIR}"/haproxy.log
 }
 
 remove_pid() {
@@ -45,7 +53,14 @@ start_haproxy() {
         echo "HAProxy is currently running"
     else
         RETVAL=0
+
+        # syslog forwarding
+        /var/vcap/packages/syslog_aggregator/enable_syslog_config haproxy_syslog.conf $JOB_DIR/config
+        /var/vcap/packages/syslog_aggregator/setup_syslog_forwarder $JOB_DIR/config
+
         ensure_dirs
+        ensure_log_files
+
         echo "$("${TIMESTAMP}"): Starting RabbitMQ-HAProxy" >> "${INIT_LOG_DIR}/startup_stdout.log"
         set +e
         "${DAEMON}" -f "${CONFIG}" -D -p "${PID_FILE}" \

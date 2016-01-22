@@ -9,9 +9,11 @@ describe "Syslog forwarding" do
 
   RMQ_JOB_NAME = "rmq_z1"
   BROKER_JOB_NAME = "rmq-broker"
+  HAPROXY_JOB_NAME = "haproxy_z1"
   BOSH_JOB_INDEX = 0
   RMQ_HOST = bosh_director.ips_for_job(RMQ_JOB_NAME, environment.bosh_manifest.deployment_name)[BOSH_JOB_INDEX]
   BROKER_HOST = bosh_director.ips_for_job(BROKER_JOB_NAME, environment.bosh_manifest.deployment_name)[BOSH_JOB_INDEX]
+  HAPROXY_HOST = bosh_director.ips_for_job(HAPROXY_JOB_NAME, environment.bosh_manifest.deployment_name)[BOSH_JOB_INDEX]
 
   SYSLOG_ADDRESS = "127.0.0.1"
   SYSLOG_PORT = 12345
@@ -24,6 +26,7 @@ describe "Syslog forwarding" do
     before :context do
       @rmq_listener_thread = create_listener_thread(RMQ_HOST)
       @broker_listener_thread = create_listener_thread(BROKER_HOST)
+      @haproxy_listener_thread = create_listener_thread(HAPROXY_HOST)
 
       modify_and_deploy_manifest do |manifest|
         manifest["properties"]["syslog_aggregator"] = { "address" => SYSLOG_ADDRESS, "port" => SYSLOG_PORT }
@@ -33,6 +36,8 @@ describe "Syslog forwarding" do
     after :context do
       @rmq_listener_thread.kill
       @broker_listener_thread.kill
+      @haproxy_listener_thread.kill
+
       ssh_gateway.execute_on(RMQ_HOST, "pkill -f '#{NC_COMMAND}'")
       modify_and_deploy_manifest do |manifest|
         manifest["properties"].delete("syslog_aggregator")
@@ -76,6 +81,16 @@ describe "Syslog forwarding" do
         expect(output).to include "rabbitmq-management-route-registrar_stderr [job=#{BROKER_JOB_NAME} index=#{BOSH_JOB_INDEX}]"
         expect(output).to include "rabbitmq-service-broker-route-registrar_stdout [job=#{BROKER_JOB_NAME} index=#{BOSH_JOB_INDEX}]"
         expect(output).to include "rabbitmq-service-broker-route-registrar_stderr [job=#{BROKER_JOB_NAME} index=#{BOSH_JOB_INDEX}]"
+      end
+
+      it "should forward the haproxy logs" do
+        ssh_gateway.execute_on(HAPROXY_HOST, "curl localhost")
+
+        output_from_syslog = ssh_gateway.execute_on(HAPROXY_HOST, "cat log.txt")
+        output_from_file = ssh_gateway.execute_on(HAPROXY_HOST, "cat /var/vcap/sys/log/rabbitmq-haproxy/haproxy.log")
+
+        expect(output_from_syslog).to include "rabbitmq-haproxy_haproxy_log [job=#{HAPROXY_JOB_NAME} index=#{BOSH_JOB_INDEX}]"
+        expect(output_from_file).to include "localhost haproxy"
       end
   end
 end
