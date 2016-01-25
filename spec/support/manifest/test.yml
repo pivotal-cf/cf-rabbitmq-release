@@ -196,10 +196,6 @@ properties:
     route: pivotal-rabbitmq-broker
     ip: 10.244.9.14
     cc_endpoint: http://api.bosh-lite.com
-    uaa_client:
-      client_id: cf
-      username: "admin"
-      password: "admin"
     service:
       username: "p1-rabbit"
       password: "p1-rabbit-devpwd"

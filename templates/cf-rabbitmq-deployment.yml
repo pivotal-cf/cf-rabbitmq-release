@@ -149,10 +149,6 @@ properties:
     route: pivotal-rabbitmq-broker
     ip: (( jobs.[2].networks.[0].static_ips.[0] ))
     cc_endpoint: http://api.domain
-    uaa_client:
-      client_id: cf
-      username: (( .properties.cf.admin_username ))
-      password: (( .properties.cf.admin_password ))
     service:
       username: "p1-rabbit"
       password: "p1-rabbit-default-password"

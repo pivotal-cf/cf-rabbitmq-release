@@ -17,14 +17,6 @@ properties:
     description: "Broker IP"
   rabbitmq-broker.cc_endpoint:
     description: "URL for CC"
-  rabbitmq-broker.uaa_endpoint:
-    description: "URL for UAA"
-  rabbitmq-broker.uaa_client.client_id:
-    description: "Client ID for UAA"
-  rabbitmq-broker.uaa_client.username:
-    description: "Services Username"
-  rabbitmq-broker.uaa_client.password:
-    description: "Services Password"
   rabbitmq-broker.rabbitmq.hosts:
     description: "List of IPs of the Rabbit servers (maybe proxied) upon which to allocate resources"
   rabbitmq-broker.rabbitmq.dns_host:

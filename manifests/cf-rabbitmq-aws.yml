@@ -131,10 +131,6 @@ properties:
     route: pivotal-rabbitmq-broker
     ip: 10.10.38.7
     cc_endpoint: http://your_cc_endpoint.com
-    uaa_client:
-      client_id: cf
-      username: "admin"
-      password: "your-uaa-password"
     service:
       username: "p1-rabbit"
       password: "p1-rabbit-default-password"
