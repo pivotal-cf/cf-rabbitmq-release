@@ -7,14 +7,6 @@
   (let [m (load-config "config/valid.yml")]
     (is (= "http://127.0.0.1:8181" (cfg/cc-endpoint m)))))
 
-(deftest test-uaa-username
-  (let [m (load-config "config/valid.yml")]
-    (is (= "p1-rabbit" (cfg/uaa-username m)))))
-
-(deftest test-uaa-password
-  (let [m (load-config "config/valid.yml")]
-    (is (= "p1-rabbit-pwd" (cfg/uaa-password m)))))
-
 (deftest test-using-tls
   (let [m (load-config "config/valid.yml")]
     (is (not (cfg/using-tls? m))))

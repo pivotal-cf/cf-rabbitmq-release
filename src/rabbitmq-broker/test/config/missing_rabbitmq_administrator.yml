@@ -1,11 +1,6 @@
 ---
 # CC, default assumes bosh-lite is used
 cc_endpoint: http://api.bosh-lite.com
-# UAA
-uaa_client:
-  client_id: cf
-  username: "p1-rabbit"
-  password: "p1-rabbitpwd"
 service:
   # credentials CC uses to authenticate with the broker
   username: "p1-rabbit"

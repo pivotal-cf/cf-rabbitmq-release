@@ -1,9 +1,5 @@
 ---
 cc_endpoint: http://127.0.0.1:8181
-uaa_client:
-  client_id: cf
-  username: "p1-rabbit"
-  password: "p1-rabbitpwd"
 logging:
   level: debug
 pid: /tmp/cf_rabbitmq_broker.pid

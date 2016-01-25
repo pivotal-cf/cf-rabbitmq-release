@@ -49,11 +49,10 @@
 
 (defn announce-start
   [config]
-  (log/infof "Starting. PID: %s, PID path: %s, CC endpoint: %s, UAA username: %s"
+  (log/infof "Starting. PID: %s, PID path: %s, CC endpoint: %s"
              (own-pid)
              (cfg/pid-path config)
-             (cfg/cc-endpoint config)
-             (cfg/uaa-username config)))
+             (cfg/cc-endpoint config)))
 
 (defn log-if-using-tls
   [config]

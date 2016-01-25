@@ -29,10 +29,6 @@
      ;; logging
      (presence-of [:logging :level] :message missing-msg)
      (inclusion-of [:logging :level] :in #{"debug" "info" "warn" "error" "fatal"})
-     ;; UAA authentication
-     (presence-of [:uaa_client :username] :message missing-msg)
-     (presence-of [:uaa_client :password] :message missing-msg)
-     (presence-of [:uaa_client :client_id] :message missing-msg)
      ;; CC/broker authentication
      (presence-of [:service :username] :message missing-msg)
      (presence-of [:service :password] :message missing-msg)
@@ -93,18 +89,6 @@
 (defn ^String cc-endpoint
   [m]
   (get m :cc_endpoint))
-
-(defn ^String uaa-client-id
-  [m]
-  (get-in m [:uaa_client :client_id]))
-
-(defn ^String uaa-username
-  [m]
-  (get-in m [:uaa_client :username]))
-
-(defn ^String uaa-password
-  [m]
-  (get-in m [:uaa_client :password]))
 
 (defn service-info
   [m]
