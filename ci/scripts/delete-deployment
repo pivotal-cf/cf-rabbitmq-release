@@ -10,7 +10,5 @@ pushd "${BASE_DIR}"
   bundle exec bosh -n target ${BOSH_TARGET}
   bundle exec bosh login ${BOSH_USERNAME} ${BOSH_PASSWORD}
   bundle exec bosh -n delete deployment ${NAME}
-  bundle exec bosh -n cleanup --all 
+  bundle exec bosh -n delete release ${RELEASE_NAME}
 popd
-
-

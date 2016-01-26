@@ -31,9 +31,9 @@ resources:
 - name: bosh-aws
   type: bosh-deployment
   source:
-    target: {{bosh-target-us}}
-    username: {{bosh-username-us}}
-    password: {{bosh-password-us}}
+    target: {{bosh-target}}
+    username: {{bosh-username}}
+    password: {{bosh-password}}
     deployment: cf-rabbitmq-upgrade-test
     ignore_ssl: true
 
@@ -67,7 +67,7 @@ jobs:
     file: git-master/ci/create-release-old.yml
     config:
       params:
-        NAME: cf-rabbitmq
+        NAME: cf-rabbitmq-upgrade
         GIT_REPO: git-v168.x
         BUNDLE_GEM__FURY__IO: {{gemfury-token}}
   - put: bosh-aws
@@ -83,9 +83,9 @@ jobs:
       params:
         ERRAND: broker-registrar
         BOSH_MANIFEST: ../git-london-ci-tools/manifests/rabbitmq/develop/ci/cf-rabbitmq-aws-upgrade-test-src.yml
-        BOSH_TARGET: {{bosh-target-us}}
-        BOSH_USERNAME: {{bosh-username-us}}
-        BOSH_PASSWORD: {{bosh-password-us}}
+        BOSH_TARGET: {{bosh-target}}
+        BOSH_USERNAME: {{bosh-username}}
+        BOSH_PASSWORD: {{bosh-password}}
         BUNDLE_GEM__FURY__IO: {{gemfury-token}}
 
 - name: deploy-test-app
@@ -103,10 +103,10 @@ jobs:
     file: git-master/ci/deploy-test-app.yml
     config:
       params:
-        CF_API: {{cf-api-us}}
-        CF_USERNAME: {{cf-username-us}}
-        CF_PASSWORD: {{cf-password-us}}
-        SERVICE_NAME: p-rabbitmq
+        CF_API: {{cf-api}}
+        CF_USERNAME: {{cf-username}}
+        CF_PASSWORD: {{cf-password}}
+        SERVICE_NAME: p-rmq-upgrade
         SERVICE_PLAN: standard
 
 - name: write-message
@@ -124,7 +124,7 @@ jobs:
     file: git-master/ci/write-message.yml
     config:
       params:
-        CF_DOMAIN: {{cf-domain-us}}
+        CF_DOMAIN: {{cf-domain}}
 
 - name: upgrade-to-new-release
   plan:
@@ -150,7 +150,7 @@ jobs:
     file: git-master/ci/create-release-new.yml
     config:
       params:
-        NAME: cf-rabbitmq
+        NAME: cf-rabbitmq-upgrade
         GIT_REPO: git-master
         BUNDLE_GEM__FURY__IO: {{gemfury-token}}
   - aggregate:
@@ -167,9 +167,9 @@ jobs:
       config:
         params:
           BOSH_MANIFEST: ../git-london-ci-tools/manifests/rabbitmq/develop/ci/cf-rabbitmq-aws-upgrade-test-dst.yml
-          BOSH_TARGET: {{bosh-target-us}}
-          BOSH_USERNAME: {{bosh-username-us}}
-          BOSH_PASSWORD: {{bosh-password-us}}
+          BOSH_TARGET: {{bosh-target}}
+          BOSH_USERNAME: {{bosh-username}}
+          BOSH_PASSWORD: {{bosh-password}}
           BUNDLE_GEM__FURY__IO: {{gemfury-token}}
 
 - name: read-message
@@ -185,7 +185,7 @@ jobs:
     file: git-master/ci/read-message.yml
     config:
       params:
-        CF_DOMAIN: {{cf-domain-us}}
+        CF_DOMAIN: {{cf-domain}}
 
 - name: delete-test-app
   plan:
@@ -200,9 +200,9 @@ jobs:
     file: git-master/ci/delete-test-app.yml
     config:
       params:
-        CF_API: {{cf-api-us}}
-        CF_USERNAME: {{cf-username-us}}
-        CF_PASSWORD: {{cf-password-us}}
+        CF_API: {{cf-api}}
+        CF_USERNAME: {{cf-username}}
+        CF_PASSWORD: {{cf-password}}
 
 - name: delete-deployment
   plan:
@@ -220,18 +220,19 @@ jobs:
       params:
         ERRAND: broker-deregistrar
         BOSH_MANIFEST: ../git-london-ci-tools/manifests/rabbitmq/develop/ci/cf-rabbitmq-aws-upgrade-test-src.yml
-        BOSH_TARGET: {{bosh-target-us}}
-        BOSH_USERNAME: {{bosh-username-us}}
-        BOSH_PASSWORD: {{bosh-password-us}}
+        BOSH_TARGET: {{bosh-target}}
+        BOSH_USERNAME: {{bosh-username}}
+        BOSH_PASSWORD: {{bosh-password}}
         BUNDLE_GEM__FURY__IO: {{gemfury-token}}
   - task: delete-deployment
     file: git-master/ci/delete-deployment.yml
     config:
       params:
         NAME: cf-rabbitmq-upgrade-test
-        BOSH_TARGET: {{bosh-target-us}}
-        BOSH_USERNAME: {{bosh-username-us}}
-        BOSH_PASSWORD: {{bosh-password-us}}
+        RELEASE_NAME: cf-rabbitmq-upgrade
+        BOSH_TARGET: {{bosh-target}}
+        BOSH_USERNAME: {{bosh-username}}
+        BOSH_PASSWORD: {{bosh-password}}
         BUNDLE_GEM__FURY__IO: {{gemfury-token}}
   - put: bosh-lock
     params: {release: bosh-lock}
