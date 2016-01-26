@@ -8,8 +8,8 @@ BASE_DIR="$( cd "${MY_DIR}/../.." && pwd )"
 pushd "${BASE_DIR}"
   eval `ssh-agent -s`
 
-  chmod 600 ../git-london-meta/credentials/id_rsa_cfintegration
-  ssh-add ../git-london-meta/credentials/id_rsa_cfintegration
+  chmod 600 ../git-london-meta/credentials/eu-west-micro-bosh.pem
+  ssh-add ../git-london-meta/credentials/eu-west-micro-bosh.pem
 
   bundle install --path vendor/bundle
   export SKIP_ERRANDS=true
