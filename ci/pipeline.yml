@@ -28,6 +28,16 @@ resources:
     private_key: {{git-private-key}}
     uri: git@github.com:pivotal-cf/london-meta.git
 
+- name: release-version
+  type: semver
+  source:
+    bucket: ci-versions
+    key: rabbitmq-upgrade-test-release-number
+    access_key_id: {{release-bucket-access-key}}
+    secret_access_key: {{release-bucket-secret-key}}
+    region_name: eu-west-1
+    initial_version: 0.0.0
+
 - name: bosh-aws
   type: bosh-deployment
   source:
@@ -56,6 +66,12 @@ jobs:
     - get: git-master
       trigger: true
     - get: git-london-ci-tools
+    - get: release-version
+      params:
+        bump: minor
+  - put: release-version
+    params:
+      file: release-version/number
   - task: pull-stemcell
     file: git-master/ci/pull-stemcell.yml
     config:
@@ -139,6 +155,12 @@ jobs:
       passed: [write-message]
     - get: git-london-meta
     - get: git-london-ci-tools
+    - get: release-version
+      params:
+        bump: patch
+  - put: release-version
+    params:
+      file: release-version/number
   - task: pull-stemcell
     file: git-master/ci/pull-stemcell.yml
     config:

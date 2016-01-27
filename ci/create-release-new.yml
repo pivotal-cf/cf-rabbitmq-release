@@ -5,6 +5,7 @@ image: docker:///cflondonservices/london-services-ci-release-builder#latest
 
 inputs:
 - name: git-master
+- name: release-version
 
 run:
   path: git-master/ci/scripts/create-release
