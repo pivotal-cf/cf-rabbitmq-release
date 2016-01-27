@@ -5,9 +5,11 @@ image: docker:///cflondonservices/london-services-ci-base#stable
 
 inputs:
   - name: git-master
+  - name: resource-s3-random-string
 
 run:
   path: git-master/ci/scripts/write-message
 
 params:
+  RANDOM_STRING_FILE:
   CF_DOMAIN:

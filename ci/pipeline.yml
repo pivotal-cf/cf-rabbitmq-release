@@ -28,6 +28,15 @@ resources:
     private_key: {{git-private-key}}
     uri: git@github.com:pivotal-cf/london-meta.git
 
+- name: s3-random-string
+  type: s3
+  source:
+    bucket: ci-clipboard
+    access_key_id: {{release-bucket-access-key}}
+    secret_access_key: {{release-bucket-secret-key}}
+    region_name: eu-west-1
+    versioned_file: rabbitmq-upgrade-test-id
+
 - name: release-version
   type: semver
   source:
@@ -104,7 +113,7 @@ jobs:
         BOSH_PASSWORD: {{bosh-password}}
         BUNDLE_GEM__FURY__IO: {{gemfury-token}}
 
-- name: deploy-test-app
+- name: generate-random-string
   plan:
   - aggregate:
     - get: bosh-lock
@@ -115,10 +124,33 @@ jobs:
       trigger: true
     - get: bosh-aws
       passed: [deploy-old-release]
+  - task: generate-random-string
+    file: git-master/ci/generate-random-string.yml
+    config:
+      params:
+        OUTPUT_FILE: rabbitmq-upgrade-test-id
+  - put: s3-random-string
+    params:
+      from: generate-random-string/rabbitmq-upgrade-test-id
+
+- name: deploy-test-app
+  plan:
+  - aggregate:
+    - get: bosh-lock
+      passed: [generate-random-string]
+      trigger: true
+    - get: git-master
+      passed: [generate-random-string]
+      trigger: true
+    - get: bosh-aws
+      passed: [generate-random-string]
+    - get: s3-random-string
+      passed: [generate-random-string]
   - task: deploy-test-app
     file: git-master/ci/deploy-test-app.yml
     config:
       params:
+        RANDOM_STRING_FILE: s3-random-string/rabbitmq-upgrade-test-id
         CF_API: {{cf-api}}
         CF_USERNAME: {{cf-username}}
         CF_PASSWORD: {{cf-password}}
@@ -136,10 +168,13 @@ jobs:
       trigger: true
     - get: bosh-aws
       passed: [deploy-test-app]
+    - get: s3-random-string
+      passed: [deploy-test-app]
   - task: write-message
     file: git-master/ci/write-message.yml
     config:
       params:
+        RANDOM_STRING_FILE: s3-random-string/rabbitmq-upgrade-test-id
         CF_DOMAIN: {{cf-domain}}
 
 - name: upgrade-to-new-release
@@ -158,6 +193,8 @@ jobs:
     - get: release-version
       params:
         bump: patch
+    - get: s3-random-string
+      passed: [write-message]
   - put: release-version
     params:
       file: release-version/number
@@ -203,10 +240,13 @@ jobs:
     - get: git-master
       passed: [upgrade-to-new-release]
       trigger: true
+    - get: s3-random-string
+      passed: [upgrade-to-new-release]
   - task: read-message
     file: git-master/ci/read-message.yml
     config:
       params:
+        RANDOM_STRING_FILE: s3-random-string/rabbitmq-upgrade-test-id
         CF_DOMAIN: {{cf-domain}}
 
 - name: delete-test-app
@@ -218,10 +258,13 @@ jobs:
     - get: git-master
       passed: [read-message]
       trigger: true
+    - get: s3-random-string
+      passed: [read-message]
   - task: delete-test-app
     file: git-master/ci/delete-test-app.yml
     config:
       params:
+        RANDOM_STRING_FILE: s3-random-string/rabbitmq-upgrade-test-id
         CF_API: {{cf-api}}
         CF_USERNAME: {{cf-username}}
         CF_PASSWORD: {{cf-password}}

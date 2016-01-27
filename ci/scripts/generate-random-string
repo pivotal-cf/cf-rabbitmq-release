@@ -1,0 +1,3 @@
+#!/bin/bash -eux
+
+< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c6 | md5sum | awk '{print $1}'  > $OUTPUT_FILE

@@ -6,16 +6,18 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE_DIR="$( cd "${MY_DIR}/../.." && pwd )"
 
 pushd "${BASE_DIR}"
-  CF_ORG="test-org"
-  CF_SPACE="test-space"
-  SERVICE_INSTANCE_NAME="test-service"
-  APP_NAME="test-app"
+  RANDOM_STRING="$(cat ../$RANDOM_STRING_FILE)"
+
+  CF_ORG="test-org-${RANDOM_STRING}"
+  CF_SPACE="test-space-${RANDOM_STRING}"
+  SERVICE_INSTANCE_NAME="test-service-${RANDOM_STRING}"
+  APP_NAME="test-app-${RANDOM_STRING}"
   SG_RULES_FILE_PATH="/tmp/security_group_rules.json"
-  SG_NAME="allow-all-sg"
+  SG_NAME="allow-all-sg-${RANDOM_STRING}"
 
   cf api --skip-ssl-validation $CF_API
   cf auth $CF_USERNAME $CF_PASSWORD
- 
+
   cf create-org $CF_ORG
   cf target -o $CF_ORG
 
@@ -34,7 +36,7 @@ pushd "${BASE_DIR}"
   cf push $APP_NAME -p system_test/rabbit-example-app --no-start
 
   cf bind-service $APP_NAME $SERVICE_INSTANCE_NAME
-  
+
   cf set-env $APP_NAME SERVICE_NAME $SERVICE_NAME
 
   cf start $APP_NAME

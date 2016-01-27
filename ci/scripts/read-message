@@ -1,16 +1,24 @@
 #!/bin/bash -eu
 
-APP_URI="http://test-app.${CF_DOMAIN}/store"
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-EXPECTED="original_message"
-ACTUAL=`curl -s -f -XGET ${APP_URI}` 
+# This script expects to live two directories below the base directory.
+BASE_DIR="$( cd "${MY_DIR}/../../.." && pwd )"
 
-echo "Expected message: '$EXPECTED'"
-echo "Actual message: '$ACTUAL'"
+pushd ${BASE_DIR}
+  RANDOM_STRING="$(cat $RANDOM_STRING_FILE)"
+  APP_URI="http://test-app-${RANDOM_STRING}.${CF_DOMAIN}/store"
 
-if [ "$EXPECTED" != "$ACTUAL" ]; then
-  echo "FAILURE: Did not get original message."
-  exit -1
-fi
+  EXPECTED="original_message-${RANDOM_STRING}"
+  ACTUAL=`curl -s -f -XGET ${APP_URI}`
 
-echo "SUCCESS"
+  echo "Expected message: '$EXPECTED'"
+  echo "Actual message: '$ACTUAL'"
+
+  if [ "$EXPECTED" != "$ACTUAL" ]; then
+    echo "FAILURE: Did not get original message."
+    exit -1
+  fi
+
+  echo "SUCCESS"
+popd

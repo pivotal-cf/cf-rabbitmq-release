@@ -1,5 +1,13 @@
 #!/bin/bash -eu
 
-APP_URI="http://test-app.${CF_DOMAIN}/store"
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-curl -XPOST -d 'original_message' ${APP_URI} 
+# This script expects to live two directories below the base directory.
+BASE_DIR="$( cd "${MY_DIR}/../../.." && pwd )"
+
+pushd ${BASE_DIR}
+  RANDOM_STRING="$(cat ../$RANDOM_STRING_FILE)"
+
+  APP_URI="http://test-app-${RANDOM_STRING}.${CF_DOMAIN}/store"
+  curl -XPOST -d 'original_message-${RANDOM_STRING}' ${APP_URI}
+popd

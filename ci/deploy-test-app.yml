@@ -10,6 +10,7 @@ run:
   path: git-master/ci/scripts/deploy-test-app
 
 params:
+  RANDOM_STRING_FILE:
   CF_API:
   CF_USERNAME:
   CF_PASSWORD:

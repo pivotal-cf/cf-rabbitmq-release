@@ -5,11 +5,13 @@ image: docker:///cflondonservices/london-services-ci-base#stable
 
 inputs:
 - name: git-master
+- name: resource-s3-random-string
 
 run:
   path: git-master/ci/scripts/delete-test-app
 
 params:
+  RANDOM_STRING_FILE:
   CF_API:
   CF_USERNAME:
   CF_PASSWORD:
