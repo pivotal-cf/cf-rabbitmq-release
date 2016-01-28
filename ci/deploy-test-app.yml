@@ -5,6 +5,7 @@ image: docker:///cflondonservices/london-services-ci-base#stable
 
 inputs:
 - name: git-master
+- name: s3-random-string
 
 run:
   path: git-master/ci/scripts/deploy-test-app

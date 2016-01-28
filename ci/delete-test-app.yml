@@ -5,7 +5,7 @@ image: docker:///cflondonservices/london-services-ci-base#stable
 
 inputs:
 - name: git-master
-- name: resource-s3-random-string
+- name: s3-random-string
 
 run:
   path: git-master/ci/scripts/delete-test-app
