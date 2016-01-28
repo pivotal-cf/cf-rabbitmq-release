@@ -1,13 +1,13 @@
-#!/bin/bash -eu
+#!/bin/bash -eux
 
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # This script expects to live two directories below the base directory.
-BASE_DIR="$( cd "${MY_DIR}/../../.." && pwd )"
+BASE_DIR="$( cd "${MY_DIR}/../.." && pwd )"
 
 pushd ${BASE_DIR}
   RANDOM_STRING="$(cat ../$RANDOM_STRING_FILE)"
 
   APP_URI="http://test-app-${RANDOM_STRING}.${CF_DOMAIN}/store"
-  curl -XPOST -d 'original_message-${RANDOM_STRING}' ${APP_URI}
+  curl -XPOST -d "original_message-${RANDOM_STRING}" ${APP_URI}
 popd
