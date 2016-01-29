@@ -38,10 +38,8 @@ describe "Syslog forwarding" do
       @broker_listener_thread.kill
       @haproxy_listener_thread.kill
 
-      ssh_gateway.execute_on(RMQ_HOST, "pkill -f '#{NC_COMMAND}'")
-      modify_and_deploy_manifest do |manifest|
-        manifest["properties"].delete("syslog_aggregator")
-      end
+      ssh_gateway.execute_on(RMQ_HOST, "pkill -f'#{NC_COMMAND}'")
+      bosh_director.deploy(environment.bosh_manifest.path)
     end
 
     it "should forward the RabbitMQ server logs" do

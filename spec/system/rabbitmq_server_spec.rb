@@ -36,7 +36,7 @@ describe "RabbitMQ server configuration" do
 
     after :context do
       modify_and_deploy_manifest do |manifest|
-        manifest["properties"]["rabbitmq-server"].delete("fd_limit")
+        bosh_director.deploy(environment.bosh_manifest.path)
       end
     end
 
