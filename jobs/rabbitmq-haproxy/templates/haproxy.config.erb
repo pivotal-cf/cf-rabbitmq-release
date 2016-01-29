@@ -9,12 +9,13 @@ global
 	user vcap
 	group vcap
 	maxconn 64000
-	spread-checks 4
-  log 127.0.0.1 local2
+        spread-checks 4
+        log 127.0.0.1 local2 info
 
 defaults
-  log     global
-	timeout connect 10s
+	option  tcplog
+        log     global
+        timeout connect 10s
         timeout client  2d
         timeout server  2d
 

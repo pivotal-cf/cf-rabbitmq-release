@@ -38,7 +38,9 @@ describe "Syslog forwarding" do
       @broker_listener_thread.kill
       @haproxy_listener_thread.kill
 
-      ssh_gateway.execute_on(RMQ_HOST, "pkill -f'#{NC_COMMAND}'")
+      ssh_gateway.execute_on(RMQ_HOST, "pkill -f '#{NC_COMMAND}'")
+      ssh_gateway.execute_on(BROKER_HOST, "pkill -f '#{NC_COMMAND}'")
+      ssh_gateway.execute_on(HAPROXY_HOST, "pkill -f '#{NC_COMMAND}'")
       bosh_director.deploy(environment.bosh_manifest.path)
     end
 

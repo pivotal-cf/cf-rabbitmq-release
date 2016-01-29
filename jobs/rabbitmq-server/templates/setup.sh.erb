@@ -124,7 +124,7 @@ end
   SELF_NODE="rabbit@<%= job_ip_md5 %>"
   CONFIG="CONFIG_FILE='${SCRIPT_DIR}/../etc/rabbitmq'"
   NODENAME="NODENAME='${SELF_NODE}'"
-  SERVER_START_ARGS="SERVER_START_ARGS='-rabbitmq_clusterer config \"${CLUSTER_CONFIG}\" -rabbit disk_free_limit 1000000 -rabbit cluster_partition_handling autoheal -rabbit halt_on_upgrade_failure false -rabbitmq_mqtt subscription_ttl 1800000"
+  SERVER_START_ARGS="SERVER_START_ARGS='-rabbitmq_clusterer config \"${CLUSTER_CONFIG}\" -rabbit log_levels [{connection,info}] -rabbit disk_free_limit 1000000 -rabbit cluster_partition_handling autoheal -rabbit halt_on_upgrade_failure false -rabbitmq_mqtt subscription_ttl 1800000"
   SERVER_START_ARGS="${SERVER_START_ARGS} -rabbitmq_management http_log_dir \"${LOG_DIR}\""
 
 <% if ssl %>
