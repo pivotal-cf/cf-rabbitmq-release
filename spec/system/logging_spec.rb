@@ -33,6 +33,8 @@ describe "logging configuration" do
 
   context "when a connection is made over AMQP" do
     before :context do
+      register_broker
+
       ssh_gateway.execute_on(RMQ_Z1_HOST, "cp /var/vcap/sys/log/rabbitmq-server/rabbit@#{RMQ_HOST_Z1_DIGEST}.log /tmp")
       ssh_gateway.execute_on(RMQ_Z2_HOST, "cp /var/vcap/sys/log/rabbitmq-server/rabbit@#{RMQ_HOST_Z2_DIGEST}.log /tmp")
 
@@ -42,6 +44,8 @@ describe "logging configuration" do
     end
 
     after :context do
+      deregister_broker
+
       ssh_gateway.execute_on(RMQ_Z1_HOST, "cp /tmp/rabbit@#{RMQ_HOST_Z1_DIGEST}.log /var/vcap/sys/log/rabbitmq-server")
       ssh_gateway.execute_on(RMQ_Z2_HOST, "cp /tmp/rabbit@#{RMQ_HOST_Z2_DIGEST}.log /var/vcap/sys/log/rabbitmq-server")
     end
