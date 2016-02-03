@@ -7,6 +7,26 @@ It is deployable by BOSH in the usual way.
 
 Clone the repository and run `./scripts/update-release`.
 
+## Deploying
+
+Run the `scripts/deploy-release` script. Examples as follows:
+
+```
+# Deploying locally to BOSH lite
+export BOSH_MANIFEST=../london-ci-tools/manifests/rabbitmq/develop/development/bosh-lite.yml
+./scripts/deploy-release lite
+
+# Deploying to a different BOSH director
+export BOSH_MANIFEST=/path/to/manifest.yml
+./scripts/deploy-release my-bosh-alias
+```
+
+Note that the argument is a BOSH alias, which you must have configured prior to running the script. E.G.
+
+```
+bosh target https://192.168.50.4:25555 lite
+```
+
 ## Testing
 
 ### Unit Tests
