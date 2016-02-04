@@ -1,0 +1,13 @@
+#!/bin/bash
+
+ssh-add -l
+
+if [ $? -ne 0 ]; then
+  echo "Please add your ssh key"
+  exit 1
+fi
+
+set -xe
+
+git submodule update --init --recursive
+bundle install

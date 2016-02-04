@@ -1,6 +1,6 @@
 ---
-director_uuid: 11111111-1111-1111-1111-111111111111
 name: cf-rabbitmq
+director_uuid: <%= `bosh -t lite status --uuid` %>
 
 releases:
 - name: cf-rabbitmq
