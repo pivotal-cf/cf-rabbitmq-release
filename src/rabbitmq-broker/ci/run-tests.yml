@@ -1,0 +1,10 @@
+---
+platform: linux
+
+image: docker:///cflondonservices/london-services-ci-rabbitmq#stable
+
+inputs:
+- name: cf-rabbitmq-release
+
+run:
+  path: cf-rabbitmq-release/bin/test
