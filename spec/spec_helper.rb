@@ -2,26 +2,7 @@ require 'prof/external_spec/spec_helper'
 require 'prof/environment/cloud_foundry'
 require 'prof/environment_manager'
 require 'prof/ssh_gateway'
-
-require 'pry'
-
-RSpec.configure do |config|
-
-  config.formatter = :documentation
-  config.filter_run :focus
-  config.run_all_when_everything_filtered = true
-
-  config.around do |example|
-    if example.metadata[:pushes_cf_app] || example.metadata[:creates_service_key]
-
-      environment_manager.isolate_cloud_foundry do
-        example.run
-      end
-    else
-      example.run
-    end
-  end
-end
+require 'yaml'
 
 def environment
   @environment ||= begin
@@ -89,4 +70,44 @@ end
 
 def deregister_broker
     bosh_director.run_errand('broker-deregistrar') unless ENV.has_key?('SKIP_ERRANDS')
+end
+
+module ExcludeHelper
+  def self.manifest
+    @bosh_manifest ||= YAML.load(File.read(ENV['BOSH_MANIFEST']))
+  end
+
+  def self.metrics_available?
+    0 != manifest.fetch('releases').select{|i| i["name"] == "service-metrics" }.length
+  end
+
+  def self.warnings
+    message = "\n"
+    if !metrics_available?
+      message += "WARNING: Skipping metrics tests, metrics are not available in this manifest\n"
+    end
+
+    message + "\n"
+  end
+end
+
+puts ExcludeHelper::warnings
+
+RSpec.configure do |config|
+
+  config.formatter = :documentation
+  config.filter_run :focus
+  config.run_all_when_everything_filtered = true
+  config.filter_run_excluding :skip_metrics => !ExcludeHelper::metrics_available?
+
+  config.around do |example|
+    if example.metadata[:pushes_cf_app] || example.metadata[:creates_service_key]
+
+      environment_manager.isolate_cloud_foundry do
+        example.run
+      end
+    else
+      example.run
+    end
+  end
 end

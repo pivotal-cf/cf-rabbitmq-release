@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'metrics' do
+describe 'metrics', :skip_metrics => true do
 
   before(:all) do
     @number_of_nodes = 1
