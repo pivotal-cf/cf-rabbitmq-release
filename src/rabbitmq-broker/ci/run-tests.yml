@@ -7,4 +7,4 @@ inputs:
 - name: cf-rabbitmq-release
 
 run:
-  path: cf-rabbitmq-release/bin/test
+  path: cf-rabbitmq-release/src/rabbitmq-broker/bin/test
