@@ -30,10 +30,10 @@ def environment
       bosh_service_broker_job_name: 'cf-rabbitmq-broker'
     }
 
-    options[:cloud_foundry_domain]   = ENV['CF_DOMAIN']   ? ENV['CF_DOMAIN']   : 'bosh-lite.com'
-    options[:cloud_foundry_username] = ENV['CF_USERNAME'] ? ENV['CF_USERNAME'] : 'admin'
-    options[:cloud_foundry_password] = ENV['CF_PASSWORD'] ? ENV['CF_PASSWORD'] : 'admin'
-    options[:cloud_foundry_api_url]  = ENV['CF_API']      ? ENV['CF_API']      : 'api.bosh-lite.com'
+    options[:cloud_foundry_domain]   = ENV['CF_DOMAIN']    ? ENV['CF_DOMAIN']    : 'bosh-lite.com'
+    options[:cloud_foundry_username] = ENV['CF_USERNAME']  ? ENV['CF_USERNAME']  : 'admin'
+    options[:cloud_foundry_password] = ENV['CF_PASSWORD']  ? ENV['CF_PASSWORD']  : 'admin'
+    options[:cloud_foundry_api_url]  = ENV['CF_API']       ? ENV['CF_API']       : 'api.bosh-lite.com'
 
     options[:bosh_target]          = ENV['BOSH_TARGET']   if ENV.key?('BOSH_TARGET')
     options[:bosh_username]        = ENV['BOSH_USERNAME'] if ENV.key?('BOSH_USERNAME')
@@ -77,6 +77,10 @@ def modify_and_deploy_manifest
     manifest_file.write(manifest.to_yaml)
     bosh_director.deploy(manifest_file.path)
   end
+end
+
+def doppler_address
+  ENV['DOPPLER_ADDR'] ? ENV['DOPPLER_ADDR'] : "wss://doppler.bosh-lite.com:443"
 end
 
 def register_broker
