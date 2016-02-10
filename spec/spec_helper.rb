@@ -72,6 +72,11 @@ def deregister_broker
     bosh_director.run_errand('broker-deregistrar') unless ENV.has_key?('SKIP_ERRANDS')
 end
 
+def get_uuid(content)
+  uuid_regex = /(\w{8}(-\w{4}){3}-\w{12}?)/
+  uuid_regex.match(content)[0]
+end
+
 module ExcludeHelper
   def self.manifest
     @bosh_manifest ||= YAML.load(File.read(ENV['BOSH_MANIFEST']))

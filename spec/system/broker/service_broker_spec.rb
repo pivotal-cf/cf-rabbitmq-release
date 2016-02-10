@@ -15,7 +15,7 @@ require 'rabbitmq/http/client'
 require "mqtt"
 require "stomp"
 
-require File.expand_path('../../../system_test/test_app/lib/lab_rat/aggregate_health_checker.rb', __FILE__)
+require File.expand_path('../../../../system_test/test_app/lib/lab_rat/aggregate_health_checker.rb', __FILE__)
 
 describe 'Using a Cloud Foundry service broker' do
   before(:all) do

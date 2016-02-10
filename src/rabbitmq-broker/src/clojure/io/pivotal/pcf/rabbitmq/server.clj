@@ -20,11 +20,8 @@
 ;;
 
 (defn ^{:private true} log-exception
-  [config ^Exception e]
-  (log/errorf "Caught an exception during boot: %s (%s)" (.getMessage e) (.getClass e))
-  (when (cfg/print-stack-traces? config)
-    (.printStackTrace e))
-  e)
+  [^Exception e]
+  (log/errorf "Caught an exception during boot: %s (%s)" (.getMessage e) (.getClass e)) e)
 
 (defn initialize-logger
   [config]
@@ -141,38 +138,47 @@
   ;;  * space_guid
   (log/infof "Asked to provision a service: %s" (:id params))
   (if-let [^String id (:id params)]
-    (if (rs/vhost-exists? id)
-      (do (log/warnf "Vhost %s already exists" id)
+    (try
+      (if (rs/vhost-exists? id)
+        (do (log/warnf "Vhost %s already exists" id)
           (conflict))
-      (let [[mu mp] (rs/generate-credentials "mu" id)]
-        (try
-          (rs/add-vhost id)
-          (log/infof "Created vhost %s" id)
-          (rs/add-user mu mp)
-          (rs/grant-permissions mu id)
-          (log/infof "Created special user for dashboard access: %s" mu)
-          (rs/grant-broker-administrator-permissions id)
-          (log/infof "Granted system administrator access to vhost %s" id)
-          (if (cfg/operator-set-policy-enabled?) (rs/add-operator-set-policy id))
-          (catch Exception e
-            (.printStackTrace e)
-            (log-exception e)
-            (rs/delete-vhost id)
-            (rs/delete-user mu mp)))
-        (created {:dashboard_url (rs/dashboard-url mu mp)})))
+        (let [[mu mp] (rs/generate-credentials "mu" id)]
+          (try
+            (rs/add-vhost id)
+            (log/infof "Created vhost %s" id)
+            (rs/add-user mu mp)
+            (rs/grant-permissions mu id)
+            (log/infof "Created special user for dashboard access: %s" mu)
+            (rs/grant-broker-administrator-permissions id)
+            (log/infof "Granted system administrator access to vhost %s" id)
+            (if (cfg/operator-set-policy-enabled?) (rs/add-operator-set-policy id))
+            (catch Exception e
+              (rs/delete-vhost id)
+              (rs/delete-user mu mp)
+              (throw e)))
+          (created {:dashboard_url (rs/dashboard-url mu mp)})))
+    (catch Exception e
+      (log/errorf "Failed to provision a service: %s" id)
+      (.printStackTrace e)
+      (log-exception e)))
     (conflict)))
 
 (defn delete-service
   [{:keys [params] :as req}]
   (log/infof "Asked to deprovision a service: %s" (:id params))
   (if-let [^String id (:id params)]
-    (if (rs/vhost-exists? id)
-      (do (rs/delete-vhost id)
-          (log/infof "Deleted vhost %s" id)
-          (ok))
-      (do (log/warnf "Vhost %s does not exist" id)
-          (gone)))
-    (gone)))
+    (try
+      (if (rs/vhost-exists? id)
+        (do (rs/delete-vhost id)
+            (log/infof "Deleted vhost %s" id)
+            (ok))
+        (do (log/warnf "Vhost %s does not exist" id)
+            (gone)))
+      (gone)
+    (catch Exception e
+      (log/errorf "Failed to deprovision a service: %s" id)
+      (.printStackTrace e)
+      (log-exception e)))))
 
 (defn bind-service
   [{:keys [params] :as req}]
@@ -180,42 +186,52 @@
   ;;  * service_id
   ;;  * plan_id
   ;;  * app_guid
-  (log/infof "Asked to bind service %s, RabbitMQ user id: %s" (:instance_id params) (:id params))
+  (log/infof "Asked to bind a service: %s, RabbitMQ user id: %s" (:instance_id params) (:id params))
   (let [^String virtual-host (:instance_id params) ; Instance ID in CF = Virtual Host ID in Rabbit
         ^String user-id  (:id params)]             ; Binding ID in CF = User ID in Rabbit
-    (if (and virtual-host user-id (rs/vhost-exists? virtual-host))
-      (if (rs/user-exists? user-id)
-        (conflict)
-        (let [password (rs/generate-password)]
-          (try
-            (rs/add-user user-id password)
-            (rs/grant-permissions user-id virtual-host)
-            (ok {:credentials (rs/credentials-for (cfg/node-hosts)
-                                                  virtual-host
-                                                  user-id
-                                                  password
-                                                  (rs/protocol-ports)
-                                                  (cfg/using-tls?))})
-            (catch Exception e
-              (log/errorf "Failed to grant user %s permissions to vhost %s: %s" user-id virtual-host (.getMessage e))
-              (rs/delete-user user-id)
-              (internal-error)))))
-      (gone))))
+    (try
+      (if (and virtual-host user-id (rs/vhost-exists? virtual-host))
+        (if (rs/user-exists? user-id)
+          (conflict)
+          (let [password (rs/generate-password)]
+            (try
+              (rs/add-user user-id password)
+              (rs/grant-permissions user-id virtual-host)
+              (ok {:credentials (rs/credentials-for (cfg/node-hosts)
+                                  virtual-host
+                                  user-id
+                                  password
+                                  (rs/protocol-ports)
+                                  (cfg/using-tls?))})
+              (catch Exception e
+                (log/errorf "Failed to grant user %s permissions to vhost %s: %s" user-id virtual-host (.getMessage e))
+                (rs/delete-user user-id)
+                (internal-error)))))
+        (gone))
+      (catch Exception e
+        (log/errorf "Failed to bind a service: %s" virtual-host)
+        (.printStackTrace e)
+        (log-exception e)))))
 
 (defn unbind-service
   [{:keys [params] :as req}]
-  (log/infof "Asked to unbind service %s, RabbitMQ user id: %s" (:instance_id params) (:id params))
+  (log/infof "Asked to unbind a service: %s, RabbitMQ user id: %s" (:instance_id params) (:id params))
   (let [^String vh (:instance_id params)
         ^String u  (:id params)]
-    (if (and vh u)
-      (let [xs (rs/close-connections-from u)]
-        (rs/delete-user u)
-        (log/infof "Deleted use %s" u)
-        (log/infof "Forcing connections from %s to close" u)
-        (rs/close-connections-from u)
-        (log/infof "Force-closed %d connections" (count xs))
-        (ok))
-      (gone))))
+    (try
+      (if (and vh u)
+        (let [xs (rs/close-connections-from u)]
+          (rs/delete-user u)
+          (log/infof "Deleted use %s" u)
+          (log/infof "Forcing connections from %s to close" u)
+          (rs/close-connections-from u)
+          (log/infof "Force-closed %d connections" (count xs))
+          (ok))
+        (gone))
+      (catch Exception e
+        (log/errorf "Failed to unbind a service: %s" vh)
+        (.printStackTrace e)
+        (log-exception e)))))
 
 (defn show-raw-config
   [_]
