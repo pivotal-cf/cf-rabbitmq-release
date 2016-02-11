@@ -19,7 +19,7 @@ def environment
     options[:bosh_target]          = ENV['BOSH_TARGET']   if ENV.key?('BOSH_TARGET')
     options[:bosh_username]        = ENV['BOSH_USERNAME'] if ENV.key?('BOSH_USERNAME')
     options[:bosh_password]        = ENV['BOSH_PASSWORD'] if ENV.key?('BOSH_PASSWORD')
-    options[:ssh_gateway_host]     = ENV['BOSH_TARGET']   if ENV.key?('BOSH_TARGET')
+    options[:ssh_gateway_host]     = URI.parse(ENV['BOSH_TARGET']).host if ENV.key?('BOSH_TARGET')
 
     options[:ssh_gateway_username] = 'vcap'               if ENV.key?('BOSH_TARGET')
     options[:ssh_gateway_password] = 'c1oudc0w'           if ENV.key?('BOSH_TARGET')
