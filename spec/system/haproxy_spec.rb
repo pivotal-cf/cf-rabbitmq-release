@@ -18,14 +18,6 @@ describe "haproxy" do
     )
   end
 
-  before(:all) do
-    register_broker
-  end
-
-  after(:all) do
-    deregister_broker
-  end
-
   %w(rmq_z1 rmq_z2).each do |job_name|
     context "when the job #{job_name}/0 is down", :pushes_cf_app do
       before(:all) do

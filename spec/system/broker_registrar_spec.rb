@@ -3,6 +3,14 @@ require 'spec_helper'
 require 'hula'
 
 describe 'Broker Registrar' do
+  before(:suite) do
+    deregister_broker
+  end
+
+  after(:suite) do
+    register_broker
+  end
+
   before(:all) do
     @rand_str = rand(36**8).to_s(36)
     @orgs = (1..4).to_a.map{|i| "#{@rand_str}_#{i}"}

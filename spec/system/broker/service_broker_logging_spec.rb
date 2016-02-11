@@ -32,16 +32,10 @@ describe 'Logging a Cloud Foundry service broker' do
   let(:service_name) { environment.bosh_manifest.property('rabbitmq-broker.service.name') }
   let(:service) { Prof::MarketplaceService.new(name: service_name, plan: 'standard') }
   let(:rmq_broker_host)  { bosh_director.ips_for_job(RMQ_BROKER_JOB, environment.bosh_manifest.deployment_name)[RMQ_BROKER_JOB_INDEX] }
+  let(:rmq_server_z1_host)  { bosh_director.ips_for_job(RMQ_SERVER_Z1_JOB, environment.bosh_manifest.deployment_name)[RMQ_SERVER_Z1_JOB_INDEX] }
+  let(:rmq_server_z2_host)  { bosh_director.ips_for_job(RMQ_SERVER_Z2_JOB, environment.bosh_manifest.deployment_name)[RMQ_SERVER_Z2_JOB_INDEX] }
   let(:rmq_broker_stdout_log) { ssh_gateway.execute_on(rmq_broker_host, "cat /var/vcap/sys/log/rabbitmq-broker/startup_stdout.log") }
   let(:rmq_broker_stderr_log) { ssh_gateway.execute_on(rmq_broker_host, "cat /var/vcap/sys/log/rabbitmq-broker/startup_stderr.log") }
-
-  before(:all) do
-    register_broker
-  end
-
-  after(:all) do
-    deregister_broker
-  end
 
   describe 'provisions a service' do
     it 'and writes the operation into the stdout logs', :creates_service_key do
@@ -52,20 +46,12 @@ describe 'Logging a Cloud Foundry service broker' do
     end
 
     context 'when the nodes are down' do
-      before(:all) do
-        bosh_director.stop(RMQ_SERVER_Z1_JOB, RMQ_SERVER_Z1_JOB_INDEX)
-        bosh_director.stop(RMQ_SERVER_Z2_JOB, RMQ_SERVER_Z2_JOB_INDEX)
-      end
-
-      after(:all) do
-        bosh_director.start(RMQ_SERVER_Z1_JOB, RMQ_SERVER_Z1_JOB_INDEX)
-        bosh_director.start(RMQ_SERVER_Z2_JOB, RMQ_SERVER_Z2_JOB_INDEX)
-      end
-
       it 'writes the error in stderr log', :creates_service_key do
-        expect{ cf.provision_and_create_service_key(service) }.to raise_error do |e|
-          service_instance_id = get_uuid(e.message)
-          expect(rmq_broker_stderr_log).to include "Failed to provision a service: #{service_instance_id}"
+        stop_connections_to_job(:hosts=>[rmq_server_z1_host, rmq_server_z2_host], :port => 15672) do
+          expect{ cf.provision_and_create_service_key(service) }.to raise_error do |e|
+            service_instance_id = get_uuid(e.message)
+            expect(rmq_broker_stderr_log).to include "Failed to provision a service: #{service_instance_id}"
+          end
         end
       end
     end
@@ -81,20 +67,14 @@ describe 'Logging a Cloud Foundry service broker' do
     end
 
     context 'when the nodes are down' do
-      after(:all) do
-        bosh_director.start(RMQ_SERVER_Z1_JOB, RMQ_SERVER_Z1_JOB_INDEX)
-        bosh_director.start(RMQ_SERVER_Z2_JOB, RMQ_SERVER_Z2_JOB_INDEX)
-      end
-
       it 'writes the error into stderr log', :creates_service_key do
-        expect do
-          cf.provision_service(service, :allow_failure => false) do |_|
-            bosh_director.stop(RMQ_SERVER_Z1_JOB, RMQ_SERVER_Z1_JOB_INDEX)
-            bosh_director.stop(RMQ_SERVER_Z2_JOB, RMQ_SERVER_Z2_JOB_INDEX)
+        cf.provision_service(service) do |service_instance|
+          stop_connections_to_job(:hosts=>[rmq_server_z1_host, rmq_server_z2_host], :port => 15672) do
+            expect { cf.delete_service_instance_and_unbind(service_instance, :allow_failure => false) }.to raise_error do |e|
+              service_instance_id = get_uuid(e.message)
+              expect(rmq_broker_stderr_log).to include "Failed to deprovision a service: #{service_instance_id}"
+            end
           end
-        end.to raise_error do |e|
-          service_instance_id = get_uuid(e.message)
-          expect(rmq_broker_stderr_log).to include "Failed to deprovision a service: #{service_instance_id}"
         end
       end
     end
@@ -111,54 +91,43 @@ describe 'Logging a Cloud Foundry service broker' do
     end
 
     context 'when the nodes are down' do
-      after(:all) do
-        bosh_director.start(RMQ_SERVER_Z1_JOB, RMQ_SERVER_Z1_JOB_INDEX)
-        bosh_director.start(RMQ_SERVER_Z2_JOB, RMQ_SERVER_Z2_JOB_INDEX)
-      end
+      it 'writes the error into the stderr logs', :pushes_cf_app do
+        cf.provision_service(service) do |service_instance|
+          cf.push_app(test_app) do |pushed_app|
 
-      it 'writes the error into the stderr logs', :creates_service_key do
-        cf.provision_and_create_service_key(service) do |service_instance, service_key, service_key_data|
-          @service_instance_id = service_key_data['vhost']
-
-          bosh_director.stop(RMQ_SERVER_Z1_JOB, RMQ_SERVER_Z1_JOB_INDEX)
-          bosh_director.stop(RMQ_SERVER_Z2_JOB, RMQ_SERVER_Z2_JOB_INDEX)
-
-          expect { cf.push_app_and_bind_with_service_instance(test_app, service_instance) { |_, _| } }.to raise_error do |e|
-            bosh_director.start(RMQ_SERVER_Z1_JOB, RMQ_SERVER_Z1_JOB_INDEX)
-            bosh_director.start(RMQ_SERVER_Z2_JOB, RMQ_SERVER_Z2_JOB_INDEX)
-
-            expect(rmq_broker_stderr_log).to include "Failed to bind a service: #{@service_instance_id}"
+            stop_connections_to_job(:hosts=>[rmq_server_z1_host, rmq_server_z2_host], :port => 15672) do
+              expect { cf.bind_service_and_keep_running(pushed_app.name, service_instance.name) }.to raise_error do |e|
+                service_instance_id = get_uuid(e.message)
+                expect(rmq_broker_stderr_log).to include "Failed to bind a service: #{service_instance_id}"
+              end
+            end
           end
         end
       end
     end
+  end
 
-    describe 'unbinds a service' do
-      it 'and writes the operation into the stdout logs', :creates_service_key, :pushes_cf_app do
-        cf.provision_and_create_service_key(service) do |service_instance, service_key, service_key_data|
-          cf.push_app_and_bind_with_service_instance(test_app, service_instance) { |_, _| }
-          service_instance_id = service_key_data['vhost']
-          expect(rmq_broker_stdout_log).to include "Asked to unbind a service: #{service_instance_id}"
-        end
+  describe 'unbinds a service' do
+    it 'and writes the operation into the stdout logs', :creates_service_key, :pushes_cf_app do
+      cf.provision_and_create_service_key(service) do |service_instance, service_key, service_key_data|
+        cf.push_app_and_bind_with_service_instance(test_app, service_instance) { |_, _| }
+        service_instance_id = service_key_data['vhost']
+        expect(rmq_broker_stdout_log).to include "Asked to unbind a service: #{service_instance_id}"
       end
+    end
 
-      context 'when the nodes are down' do
-        after(:all) do
-          bosh_director.start(RMQ_SERVER_Z1_JOB, RMQ_SERVER_Z1_JOB_INDEX)
-          bosh_director.start(RMQ_SERVER_Z2_JOB, RMQ_SERVER_Z2_JOB_INDEX)
-        end
+    context 'when the nodes are down' do
+      it 'writes the error into tthe stderr logs', :pushes_cf_app do
+        cf.provision_service(service) do |service_instance|
+          cf.push_app(test_app) do |pushed_app|
+            cf.bind_service_and_keep_running(pushed_app.name, service_instance.name)
 
-        it 'writes the error into tthe stderr logs', :pushes_cf_app do
-          expect do
-            cf.push_app_and_bind_with_service(test_app, service) do |_, _|
-              bosh_director.stop(RMQ_SERVER_Z1_JOB, RMQ_SERVER_Z1_JOB_INDEX)
-              bosh_director.stop(RMQ_SERVER_Z2_JOB, RMQ_SERVER_Z2_JOB_INDEX)
+            stop_connections_to_job(:hosts=>[rmq_server_z1_host, rmq_server_z2_host], :port => 15672) do
+              expect { cf.unbind_app_from_service(pushed_app, service_instance) }.to raise_error do |e|
+                service_instance_id = get_uuid(e.message)
+                expect(rmq_broker_stderr_log).to include "Failed to unbind a service: #{service_instance_id}"
+              end
             end
-          end.to raise_error do |e|
-            service_instance_id = get_uuid(e.message)
-            bosh_director.start(RMQ_SERVER_Z1_JOB, RMQ_SERVER_Z1_JOB_INDEX)
-            bosh_director.start(RMQ_SERVER_Z2_JOB, RMQ_SERVER_Z2_JOB_INDEX)
-            expect(rmq_broker_stderr_log).to include "Failed to unbind a service: #{service_instance_id}"
           end
         end
       end

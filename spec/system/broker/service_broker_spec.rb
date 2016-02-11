@@ -18,14 +18,6 @@ require "stomp"
 require File.expand_path('../../../../system_test/test_app/lib/lab_rat/aggregate_health_checker.rb', __FILE__)
 
 describe 'Using a Cloud Foundry service broker' do
-  before(:all) do
-    register_broker
-  end
-
-  after(:all) do
-    deregister_broker
-  end
-
   let(:service_name) { environment.bosh_manifest.property('rabbitmq-broker.service.name') }
 
   let(:service) do

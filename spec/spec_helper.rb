@@ -77,6 +77,22 @@ def get_uuid(content)
   uuid_regex.match(content)[0]
 end
 
+def stop_connections_to_job(options = {})
+  job_hosts = options.fetch(:hosts)
+  protocol = options.fetch(:protocol, 'tcp')
+  port = options.fetch(:port, 80)
+
+  job_hosts.each do |job_host|
+    ssh_gateway.execute_on(job_host, "iptables -w -A INPUT -p #{protocol} --destination-port #{port} -j DROP", :root => true)
+  end
+
+  yield
+ensure
+  job_hosts.each do |job_host|
+    ssh_gateway.execute_on(job_host, "iptables -w -D INPUT -p #{protocol} --destination-port #{port} -j DROP", :root => true)
+  end
+end
+
 module ExcludeHelper
   def self.manifest
     @bosh_manifest ||= YAML.load(File.read(ENV['BOSH_MANIFEST']))
