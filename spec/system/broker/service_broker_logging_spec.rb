@@ -29,6 +29,8 @@ describe 'Logging a Cloud Foundry service broker' do
   RMQ_SERVER_Z2_JOB = "rmq_z2"
   RMQ_SERVER_Z2_JOB_INDEX = 0
 
+  RMQ_SERVER_PORT = 15672
+
   let(:service_name) { environment.bosh_manifest.property('rabbitmq-broker.service.name') }
   let(:service) { Prof::MarketplaceService.new(name: service_name, plan: 'standard') }
   let(:rmq_broker_host)  { bosh_director.ips_for_job(RMQ_BROKER_JOB, environment.bosh_manifest.deployment_name)[RMQ_BROKER_JOB_INDEX] }
@@ -47,7 +49,7 @@ describe 'Logging a Cloud Foundry service broker' do
 
     context 'when the nodes are down' do
       it 'writes the error in stderr log', :creates_service_key do
-        stop_connections_to_job(:hosts=>[rmq_server_z1_host, rmq_server_z2_host], :port => 15672) do
+        stop_connections_to_job(:hosts => [rmq_server_z1_host, rmq_server_z2_host], :port => RMQ_SERVER_PORT) do
           expect{ cf.provision_and_create_service_key(service) }.to raise_error do |e|
             service_instance_id = get_uuid(e.message)
             expect(rmq_broker_stderr_log).to include "Failed to provision a service: #{service_instance_id}"
@@ -69,7 +71,7 @@ describe 'Logging a Cloud Foundry service broker' do
     context 'when the nodes are down' do
       it 'writes the error into stderr log', :creates_service_key do
         cf.provision_service(service) do |service_instance|
-          stop_connections_to_job(:hosts=>[rmq_server_z1_host, rmq_server_z2_host], :port => 15672) do
+          stop_connections_to_job(:hosts => [rmq_server_z1_host, rmq_server_z2_host], :port => RMQ_SERVER_PORT) do
             expect { cf.delete_service_instance_and_unbind(service_instance, :allow_failure => false) }.to raise_error do |e|
               service_instance_id = get_uuid(e.message)
               expect(rmq_broker_stderr_log).to include "Failed to deprovision a service: #{service_instance_id}"
@@ -95,7 +97,7 @@ describe 'Logging a Cloud Foundry service broker' do
         cf.provision_service(service) do |service_instance|
           cf.push_app(test_app) do |pushed_app|
 
-            stop_connections_to_job(:hosts=>[rmq_server_z1_host, rmq_server_z2_host], :port => 15672) do
+            stop_connections_to_job(:hosts => [rmq_server_z1_host, rmq_server_z2_host], :port => RMQ_SERVER_PORT) do
               expect { cf.bind_service_and_keep_running(pushed_app.name, service_instance.name) }.to raise_error do |e|
                 service_instance_id = get_uuid(e.message)
                 expect(rmq_broker_stderr_log).to include "Failed to bind a service: #{service_instance_id}"
@@ -122,7 +124,7 @@ describe 'Logging a Cloud Foundry service broker' do
           cf.push_app(test_app) do |pushed_app|
             cf.bind_service_and_keep_running(pushed_app.name, service_instance.name)
 
-            stop_connections_to_job(:hosts=>[rmq_server_z1_host, rmq_server_z2_host], :port => 15672) do
+            stop_connections_to_job(:hosts=>[rmq_server_z1_host, rmq_server_z2_host], :port => RMQ_SERVER_PORT) do
               expect { cf.unbind_app_from_service(pushed_app, service_instance) }.to raise_error do |e|
                 service_instance_id = get_uuid(e.message)
                 expect(rmq_broker_stderr_log).to include "Failed to unbind a service: #{service_instance_id}"

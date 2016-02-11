@@ -3,15 +3,9 @@ require 'spec_helper'
 require 'hula'
 
 describe 'Broker Registrar' do
-  before(:suite) do
-    deregister_broker
-  end
-
-  after(:suite) do
-    register_broker
-  end
-
   before(:all) do
+    deregister_broker
+
     @rand_str = rand(36**8).to_s(36)
     @orgs = (1..4).to_a.map{|i| "#{@rand_str}_#{i}"}
     @space = 'test'
@@ -28,6 +22,8 @@ describe 'Broker Registrar' do
     @orgs.each do |org|
       cf.delete_org(org)
     end
+
+    register_broker
   end
 
   let(:service_name) { environment.bosh_manifest.property('rabbitmq-broker.service.name') }
