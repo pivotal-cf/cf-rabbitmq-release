@@ -30,7 +30,7 @@ bosh_run_errand() {
 }
 
 check_args() {
-  if [ -z $BOSH_MANIFEST ]
+  if [ -z "$BOSH_MANIFEST" ]
   then
     log "Please set the BOSH_MANIFEST environment variable to the path to your manifest file"
     log "E.G. export BOSH_MANIFEST=~/workspace/london-ci-tools/manifests/${RELEASE_NAME}/develop/development/bosh-lite.yml"
@@ -46,13 +46,16 @@ check_args() {
 }
 
 update_release() {
-  if [ ! -f scripts/update-release ]
-  then
-    log "[ERROR] Could not find the 'scripts/update-release' script in $(pwd)"
-    exit 1
-  fi
+  check_ssh_keys_loaded
 
-  scripts/update-release
+  if [ -f scripts/update-release ]
+  then
+    scripts/update-release
+  else
+    log "[INFO] Could not find the 'scripts/update-release' script in $(pwd), manually updating release"
+    git submodule update --init --recursive
+    bundle install
+  fi
 }
 
 upload_release() {
@@ -60,9 +63,51 @@ upload_release() {
 
   pushd "$_release_path"
   update_release
-  bosh -n create release --force
+  bosh -n create release --with-tarball --force
   bosh -n upload release --rebase || log "[WARN] Attempted a --rebase, but there were no job or package changes."
   popd
+}
+
+check_ssh_keys_loaded() {
+  (
+    ssh-add -l
+  )
+
+  if [ $? -ne 0 ]; then
+    echo "Please add your ssh key"
+    exit 1
+  fi
+}
+
+upload_loggregator_release() {
+  local _bosh_deployment_manifest_path=$1
+
+  if ! manifest_contains_release "loggregator" $_bosh_deployment_manifest_path
+  then
+    log "[INFO] Skipped loggregator release because not found in manifest"
+    return
+  fi
+
+  upload_release "${WORKSPACE_BASE_DIR}/loggregator"
+}
+
+manifest_contains_release() {
+  local _release_name=$1
+  local _bosh_deployment_manifest_path=$2
+
+  grep "release:[[:space:]]\+$_release_name" $_bosh_deployment_manifest_path
+}
+
+upload_metrics_release() {
+  local _bosh_deployment_manifest_path=$1
+
+  if ! manifest_contains_release "service-metrics" $_bosh_deployment_manifest_path
+  then
+    log "[INFO] Skipped service metrics release because not found in manifest"
+    return
+  fi
+
+  upload_release "${WORKSPACE_BASE_DIR}/service-metrics-release"
 }
 
 main() {
@@ -71,6 +116,8 @@ main() {
   bosh_target_and_set_deployment "$BOSH_TARGET_ALIAS" "$BOSH_MANIFEST"
 
   upload_release "${WORKSPACE_BASE_DIR}/cf-${RELEASE_NAME}-release"
+  upload_metrics_release "$BOSH_MANIFEST"
+  upload_loggregator_release "$BOSH_MANIFEST"
 
   bosh_deploy
   bosh_run_errand "broker-registrar"

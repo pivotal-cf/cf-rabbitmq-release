@@ -1,0 +1,34 @@
+#!/bin/bash
+
+set -ex
+
+log() {
+  local _message=$1
+  echo -e "$_message"
+}
+
+check_args() {
+  if [ -z "$BOSH_MANIFEST" ]
+  then
+    log "Please set the BOSH_MANIFEST environment variable to the path to your manifest file"
+    log "E.G. export BOSH_MANIFEST=/home/example/cf-redis-release/manifests/bosh-lite.yml"
+    exit 1
+  fi
+}
+
+TMP_MANIFEST=/tmp/bosh_manifest.yml
+
+edit_manifest() {
+  uuid=$(bosh -t lite status --uuid)
+  cp "$BOSH_MANIFEST" "$TMP_MANIFEST"
+  sed -i "s/director_uuid: .*/director_uuid: ${uuid}/" "$TMP_MANIFEST"
+  BOSH_MANIFEST="$TMP_MANIFEST"
+}
+
+check_args
+
+grep -q "status --uuid" "$BOSH_MANIFEST" && edit_manifest;
+
+bundle install && bundle exec rake spec
+
+rm "$TMP_MANIFEST"
