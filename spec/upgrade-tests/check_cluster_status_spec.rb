@@ -14,9 +14,9 @@ describe 'RabbitMQ cluster status during upgrade' do
       job['networks'].flat_map { |network| network['static_ips'] }
     end
   end
-  let(:broker_host) do
-    broker_job = manifest['jobs'].detect { |job| job['template'] == 'rabbitmq-broker' }
-    broker_job['networks'].first['static_ips'].first
+  let(:haproxy_host) do
+    haproxy_job = manifest['jobs'].detect { |job| job['template'] == 'rabbitmq-haproxy' }
+    haproxy_job['networks'].first['static_ips'].first
   end
   let(:sleep_interval) { 10 }
   let(:upgraded_rabbitmq_version) do
@@ -31,7 +31,7 @@ describe 'RabbitMQ cluster status during upgrade' do
       log("Upgrade is in progress - testing versions of RabbitMQ")
 
       versions = hosts.map do |ip|
-        response = ssh_gateway.execute_on(broker_host, "curl -u #{username}:#{password} http://#{ip}:15672/api/overview -s")
+        response = ssh_gateway.execute_on(haproxy_host, "curl -u #{username}:#{password} http://#{ip}:15672/api/overview -s")
 
         if valid_json?(response)
           overview = JSON.parse(response)
