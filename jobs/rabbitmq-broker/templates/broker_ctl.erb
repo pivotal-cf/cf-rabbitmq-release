@@ -51,11 +51,12 @@ start_broker() {
         echo "RabbitMQ service broker is currently running"
     else
         RETVAL=0
-        
+
         # syslog forwarding
         /var/vcap/packages/syslog_aggregator/enable_syslog_config broker_syslog.conf $JOB_DIR/config
         /var/vcap/packages/syslog_aggregator/setup_syslog_forwarder $JOB_DIR/config
-        
+        /usr/sbin/service rsyslog restart
+
         ensure_dirs
         echo "$("${TIMESTAMP}"): Starting RabbitMQ service broker" >> "${INIT_LOG_DIR}/startup_stdout.log"
         set +e

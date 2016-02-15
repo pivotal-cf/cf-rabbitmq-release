@@ -57,6 +57,7 @@ start_haproxy() {
         # syslog forwarding
         /var/vcap/packages/syslog_aggregator/enable_syslog_config haproxy_syslog.conf $JOB_DIR/config
         /var/vcap/packages/syslog_aggregator/setup_syslog_forwarder $JOB_DIR/config
+        /usr/sbin/service rsyslog restart
 
         ensure_dirs
         ensure_log_files
