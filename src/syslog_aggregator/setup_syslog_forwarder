@@ -11,3 +11,5 @@ then
 fi
 
 cp $CONFIG_DIR/syslog_forwarder.conf /etc/rsyslog.d/20-syslog_forwarder.conf
+
+/usr/sbin/service rsyslog restart

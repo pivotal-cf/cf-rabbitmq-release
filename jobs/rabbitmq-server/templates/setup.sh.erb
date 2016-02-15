@@ -62,7 +62,6 @@ end
   # syslog forwarding
   /var/vcap/packages/syslog_aggregator/enable_syslog_config rabbitmq_syslog.conf $JOB_DIR/config
   /var/vcap/packages/syslog_aggregator/setup_syslog_forwarder $JOB_DIR/config
-  /usr/sbin/service rsyslog restart
 
   # Unfortunate tight coupling. Beware.
   # We need this for CONF_ENV_FILE, HOME, ERL_INETRC, and for MNESIA_BASE

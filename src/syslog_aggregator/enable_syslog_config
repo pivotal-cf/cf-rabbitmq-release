@@ -23,3 +23,6 @@ chmod 755 /var/vcap/data/sys/
 chmod 755 /var/vcap/data/sys/log/
 
 cp $CONFIG_DIR/$SYSLOG_FILE_NAME /etc/rsyslog.d/$SYSLOG_FILE_NAME
+
+/usr/sbin/service rsyslog restart
+
