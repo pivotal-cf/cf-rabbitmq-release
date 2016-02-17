@@ -1,0 +1,137 @@
+director_uuid: bosh-director-uuid
+
+name: cf-rabbitmq
+
+releases:
+- name: cf-rabbitmq
+  version: latest
+
+jobs:
+- name: rmq_z1
+  instances: 1
+  networks:
+  - name: rabbitmq_z1
+    static_ips:
+    - 10.10.38.6
+
+- name: rmq_z2
+  instances: 1
+  networks:
+  - name: rabbitmq_z2
+    static_ips:
+    - 10.10.102.6
+
+- name: rmq-broker
+  instances: 1
+  networks:
+  - name: rabbitmq_z1
+    static_ips:
+    - 10.10.38.7
+
+- name: haproxy_z1
+  instances: 1
+  networks:
+  - name: rabbitmq_z1
+    static_ips:
+    - 10.10.38.8
+
+- name: haproxy_z2
+  instances: 1
+  networks:
+  - name: rabbitmq_z2
+    static_ips:
+    - 10.10.102.8
+
+- name: broker-registrar
+  properties:
+    broker:
+      name: p-rabbitmq
+
+properties:
+  # for broker and route registrars
+  cf:
+    domain: your.domain.com
+    admin_password: password 
+    admin_username: username
+    api_url: "http://api.your.domain.com"
+    nats:
+      host: "10.10.80.11"
+      port: "4222"
+      password: password
+      username: username
+  rabbitmq-server:
+    administrators:
+      broker:
+        username: username
+        password: password
+    static_ips:
+    - 10.10.38.6
+    - 10.10.102.6
+    ssl:
+      cert: |
+        -----BEGIN CERTIFICATE-----
+        your certificate
+        -----END CERTIFICATE-----
+      key: |
+        -----BEGIN RSA PRIVATE KEY-----
+        your key
+        -----END RSA PRIVATE KEY-----
+      cacert: |
+        -----BEGIN CERTIFICATE-----
+        certificate for your CA
+        -----END CERTIFICATE-----
+  rabbitmq-haproxy:
+    stats:
+      username: username
+      password: password
+  rabbitmq-broker:
+    ip: 10.10.38.7
+    cc_endpoint: http://api.your.domain.com
+    service:
+      username: "p1-rabbit"
+      password: "p1-rabbit-default-password"
+    logging:
+      level: debug
+      print_stack_traces: false
+    rabbitmq:
+      management_domain: pivotal-rabbitmq.your.domain.com
+      management_ip: 10.10.38.8
+      ssl: true
+      hosts:
+        - 10.10.38.8
+        - 10.10.102.8
+
+networks:
+- name: rabbitmq_z1
+  type: manual
+  subnets:
+  - range: 10.10.38.0/24
+    gateway: 10.10.38.1
+    reserved:
+    - 10.10.38.2 - 10.10.38.4
+    - 10.10.38.254
+    static:
+    - 10.10.38.6 - 10.10.38.8
+    dns:
+    - 172.30.0.253
+    cloud_properties:
+      net_id: net-id
+      security_groups:
+      - security-group-name
+
+- name: rabbitmq_z2
+  type: manual
+  subnets:
+  - range: 10.10.102.0/24
+    gateway: 10.10.102.1
+    reserved:
+    - 10.10.102.2 - 10.10.102.4
+    - 10.10.102.254
+    static:
+    - 10.10.102.6 - 10.10.102.8
+    dns:
+    - 172.30.0.253
+    cloud_properties:
+      net_id: subnet-id
+      security_groups:
+      - security-group-name
