@@ -11,6 +11,8 @@ global
 	maxconn 64000
         spread-checks 4
         log 127.0.0.1 local2 info
+  stats socket /var/vcap/sys/run/rabbitmq-haproxy/haproxy.sock mode 600 level admin user vcap
+  stats timeout 2m #Wait up to 2 minutes for input
 
 defaults
 	option  tcplog
