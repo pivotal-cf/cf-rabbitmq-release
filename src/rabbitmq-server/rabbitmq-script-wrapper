@@ -37,8 +37,8 @@ SCRIPT=`basename $0`
 
 cd /var/vcap/store/rabbitmq # this is our HOME for rabbit/vcap
 
-if [ `id -u` = `id -u ${RABBITMQ_USER}` -a "$SCRIPT" = "rabbitmq-server" ] ; then
-    /var/vcap/packages/rabbitmq-server/privbin/rabbitmq-server "$@"
+if [ `id -u` = `id -u ${RABBITMQ_USER}` -a "$SCRIPT" = "rabbitmqctl" ] ; then
+    /var/vcap/packages/rabbitmq-server/privbin/${SCRIPT} "$@"
 elif [ `id -u` = 0 ] ; then
     su ${RABBITMQ_USER} -p -s /bin/sh -c "PATH=$PATH /var/vcap/packages/rabbitmq-server/privbin/${SCRIPT} ${CMDLINE}"
 else

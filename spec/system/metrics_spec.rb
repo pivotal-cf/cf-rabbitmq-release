@@ -43,6 +43,27 @@ describe 'metrics', :skip_metrics => true do
     end
   end
 
+  describe 'rabbitmq server metrics' do
+    it "contains rmq_z1 node metrics" do
+      assert_metric('/p-rabbitmq/rabbitmq/heartbeat', 'rmq_z1', 0, /value:1 unit:"boolean"/)
+    end
+
+    context "when rmq_z1 is not running" do
+      before(:all) do
+        @rmq_z1_host = bosh_director.ips_for_job('rmq_z1', environment.bosh_manifest.deployment_name)[0]
+        ssh_gateway.execute_on(@rmq_z1_host, '/var/vcap/bosh/bin/monit stop rabbitmq-server', :root => true)
+      end
+
+      after(:all) do
+        ssh_gateway.execute_on(@rmq_z1_host, '/var/vcap/bosh/bin/monit start rabbitmq-server', :root => true)
+      end
+
+      it "contains rmq_z1 node metrics" do
+        assert_metric('/p-rabbitmq/rabbitmq/heartbeat', 'rmq_z1', 0, /value:0 unit:"boolean"/)
+      end
+    end
+  end
+
   def assert_metric(metric_name, job_name, job_index, *regex_patterns)
     metric = find_metric(metric_name, job_name, job_index)
 
