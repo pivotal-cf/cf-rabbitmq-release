@@ -64,6 +64,27 @@ describe 'metrics', :skip_metrics => true do
     end
   end
 
+  describe 'rabbitmq broker metrics' do
+    it "contains rmq-broker node metrics" do
+      assert_metric('/p-rabbitmq/service_broker/heartbeat', 'rmq-broker', 0, /value:1 unit:"boolean"/)
+    end
+
+    context "when rmq-broker is not running" do
+      before(:all) do
+        @rmq_broker_host = bosh_director.ips_for_job('rmq-broker', environment.bosh_manifest.deployment_name)[0]
+        ssh_gateway.execute_on(@rmq_broker_host, '/var/vcap/bosh/bin/monit stop rabbitmq-broker', :root => true)
+      end
+
+      after(:all) do
+        ssh_gateway.execute_on(@rmq_broker_host, '/var/vcap/bosh/bin/monit start rabbitmq-broker', :root => true)
+      end
+
+      it "contains rmq-broker node metrics" do
+        assert_metric('/p-rabbitmq/service_broker/heartbeat', 'rmq-broker', 0, /value:0 unit:"boolean"/)
+      end
+    end
+  end
+
   def assert_metric(metric_name, job_name, job_index, *regex_patterns)
     metric = find_metric(metric_name, job_name, job_index)
 
