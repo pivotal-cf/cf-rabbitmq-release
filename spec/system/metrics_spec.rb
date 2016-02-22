@@ -23,11 +23,11 @@ describe 'metrics', :skip_metrics => true do
   end
 
   describe 'rabbitmq haproxy metrics' do
-    it "contains haproxy_z1 metric for rabbitmq haproxy nodes" do
+    it 'contains haproxy_z1 metric for rabbitmq haproxy nodes' do
       assert_metric('/p-rabbitmq/haproxy/heartbeat', 'haproxy_z1', 0, /value:1 unit:"boolean"/)
     end
 
-    context "when haproxy_z1 is not running" do
+    context 'when haproxy_z1 is not running' do
       before(:all) do
         @ha_host = bosh_director.ips_for_job('haproxy_z1', environment.bosh_manifest.deployment_name)[0]
         ssh_gateway.execute_on(@ha_host, '/var/vcap/bosh/bin/monit stop rabbitmq-haproxy', :root => true)
@@ -37,39 +37,64 @@ describe 'metrics', :skip_metrics => true do
         ssh_gateway.execute_on(@ha_host, '/var/vcap/bosh/bin/monit start rabbitmq-haproxy', :root => true)
       end
 
-      it "contains haproxy_z1 metrics for rabbitmq haproxy nodes" do
+      it 'contains haproxy_z1 metrics for rabbitmq haproxy nodes' do
         assert_metric('/p-rabbitmq/haproxy/heartbeat', 'haproxy_z1', 0, /value:0 unit:"boolean"/)
       end
     end
   end
 
   describe 'rabbitmq server metrics' do
-    it "contains rmq_z1 node metrics" do
+    it 'contains rmq_z1 node metrics' do
       assert_metric('/p-rabbitmq/rabbitmq/heartbeat', 'rmq_z1', 0, /value:1 unit:"boolean"/)
     end
 
-    context "when rmq_z1 is not running" do
+    context 'when rmq_z1 is not running' do
       before(:all) do
         @rmq_z1_host = bosh_director.ips_for_job('rmq_z1', environment.bosh_manifest.deployment_name)[0]
         ssh_gateway.execute_on(@rmq_z1_host, '/var/vcap/bosh/bin/monit stop rabbitmq-server', :root => true)
       end
 
-      after(:all) do
+    after(:all) do
         ssh_gateway.execute_on(@rmq_z1_host, '/var/vcap/bosh/bin/monit start rabbitmq-server', :root => true)
       end
 
-      it "contains rmq_z1 node metrics" do
+      it 'contains rmq_z1 node metrics' do
         assert_metric('/p-rabbitmq/rabbitmq/heartbeat', 'rmq_z1', 0, /value:0 unit:"boolean"/)
+      end
+    end
+
+    it 'contains the metrics for all RabbitMQ nodes' do
+      assert_metric('/p-rabbitmq/rabbitmq/heartbeat', 'rmq_z1', 0, /value:1 unit:"boolean"/)
+      assert_metric('/p-rabbitmq/rabbitmq/heartbeat', 'rmq_z2', 0, /value:1 unit:"boolean"/)
+    end
+
+    context 'when all RabbitMQ nodes are not running' do
+      before(:all) do
+        @rmq_z1_host = bosh_director.ips_for_job('rmq_z1', environment.bosh_manifest.deployment_name)[0]
+        @rmq_z2_host = bosh_director.ips_for_job('rmq_z2', environment.bosh_manifest.deployment_name)[0]
+
+        ssh_gateway.execute_on(@rmq_z1_host, '/var/vcap/bosh/bin/monit stop rabbitmq-server', :root => true)
+        ssh_gateway.execute_on(@rmq_z2_host, '/var/vcap/bosh/bin/monit stop rabbitmq-server', :root => true)
+      end
+
+      after(:all) do
+        ssh_gateway.execute_on(@rmq_z1_host, '/var/vcap/bosh/bin/monit start rabbitmq-server', :root => true)
+        ssh_gateway.execute_on(@rmq_z2_host, '/var/vcap/bosh/bin/monit start rabbitmq-server', :root => true)
+      end
+
+      it 'contains rmq_z1 node metrics' do
+        assert_metric('/p-rabbitmq/rabbitmq/heartbeat', 'rmq_z1', 0, /value:0 unit:"boolean"/)
+        assert_metric('/p-rabbitmq/rabbitmq/heartbeat', 'rmq_z2', 0, /value:0 unit:"boolean"/)
       end
     end
   end
 
   describe 'rabbitmq broker metrics' do
-    it "contains rmq-broker node metrics" do
+    it 'contains rmq-broker node metrics' do
       assert_metric('/p-rabbitmq/service_broker/heartbeat', 'rmq-broker', 0, /value:1 unit:"boolean"/)
     end
 
-    context "when rmq-broker is not running" do
+    context 'when rmq-broker is not running' do
       before(:all) do
         @rmq_broker_host = bosh_director.ips_for_job('rmq-broker', environment.bosh_manifest.deployment_name)[0]
         ssh_gateway.execute_on(@rmq_broker_host, '/var/vcap/bosh/bin/monit stop rabbitmq-broker', :root => true)
@@ -79,7 +104,7 @@ describe 'metrics', :skip_metrics => true do
         ssh_gateway.execute_on(@rmq_broker_host, '/var/vcap/bosh/bin/monit start rabbitmq-broker', :root => true)
       end
 
-      it "contains rmq-broker node metrics" do
+      it 'contains rmq-broker node metrics' do
         assert_metric('/p-rabbitmq/service_broker/heartbeat', 'rmq-broker', 0, /value:0 unit:"boolean"/)
       end
     end
