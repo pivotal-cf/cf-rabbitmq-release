@@ -31,6 +31,14 @@ security_options = p('rabbitmq-server.ssl.security_options')
 if security_options.include?('enable_tls1_0')
   supported_tls_versions << "tlsv1"
 end
+verify_peer = 'verify_none'
+if_p("rabbitmq-server.ssl.verify") do |v|
+  verify_peer = v
+end
+fail_if_no_peer_cert = false
+if_p("rabbitmq-server.ssl.fail_if_no_peer_cert") do |f|
+  fail_if_no_peer_cert = f
+end
 
 %>
 (
@@ -135,7 +143,7 @@ end
   <% if ssl %>
   # concatenate options encoded in double quotes, see the concatenation comment above.
   # {versions,['tlsv1.2','tlsv1.1',tlsv1]} disables SSLv3 to mitigate the POODLE attack.
-  SSL_OPTIONS=" -rabbit ssl_options [{cacertfile,\\\"${SCRIPT_DIR}/../etc/cacert.pem\\\"},{certfile,\\\"${SCRIPT_DIR}/../etc/cert.pem\\\"},{keyfile,\\\"${SCRIPT_DIR}/../etc/key.pem\\\"},{verify,verify_none},{fail_if_no_peer_cert,false},{versions,<%= "[#{supported_tls_versions.join(',')}]" %>}]"
+  SSL_OPTIONS=" -rabbit ssl_options [{cacertfile,\\\"${SCRIPT_DIR}/../etc/cacert.pem\\\"},{certfile,\\\"${SCRIPT_DIR}/../etc/cert.pem\\\"},{keyfile,\\\"${SCRIPT_DIR}/../etc/key.pem\\\"},{verify,<%= "#{verify_peer}" %>},{fail_if_no_peer_cert,<%= "#{fail_if_no_peer_cert}" %>},{versions,<%= "[#{supported_tls_versions.join(',')}]" %>}]"
   SERVER_START_ARGS="${SERVER_START_ARGS}\"${SSL_OPTIONS}\""
   <% end %>
   if [ -f ${CONF_ENV_FILE} ]
