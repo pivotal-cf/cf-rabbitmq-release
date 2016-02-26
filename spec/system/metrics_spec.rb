@@ -44,8 +44,12 @@ describe 'metrics', :skip_metrics => true do
   end
 
   describe 'rabbitmq server metrics' do
-    it 'contains rmq_z1 node metrics' do
+    it 'contains rmq_z1 heartbeat node metrics' do
       assert_metric('/p-rabbitmq/rabbitmq/heartbeat', 'rmq_z1', 0, /value:1 unit:"boolean"/)
+    end
+
+    it 'contains rmq_z1 process count metrics' do
+      assert_metric('/p-rabbitmq/rabbitmq/erlang/erlang_processes', 'rmq_z1', 0, /value:215 unit:"count"/)
     end
 
     context 'when rmq_z1 is not running' do
@@ -54,16 +58,20 @@ describe 'metrics', :skip_metrics => true do
         ssh_gateway.execute_on(@rmq_z1_host, '/var/vcap/bosh/bin/monit stop rabbitmq-server', :root => true)
       end
 
-    after(:all) do
+      after(:all) do
         ssh_gateway.execute_on(@rmq_z1_host, '/var/vcap/bosh/bin/monit start rabbitmq-server', :root => true)
       end
 
-      it 'contains rmq_z1 node metrics' do
+      it 'contains rmq_z1 heartbeat node metrics' do
         assert_metric('/p-rabbitmq/rabbitmq/heartbeat', 'rmq_z1', 0, /value:0 unit:"boolean"/)
+      end
+
+      it 'contains rmq_z1 process count metrics' do
+        assert_metric('/p-rabbitmq/rabbitmq/erlang/erlang_processes', 'rmq_z1', 0, /value:0 unit:"count"/)
       end
     end
 
-    it 'contains the metrics for all RabbitMQ nodes' do
+    it 'contains the heartbeat metrics for all RabbitMQ nodes' do
       assert_metric('/p-rabbitmq/rabbitmq/heartbeat', 'rmq_z1', 0, /value:1 unit:"boolean"/)
       assert_metric('/p-rabbitmq/rabbitmq/heartbeat', 'rmq_z2', 0, /value:1 unit:"boolean"/)
     end
@@ -82,9 +90,14 @@ describe 'metrics', :skip_metrics => true do
         ssh_gateway.execute_on(@rmq_z2_host, '/var/vcap/bosh/bin/monit start rabbitmq-server', :root => true)
       end
 
-      it 'contains rmq_z1 node metrics' do
+      it 'contains rmq_z1 and rmq_z2 heartbeat node metrics' do
         assert_metric('/p-rabbitmq/rabbitmq/heartbeat', 'rmq_z1', 0, /value:0 unit:"boolean"/)
         assert_metric('/p-rabbitmq/rabbitmq/heartbeat', 'rmq_z2', 0, /value:0 unit:"boolean"/)
+      end
+
+      it 'contains rmq_z1 and rmq_z2 process count metrics' do
+        assert_metric('/p-rabbitmq/rabbitmq/erlang/erlang_processes', 'rmq_z1', 0, /value:0 unit:"count"/)
+        assert_metric('/p-rabbitmq/rabbitmq/erlang/erlang_processes', 'rmq_z2', 0, /value:0 unit:"count"/)
       end
     end
   end
