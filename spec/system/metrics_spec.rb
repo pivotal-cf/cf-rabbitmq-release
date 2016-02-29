@@ -49,7 +49,7 @@ describe 'metrics', :skip_metrics => true do
     end
 
     it 'contains rmq_z1 process count metrics' do
-      assert_metric('/p-rabbitmq/rabbitmq/erlang/erlang_processes', 'rmq_z1', 0, /value:215 unit:"count"/)
+      assert_metric('/p-rabbitmq/rabbitmq/erlang/erlang_processes', 'rmq_z1', 0, /value:[1-9][0-9]* unit:"count"/)
     end
 
     context 'when rmq_z1 is not running' do
