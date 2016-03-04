@@ -30,5 +30,3 @@ check_args
 grep -q "status --uuid" "$BOSH_MANIFEST" && edit_manifest;
 
 bundle install && bundle exec rake spec
-
-rm "$TMP_MANIFEST"
