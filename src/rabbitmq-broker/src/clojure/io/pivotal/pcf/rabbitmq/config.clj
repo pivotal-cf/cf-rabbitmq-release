@@ -1,4 +1,5 @@
 (ns io.pivotal.pcf.rabbitmq.config
+
   (:require [clj-yaml.core :as yaml]
             [clojure.data.json :as json]
             [clojure.string :as string]
@@ -121,7 +122,7 @@
                     :description "Provides a multi-tenant RabbitMQ cluster"
                     :metadata    {"displayName" "Standard"
                                   "costs"       [pcf-product-cost]
-                                  "bullets"     ["RabbitMQ 3.5.7" "Multi-tenant"]}}]}))
+                                  "bullets"     ["RabbitMQ 3.6.1" "Multi-tenant"]}}]}))
 
 (defn using-tls?
   ([]
