@@ -5,9 +5,9 @@ packages:
 - java
 - rabbitmq-broker
 - util-linux
-- golang
-- route-registrar
-- syslog_aggregator
+- cf-rabbitmq-golang
+- cf-rabbitmq-route-registrar
+- cf-rabbitmq-syslog_aggregator
 
 properties:
   rabbitmq-broker.route:
