@@ -11,21 +11,21 @@ input(type="imfile"
       Tag="rabbitmq-service-broker_startup_stderr")
 
 input(type="imfile"
-      File="/var/vcap/sys/log/management-route-registrar/route-registrar.stdout.log"
+      File="/var/vcap/sys/log/rabbitmq-broker/rabbitmq-management-route-registrar.stdout.log"
       StateFile="rabbitmq-management-route-registrar_stdout.statefile"
       Tag="rabbitmq-management-route-registrar_stdout")
 
 input(type="imfile"
-      File="/var/vcap/sys/log/management-route-registrar/route-registrar.stderr.log"
+      File="/var/vcap/sys/log/rabbitmq-broker/rabbitmq-managment-route-registrar.stderr.log"
       StateFile="rabbitmq-management-route-registrar_stderr.statefile"
       Tag="rabbitmq-management-route-registrar_stderr")
 
 input(type="imfile"
-      File="/var/vcap/sys/log/broker-route-registrar/route-registrar.stdout.log"
+      File="/var/vcap/sys/log/rabbitmq-broker/rabbitmq-broker-route-registrar.stdout.log"
       StateFile="rabbitmq-service-broker-route-registrar_stdout.statefile"
       Tag="rabbitmq-service-broker-route-registrar_stdout")
 
 input(type="imfile"
-      File="/var/vcap/sys/log/broker-route-registrar/route-registrar.stderr.log"
+      File="/var/vcap/sys/log/rabbitmq-broker/rabbitmq-broker-route-registrar.stderr.log"
       StateFile="rabbitmq-service-broker-route-registrar_stderr.statefile"
       Tag="rabbitmq-service-broker-route-registrar_stderr")

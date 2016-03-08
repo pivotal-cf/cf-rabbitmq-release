@@ -2,7 +2,7 @@
 name: rabbitmq-haproxy
 packages:
 - haproxy
-- syslog_aggregator
+- cf-rabbitmq-syslog_aggregator
 properties:
   rabbitmq-haproxy.server_ips:
     description: "List of IP addresses for the RabbitMQ cluster to proxy"
