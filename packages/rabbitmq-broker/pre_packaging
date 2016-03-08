@@ -1,5 +1,8 @@
 set -e -x
 
+export JAVE_HOME=/var/vcap/packages/java
+export PATH=$PATH:$JAVA_HOME/bin
+
 cd "${BUILD_DIR}/rabbitmq-broker"
 LEIN=./tools/leiningen/lein
 
