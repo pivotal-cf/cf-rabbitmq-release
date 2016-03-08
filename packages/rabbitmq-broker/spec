@@ -1,7 +1,6 @@
 ---
 name: rabbitmq-broker
-dependencies:
-- java
+dependencies:[]
 files:
 - rabbitmq-broker/bin/*
 - rabbitmq-broker/config/*
