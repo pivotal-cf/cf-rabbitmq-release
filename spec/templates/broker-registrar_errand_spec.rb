@@ -9,7 +9,7 @@ RSpec.describe 'broker registration errand template' do
 	let(:output) { renderer.render('jobs/broker-registrar/templates/errand.sh.erb') }
 
 	context 'when ssl validation is not skipped' do
-		let(:manifest){ emulate_bosh_director_merge ({'cf' => { 'skip-ssl-validation' => false }}) }
+		let(:manifest){ emulate_bosh_director_merge ({'cf' => { 'skip_ssl_validation' => false }}) }
 
 		it 'skips ssl validation' do
 			expect(output).not_to include '--skip-ssl-validation'
@@ -18,7 +18,7 @@ RSpec.describe 'broker registration errand template' do
 	end
 
 	context 'when ssl validation is skipped' do
-		let(:manifest){ emulate_bosh_director_merge ({'cf'=> {'skip-ssl-validation' => true }}) }
+		let(:manifest){ emulate_bosh_director_merge ({'cf'=> {'skip_ssl_validation' => true }}) }
 
 		it 'skips ssl validation' do
 			expect(output).to include 'cf api --skip-ssl-validation'
