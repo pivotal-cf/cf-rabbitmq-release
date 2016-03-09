@@ -12,7 +12,7 @@ BROKER_NAME='<%= p("broker.name") %>'
 
 cf --version
 
-<% if p("cf.skip-ssl-validation") %>
+<% if p("cf.skip_ssl_validation") %>
 cf api --skip-ssl-validation $CF_API_URL
 <% else %>
 cf api $CF_API_URL
