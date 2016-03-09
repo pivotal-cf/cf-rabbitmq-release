@@ -11,6 +11,9 @@ properties:
     description: 'Username of the admin user'
   cf.admin_password:
     description: 'Password of the admin user'
+  cf.skip-ssl-validation:
+    description: 'Trust self signed cf certificates'
+    default: true
   broker.service.name:
     description: 'Offered service name'
     default: 'p-rabbitmq'
