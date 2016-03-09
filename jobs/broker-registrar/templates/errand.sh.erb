@@ -15,7 +15,11 @@ BROKER_PASSWORD='<%= p("broker.password") %>'
 SERVICE_NAME='<%= p("broker.service.name") %>'
 
 cf --version
+<% if p("cf.skip-ssl-validation") %>
 cf api --skip-ssl-validation $CF_API_URL
+<% else %>
+cf api $CF_API_URL
+<% end %>
 cf auth $CF_ADMIN_USERNAME $CF_ADMIN_PASSWORD
 cf create-service-broker $BROKER_NAME $BROKER_USERNAME $BROKER_PASSWORD $BROKER_URL || cf update-service-broker $BROKER_NAME $BROKER_USERNAME $BROKER_PASSWORD $BROKER_URL
 
