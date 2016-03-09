@@ -3,7 +3,7 @@ require 'date'
 
 describe 'metrics', :skip_metrics => true do
 
-  before(:all) do
+  before(:each) do
     @number_of_nodes = 1
     @outFile = Tempfile.new('smetrics')
 
@@ -17,7 +17,7 @@ describe 'metrics', :skip_metrics => true do
     )
   end
 
-  after(:all) do
+  after(:each) do
     Process.kill("INT", @pid)
     @outFile.unlink
   end
@@ -126,11 +126,10 @@ describe 'metrics', :skip_metrics => true do
   def assert_metric(metric_name, job_name, job_index, *regex_patterns)
     metric = find_metric(metric_name, job_name, job_index)
 
-    expect(metric).to match(/value:\d/)
-    expect(metric).to include('origin:"rmq"')
-    expect(metric).to include('deployment:"cf-rabbitmq"')
+    expect(metric).to include('origin:"p-rabbitmq"')
     expect(metric).to include('eventType:ValueMetric')
     expect(metric).to match(/timestamp:\d/)
+    expect(metric).to include('deployment:"cf-rabbitmq"')
     expect(metric).to match(/index:"\d"/)
     expect(metric).to match(/ip:"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"/)
 
@@ -140,18 +139,10 @@ describe 'metrics', :skip_metrics => true do
   end
 
   def find_metric(metric_name, job_name, job_index)
-    start_time = DateTime.now
-
     31.times do
       File.open(firehose_out_file, "r") do |file|
         regex = /(?=.*name:"#{metric_name}")(?=.*job:"#{job_name}")(?=.*index:"#{job_index}")/
-        matches = file.readlines.grep(regex)
-
-        metrics = matches.select do |entry|
-          timestamp = entry.match(/timestamp:\d+/)[0].delete('timestamp:')
-          time = Time.at(timestamp.to_i/1e9).to_datetime
-          time >= start_time
-        end
+        metrics = file.readlines.grep(regex)
 
         if metrics.size > 0
           return metrics[0]
