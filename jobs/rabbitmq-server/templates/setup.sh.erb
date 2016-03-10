@@ -4,8 +4,6 @@ set -e
 
 <%
 
-job = spec.job.name
-default_network = spec.networks.marshal_dump().detect { |_, network_spec| network_spec.default }.last
 job_ip = spec.networks.send(spec.networks.methods(false).first).ip
 
 ssl = false
@@ -15,7 +13,7 @@ if_p("rabbitmq-server.ssl.key") do |key|
   end
 end
 
-ips = [default_network.ip]
+ips = [job_ip]
 if_p("rabbitmq-server.static_ips") do |cluster_ips|
   if cluster_ips && cluster_ips.length > 1
     ips = cluster_ips
