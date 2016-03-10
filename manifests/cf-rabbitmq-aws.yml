@@ -103,6 +103,8 @@ properties:
     static_ips:
     - 10.10.38.6
     ssl:
+      verify: false
+      fail_if_no_peer_cert: false
       cert: |
         -----BEGIN CERTIFICATE-----
         -----END CERTIFICATE-----
