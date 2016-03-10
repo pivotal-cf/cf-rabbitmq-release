@@ -179,6 +179,40 @@ describe 'Using a Cloud Foundry service broker' do
       end
     end
   end
+
+  describe 'SSL' do
+    let(:rmq_host) { bosh_director.ips_for_job("rmq_z1", environment.bosh_manifest.deployment_name)[0] }
+    let(:ssl_options) {  ssh_gateway.execute_on(rmq_host, "ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl eval 'application:get_env(rabbit, ssl_options).'", :root => true) }
+
+    it 'does not have SSL verification enabled' do
+      expect(ssl_options).to include('{verify,verify_none}')
+    end
+
+    it 'does not have SSL peer validation enabled' do
+      expect(ssl_options).to include('{fail_if_no_peer_cert,false}')
+    end
+
+    context 'when SSL verification and peer validation is enabled' do
+      before(:context) do
+        modify_and_deploy_manifest do |manifest|
+          manifest['properties']['rabbitmq-server']['ssl']['verify'] = true
+          manifest['properties']['rabbitmq-server']['ssl']['fail_if_no_peer_cert'] = true
+        end
+      end
+
+      after(:context) do
+        bosh_director.deploy(environment.bosh_manifest.path)
+      end
+
+      it 'has the right SSL verification options' do
+        expect(ssl_options).to include('{verify,verify_peer}')
+      end
+
+      it 'has the right SSL peer options' do
+        expect(ssl_options).to include('{fail_if_no_peer_cert,true}')
+      end
+    end
+  end
 end
 
 def provides_amqp_connectivity(session, app)
