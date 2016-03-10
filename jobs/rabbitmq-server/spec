@@ -20,7 +20,7 @@ properties:
     default: []
   rabbitmq-server.ssl.verify:
     description: "Verify peer method used by RabbitMQ server"
-    default: false
+    default: verify_none
   rabbitmq-server.ssl.fail_if_no_peer_cert:
     description: "Should RabbitMQ server fail if there is no peer cert"
     default: false
