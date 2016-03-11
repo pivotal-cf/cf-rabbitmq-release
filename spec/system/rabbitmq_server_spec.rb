@@ -39,14 +39,14 @@ describe "RabbitMQ server configuration" do
     end
 
     context 'when SSL verification and peer validation is enabled' do
-      before(:each) do
+      before(:context) do
         modify_and_deploy_manifest do |manifest|
           manifest['properties']['rabbitmq-server']['ssl']['verify'] = true
           manifest['properties']['rabbitmq-server']['ssl']['fail_if_no_peer_cert'] = true
         end
       end
 
-      after(:each) do
+      after(:context) do
         bosh_director.deploy(environment.bosh_manifest.path)
       end
 
