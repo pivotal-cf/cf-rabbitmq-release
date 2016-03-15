@@ -7,7 +7,7 @@ require 'tempfile'
 require 'hula'
 require 'hula/bosh_manifest'
 
-describe "RabbitMQ server configuration" do
+RSpec.describe "RabbitMQ server configuration" do
 
   let(:rmq_host) { bosh_director.ips_for_job("rmq_z1", environment.bosh_manifest.deployment_name)[0] }
   let(:rmq_admin_broker_username) { environment.bosh_manifest.property('rabbitmq-server.administrators.broker.username') }

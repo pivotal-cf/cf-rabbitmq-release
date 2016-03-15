@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'bosh/template/renderer'
 require 'tempfile'
 
-describe 'Enabling plugins' do
+RSpec.describe 'Enabling plugins' do
   let(:manifest){ YAML.load_file('spec/support/manifest/test.yml')}
 
   context "when there is a plugin specified in the manifest but missing on server" do

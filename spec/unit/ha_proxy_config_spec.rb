@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'bosh/template/renderer'
 
-describe 'Cluster' do
+RSpec.describe 'Cluster' do
   let(:manifest){ YAML.load_file('manifests/cf-rabbitmq-lite.yml')}
 
   it "should contain all rabbit nodes to load balance" do

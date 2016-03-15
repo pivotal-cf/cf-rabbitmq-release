@@ -1,16 +1,11 @@
 require 'spec_helper'
 require 'bosh/template/renderer'
 
-describe 'TLS Versions' do
+RSpec.describe 'TLS Versions' do
   let(:manifest){ YAML.load_file('manifests/cf-rabbitmq-lite.yml')}
 
   before :each do
-    networks = double("networks")
-    allow(networks).to receive(:marshal_dump).and_return({"blah" => OpenStruct.new(default: true, ip: "127.0.0.1")})
-    allow(networks).to receive(:methods).and_return(["mynetwork"])
-    allow(networks).to receive(:mynetwork).and_return(double("ip", ip: "127.0.0.1"))
-    allow_any_instance_of(OpenStruct).to receive(:networks).and_return(networks)
-
+    manifest[:networks] = { blah: { ip: '127.0.0.1', default: true }}
     manifest[:job] = {name: 'rabbitmq'}
   end
 

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 require 'hula'
 
-describe 'Broker Registrar' do
+RSpec.describe 'Broker Registrar' do
   before(:all) do
     deregister_broker
 

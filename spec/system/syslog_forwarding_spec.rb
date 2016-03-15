@@ -5,7 +5,7 @@ require 'json'
 require 'hula'
 require 'hula/bosh_manifest'
 
-describe "Syslog forwarding" do
+RSpec.describe "Syslog forwarding" do
 
   RMQ_JOB_NAME = "rmq_z1"
   BROKER_JOB_NAME = "rmq-broker"

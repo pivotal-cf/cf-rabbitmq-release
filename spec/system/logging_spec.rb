@@ -10,7 +10,7 @@ require 'prof/service_instance'
 require 'prof/cloud_foundry'
 require 'prof/test_app'
 
-describe "logging configuration" do
+RSpec.describe "logging configuration" do
 
   RMQ_Z1_JOB_NAME = "rmq_z1"
   RMQ_Z2_JOB_NAME = "rmq_z2"
@@ -27,9 +27,9 @@ describe "logging configuration" do
 
   SERVICE_NAME = environment.bosh_manifest.property('rabbitmq-broker.service.name')
   SERVICE = Prof::MarketplaceService.new(
-      name: SERVICE_NAME,
-      plan: 'standard'
-    )
+    name: SERVICE_NAME,
+    plan: 'standard'
+  )
 
   context "when a connection is made over AMQP" do
     before :context do

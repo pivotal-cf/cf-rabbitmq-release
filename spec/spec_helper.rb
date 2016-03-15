@@ -6,26 +6,26 @@ require 'yaml'
 
 def environment
   @environment ||= begin
-    options = {
-      bosh_manifest_path: ENV.fetch('BOSH_MANIFEST') { File.expand_path('../../manifests/cf-rabbitmq-lite.yml', __FILE__) },
-      bosh_service_broker_job_name: 'cf-rabbitmq-broker'
-    }
+                     options = {
+                       bosh_manifest_path: ENV.fetch('BOSH_MANIFEST') { File.expand_path('../../manifests/cf-rabbitmq-lite.yml', __FILE__) },
+                       bosh_service_broker_job_name: 'cf-rabbitmq-broker'
+                     }
 
-    options[:cloud_foundry_domain]   = ENV['CF_DOMAIN']    ? ENV['CF_DOMAIN']    : 'bosh-lite.com'
-    options[:cloud_foundry_username] = ENV['CF_USERNAME']  ? ENV['CF_USERNAME']  : 'admin'
-    options[:cloud_foundry_password] = ENV['CF_PASSWORD']  ? ENV['CF_PASSWORD']  : 'admin'
-    options[:cloud_foundry_api_url]  = ENV['CF_API']       ? ENV['CF_API']       : 'api.bosh-lite.com'
+                     options[:cloud_foundry_domain]   = ENV['CF_DOMAIN']    ? ENV['CF_DOMAIN']    : 'bosh-lite.com'
+                     options[:cloud_foundry_username] = ENV['CF_USERNAME']  ? ENV['CF_USERNAME']  : 'admin'
+                     options[:cloud_foundry_password] = ENV['CF_PASSWORD']  ? ENV['CF_PASSWORD']  : 'admin'
+                     options[:cloud_foundry_api_url]  = ENV['CF_API']       ? ENV['CF_API']       : 'api.bosh-lite.com'
 
-    options[:bosh_target]          = ENV['BOSH_TARGET']   if ENV.key?('BOSH_TARGET')
-    options[:bosh_username]        = ENV['BOSH_USERNAME'] if ENV.key?('BOSH_USERNAME')
-    options[:bosh_password]        = ENV['BOSH_PASSWORD'] if ENV.key?('BOSH_PASSWORD')
-    options[:ssh_gateway_host]     = URI.parse(ENV['BOSH_TARGET']).host if ENV.key?('BOSH_TARGET')
+                     options[:bosh_target]          = ENV['BOSH_TARGET']   if ENV.key?('BOSH_TARGET')
+                     options[:bosh_username]        = ENV['BOSH_USERNAME'] if ENV.key?('BOSH_USERNAME')
+                     options[:bosh_password]        = ENV['BOSH_PASSWORD'] if ENV.key?('BOSH_PASSWORD')
+                     options[:ssh_gateway_host]     = URI.parse(ENV['BOSH_TARGET']).host if ENV.key?('BOSH_TARGET')
 
-    options[:ssh_gateway_username] = 'vcap'               if ENV.key?('BOSH_TARGET')
-    options[:ssh_gateway_password] = 'c1oudc0w'           if ENV.key?('BOSH_TARGET')
+                     options[:ssh_gateway_username] = 'vcap'               if ENV.key?('BOSH_TARGET')
+                     options[:ssh_gateway_password] = 'c1oudc0w'           if ENV.key?('BOSH_TARGET')
 
-    Prof::Environment::CloudFoundry.new(options)
-  end
+                     Prof::Environment::CloudFoundry.new(options)
+                   end
 end
 
 def bosh_director
@@ -65,11 +65,11 @@ def doppler_address
 end
 
 def register_broker
-    bosh_director.run_errand('broker-registrar') unless ENV.has_key?('SKIP_ERRANDS')
+  bosh_director.run_errand('broker-registrar') unless ENV.has_key?('SKIP_ERRANDS')
 end
 
 def deregister_broker
-    bosh_director.run_errand('broker-deregistrar') unless ENV.has_key?('SKIP_ERRANDS')
+  bosh_director.run_errand('broker-deregistrar') unless ENV.has_key?('SKIP_ERRANDS')
 end
 
 def get_uuid(content)
@@ -99,6 +99,7 @@ module ExcludeHelper
   end
 
   def self.metrics_available?
+    return unless ENV['BOSH_MANIFEST']
     0 != manifest.fetch('releases').select{|i| i["name"] == "service-metrics" }.length
   end
 
@@ -116,7 +117,6 @@ puts ExcludeHelper::warnings
 
 RSpec.configure do |config|
 
-  config.formatter = :documentation
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
   config.filter_run_excluding :skip_metrics => !ExcludeHelper::metrics_available?
@@ -131,4 +131,18 @@ RSpec.configure do |config|
       example.run
     end
   end
+
+  config.expect_with :rspec do |expectations|
+    expectations.include_chain_clauses_in_custom_matcher_descriptions = true
+  end
+
+  config.mock_with :rspec do |mocks|
+    mocks.verify_partial_doubles = true
+  end
+
+  config.disable_monkey_patching!
+
+  config.warnings = true
+
+  Kernel.srand config.seed
 end

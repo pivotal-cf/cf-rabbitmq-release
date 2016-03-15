@@ -3,7 +3,7 @@ require 'httparty'
 require 'yaml'
 require 'json'
 
-describe 'RabbitMQ cluster status during upgrade' do
+RSpec.describe 'RabbitMQ cluster status during upgrade' do
 
   let(:manifest) { YAML.load_file(ENV['BOSH_MANIFEST']) }
   let(:username) { manifest['properties']['rabbitmq-server']['administrators']['management']['username'] }
@@ -66,7 +66,7 @@ describe 'RabbitMQ cluster status during upgrade' do
     begin
       JSON.parse(json)
       return true
-    rescue Exception => e
+    rescue JSON::ParserError
       return false
     end
   end

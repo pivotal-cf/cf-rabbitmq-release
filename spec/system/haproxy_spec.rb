@@ -7,7 +7,7 @@ require 'prof/cloud_foundry'
 
 require 'net/http'
 
-describe "haproxy" do
+RSpec.describe "haproxy" do
 
   let(:service_name) { environment.bosh_manifest.property('rabbitmq-broker.service.name') }
 

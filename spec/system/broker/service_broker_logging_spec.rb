@@ -19,7 +19,7 @@ require "stomp"
 require File.expand_path('../../../../system_test/test_app/lib/lab_rat/aggregate_health_checker.rb', __FILE__)
 
 
-describe 'Logging a Cloud Foundry service broker' do
+RSpec.describe 'Logging a Cloud Foundry service broker' do
   RMQ_BROKER_JOB = "rmq-broker"
   RMQ_BROKER_JOB_INDEX = 0
 
