@@ -61,7 +61,7 @@ def modify_and_deploy_manifest
 end
 
 def doppler_address
-  ENV['DOPPLER_ADDR'] ? ENV['DOPPLER_ADDR'] : "wss://doppler.bosh-lite.com:443"
+  @doppler_address ||= cf.info["doppler_logging_endpoint"]
 end
 
 def register_broker
