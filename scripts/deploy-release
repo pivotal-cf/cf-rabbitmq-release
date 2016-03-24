@@ -54,7 +54,9 @@ update_release() {
   else
     log "[INFO] Could not find the 'scripts/update-release' script in $(pwd), manually updating release"
     git submodule update --init --recursive
-    bundle install
+    if [ -f scripts/update-release ]; then
+      bundle install
+    fi
   fi
 }
 
@@ -108,6 +110,7 @@ upload_metrics_release() {
   fi
 
   upload_release "${WORKSPACE_BASE_DIR}/service-metrics-release"
+  upload_release "${WORKSPACE_BASE_DIR}/rabbitmq-metrics-release"
 }
 
 main() {
@@ -115,7 +118,7 @@ main() {
 
   bosh_target_and_set_deployment "$BOSH_TARGET_ALIAS" "$BOSH_MANIFEST"
 
-  upload_release "${WORKSPACE_BASE_DIR}/cf-${RELEASE_NAME}-release"
+  upload_release "${WORKSPACE_BASE_DIR}/cf-${RELEASE_NAME}"
   upload_metrics_release "$BOSH_MANIFEST"
   upload_loggregator_release "$BOSH_MANIFEST"
 
