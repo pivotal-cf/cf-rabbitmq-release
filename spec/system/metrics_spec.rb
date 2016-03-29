@@ -36,23 +36,30 @@ RSpec.describe 'metrics', :skip_metrics => true do
   end
 
   describe 'rabbitmq server metrics' do
-    it 'contains rmq_z1 heartbeat node metrics' do
-      expect(firehose).to have_metric('rmq_z1', 0, /name:"\/p-rabbitmq\/rabbitmq\/heartbeat" value:1 unit:"boolean"/)
+    before(:all) do
+      @rmq_z1_host = bosh_director.ips_for_job('rmq_z1', environment.bosh_manifest.deployment_name)[0]
+      @rmq_z2_host = bosh_director.ips_for_job('rmq_z2', environment.bosh_manifest.deployment_name)[0]
     end
 
-    it 'contains rmq_z1 process count metrics' do
-      expect(firehose).to have_metric('rmq_z1', 0, /name:"\/p-rabbitmq\/rabbitmq\/erlang\/erlang_processes" value:[1-9][0-9]* unit:"count"/)
-    end
+    context 'when all RabbitMQ nodes are running' do
+      before(:all) do
+        ssh_gateway.execute_on(@rmq_z1_host, '/var/vcap/bosh/bin/monit start rabbitmq-server', :root => true)
+        ssh_gateway.execute_on(@rmq_z2_host, '/var/vcap/bosh/bin/monit start rabbitmq-server', :root => true)
+      end
 
-    it 'contains the heartbeat metrics for all RabbitMQ nodes' do
-      expect(firehose).to have_metric('rmq_z1', 0, /name:"\/p-rabbitmq\/rabbitmq\/heartbeat" value:1 unit:"boolean"/)
-      expect(firehose).to have_metric('rmq_z2', 0, /name:"\/p-rabbitmq\/rabbitmq\/heartbeat" value:1 unit:"boolean"/)
+      it 'contains erlang process count metrics for all RabbitMQ nodes' do
+        expect(firehose).to have_metric('rmq_z1', 0, /name:"\/p-rabbitmq\/rabbitmq\/erlang\/erlang_processes" value:[1-9][0-9]* unit:"count"/)
+        expect(firehose).to have_metric('rmq_z2', 0, /name:"\/p-rabbitmq\/rabbitmq\/erlang\/erlang_processes" value:[1-9][0-9]* unit:"count"/)
+      end
+
+      it 'contains the heartbeat metrics for all RabbitMQ nodes' do
+        expect(firehose).to have_metric('rmq_z1', 0, /name:"\/p-rabbitmq\/rabbitmq\/heartbeat" value:1 unit:"boolean"/)
+        expect(firehose).to have_metric('rmq_z2', 0, /name:"\/p-rabbitmq\/rabbitmq\/heartbeat" value:1 unit:"boolean"/)
+      end
     end
 
     context 'when all RabbitMQ nodes are not running' do
       before(:all) do
-        @rmq_z1_host = bosh_director.ips_for_job('rmq_z1', environment.bosh_manifest.deployment_name)[0]
-        @rmq_z2_host = bosh_director.ips_for_job('rmq_z2', environment.bosh_manifest.deployment_name)[0]
         ssh_gateway.execute_on(@rmq_z1_host, '/var/vcap/bosh/bin/monit stop rabbitmq-server', :root => true)
         ssh_gateway.execute_on(@rmq_z2_host, '/var/vcap/bosh/bin/monit stop rabbitmq-server', :root => true)
       end
@@ -75,13 +82,23 @@ RSpec.describe 'metrics', :skip_metrics => true do
   end
 
   describe 'rabbitmq broker metrics' do
-    it 'contains rmq-broker node metrics' do
-      expect(firehose).to have_metric('rmq-broker', 0, /name:"\/p-rabbitmq\/service_broker\/heartbeat" value:1 unit:"boolean"/)
+
+    before(:all) do
+      @rmq_broker_host = bosh_director.ips_for_job('rmq-broker', environment.bosh_manifest.deployment_name)[0]
+    end
+
+    context 'when rmq-broker is running' do
+      before(:all) do
+        ssh_gateway.execute_on(@rmq_broker_host, '/var/vcap/bosh/bin/monit start rabbitmq-broker', :root => true)
+      end
+
+      it 'contains rmq-broker node metrics' do
+        expect(firehose).to have_metric('rmq-broker', 0, /name:"\/p-rabbitmq\/service_broker\/heartbeat" value:1 unit:"boolean"/)
+      end
     end
 
     context 'when rmq-broker is not running' do
       before(:all) do
-        @rmq_broker_host = bosh_director.ips_for_job('rmq-broker', environment.bosh_manifest.deployment_name)[0]
         ssh_gateway.execute_on(@rmq_broker_host, '/var/vcap/bosh/bin/monit stop rabbitmq-broker', :root => true)
       end
 

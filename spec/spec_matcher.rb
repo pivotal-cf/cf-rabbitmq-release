@@ -31,7 +31,7 @@ RSpec::Matchers.define :have_metric do |job_name, job_index, metric_regex_patter
     @actual = []
 
     firehose.read_log do |file|
-      31.times do
+      61.times do
         lines = file.readlines
         @actual << lines
 
@@ -39,7 +39,7 @@ RSpec::Matchers.define :have_metric do |job_name, job_index, metric_regex_patter
           matched = metric.include? 'origin:"p-rabbitmq"'
           matched &= metric.include? 'deployment:"cf-rabbitmq"'
           matched &= metric.include? 'eventType:ValueMetric'
-          matched &= metric.include? "job:\"#{job_name}\""
+          matched &= metric =~ /job:\".*#{job_name}.*\"/
           matched &= metric.include? "index:\"#{job_index}\""
 
           matched &= metric =~ /timestamp:\d/
