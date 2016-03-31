@@ -65,11 +65,11 @@ def doppler_address
 end
 
 def register_broker
-    bosh_director.run_errand('broker-registrar', keep_alive: true) unless ENV.has_key?('SKIP_ERRANDS')
+    bosh_director.run_errand('broker-registrar') unless ENV.has_key?('SKIP_ERRANDS')
 end
 
 def deregister_broker
-    bosh_director.run_errand('broker-deregistrar', keep_alive: true) unless ENV.has_key?('SKIP_ERRANDS')
+    bosh_director.run_errand('broker-deregistrar') unless ENV.has_key?('SKIP_ERRANDS')
 end
 
 def get_uuid(content)
