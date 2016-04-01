@@ -120,6 +120,7 @@ RSpec.configure do |config|
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
   config.filter_run_excluding :skip_metrics => !ExcludeHelper::metrics_available?
+  config.filter_run_excluding :test_with_errands => ENV.has_key?('SKIP_ERRANDS')
 
   config.around do |example|
     if example.metadata[:pushes_cf_app] || example.metadata[:creates_service_key]
