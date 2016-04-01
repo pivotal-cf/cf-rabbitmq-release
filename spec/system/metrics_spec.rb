@@ -47,6 +47,11 @@ RSpec.describe 'metrics', :skip_metrics => true do
         ssh_gateway.execute_on(@rmq_z2_host, '/var/vcap/bosh/bin/monit start rabbitmq-server', :root => true)
       end
 
+      it 'contains system memory' do
+        expect(firehose).to have_metric('rmq_z1', 0, /name:"\/p-rabbitmq\/rabbitmq\/system\/memory" .* unit:"MB"/)
+        expect(firehose).to have_metric('rmq_z2', 0, /name:"\/p-rabbitmq\/rabbitmq\/system\/memory" .* unit:"MB"/)
+      end
+
       it 'contains erlang process count metrics for all RabbitMQ nodes' do
         expect(firehose).to have_metric('rmq_z1', 0, /name:"\/p-rabbitmq\/rabbitmq\/erlang\/erlang_processes" value:[1-9][0-9]* unit:"count"/)
         expect(firehose).to have_metric('rmq_z2', 0, /name:"\/p-rabbitmq\/rabbitmq\/erlang\/erlang_processes" value:[1-9][0-9]* unit:"count"/)
