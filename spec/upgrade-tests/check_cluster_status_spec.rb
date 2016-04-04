@@ -66,7 +66,7 @@ RSpec.describe 'RabbitMQ cluster status during upgrade' do
     begin
       JSON.parse(json)
       return true
-    rescue JSON::ParserError
+    rescue JSON::ParserError, TypeError
       return false
     end
   end
