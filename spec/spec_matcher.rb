@@ -13,7 +13,7 @@ class Firehose
         'DOPPLER_ADDR' => @doppler_address,
         'CF_ACCESS_TOKEN' => @access_token,
       },
-      'firehose_sample',
+      'firehose',
       [:out, :err] => [file.path, 'w']
     )
 
