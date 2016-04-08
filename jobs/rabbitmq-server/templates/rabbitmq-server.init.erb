@@ -20,13 +20,18 @@ DAEMON=${RMQ_SERVER_PACKAGE}/bin/rabbitmq-server
 CONTROL=${RMQ_SERVER_PACKAGE}/bin/rabbitmqctl
 DESC=rabbitmq-server
 USER=vcap
-INIT_LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 PID_FILE=/var/vcap/sys/run/rabbitmq-server/pid
 HOME_DIR=/var/vcap/store/rabbitmq
 OPERATOR_USERNAME_FILE="${HOME_DIR}/operator_administrator.username"
 START_PROG=/usr/bin/setsid
 JOB_DIR=/var/vcap/jobs/rabbitmq-server
 TIMESTAMP=/bin/date
+
+INIT_LOG_DIR=/var/vcap/sys/log/rabbitmq-server
+STARTUP_LOG="${INIT_LOG_DIR}"/startup_stdout.log
+STARTUP_ERR_LOG="${INIT_LOG_DIR}"/startup_stderr.log
+SHUTDOWN_LOG="${INIT_LOG_DIR}"/shutdown_stdout.log
+SHUTDOWN_ERR_LOG="${INIT_LOG_DIR}"/shutdown_stderr.log
 
 test -x "${DAEMON}"
 test -x "${CONTROL}"
@@ -35,6 +40,12 @@ test -x "${START_PROG}"
 RETVAL=0
 
 [ -f "/var/vcap/store/rabbitmq/etc/default/${NAME}" ] && . "/var/vcap/store/rabbitmq/etc/default/${NAME}"
+
+__log() {
+  MESSAGE="$("${TIMESTAMP}"): $2"
+  echo "${MESSAGE}"
+  echo "${MESSAGE}" >> ${1}
+}
 
 ensure_dir() {
     DIR=$1
@@ -52,10 +63,10 @@ ensure_dirs() {
 }
 
 ensure_log_files() {
-  touch "${INIT_LOG_DIR}"/startup_stdout.log
-  touch "${INIT_LOG_DIR}"/startup_stderr.log
-  touch "${INIT_LOG_DIR}"/shutdown_log
-  touch "${INIT_LOG_DIR}"/shutdown_err
+  touch "${STARTUP_LOG}"
+  touch "${STARTUP_ERR_LOG}"
+  touch "${SHUTDOWN_LOG}"
+  touch "${SHUTDOWN_ERR_LOG}"
   chown vcap:vcap "${INIT_LOG_DIR}"/startup*
   chown vcap:vcap "${INIT_LOG_DIR}"/shutdown*
 }
@@ -67,19 +78,21 @@ remove_pid() {
 
 delete_guest() {
     set +e
-    "${CONTROL}" delete_user guest > /dev/null 2>&1
+    "${CONTROL}" delete_user guest > "${STARTUP_LOG}" 2>&1
     set -e
 }
 
 grant_permissions_for_all_vhosts() {
+    set +e
     username=$1
 
     VHOSTS=$(${CONTROL} list_vhosts | tail -n +2)
     for vhost in $VHOSTS
     do
-        "${CONTROL}" set_permissions -p $vhost $username ".*" ".*" ".*"  > /dev/null 2>&1
+      "${CONTROL}" set_permissions -p $vhost $username ".*" ".*" ".*"  > "${STARTUP_LOG}" 2>&1
     done
     true
+    set -e
 }
 
 create_operator_admin() {
@@ -106,10 +119,10 @@ create_admin() {
     password=$2
 
     set +e
-    "${CONTROL}" add_user $username $password  > /dev/null 2>&1
+    "${CONTROL}" add_user $username $password  > "${STARTUP_LOG}" 2>&1
     #change the password incase the OPERATOR_USERNAME_FILE does not exist & add user fails i.e. upgrading old release
-    "${CONTROL}" change_password $username $password  > /dev/null 2>&1
-    "${CONTROL}" set_user_tags $username administrator  > /dev/null 2>&1
+    "${CONTROL}" change_password $username $password  > "${STARTUP_LOG}" 2>&1
+    "${CONTROL}" set_user_tags $username administrator  > "${STARTUP_LOG}" 2>&1
     grant_permissions_for_all_vhosts $username
     set -e
 }
@@ -117,7 +130,7 @@ create_admin() {
 delete_operator_admin() {
   set +e
   USERNAME=$(cat $OPERATOR_USERNAME_FILE)
-  "${CONTROL}" delete_user $USERNAME  > /dev/null 2>&1
+  "${CONTROL}" delete_user $USERNAME  > "${SHUTDOWN_LOG}" 2>&1
   set -e
   true
 }
@@ -125,23 +138,21 @@ delete_operator_admin() {
 run_script() {
     local script
     script=$1
-    echo "$("${TIMESTAMP}"): Starting ${script}" >> "${INIT_LOG_DIR}/startup_stdout.log"
+    __log ${STARTUP_LOG} "Starting ${script}"
     set +e
     ( . "${script}" ) \
-        1>> "${INIT_LOG_DIR}/startup_stdout.log" \
-        2>> "${INIT_LOG_DIR}/startup_stderr.log" \
+        1>> "${STARTUP_LOG}" \
+        2>> "${STARTUP_ERR_LOG}" \
         0<&-
     RETVAL=$?
     set -e
     case "${RETVAL}" in
         0)
-            echo "$("${TIMESTAMP}"): Finished ${script}" >> "${INIT_LOG_DIR}/startup_stdout.log"
+            __log ${STARTUP_LOG} "Finished ${script}"
             return 0
             ;;
         *)
-            echo "$("${TIMESTAMP}"): Errored ${script}" >> "${INIT_LOG_DIR}/startup_stdout.log"
-            echo "$("${TIMESTAMP}"): Errored ${script}" >> "${INIT_LOG_DIR}/startup_stderr.log"
-            echo "FAILED - check ${INIT_LOG_DIR}/startup_std*.log"
+            __log ${STARTUP_ERR_LOG} "Errored ${script}"
             RETVAL=1
             exit "${RETVAL}"
             ;;
@@ -149,36 +160,36 @@ run_script() {
 }
 
 prepare_for_upgrade () {
-  echo "$("${TIMESTAMP}"): Preparing RabbitMQ for potential upgrade" >> "${INIT_LOG_DIR}/startup_stdout.log"
+  __log ${STARTUP_LOG} "Preparing RabbitMQ for potential upgrade"
   for remote_node in $(cat /var/vcap/data/upgrade_preparation_nodes); do
     /var/vcap/packages/rabbitmq-upgrade-preparation/bin/rabbitmq-upgrade-preparation \
       -rabbitmqctl-path $CONTROL \
       -node $remote_node \
       -new-rabbitmq-version $(cat ${RMQ_SERVER_PACKAGE}/rmq_version) \
       -new-erlang-version $(cat ${RMQ_SERVER_PACKAGE}/erlang_version) \
-      1>> "${INIT_LOG_DIR}/startup_stdout.log" \
-      2>> "${INIT_LOG_DIR}/startup_stderr.log"
+      1>> "${STARTUP_LOG}" \
+      2>> "${STARTUP_ERR_LOG}"
   done
 }
 
 start_rabbitmq () {
+    ensure_dirs
+    ensure_log_files
     status_rabbitmq
     if [ "${RETVAL}" = 0 ]; then
-      echo "RabbitMQ is currently running" | tee -a "${INIT_LOG_DIR}/startup_stdout.log"
+        __log ${STARTUP_LOG} "RabbitMQ is currently running"
     else
         RETVAL=0
-        ensure_dirs
-        ensure_log_files
         run_script "${JOB_DIR}/bin/setup.sh"
         run_script "${JOB_DIR}/bin/plugins.sh"
         prepare_for_upgrade
-        echo "$("${TIMESTAMP}"): Starting RabbitMQ" >> "${INIT_LOG_DIR}/startup_stdout.log"
+        __log ${STARTUP_LOG} "Starting RabbitMQ"
         RABBITMQ_PID_FILE="${PID_FILE}" "${START_PROG}" "${DAEMON}" \
-            >> "${INIT_LOG_DIR}/startup_stdout.log" \
-            2>> "${INIT_LOG_DIR}/startup_stderr.log" \
+            >> "${STARTUP_LOG}" \
+            2>> "${STARTUP_ERR_LOG}" \
             0<&- &
         set +e
-        "${CONTROL}" wait "${PID_FILE}" >/dev/null 2>&1
+        "${CONTROL}" wait "${PID_FILE}" > "${STARTUP_LOG}" 2> "${STARTUP_ERR_LOG}"
         RETVAL=$?
         set -e
         case "${RETVAL}" in
@@ -188,14 +199,12 @@ start_rabbitmq () {
                 [ -f $OPERATOR_USERNAME_FILE ] && delete_operator_admin
                 create_operator_admin
                 create_broker_admin
-                echo "$("${TIMESTAMP}"): Finished starting RabbitMQ" >> "${INIT_LOG_DIR}/startup_stdout.log"
-                echo "SUCCESS" | tee -a "${INIT_LOG_DIR}/startup_stdout.log"
+                __log ${STARTUP_LOG} "Finished starting RabbitMQ"
+                __log ${STARTUP_LOG} "SUCCESS"
                 ;;
             *)
-                echo "$("${TIMESTAMP}"): Errored starting RabbitMQ" >> "${INIT_LOG_DIR}/startup_stdout.log"
-                echo "$("${TIMESTAMP}"): Errored starting RabbitMQ" >> "${INIT_LOG_DIR}/startup_stderr.log"
+                __log ${STARTUP_ERR_LOG} "Errored starting RabbitMQ"
                 remove_pid
-                echo "FAILED - check ${INIT_LOG_DIR}/startup_std*.log" | tee -a "${INIT_LOG_DIR}/startup_stderr.log"
                 RETVAL=1
                 ;;
         esac
@@ -206,18 +215,18 @@ stop_rabbitmq() {
     status_rabbitmq
     if [ "${RETVAL}" = 0 ]; then
         set +e
-        "${CONTROL}" stop "${PID_FILE}" >> "${INIT_LOG_DIR}/shutdown_log" 2>> "${INIT_LOG_DIR}/shutdown_err"
+        "${CONTROL}" stop "${PID_FILE}" >> "${SHUTDOWN_LOG}" 2>> "${SHUTDOWN_ERR_LOG}"
         RETVAL=$?
         set -e
         if [ "${RETVAL}" = 0 ]; then
-            echo "RabbitMQ stopped, removing pidfile" | tee -a "${INIT_LOG_DIR}/shutdown_log"
+            __log ${SHUTDOWN_LOG} "RabbitMQ stopped, removing pidfile"
             remove_pid
         else
-            echo "FAILED - check ${INIT_LOG_DIR}/shutdown_log, _err" | tee -a "${INIT_LOG_DIR}/shutdown_err"
+            __log ${SHUTDOWN_ERR_LOG} "Error stopping RabbitMQ"
             exit ${RETVAL}
         fi
     else
-        echo "RabbitMQ is not running" | tee -a "${INIT_LOG_DIR}/shutdown_log"
+        __log ${SHUTDOWN_LOG} "RabbitMQ is not running"
         RETVAL=0
     fi
 }
