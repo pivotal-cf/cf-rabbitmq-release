@@ -50,7 +50,7 @@ RSpec.describe "Syslog forwarding" do
 
         # Generate some logs in the shutdown_err files to test against.
         # These files are empty at normal startup/shutdown.
-        ssh_gateway.execute_on(RMQ_HOST, "echo 'This is a test log' >> /var/vcap/sys/log/rabbitmq-server/shutdown_err")
+        ssh_gateway.execute_on(RMQ_HOST, "echo 'This is a test log' >> /var/vcap/sys/log/rabbitmq-server/shutdown_stderr.log")
 
         output = ssh_gateway.execute_on(RMQ_HOST, "cat log.txt")
 
@@ -63,8 +63,8 @@ RSpec.describe "Syslog forwarding" do
         # NB: The following 2 expectations only work because we do a deployment
         # as part of the test suite. This causes rabbit to be restarted, hence
         # these files get populated.
-        expect(output).to include "rabbitmq_shutdown_log [job=#{RMQ_JOB_NAME} index=#{BOSH_JOB_INDEX}] Stopping and halting node"
-        expect(output).to include "rabbitmq_shutdown_err [job=#{RMQ_JOB_NAME} index=#{BOSH_JOB_INDEX}] This is a test log"
+        expect(output).to include "rabbitmq_shutdown_stdout [job=#{RMQ_JOB_NAME} index=#{BOSH_JOB_INDEX}] Stopping and halting node"
+        expect(output).to include "rabbitmq_shutdown_stderr [job=#{RMQ_JOB_NAME} index=#{BOSH_JOB_INDEX}] This is a test log"
     end
 
     it "should forward the Service Broker logs" do
