@@ -8,7 +8,6 @@ require 'hula'
 require 'hula/bosh_manifest'
 
 RSpec.describe "RabbitMQ server configuration" do
-
   let(:rmq_host) { bosh_director.ips_for_job("rmq_z1", environment.bosh_manifest.deployment_name)[0] }
   let(:rmq_admin_broker_username) { environment.bosh_manifest.property('rabbitmq-server.administrators.broker.username') }
   let(:rmq_admin_broker_password) { environment.bosh_manifest.property('rabbitmq-server.administrators.broker.password') }
@@ -21,41 +20,62 @@ RSpec.describe "RabbitMQ server configuration" do
     end
   end
 
-  it 'should have TLS enabled' do
-    expect(tls_version_enabled?(rmq_host, 'tls1')).to be_truthy
-    expect(tls_version_enabled?(rmq_host, 'tls1_1')).to be_truthy
-    expect(tls_version_enabled?(rmq_host, 'tls1_2')).to be_truthy
-  end
-
   describe 'SSL' do
     let(:ssl_options) {  ssh_gateway.execute_on(rmq_host, "ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl eval 'application:get_env(rabbit, ssl_options).'", :root => true) }
 
-    it 'does not have SSL verification enabled' do
-      expect(ssl_options).to include('{verify,verify_none}')
+    it 'does not have SSL verification enabled and peer validation enabled' do
+      expect(ssl_options).to include('{ok,[]}')
     end
 
-    it 'does not have SSL peer validation enabled' do
-      expect(ssl_options).to include('{fail_if_no_peer_cert,false}')
-    end
+    context 'when is configured' do
+      before(:all) do
+        server_key = File.read(File.join(__dir__, '../..', '/spec/assets/server_key.pem'))
+        server_cert = File.read(File.join(__dir__, '../..', '/spec/assets/server_certificate.pem'))
+        ca_cert = File.read(File.join(__dir__, '../..', '/spec/assets/ca_certificate.pem'))
 
-    context 'when SSL verification and peer validation is enabled' do
-      before(:context) do
         modify_and_deploy_manifest do |manifest|
-          manifest['properties']['rabbitmq-server']['ssl']['verify'] = true
-          manifest['properties']['rabbitmq-server']['ssl']['fail_if_no_peer_cert'] = true
+          @current_manifest = manifest
+
+          manifest['properties']['rabbitmq-server']['ssl'] = Hash.new
+          manifest['properties']['rabbitmq-server']['ssl']['key'] = server_key
+          manifest['properties']['rabbitmq-server']['ssl']['cert'] = server_cert
+          manifest['properties']['rabbitmq-server']['ssl']['cacert'] = ca_cert
+          manifest['properties']['rabbitmq-server']['ssl']['security_options'] = ['enable_tls1_0']
         end
       end
 
-      after(:context) do
+      after(:all) do
         bosh_director.deploy(environment.bosh_manifest.path)
       end
 
-      it 'has the right SSL verification options' do
-        expect(ssl_options).to include('{verify,verify_peer}')
+      context 'when verification and validation is enabled' do
+        before(:all) do
+          @current_manifest['properties']['rabbitmq-server']['ssl']['verify'] = true
+          @current_manifest['properties']['rabbitmq-server']['ssl']['fail_if_no_peer_cert'] = true
+          deploy_manifest(@current_manifest)
+        end
+
+        it 'has the right SSL verification options' do
+          expect(ssl_options).to include('{verify,verify_peer}')
+        end
+
+        it 'has the right SSL peer options' do
+          expect(ssl_options).to include('{fail_if_no_peer_cert,true}')
+        end
       end
 
-      it 'has the right SSL peer options' do
-        expect(ssl_options).to include('{fail_if_no_peer_cert,true}')
+      it 'does not have SSL verification enabled' do
+        expect(ssl_options).to include('{verify,verify_none}')
+      end
+
+      it 'does not have SSL peer validation enabled' do
+        expect(ssl_options).to include('{fail_if_no_peer_cert,false}')
+      end
+
+      it 'should have TLS enabled' do
+        expect(tls_version_enabled?(rmq_host, 'tls1')).to be_truthy
+        expect(tls_version_enabled?(rmq_host, 'tls1_1')).to be_truthy
+        expect(tls_version_enabled?(rmq_host, 'tls1_2')).to be_truthy
       end
     end
   end

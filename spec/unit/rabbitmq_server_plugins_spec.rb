@@ -3,7 +3,7 @@ require 'bosh/template/renderer'
 require 'tempfile'
 
 RSpec.describe 'Enabling plugins' do
-  let(:manifest){ YAML.load_file('spec/support/manifest/test.yml')}
+  let(:manifest){ YAML.load_file('spec/assets/test_manifest.yml')}
 
   context "when there is a plugin specified in the manifest but missing on server" do
     it "should not enable the specified plugin, but give a warning" do

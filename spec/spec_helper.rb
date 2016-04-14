@@ -4,6 +4,10 @@ require 'prof/environment_manager'
 require 'prof/ssh_gateway'
 require 'yaml'
 
+Dir[File.expand_path('support/**/*.rb', __dir__)].each do |file|
+  require file
+end
+
 def environment
   @environment ||= begin
                      options = {
@@ -54,6 +58,10 @@ def modify_and_deploy_manifest
 
   yield manifest
 
+  deploy_manifest(manifest)
+end
+
+def deploy_manifest(manifest)
   Tempfile.open('manifest.yml') do |manifest_file|
     manifest_file.write(manifest.to_yaml)
     bosh_director.deploy(manifest_file.path)
@@ -70,6 +78,19 @@ end
 
 def deregister_broker
   bosh_director.run_errand('broker-deregistrar') unless ENV.has_key?('SKIP_ERRANDS')
+end
+
+def create_random_orgs_and_space(count: 1)
+    rand_str = rand(36**8).to_s(36)
+    orgs = (1..count).to_a.map{|i| "#{rand_str}_#{i}"}
+    space = 'test'
+
+    orgs.each do |org|
+      cf.create_and_target_org(org)
+      cf.create_space(space)
+    end
+
+    {'orgs' => orgs, 'space'=>space}
 end
 
 def get_uuid(content)
@@ -116,7 +137,7 @@ end
 puts ExcludeHelper::warnings
 
 RSpec.configure do |config|
-
+  config.include Matchers
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
   config.filter_run_excluding :skip_metrics => !ExcludeHelper::metrics_available?

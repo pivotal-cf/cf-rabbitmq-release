@@ -1,39 +1,70 @@
 require 'spec_helper'
-require 'spec_matcher'
 require 'date'
 
 RSpec.describe 'metrics', :skip_metrics => true do
-  let(:firehose) { Firehose.new(doppler_address: doppler_address, access_token: cf.auth_token) }
+  let(:firehose) { Matchers::Firehose.new(doppler_address: doppler_address, access_token: cf.auth_token) }
 
   describe 'rabbitmq haproxy metrics' do
     before(:all) do
       @ha_host = bosh_director.ips_for_job('haproxy_z1', environment.bosh_manifest.deployment_name)[0]
     end
 
-    context 'when haproxy_z1 is running' do
-      before(:all) do
-        ssh_gateway.execute_on(@ha_host, '/var/vcap/bosh/bin/monit start rabbitmq-haproxy', :root => true)
+    describe 'heartbeat' do
+      context 'when haproxy_z1 is running' do
+        before(:all) do
+          ssh_gateway.execute_on(@ha_host, '/var/vcap/bosh/bin/monit start rabbitmq-haproxy', :root => true)
+        end
+
+        it 'contains haproxy_z1 metric for rabbitmq haproxy nodes' do
+          expect(firehose).to have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/heartbeat" value:1 unit:"boolean"/)
+        end
       end
 
-      it 'contains haproxy_z1 metric for rabbitmq haproxy nodes' do
-        expect(firehose).to have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/heartbeat" value:1 unit:"boolean"/)
+      context 'when haproxy_z1 is not running' do
+        before(:all) do
+          ssh_gateway.execute_on(@ha_host, '/var/vcap/bosh/bin/monit stop rabbitmq-haproxy', :root => true)
+        end
+
+        after(:all) do
+          ssh_gateway.execute_on(@ha_host, '/var/vcap/bosh/bin/monit start rabbitmq-haproxy', :root => true)
+        end
+
+        it 'contains haproxy_z1 metrics for rabbitmq haproxy nodes' do
+          expect(firehose).to have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/heartbeat" value:0 unit:"boolean"/)
+        end
       end
     end
 
-    context 'when haproxy_z1 is not running' do
-      before(:all) do
-        ssh_gateway.execute_on(@ha_host, '/var/vcap/bosh/bin/monit stop rabbitmq-haproxy', :root => true)
-      end
+    describe 'health connections count' do
+      describe 'AMQP' do
+        let(:rmq_node_count) do
+          manifest = environment.bosh_manifest
+          manifest.job('rmq_z1').instances + manifest.job('rmq_z2').instances
+        end
 
-      after(:all) do
-        ssh_gateway.execute_on(@ha_host, '/var/vcap/bosh/bin/monit start rabbitmq-haproxy', :root => true)
-      end
+        it 'contains haproxy_z1 amqp health connection metrics' do
+          regexp_pattern = 'name:"\/p-rabbitmq\/haproxy\/health\/connections\/amqp" value:%i unit:"count"' % rmq_node_count
+          expect(firehose).to have_metric('haproxy_z1', 0, Regexp.new(regexp_pattern))
+        end
 
-      it 'contains haproxy_z1 metrics for rabbitmq haproxy nodes' do
-        expect(firehose).to have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/heartbeat" value:0 unit:"boolean"/)
+        context 'when there is a single connection' do
+          before(:all) do
+            @rmq_z1_host = bosh_director.ips_for_job('rmq_z1', environment.bosh_manifest.deployment_name)[0]
+            ssh_gateway.execute_on(@rmq_z1_host, '/var/vcap/bosh/bin/monit stop rabbitmq-server', :root => true)
+          end
+
+          after(:all) do
+            ssh_gateway.execute_on(@rmq_z1_host, '/var/vcap/bosh/bin/monit start rabbitmq-server', :root => true)
+          end
+
+          it 'contains haproxy_z1 1 amqp health connection metric' do
+            regexp_pattern = 'name:"\/p-rabbitmq\/haproxy\/health\/connections\/amqp" value:%i unit:"count"' % (rmq_node_count - 1)
+            expect(firehose).to have_metric('haproxy_z1', 0, Regexp.new(regexp_pattern))
+          end
       end
     end
   end
+end
 
   describe 'rabbitmq server metrics' do
     before(:all) do
@@ -87,7 +118,6 @@ RSpec.describe 'metrics', :skip_metrics => true do
   end
 
   describe 'rabbitmq broker metrics' do
-
     before(:all) do
       @rmq_broker_host = bosh_director.ips_for_job('rmq-broker', environment.bosh_manifest.deployment_name)[0]
     end
