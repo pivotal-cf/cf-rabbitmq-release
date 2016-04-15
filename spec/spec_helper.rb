@@ -80,19 +80,6 @@ def deregister_broker
   bosh_director.run_errand('broker-deregistrar') unless ENV.has_key?('SKIP_ERRANDS')
 end
 
-def create_random_orgs_and_space(count: 1)
-    rand_str = rand(36**8).to_s(36)
-    orgs = (1..count).to_a.map{|i| "#{rand_str}_#{i}"}
-    space = 'test'
-
-    orgs.each do |org|
-      cf.create_and_target_org(org)
-      cf.create_space(space)
-    end
-
-    {'orgs' => orgs, 'space'=>space}
-end
-
 def get_uuid(content)
   uuid_regex = /(\w{8}(-\w{4}){3}-\w{12}?)/
   uuid_regex.match(content)[0]

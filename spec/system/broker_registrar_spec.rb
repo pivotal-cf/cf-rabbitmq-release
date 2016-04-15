@@ -6,11 +6,15 @@ RSpec.describe 'Broker Registrar', test_with_errands: true do
   before(:all) do
     deregister_broker
 
-    random_orgs_space = create_and_target_org_and_space(count: 4)
-
-    @orgs = random_orgs_space['orgs']
-    @space = random_orgs_space['space']
     @rand_str = rand(36**8).to_s(36)
+    @orgs = (1..4).to_a.map{|i| "#{@rand_str}_#{i}"}
+    @space = 'test'
+
+    @orgs.each do |org|
+      cf.create_and_target_org(org)
+      cf.create_space(@space)
+    end
+
     @new_org = "#{@rand_str}_new"
   end
 
