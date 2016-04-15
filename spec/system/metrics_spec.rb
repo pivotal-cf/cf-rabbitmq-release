@@ -9,62 +9,80 @@ RSpec.describe 'metrics', :skip_metrics => true do
       @ha_host = bosh_director.ips_for_job('haproxy_z1', environment.bosh_manifest.deployment_name)[0]
     end
 
-    describe 'heartbeat' do
-      context 'when haproxy_z1 is running' do
-        before(:all) do
-          ssh_gateway.execute_on(@ha_host, '/var/vcap/bosh/bin/monit start rabbitmq-haproxy', :root => true)
-        end
+    it 'contains haproxy_z1 heartbeat metric for rabbitmq haproxy nodes' do
+      expect(firehose).to have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/heartbeat" value:1 unit:"boolean"/)
+    end
 
-        it 'contains haproxy_z1 metric for rabbitmq haproxy nodes' do
-          expect(firehose).to have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/heartbeat" value:1 unit:"boolean"/)
-        end
+    describe 'health' do
+      let(:rmq_node_count) do
+        manifest = environment.bosh_manifest
+        manifest.job('rmq_z1').instances + manifest.job('rmq_z2').instances
       end
 
-      context 'when haproxy_z1 is not running' do
+      it 'contains haproxy_z1 amqp health connection metrics' do
+        regexp_pattern = 'name:"\/p-rabbitmq\/haproxy\/health\/connections\/amqp" value:%i unit:"count"' % rmq_node_count
+        expect(firehose).to have_metric('haproxy_z1', 0, Regexp.new(regexp_pattern))
+      end
+
+      context 'when rmq_z1 node is down' do
         before(:all) do
-          ssh_gateway.execute_on(@ha_host, '/var/vcap/bosh/bin/monit stop rabbitmq-haproxy', :root => true)
+          @rmq_z1_host = bosh_director.ips_for_job('rmq_z1', environment.bosh_manifest.deployment_name)[0]
+          ssh_gateway.execute_on(@rmq_z1_host, '/var/vcap/bosh/bin/monit stop rabbitmq-server', :root => true)
         end
 
         after(:all) do
-          ssh_gateway.execute_on(@ha_host, '/var/vcap/bosh/bin/monit start rabbitmq-haproxy', :root => true)
+          ssh_gateway.execute_on(@rmq_z1_host, '/var/vcap/bosh/bin/monit start rabbitmq-server', :root => true)
         end
 
-        it 'contains haproxy_z1 metrics for rabbitmq haproxy nodes' do
-          expect(firehose).to have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/heartbeat" value:0 unit:"boolean"/)
+        it 'contains haproxy_z1 1 amqp health connection metric' do
+          regexp_pattern = 'name:"\/p-rabbitmq\/haproxy\/health\/connections\/amqp" value:%i unit:"count"' % (rmq_node_count - 1)
+          expect(firehose).to have_metric('haproxy_z1', 0, Regexp.new(regexp_pattern))
         end
       end
     end
 
-    describe 'health connections count' do
-      describe 'AMQP' do
-        let(:rmq_node_count) do
-          manifest = environment.bosh_manifest
-          manifest.job('rmq_z1').instances + manifest.job('rmq_z2').instances
-        end
+    it 'contains haproxy_z1 amqp queue size' do
+      expect(firehose).to have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/health\/qsize\/amqp" value:\d+ unit:"size"/)
+    end
 
-        it 'contains haproxy_z1 amqp health connection metrics' do
-          regexp_pattern = 'name:"\/p-rabbitmq\/haproxy\/health\/connections\/amqp" value:%i unit:"count"' % rmq_node_count
-          expect(firehose).to have_metric('haproxy_z1', 0, Regexp.new(regexp_pattern))
-        end
+    it 'contains haproxy_z1 amqp retries' do
+      expect(firehose).to have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/health\/retries\/amqp" value:\d+ unit:"count"/)
+    end
 
-        context 'when there is a single connection' do
-          before(:all) do
-            @rmq_z1_host = bosh_director.ips_for_job('rmq_z1', environment.bosh_manifest.deployment_name)[0]
-            ssh_gateway.execute_on(@rmq_z1_host, '/var/vcap/bosh/bin/monit stop rabbitmq-server', :root => true)
-          end
+    it 'contains haproxy_z1 amqp connection time' do
+      expect(firehose).to have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/health\/ctime\/amqp" value:\d+ unit:"time"/)
+    end
 
-          after(:all) do
-            ssh_gateway.execute_on(@rmq_z1_host, '/var/vcap/bosh/bin/monit start rabbitmq-server', :root => true)
-          end
+    context 'when haproxy_z1 is not running' do
+      before(:all) do
+        ssh_gateway.execute_on(@ha_host, '/var/vcap/bosh/bin/monit stop rabbitmq-haproxy', :root => true)
+      end
 
-          it 'contains haproxy_z1 1 amqp health connection metric' do
-            regexp_pattern = 'name:"\/p-rabbitmq\/haproxy\/health\/connections\/amqp" value:%i unit:"count"' % (rmq_node_count - 1)
-            expect(firehose).to have_metric('haproxy_z1', 0, Regexp.new(regexp_pattern))
-          end
+      after(:all) do
+        ssh_gateway.execute_on(@ha_host, '/var/vcap/bosh/bin/monit start rabbitmq-haproxy', :root => true)
+      end
+
+      it 'contains haproxy_z1 heartbeat metrics for rabbitmq haproxy nodes' do
+        expect(firehose).to have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/heartbeat" value:0 unit:"boolean"/)
+      end
+
+      it 'does not contain haproxy_z1 1 amqp health connection metric' do
+        expect(firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/health\/connections\/amqp" value:\d+ unit:"count"/)
+      end
+
+      it 'does not contain haproxy_z1 amqp queue size' do
+        expect(firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/health\/qsize\/amqp" value:\d+ unit:"size"/)
+      end
+
+      it 'does not contain haproxy_z1 amqp retries' do
+        expect(firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/health\/retries\/amqp" value:\d+ unit:"count"/)
+      end
+
+      it 'does not contain haproxy_z1 amqp connection time' do
+        expect(firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/health\/ctime\/amqp" value:\d+ unit:"time"/)
       end
     end
   end
-end
 
   describe 'rabbitmq server metrics' do
     before(:all) do
