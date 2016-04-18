@@ -27,11 +27,11 @@ erlang/otp_src_oss_18.1.tgz:
   object_id: 6cf4831f-727d-44b5-9cd2-1bb33c25b4c5
   sha: cf5a7e63074a4743e976d87b5f9fe80deac61cfe
   size: 68197399
-rabbitmq-server/rabbitmq-server-generic-unix-3.6.1.tar.xz:
-  object_id: 7652caf5-b4a3-498b-b078-98a329fe83e7
-  sha: 0ec200d04a832a221f21e5ad815fc6e7041fa6aa
-  size: 4884356
-rabbitmq-server/rabbitmq_clusterer-3.6.1.ez:
-  object_id: fd3ad313-3c95-4a52-b934-fef3c9fbe711
-  sha: a34f03accd664f2ee90273b46138f581d3988dd6
-  size: 57785
+rabbitmq-server/rabbitmq-server-generic-unix-3.6.1.904.tar.xz:
+  object_id: 6b47af78-852f-4cfb-bea0-65f23493ee54
+  sha: 57a3390db4bb32b0975fa7f29ef22142b8f105aa
+  size: 5046088
+rabbitmq-server/rabbitmq_clusterer-3.6.1.904.ez:
+  object_id: 2cae06fe-df3e-4b19-bf68-fcd0473ad14a
+  sha: 82ec26a76db0efe1e0eefa66009bde5e3c227d23
+  size: 57872
