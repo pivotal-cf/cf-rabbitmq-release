@@ -1,9 +1,9 @@
 # abort script on any command that exit with a non zero value
 set -e
 
-JAVA_VERSION="1.8.0_20"
+JAVA_VERSION="1.8.0_77"
 
-archive="java/jre${JAVA_VERSION}.tar.gz"
+archive="java/jre-${JAVA_VERSION}.tar.gz"
 
 echo "Extracting archive..."
 tar xzf $archive

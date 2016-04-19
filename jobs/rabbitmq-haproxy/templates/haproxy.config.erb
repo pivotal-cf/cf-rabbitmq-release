@@ -34,7 +34,8 @@ backend output-<%= port %>
 <% end %>
 <% end %>
 
-listen stats 0.0.0.0:80
+listen stats
+    bind 0.0.0.0:80
     mode http
     balance
     timeout client 5000

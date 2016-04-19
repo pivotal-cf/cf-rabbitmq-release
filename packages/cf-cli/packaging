@@ -1,3 +1,4 @@
+VERSION="cf-cli_6.17.0_linux_x86-64"
 mkdir -p ${BOSH_INSTALL_TARGET}/bin
-tar zxvf cf-cli/cf-linux-amd64-6.10.tgz
+tar zxvf cf-cli/${VERSION}.tgz
 cp cf ${BOSH_INSTALL_TARGET}/bin/cf
