@@ -51,12 +51,17 @@ RSpec.describe "RabbitMQ server configuration" do
       context 'when verification and validation is enabled' do
         before(:all) do
           @current_manifest['properties']['rabbitmq-server']['ssl']['verify'] = true
+          @current_manifest['properties']['rabbitmq-server']['ssl']['verification_depth'] = 10
           @current_manifest['properties']['rabbitmq-server']['ssl']['fail_if_no_peer_cert'] = true
           deploy_manifest(@current_manifest)
         end
 
         it 'has the right SSL verification options' do
           expect(ssl_options).to include('{verify,verify_peer}')
+        end
+
+        it 'has the right SSL verification depth option' do
+          expect(ssl_options).to include('{depth,10}')
         end
 
         it 'has the right SSL peer options' do
@@ -70,6 +75,10 @@ RSpec.describe "RabbitMQ server configuration" do
 
       it 'does not have SSL peer validation enabled' do
         expect(ssl_options).to include('{fail_if_no_peer_cert,false}')
+      end
+
+      it 'has the right SSL verification depth option' do
+        expect(ssl_options).to include('{depth,5}')
       end
 
       it 'should have TLS enabled' do

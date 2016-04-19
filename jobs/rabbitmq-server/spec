@@ -21,6 +21,9 @@ properties:
   rabbitmq-server.ssl.verify:
     description: "Peer verification method used by RabbitMQ server"
     default: false
+  rabbitmq-server.ssl.verification_depth:
+    description: "Peer verification depth used by RabbitMQ server"
+    default: 5
   rabbitmq-server.ssl.fail_if_no_peer_cert:
     description: "Should RabbitMQ server reject connection if there is no peer cert"
     default: false
