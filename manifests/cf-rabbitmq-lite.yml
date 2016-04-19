@@ -178,6 +178,9 @@ properties:
         -----END CERTIFICATE-----
       security_options:
         - enable_tls1_0 #required until warden rootfs is upgraded to trusty
+      verification_depth: 10
+      fail_if_no_peer_cert: false
+
   rabbitmq-haproxy:
     ports:
     - 5672
