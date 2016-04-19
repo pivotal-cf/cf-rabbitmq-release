@@ -1,28 +1,8 @@
 ---
-golang/go1.2.1.linux-amd64.tar.gz:
-  object_id: c87bdd9b-8d34-43cc-b84c-bb3c493a1026
-  sha: 7605f577ff6ac2d608a3a4e829b255ae2ebc8dcf
-  size: 56123695
-haproxy/haproxy-1.5-dev19.tar.gz:
-  object_id: 62e4f1aa-4f9f-4a37-b5d3-a5382f641a88
-  sha: 5c16686c516dbeaab8ada6c17c25e9629ab4f7d3
-  size: 1143258
 util-linux/util-linux_2.20.1.orig.tar.gz:
   object_id: 00358c94-0d4b-4db5-bb8f-f8b6df178818
   sha: d1dcff8d39e1a821cb0efda31a38452d12fd6b52
   size: 6174190
-java/jre1.8.0_20.tar.gz:
-  object_id: 49264d83-d6a7-4444-a801-88e4af6e0691
-  sha: 30745df3fca966a222a2800052aa2406ad987de3
-  size: 62751094
-cf-cli/cf-linux-amd64-6.10.tgz:
-  object_id: cda6b19b-8df2-4583-a1b5-a0ab78ba191d
-  sha: f845800310e4b702a39a2f1191e3d71862630103
-  size: 4803309
-haproxy/haproxy-1.5.14.tar.gz:
-  object_id: 41da4b88-799e-4d52-bdf0-a0597bffc35a
-  sha: 159f5beb8fdc6b8059ae51b53dc935d91c0fb51f
-  size: 1345345
 erlang/otp_src_oss_18.1.tgz:
   object_id: 6cf4831f-727d-44b5-9cd2-1bb33c25b4c5
   sha: cf5a7e63074a4743e976d87b5f9fe80deac61cfe
@@ -35,3 +15,19 @@ rabbitmq-server/rabbitmq_clusterer-3.6.1.904.ez:
   object_id: 2cae06fe-df3e-4b19-bf68-fcd0473ad14a
   sha: 82ec26a76db0efe1e0eefa66009bde5e3c227d23
   size: 57872
+cf-cli/cf-cli_6.17.0_linux_x86-64.tgz:
+  object_id: e54af7b0-973c-4bbe-ac47-a7f95c6f8d2f
+  sha: c552c8f4436a63c2034d47f66fd218426c632112
+  size: 6153376
+golang/go1.6.1.linux-amd64.tar.gz:
+  object_id: 6483bb0d-c45f-4b69-a732-d4cac4f88cc7
+  sha: c73492474dcc7a233772d27e948b74468d9f1849
+  size: 84824395
+haproxy/haproxy-1.6.4.tar.gz:
+  object_id: f790a114-2611-4f78-8bf7-99f714c268d8
+  sha: df3d7f216fe4974d9eac55d76c7f729560c6e975
+  size: 1559276
+java/jre-1.8.0_77.tar.gz:
+  object_id: f9f7a230-63e5-4eae-857f-fcb849966cc9
+  sha: 8edb2189ef42d6756faa355efeb356aead6e6da3
+  size: 71796315
