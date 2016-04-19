@@ -8,32 +8,26 @@ module(load="imfile")
 
 input(type="imfile"
       File="/var/vcap/sys/log/rabbitmq-server/rabbit@<%= job_ip_md5sum %>.log"
-      StateFile="rabbit.log.statefile"
       Tag="rabbitmq")
 
 input(type="imfile"
       File="/var/vcap/sys/log/rabbitmq-server/rabbit@<%= job_ip_md5sum %>-sasl.log"
-      StateFile="rabbitsasl.log.statefile"
       Tag="rabbitmq_sasl")
 
 input(type="imfile"
       File="/var/vcap/sys/log/rabbitmq-server/startup_stderr.log"
-      StateFile="startup_err.log.statefile"
       Tag="rabbitmq_startup_stderr")
 
 input(type="imfile"
       File="/var/vcap/sys/log/rabbitmq-server/startup_stdout.log"
-      StateFile="startup_out.log.statefile"
       Tag="rabbitmq_startup_stdout")
 
 input(type="imfile"
       File="/var/vcap/sys/log/rabbitmq-server/shutdown_stdout.log"
-      StateFile="shutdown_log.statefile"
       Tag="rabbitmq_shutdown_stdout")
 
 input(type="imfile"
       File="/var/vcap/sys/log/rabbitmq-server/shutdown_stderr.log"
-      StateFile="shutdown_err.statefile"
       Tag="rabbitmq_shutdown_stderr")
 
 input(type="imfile"

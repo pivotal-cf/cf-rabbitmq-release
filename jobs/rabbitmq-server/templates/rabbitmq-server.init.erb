@@ -78,7 +78,7 @@ remove_pid() {
 
 delete_guest() {
     set +e
-    "${CONTROL}" delete_user guest > "${STARTUP_LOG}" 2>&1
+    "${CONTROL}" delete_user guest >> "${STARTUP_LOG}" 2>&1
     set -e
 }
 
@@ -89,7 +89,7 @@ grant_permissions_for_all_vhosts() {
     VHOSTS=$(${CONTROL} list_vhosts | tail -n +2)
     for vhost in $VHOSTS
     do
-      "${CONTROL}" set_permissions -p $vhost $username ".*" ".*" ".*"  > "${STARTUP_LOG}" 2>&1
+    "${CONTROL}" set_permissions -p $vhost $username ".*" ".*" ".*"  >> "${STARTUP_LOG}" 2>&1
     done
     true
     set -e
@@ -119,10 +119,10 @@ create_admin() {
     password=$2
 
     set +e
-    "${CONTROL}" add_user $username $password  > "${STARTUP_LOG}" 2>&1
+    "${CONTROL}" add_user $username $password  >> "${STARTUP_LOG}" 2>&1
     #change the password incase the OPERATOR_USERNAME_FILE does not exist & add user fails i.e. upgrading old release
-    "${CONTROL}" change_password $username $password  > "${STARTUP_LOG}" 2>&1
-    "${CONTROL}" set_user_tags $username administrator  > "${STARTUP_LOG}" 2>&1
+    "${CONTROL}" change_password $username $password  >> "${STARTUP_LOG}" 2>&1
+    "${CONTROL}" set_user_tags $username administrator >> "${STARTUP_LOG}" 2>&1
     grant_permissions_for_all_vhosts $username
     set -e
 }
@@ -130,7 +130,7 @@ create_admin() {
 delete_operator_admin() {
   set +e
   USERNAME=$(cat $OPERATOR_USERNAME_FILE)
-  "${CONTROL}" delete_user $USERNAME  > "${SHUTDOWN_LOG}" 2>&1
+  "${CONTROL}" delete_user $USERNAME  >> "${SHUTDOWN_LOG}" 2>&1
   set -e
   true
 }
@@ -189,7 +189,7 @@ start_rabbitmq () {
             2>> "${STARTUP_ERR_LOG}" \
             0<&- &
         set +e
-        "${CONTROL}" wait "${PID_FILE}" > "${STARTUP_LOG}" 2> "${STARTUP_ERR_LOG}"
+        "${CONTROL}" wait "${PID_FILE}" >> "${STARTUP_LOG}" 2>> "${STARTUP_ERR_LOG}"
         RETVAL=$?
         set -e
         case "${RETVAL}" in
