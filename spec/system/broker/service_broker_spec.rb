@@ -171,7 +171,7 @@ def provides_mirrored_queue_policy_as_a_default(app)
   credentials = cf.app_vcap_services(app.name)
   service_protocols = credentials[service_name].first['credentials']['protocols']
 
-  management_credentials_key = service_protocols.keys { |k| k =~ /^management/ }.first
+  management_credentials_key = service_protocols.keys.detect { |k| k =~ /^management/ }
   management_credentials = service_protocols[management_credentials_key]
 
   ssh_gateway.with_port_forwarded_to(management_credentials['host'], management_credentials['port']) do |port|
@@ -184,7 +184,7 @@ def provides_mirrored_queue_policy_as_a_default(app)
                                           verify: false
                                         })
 
-    amqp_vhost_key = service_protocols.keys { |k| k =~ /^amqp/ }.first
+    amqp_vhost_key = service_protocols.keys.detect { |k| k =~ /^amqp/ }
     vhost = service_protocols[amqp_vhost_key]['vhost']
 
     policy = client.list_policies(vhost).find do |policy|
