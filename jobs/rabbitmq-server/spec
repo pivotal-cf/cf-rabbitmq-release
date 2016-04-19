@@ -19,10 +19,10 @@ properties:
     description: "SSL security options (currently only 'enable_tls1_0')"
     default: []
   rabbitmq-server.ssl.verify:
-    description: "Verify peer method used by RabbitMQ server"
+    description: "Peer verification method used by RabbitMQ server"
     default: false
   rabbitmq-server.ssl.fail_if_no_peer_cert:
-    description: "Should RabbitMQ server fail if there is no peer cert"
+    description: "Should RabbitMQ server reject connection if there is no peer cert"
     default: false
 
   rabbitmq-server.plugins:
