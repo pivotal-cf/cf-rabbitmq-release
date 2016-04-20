@@ -4,7 +4,13 @@ set -e
 
 <%
 
-job_ip = spec.networks.send(spec.networks.methods(false).first).ip
+networks = spec.networks.marshal_dump.values
+network = networks.find do |network_spec|
+  network_spec.default
+end
+
+network ||= networks.first
+job_ip = network.ip
 
 ssl = false
 if_p("rabbitmq-server.ssl.key") do |key|
