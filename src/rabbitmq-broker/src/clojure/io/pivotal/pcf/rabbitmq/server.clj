@@ -66,7 +66,8 @@
 
 (def catalog {:services [{:name "p-rabbitmq"
                           :provider "pivotal"
-                          :description "RabbitMQ messaging broker"
+                          :display_name "RabbitMQ"
+                          :offering_description "RabbitMQ messaging broker"
                           :tags ["rabbitmq" "rabbit" "messaging" "message-queue" "amqp" "mqtt" "stomp"]}]})
 
 (defn init-catalog!

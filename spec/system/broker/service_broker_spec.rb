@@ -3,6 +3,8 @@ require 'spec_helper'
 require 'json'
 require 'ostruct'
 require 'tempfile'
+require 'net/https'
+require 'uri'
 
 require 'hula'
 require 'hula/bosh_manifest'
@@ -29,13 +31,43 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
 
   let(:session) { Capybara::Session.new(:poltergeist) }
 
-  context 'default deployment'  do
-    before :context do
-      @rmq_host = bosh_director.ips_for_job("rmq_z1", environment.bosh_manifest.deployment_name)[0]
-      @rmq_admin_broker_username = environment.bosh_manifest.property('rabbitmq-server.administrators.broker.username')
-      @rmq_admin_broker_password = environment.bosh_manifest.property('rabbitmq-server.administrators.broker.password')
-    end
+  let(:rmq_host) do
+    bosh_director.ips_for_job("rmq_z1", environment.bosh_manifest.deployment_name)[0]
+  end
 
+  let(:rmq_server_admin_broker_username) do
+    environment.bosh_manifest.property('rabbitmq-server.administrators.broker.username')
+  end
+
+  let(:rmq_server_admin_broker_password) do
+    environment.bosh_manifest.property('rabbitmq-server.administrators.broker.password')
+  end
+
+  let(:rmq_broker_username) do
+    environment.bosh_manifest.property('broker.username')
+  end
+
+  let(:rmq_broker_password) do
+    environment.bosh_manifest.property('broker.password')
+  end
+
+  let(:rmq_broker_host) do
+    protocol = environment.bosh_manifest.property('broker.protocol')
+    host = environment.bosh_manifest.property('broker.host')
+    URI.parse("#{protocol}://#{host}")
+  end
+
+  let(:broker_catalog) do
+    catalog_uri = URI.join(rmq_broker_host, '/v2/catalog')
+    req = Net::HTTP::Get.new(catalog_uri)
+    req.basic_auth(rmq_broker_username, rmq_broker_password)
+    response = Net::HTTP.start(rmq_broker_host.hostname, rmq_broker_host.port, :use_ssl => rmq_broker_host.scheme == 'https', :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
+      http.request(req)
+    end
+    JSON.parse(response.body)
+  end
+
+  context 'default deployment'  do
     it 'provides defaults', :pushes_cf_app do
       cf.push_app_and_bind_with_service(test_app, service) do |app, _|
 
@@ -77,26 +109,56 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
     end
   end
 
-  context 'when a dns host is configured' do
-    before :context do
-      modify_and_deploy_manifest do |manifest|
-        rabbit_manifest = manifest['properties']['rabbitmq-broker']['rabbitmq']
-        rabbit_manifest['dns_host'] = rabbit_manifest['hosts'].first
-        rabbit_manifest['hosts'] = ['Verify that this ip is not used over the dns_host']
+  context 'when broker is configured' do
+    context 'when a dns host is configured' do
+      before(:context) do
+        modify_and_deploy_manifest do |manifest|
+          rabbit_manifest = manifest['properties']['rabbitmq-broker']['rabbitmq']
+          rabbit_manifest['dns_host'] = rabbit_manifest['hosts'].first
+          rabbit_manifest['hosts'] = ['Verify that this ip is not used over the dns_host']
+        end
+      end
+
+      after(:context) do
+        bosh_director.deploy(environment.bosh_manifest.path)
+      end
+
+      it 'is still possible to read and write to a queue', :pushes_cf_app do
+        cf.push_app_and_bind_with_service(test_app, service) do |app, _|
+          session.visit "#{app.url}/services/rabbitmq/protocols/amqp091"
+          expect(session.status_code).to eql(200)
+          expect(session).to have_content('amq.gen')
+        end
       end
     end
 
-    after :context do
-      bosh_director.deploy(environment.bosh_manifest.path)
-    end
 
-    it 'is still possible to read and write to a queue', :pushes_cf_app do
-      cf.push_app_and_bind_with_service(test_app, service) do |app, _|
-        session.visit "#{app.url}/services/rabbitmq/protocols/amqp091"
-        expect(session.status_code).to eql(200)
-        expect(session).to have_content('amq.gen')
+    context 'when the service broker is configured with particular service metadata' do
+      let(:broker_catalog_metadata) do
+        broker_catalog['services'].first['metadata']
+      end
+
+      before(:all) do
+        modify_and_deploy_manifest do |manifest|
+          service_properties = manifest['properties']['rabbitmq-broker']['service']
+          service_properties['display_name'] = "apps-manager-test-name"
+          service_properties['offering_description'] = "Some long description of our service"
+        end
+      end
+
+      after(:all) do
+        bosh_director.deploy(environment.bosh_manifest.path)
+      end
+
+      it 'has the correct display name in catalog' do
+        expect(broker_catalog_metadata['displayName']).to eq("apps-manager-test-name")
+      end
+
+      it 'has the correct description in catalog' do
+        expect(broker_catalog_metadata['longDescription']).to eq("Some long description of our service")
       end
     end
+
   end
 end
 
@@ -114,7 +176,7 @@ def provides_mqtt_connectivity(session, app)
   expect(session).to have_content('mqtt://')
   expect(session).to have_content('Payload published')
 
-  queues = ssh_gateway.execute_on(@rmq_host, "curl -u #{@rmq_admin_broker_username}:#{@rmq_admin_broker_password} http://#{@rmq_host}:15672/api/queues -s")
+  queues = ssh_gateway.execute_on(rmq_host, "curl -u #{rmq_server_admin_broker_username}:#{rmq_server_admin_broker_password} http://#{rmq_host}:15672/api/queues -s")
   json = JSON.parse(queues)
   json.select!{ |queue| queue["name"] == "mqtt-subscription-mqtt_test_clientqos1" }
   expect(json.length).to eql(1)
@@ -127,6 +189,7 @@ def provides_stomp_connectivity(session, app)
   expect(session.status_code).to eql(200)
   expect(session).to have_content('Payload published')
 end
+
 
 def provides_direct_amqp_connectivity(service_key_data)
   amqp_proto = service_key_data['protocols']['amqp'].dup

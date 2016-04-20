@@ -88,7 +88,6 @@ RSpec.describe 'Broker Registrar', test_with_errands: true do
       expect(service_available?(service_name)).to be_falsey
     end
   end
-
 end
 
 def service_available?(name)

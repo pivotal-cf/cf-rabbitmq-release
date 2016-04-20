@@ -72,6 +72,16 @@
          :metadata
          :plans)))
 
+(deftest test-display-name
+  (let [m (load-config "config/valid.yml")
+        info (cfg/service-info m)]
+    (is (= "WhiteRabbitMQ" (get-in info [:metadata "displayName"])))))
+
+(deftest test-description
+  (let [m (load-config "config/valid.yml")
+        info (cfg/service-info m)]
+    (is (= "this is a long description" (get-in info [:description])))))
+
 (deftest test-node-hosts
   (testing "when there is no DNS host"
     (let [m (load-config "config/valid.yml")]
