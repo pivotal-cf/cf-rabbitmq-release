@@ -1,6 +1,6 @@
 <%
   require 'digest'
-  etworks = spec.networks.marshal_dump.values
+  networks = spec.networks.marshal_dump.values
   network = networks.find do |network_spec|
     network_spec.default
   end
