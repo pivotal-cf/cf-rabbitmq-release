@@ -125,9 +125,11 @@ puts ExcludeHelper::warnings
 
 RSpec.configure do |config|
   config.include Matchers
+  config.include TemplateHelpers, template: true
+
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
-  config.filter_run_excluding :skip_metrics => !ExcludeHelper::metrics_available?
+  config.filter_run_excluding :metrics => !ExcludeHelper::metrics_available?
   config.filter_run_excluding :test_with_errands => ENV.has_key?('SKIP_ERRANDS')
 
   config.around do |example|

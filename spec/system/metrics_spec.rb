@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'date'
 
-RSpec.describe 'metrics', :skip_metrics => true do
+RSpec.describe 'metrics', :metrics => true do
   let(:firehose) { Matchers::Firehose.new(doppler_address: doppler_address, access_token: cf.auth_token) }
 
   describe 'rabbitmq haproxy metrics' do

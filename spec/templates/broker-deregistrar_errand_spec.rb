@@ -1,15 +1,12 @@
-require 'bosh/template/renderer'
-require 'yaml'
-
-RSpec.describe 'broker deregistration errand template' do
-	let(:renderer) {
-		Bosh::Template::Renderer.new({context: manifest.to_json})
+RSpec.describe 'broker deregistration errand template', template: true do
+	let(:output) {
+		compiled_template('broker-deregistrar', 'errand.sh', manifest_properties)
 	}
 
-	let(:output) { renderer.render('jobs/broker-deregistrar/templates/errand.sh.erb') }
-
 	context 'when ssl validation is not skipped' do
-		let(:manifest){ emulate_bosh_director_merge ({'cf' => { 'skip_ssl_validation' => false }}) }
+		let(:manifest_properties) do
+			{'cf' => { 'skip_ssl_validation' => false }}
+		end
 
 		it 'skips ssl validation' do
 			expect(output).not_to include '--skip-ssl-validation'
@@ -18,7 +15,9 @@ RSpec.describe 'broker deregistration errand template' do
 	end
 
 	context 'when ssl validation is skipped' do
-		let(:manifest){ emulate_bosh_director_merge ({'cf' => {'skip_ssl_validation' => true }}) }
+		let(:manifest_properties) do
+			{'cf' => { 'skip_ssl_validation' => true }}
+		end
 
 		it 'skips ssl validation' do
 			expect(output).to include 'cf api --skip-ssl-validation'
@@ -26,18 +25,3 @@ RSpec.describe 'broker deregistration errand template' do
 	end
 end
 
-
-include Bosh::Template::PropertyHelper
-
-# Trying to emulate bosh director Bosh::Director::DeploymentPlan::Job#extract_template_properties
-def emulate_bosh_director_merge(manifest_properties)
-	job_spec = YAML.load_file('jobs/broker-deregistrar/spec')
-	spec_properties = job_spec["properties"]
-
-	effective_properties = {}
-	spec_properties.each_pair do |name, definition|
-		copy_property(effective_properties, manifest_properties, name, definition["default"] || '')
-	end
-
-	{"properties" => effective_properties}
-end
