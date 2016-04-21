@@ -1,5 +1,8 @@
 <% if p("rabbitmq-server.config", false) %>
 <%= p("rabbitmq-server.config").unpack("m0").first %>
 <% else %>
-[].
+[
+{rabbit, [ {collect_statistics_interval, 60000}] },
+{rabbitmq_management, [ {rates_mode, none}] }
+].
 <% end %>
