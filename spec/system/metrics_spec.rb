@@ -20,24 +20,8 @@ RSpec.describe 'metrics', :metrics => true do
       end
 
       it 'contains haproxy_z1 amqp health connection metrics' do
-        regexp_pattern = 'name:"\/p-rabbitmq\/haproxy\/health\/connections\/amqp" value:%i unit:"count"' % rmq_node_count
+        regexp_pattern = 'name:"\/p-rabbitmq\/haproxy\/health\/connections" value:\d+ unit:"count"'
         expect(firehose).to have_metric('haproxy_z1', 0, Regexp.new(regexp_pattern))
-      end
-
-      context 'when rmq_z1 node is down' do
-        before(:all) do
-          @rmq_z1_host = bosh_director.ips_for_job('rmq_z1', environment.bosh_manifest.deployment_name)[0]
-          ssh_gateway.execute_on(@rmq_z1_host, '/var/vcap/bosh/bin/monit stop rabbitmq-server', :root => true)
-        end
-
-        after(:all) do
-          ssh_gateway.execute_on(@rmq_z1_host, '/var/vcap/bosh/bin/monit start rabbitmq-server', :root => true)
-        end
-
-        it 'contains haproxy_z1 1 amqp health connection metric' do
-          regexp_pattern = 'name:"\/p-rabbitmq\/haproxy\/health\/connections\/amqp" value:%i unit:"count"' % (rmq_node_count - 1)
-          expect(firehose).to have_metric('haproxy_z1', 0, Regexp.new(regexp_pattern))
-        end
       end
     end
 
@@ -67,7 +51,7 @@ RSpec.describe 'metrics', :metrics => true do
       end
 
       it 'does not contain haproxy_z1 1 amqp health connection metric' do
-        expect(firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/health\/connections\/amqp" value:\d+ unit:"count"/)
+        expect(firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/health\/connections" value:\d+ unit:"count"/)
       end
 
       it 'does not contain haproxy_z1 amqp queue size' do
