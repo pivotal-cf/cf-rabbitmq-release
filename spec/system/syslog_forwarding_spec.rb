@@ -7,11 +7,11 @@ RSpec.describe "Syslog forwarding" do
   before(:all) do
     @rmq_job_name = 'rmq_z1'
     @broker_job_name = "rmq-broker"
-    @haproxy_job_hame = "haproxy_z1"
+    @haproxy_job_name = "haproxy_z1"
     @bosh_job_index = 0
     @rmq_host = bosh_director.ips_for_job(@rmq_job_name, environment.bosh_manifest.deployment_name)[@bosh_job_index]
     @broker_host = bosh_director.ips_for_job(@broker_job_name, environment.bosh_manifest.deployment_name)[@bosh_job_index]
-    @haproxy_host = bosh_director.ips_for_job(@haproxy_job_hame, environment.bosh_manifest.deployment_name)[@bosh_job_index]
+    @haproxy_host = bosh_director.ips_for_job(@haproxy_job_name, environment.bosh_manifest.deployment_name)[@bosh_job_index]
 
     @syslog_address = "127.0.0.1"
     @syslog_port = 12345
@@ -85,7 +85,7 @@ RSpec.describe "Syslog forwarding" do
         output_from_syslog = ssh_gateway.execute_on(@haproxy_host, "cat log.txt")
         output_from_file = ssh_gateway.execute_on(@haproxy_host, "cat /var/vcap/sys/log/rabbitmq-haproxy/haproxy.log")
 
-        expect(output_from_syslog).to include "rabbitmq-haproxy_haproxy_log [job=#{@haproxy_job_hame} index=#{@bosh_job_index}]"
+        expect(output_from_syslog).to include "rabbitmq-haproxy_haproxy_log [job=#{@haproxy_job_name} index=#{@bosh_job_index}]"
         expect(output_from_file).to include "localhost haproxy"
       end
   end
