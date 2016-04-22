@@ -11,14 +11,9 @@ require 'prof/cloud_foundry'
 require 'prof/test_app'
 
 RSpec.describe "logging configuration" do
-
-  RMQ_Z1_JOB_NAME = "rmq_z1"
-  RMQ_Z2_JOB_NAME = "rmq_z2"
-  HAPROXY_JOB_NAME = "haproxy_z1"
-  BOSH_JOB_INDEX = 0
-  RMQ_Z1_HOST = bosh_director.ips_for_job(RMQ_Z1_JOB_NAME, environment.bosh_manifest.deployment_name)[BOSH_JOB_INDEX]
-  RMQ_Z2_HOST = bosh_director.ips_for_job(RMQ_Z2_JOB_NAME, environment.bosh_manifest.deployment_name)[BOSH_JOB_INDEX]
-  HAPROXY_HOST = bosh_director.ips_for_job(HAPROXY_JOB_NAME, environment.bosh_manifest.deployment_name)[BOSH_JOB_INDEX]
+  RMQ_Z1_HOST = bosh_director.ips_for_job("rmq_z1", environment.bosh_manifest.deployment_name)[0]
+  RMQ_Z2_HOST = bosh_director.ips_for_job("rmq_z2", environment.bosh_manifest.deployment_name)[0]
+  HAPROXY_HOST = bosh_director.ips_for_job("haproxy_z1", environment.bosh_manifest.deployment_name)[0]
 
   HAPROXY_LOG_LOCATION = "/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log"
 
