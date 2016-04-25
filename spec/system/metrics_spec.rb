@@ -26,15 +26,15 @@ RSpec.describe 'metrics', :metrics => true do
     end
 
     it 'contains haproxy_z1 amqp queue size' do
-      expect(firehose).to have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/health\/qsize\/amqp" value:\d+ unit:"size"/)
+      expect(firehose).to have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/backend\/qsize\/amqp" value:\d+ unit:"size"/)
     end
 
     it 'contains haproxy_z1 amqp retries' do
-      expect(firehose).to have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/health\/retries\/amqp" value:\d+ unit:"count"/)
+      expect(firehose).to have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/backend\/retries\/amqp" value:\d+ unit:"count"/)
     end
 
     it 'contains haproxy_z1 amqp connection time' do
-      expect(firehose).to have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/health\/ctime\/amqp" value:\d+ unit:"time"/)
+      expect(firehose).to have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/backend\/ctime\/amqp" value:\d+ unit:"time"/)
     end
 
     context 'when haproxy_z1 is not running' do
@@ -55,15 +55,15 @@ RSpec.describe 'metrics', :metrics => true do
       end
 
       it 'does not contain haproxy_z1 amqp queue size' do
-        expect(firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/health\/qsize\/amqp" value:\d+ unit:"size"/)
+        expect(firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/backend\/qsize\/amqp" value:\d+ unit:"size"/)
       end
 
       it 'does not contain haproxy_z1 amqp retries' do
-        expect(firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/health\/retries\/amqp" value:\d+ unit:"count"/)
+        expect(firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/backend\/retries\/amqp" value:\d+ unit:"count"/)
       end
 
       it 'does not contain haproxy_z1 amqp connection time' do
-        expect(firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/health\/ctime\/amqp" value:\d+ unit:"time"/)
+        expect(firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/backend\/ctime\/amqp" value:\d+ unit:"time"/)
       end
     end
   end
