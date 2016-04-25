@@ -109,7 +109,6 @@ properties:
     - 10.244.9.10
     ssl:
       verify: false
-      fail_if_no_peer_cert: false
       cert: |
         -----BEGIN CERTIFICATE-----
         MIIC+zCCAeOgAwIBAgIBAjANBgkqhkiG9w0BAQUFADAnMRUwEwYDVQQDEwxNeVRl
