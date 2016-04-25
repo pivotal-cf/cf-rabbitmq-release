@@ -13,16 +13,9 @@ RSpec.describe 'metrics', :metrics => true do
       expect(firehose).to have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/heartbeat" value:1 unit:"boolean"/)
     end
 
-    describe 'health' do
-      let(:rmq_node_count) do
-        manifest = environment.bosh_manifest
-        manifest.job('rmq_z1').instances + manifest.job('rmq_z2').instances
-      end
-
-      it 'contains haproxy_z1 amqp health connection metrics' do
-        regexp_pattern = 'name:"\/p-rabbitmq\/haproxy\/health\/connections" value:\d+ unit:"count"'
-        expect(firehose).to have_metric('haproxy_z1', 0, Regexp.new(regexp_pattern))
-      end
+    it 'contains haproxy_z1 amqp health connection metrics' do
+      regexp_pattern = 'name:"\/p-rabbitmq\/haproxy\/health\/connections" value:\d+ unit:"count"'
+      expect(firehose).to have_metric('haproxy_z1', 0, Regexp.new(regexp_pattern))
     end
 
     it 'contains haproxy_z1 amqp queue size' do
