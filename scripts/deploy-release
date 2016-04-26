@@ -118,7 +118,7 @@ main() {
 
   bosh_target_and_set_deployment "$BOSH_TARGET_ALIAS" "$BOSH_MANIFEST"
 
-  upload_release "${WORKSPACE_BASE_DIR}/cf-${RELEASE_NAME}"
+  upload_release "${WORKSPACE_BASE_DIR}/cf-${RELEASE_NAME}-release"
   upload_metrics_release "$BOSH_MANIFEST"
   upload_loggregator_release "$BOSH_MANIFEST"
 
