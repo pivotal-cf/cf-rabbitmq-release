@@ -58,17 +58,7 @@ ensure_dir() {
 
 ensure_dirs() {
     ensure_dir "$(dirname "${PID_FILE}")"
-    ensure_dir "${INIT_LOG_DIR}"
     ensure_dir "${HOME_DIR}"
-}
-
-ensure_log_files() {
-  touch "${STARTUP_LOG}"
-  touch "${STARTUP_ERR_LOG}"
-  touch "${SHUTDOWN_LOG}"
-  touch "${SHUTDOWN_ERR_LOG}"
-  chown vcap:vcap "${INIT_LOG_DIR}"/startup*
-  chown vcap:vcap "${INIT_LOG_DIR}"/shutdown*
 }
 
 remove_pid() {
@@ -174,7 +164,6 @@ prepare_for_upgrade () {
 
 start_rabbitmq () {
     ensure_dirs
-    ensure_log_files
     status_rabbitmq
     if [ "${RETVAL}" = 0 ]; then
         __log ${STARTUP_LOG} "RabbitMQ is currently running"

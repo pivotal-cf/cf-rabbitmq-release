@@ -18,7 +18,8 @@ properties:
   syslog_aggregator.port:
     description: "Syslog drain port"
 templates:
-  rabbitmq-haproxy.init.erb:   bin/rabbitmq-haproxy.init
-  haproxy.config.erb: haproxy.config
-  syslog_forwarder.conf.erb: config/syslog_forwarder.conf
-  haproxy_syslog.conf.erb:  config/haproxy_syslog.conf
+  rabbitmq-haproxy.init.erb:  bin/rabbitmq-haproxy.init
+  haproxy.config.erb:         haproxy.config
+  pre-start.erb:              bin/pre-start
+  syslog_forwarder.conf.erb:  config/syslog_forwarder.conf
+  haproxy_syslog.conf.erb:    config/haproxy_syslog.conf

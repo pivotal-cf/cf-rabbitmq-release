@@ -67,5 +67,6 @@ templates:
   cacert.pem.erb:                   etc/cacert.pem
   cert.pem.erb:                     etc/cert.pem
   key.pem.erb:                      etc/key.pem
+  pre-start.erb:                    bin/pre-start
   syslog_forwarder.conf.erb:        config/syslog_forwarder.conf
   rabbitmq_syslog.conf.erb:         config/rabbitmq_syslog.conf

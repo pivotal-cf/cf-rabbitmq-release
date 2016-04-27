@@ -1,0 +1,36 @@
+#!/bin/sh
+
+set -eux
+
+JOB_DIR=/var/vcap/jobs/rabbitmq-server
+INIT_LOG_DIR=/var/vcap/sys/log/rabbitmq-server
+STARTUP_LOG="${INIT_LOG_DIR}"/startup_stdout.log
+STARTUP_ERR_LOG="${INIT_LOG_DIR}"/startup_stderr.log
+SHUTDOWN_LOG="${INIT_LOG_DIR}"/shutdown_stdout.log
+SHUTDOWN_ERR_LOG="${INIT_LOG_DIR}"/shutdown_stderr.log
+
+ensure_dir() {
+    _dir=$1
+    mkdir -p "${_dir}"
+    chown -R vcap:vcap "${_dir}"
+    chmod 755 "${_dir}"
+}
+
+ensure_log_files() {
+  touch "${STARTUP_LOG}"
+  touch "${STARTUP_ERR_LOG}"
+  touch "${SHUTDOWN_LOG}"
+  touch "${SHUTDOWN_ERR_LOG}"
+  chown vcap:vcap "${INIT_LOG_DIR}"/startup*
+  chown vcap:vcap "${INIT_LOG_DIR}"/shutdown*
+}
+
+ensure_dir "${INIT_LOG_DIR}"
+ensure_log_files
+
+# syslog forwarding
+/var/vcap/packages/syslog_aggregator/enable_syslog_config rabbitmq_syslog.conf $JOB_DIR/config
+/var/vcap/packages/syslog_aggregator/setup_syslog_forwarder $JOB_DIR/config
+
+# restart rsyslog to use the latest configuration
+/usr/sbin/service rsyslog restart

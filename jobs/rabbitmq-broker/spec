@@ -104,6 +104,7 @@ properties:
 templates:
   broker_config.yml.erb:    config/rabbitmq_broker.yml
   broker_ctl.erb: bin/rabbitmq_broker_ctl
+  pre-start.erb: bin/pre-start
   route_registrar_ctl.erb: bin/route_registrar_ctl
   broker_registrar_settings.yml.erb: config/broker_registrar_settings.yml
   management_registrar_settings.yml.erb: config/management_registrar_settings.yml

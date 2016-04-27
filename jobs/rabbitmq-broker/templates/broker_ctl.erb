@@ -37,7 +37,6 @@ ensure_dir() {
 
 ensure_dirs() {
     ensure_dir "$(dirname "${PID_FILE}")"
-    ensure_dir "${INIT_LOG_DIR}"
 }
 
 remove_pid() {
@@ -52,10 +51,6 @@ start_broker() {
     else
         RETVAL=0
         ensure_dirs
-        
-        # syslog forwarding
-        /var/vcap/packages/syslog_aggregator/enable_syslog_config broker_syslog.conf $JOB_DIR/config
-        /var/vcap/packages/syslog_aggregator/setup_syslog_forwarder $JOB_DIR/config
         
         echo "$("${TIMESTAMP}"): Starting RabbitMQ service broker" >> "${INIT_LOG_DIR}/startup_stdout.log"
         set +e
