@@ -134,15 +134,20 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
 
 
     context 'when the service broker is configured with particular service metadata' do
-      let(:broker_catalog_metadata) do
-        broker_catalog['services'].first['metadata']
-      end
+      let(:service_info) { broker_catalog['services'].first }
+      let(:broker_catalog_metadata) { service_info['metadata'] }
 
       before(:all) do
         modify_and_deploy_manifest do |manifest|
           service_properties = manifest['properties']['rabbitmq-broker']['service']
+          service_properties['name'] = "service-name"
           service_properties['display_name'] = "apps-manager-test-name"
-          service_properties['offering_description'] = "Some long description of our service"
+          service_properties['offering_description'] = "Some description of our service"
+          service_properties['long_description'] = "Some long description of our service"
+          service_properties['icon_image'] = "image-uri"
+          service_properties['provider_display_name'] = "CompanyName"
+          service_properties['documentation_url'] = "https://documentation.url"
+          service_properties['support_url'] = "https://support.url"
         end
       end
 
@@ -150,15 +155,40 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
         bosh_director.deploy(environment.bosh_manifest.path)
       end
 
-      it 'has the correct display name in catalog' do
-        expect(broker_catalog_metadata['displayName']).to eq("apps-manager-test-name")
-      end
+      describe 'the catalog' do
+        it 'has the correct name' do
+          expect(service_info['name']).to eq("service-name")
+        end
 
-      it 'has the correct description in catalog' do
-        expect(broker_catalog_metadata['longDescription']).to eq("Some long description of our service")
+        it 'has the correct description' do
+          expect(service_info['description']).to eq("Some description of our service")
+        end
+
+        it 'has the correct display name' do
+          expect(broker_catalog_metadata['displayName']).to eq("apps-manager-test-name")
+        end
+
+        it 'has the correct long description' do
+          expect(broker_catalog_metadata['longDescription']).to eq("Some long description of our service")
+        end
+
+        it 'has the correct image icon' do
+          expect(broker_catalog_metadata['imageUrl']).to eq("data:image/png;base64,image-uri")
+        end
+
+        it 'has the correct provider display name' do
+          expect(broker_catalog_metadata['providerDisplayName']).to eq("CompanyName")
+        end
+
+        it 'has the correct documentation url' do
+          expect(broker_catalog_metadata['documentationUrl']).to eq("https://documentation.url")
+        end
+
+        it 'has the correct support url' do
+          expect(broker_catalog_metadata['supportUrl']).to eq("https://support.url")
+        end
       end
     end
-
   end
 end
 
