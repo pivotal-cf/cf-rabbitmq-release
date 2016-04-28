@@ -6,6 +6,7 @@ gem 'rabbitmq_http_api_client', '~> 1.3.0'
 gem 'bosh-template'
 gem 'pry'
 gem 'rspec','~> 3.3'
+gem 'rspec-instafail', '~> 0.4.0'
 gem "bunny", "~> 1.6.3"
 gem "mqtt",  "~> 0.1.0"
 gem "stomp", "~> 1.3.1"
