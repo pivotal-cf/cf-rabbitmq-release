@@ -112,7 +112,7 @@ fail_if_no_peer_cert = p("rabbitmq-server.ssl.fail_if_no_peer_cert")
   # -sname rabbit@node0
   # -rabbitmq_clusterer config "/var/vcap/store/rabbitmq/etc/rabbitmq/cluster.config"
   # -rabbit disk_free_limit 1000000
-  # -rabbit cluster_partition_handling autoheal -rabbit halt_on_upgrade_failure false
+  # -rabbit cluster_partition_handling pause_minority -rabbit halt_on_upgrade_failure false
   # -rabbit tcp_listeners [] -rabbit ssl_listeners [5671]
   # -rabbitmq_management listener [{port,15672},{ssl,true}] http_log_dir "/var/vcap/sys/log/rabbitmq-server"
   # -rabbitmq_mqtt ssl_listeners [8883]
@@ -134,7 +134,7 @@ fail_if_no_peer_cert = p("rabbitmq-server.ssl.fail_if_no_peer_cert")
   SELF_NODE="rabbit@<%= job_ip_md5 %>"
   CONFIG="CONFIG_FILE='${SCRIPT_DIR}/../etc/rabbitmq'"
   NODENAME="NODENAME='${SELF_NODE}'"
-  SERVER_START_ARGS="SERVER_START_ARGS='-rabbitmq_clusterer config \"${CLUSTER_CONFIG}\" -rabbit log_levels [{connection,info}] -rabbit disk_free_limit 1000000 -rabbit cluster_partition_handling autoheal -rabbit halt_on_upgrade_failure false -rabbitmq_mqtt subscription_ttl 1800000"
+  SERVER_START_ARGS="SERVER_START_ARGS='-rabbitmq_clusterer config \"${CLUSTER_CONFIG}\" -rabbit log_levels [{connection,info}] -rabbit disk_free_limit 1000000 -rabbit cluster_partition_handling pause_minority -rabbit halt_on_upgrade_failure false -rabbitmq_mqtt subscription_ttl 1800000"
   SERVER_START_ARGS="${SERVER_START_ARGS} -rabbitmq_management http_log_dir \"${LOG_DIR}\""
 
 <% if ssl %>
