@@ -6,10 +6,15 @@ service:
   password: "p1-rabbit-testpwd"
   url: http://127.0.0.1:4567
   name: "p-rabbitmq"
+  offering_description: "this is a description"
   uuid: 00000000-0000-0000-0000-000000000000
   display_name: "WhiteRabbitMQ"
   plan_uuid: 11111111-1111-1111-1111-111111111111
-  offering_description: "this is a long description"
+  long_description: "this is a long description"
+  provider_display_name: SomeCompany
+  documentation_url: https://example.com
+  support_url: https://support.example.com
+  icon_image: image_icon_base64
 logging:
   level: debug
   print_stack_traces: true

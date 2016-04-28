@@ -77,10 +77,35 @@
         info (cfg/service-info m)]
     (is (= "WhiteRabbitMQ" (get-in info [:metadata "displayName"])))))
 
+(deftest test-provider-name
+  (let [m (load-config "config/valid.yml")
+        info (cfg/service-info m)]
+    (is (= "SomeCompany" (get-in info [:metadata "providerDisplayName"])))))
+
 (deftest test-description
   (let [m (load-config "config/valid.yml")
         info (cfg/service-info m)]
-    (is (= "this is a long description" (get-in info [:description])))))
+    (is (= "this is a description" (get-in info [:description])))))
+
+(deftest test-long-description
+  (let [m (load-config "config/valid.yml")
+        info (cfg/service-info m)]
+    (is (= "this is a long description" (get-in info [:metadata "longDescription"])))))
+
+(deftest test-documentation-url
+  (let [m (load-config "config/valid.yml")
+        info (cfg/service-info m)]
+    (is (= "https://example.com" (get-in info [:metadata "documentationUrl"])))))
+
+(deftest test-support-url
+  (let [m (load-config "config/valid.yml")
+        info (cfg/service-info m)]
+    (is (= "https://support.example.com" (get-in info [:metadata "supportUrl"])))))
+
+(deftest test-image-url
+  (let [m (load-config "config/valid.yml")
+        info (cfg/service-info m)]
+    (is (= "data:image/png;base64,image_icon_base64" (get-in info [:metadata "imageUrl"])))))
 
 (deftest test-node-hosts
   (testing "when there is no DNS host"
