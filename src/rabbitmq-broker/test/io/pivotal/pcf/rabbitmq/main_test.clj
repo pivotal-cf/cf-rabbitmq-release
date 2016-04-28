@@ -8,9 +8,12 @@
   [^long status]
   (def FakeExitCalled status))
 
+; This exception is thrown to end the fake server
+; We could not find any other reasonable way to achieve
+; this. - (BC) (AS)
 (defn FakeServerStart
   [m]
-  (throw (Exception. "Something Terrible Happened")))
+  (throw (Exception. "End Of The TEST")))
   ; (Thread. (fn [] (prn "Started Fake Sever"))))
 
 (deftest initialization
