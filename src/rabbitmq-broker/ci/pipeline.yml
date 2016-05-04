@@ -7,6 +7,11 @@ resources:
     branch: master
     private_key: {{git-private-key}}
 
+- name: rabbitmq-alert
+  type: slack-notification
+  source:
+    url: https://hooks.slack.com/services/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
+
 jobs:
 - name: test
   plan:
@@ -14,3 +19,9 @@ jobs:
     trigger: true
   - task: test
     file: cf-rabbitmq-release/src/rabbitmq-broker/ci/run-tests.yml
+    on_failure:
+      put: rabbitmq-alert
+      params:
+        text: "Sorry, I don't know how to tell you this, but 'rabbitmq-broker' pipeline is broken."
+        channel: "#pcf-rabbitmq"
+        username: concourse
