@@ -68,7 +68,7 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
   end
 
   context 'default deployment'  do
-    it 'provides defaults', :pushes_cf_app do
+    it 'provides default connectivity', :pushes_cf_app do
       cf.push_app_and_bind_with_service(test_app, service) do |app, _|
 
         provides_amqp_connectivity(session, app)
@@ -77,6 +77,28 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
 
         provides_stomp_connectivity(session, app)
 
+      end
+    end
+  end
+
+  context 'when broker is configured with HA policy' do
+    before(:context) do
+      modify_and_deploy_manifest do |manifest|
+        manifest['properties']['rabbitmq-broker']['rabbitmq']['operator_set_policy'] = {
+          'enabled' => true,
+          'policy_name' => "operator_set_policy",
+          'policy_definition' => "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}",
+          'policy_priority' => 50
+        }
+      end
+    end
+
+    after(:context) do
+      bosh_director.deploy(environment.bosh_manifest.path)
+    end
+
+    it 'sets queue policy to each created service instance', :pushes_cf_app do
+      cf.push_app_and_bind_with_service(test_app, service) do |app, _|
         provides_mirrored_queue_policy_as_a_default(app)
       end
     end

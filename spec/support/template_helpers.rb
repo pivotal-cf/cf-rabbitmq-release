@@ -17,7 +17,9 @@ module TemplateHelpers
 
     default_property_values = {}
     spec_properties.each_pair do |name, definition|
-      copy_property(default_property_values, {}, name, definition["default"] || '')
+      default_value = definition["default"]
+      default_value =  '' if default_value.nil?
+      copy_property(default_property_values, {}, name, default_value)
     end
 
     effective_properties = recursive_merge(default_property_values, manifest_properties)

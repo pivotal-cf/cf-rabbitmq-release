@@ -76,7 +76,7 @@ properties:
     default: "https://support.pivotal.io"
   rabbitmq-broker.rabbitmq.operator_set_policy.enabled:
     description: "Enable policy set by the operator"
-    default: true
+    default: false
   rabbitmq-broker.rabbitmq.operator_set_policy.policy_name:
     description: "Operator policy name"
     default: "operator_set_policy"
