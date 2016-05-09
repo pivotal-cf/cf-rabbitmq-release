@@ -33,7 +33,23 @@ bosh target https://192.168.50.4:25555 lite
 
 To run the unit tests locally, just run: `bundle exec rake spec:unit`.
 
-You can run it from docker by using `./scripts/from-docker bundle exec rake spec:unit`.
+### Integration Tests
+
+`bundle exec rake spec:integration`
+
+You can run tests on BOSH lite. You just need BOSH_MANIFEST environment variable and do deployment.
+
+If you want to run tests on custom BOSH you need to set following environment variables:
+```
+export CF_DOMAIN='bosh-lite.com'
+export CF_USERNAME='admin'
+export CF_PASSWORD='admin'
+export CF_API='api.bosh-lite.com'
+export BOSH_TARGET='bosh-lite.com'
+export BOSH_USERNAME='admin'
+export BOSH_PASSWORD='admin'
+
+```
 
 ## Documentation
 
