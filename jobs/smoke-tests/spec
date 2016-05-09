@@ -16,7 +16,7 @@ properties:
     description: 'Username of the admin user'
   cf.admin_password:
     description: 'Password of the admin user'
-  broker.service_name:
+  broker.name:
     description: Service name displayed in the catalog metadata
     default: p-rabbitmq
   smoke_tests.apps_domain:

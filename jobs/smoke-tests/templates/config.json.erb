@@ -3,7 +3,7 @@
   "apps_domain":                      "<%= p('smoke_tests.apps_domain') != "" && p('smoke_tests.apps_domain') || p('cf.domain') %>",
   "admin_user":                       "<%= p('cf.admin_username') %>",
   "admin_password":                   "<%= p('cf.admin_password') %>",
-  "service_name":                     "<%= p('broker.service_name') %>",
+  "service_name":                     "<%= p('broker.name') %>",
   "org_name":                         "<%= p('smoke_tests.org') %>",
   "plan_names":                       [ "standard" ],
   "timeout_scale":                    <%= p('smoke_tests.timeout_scale') %>,
