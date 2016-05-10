@@ -53,6 +53,10 @@ properties:
     description: "The file descriptor limit for the RabbitMQ process"
     default: 300000
 
+  rabbitmq-server.cluster_partition_handling:
+    description: "Cluster partition recover mode property. Vald values are: pause_minority, autoheal"
+    default: "pause_minority"
+
   syslog_aggregator.address:
     description: "Syslog drain hostname"
   syslog_aggregator.port:

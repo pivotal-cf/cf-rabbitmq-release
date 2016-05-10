@@ -4,6 +4,7 @@ set -e
 
 <%
 
+cluster_partition_handling = p("rabbitmq-server.cluster_partition_handling")
 networks = spec.networks.marshal_dump.values
 network = networks.find do |network_spec|
   network_spec.default
@@ -131,7 +132,8 @@ fail_if_no_peer_cert = p("rabbitmq-server.ssl.fail_if_no_peer_cert")
   SELF_NODE="rabbit@<%= job_ip_md5 %>"
   CONFIG="CONFIG_FILE='${SCRIPT_DIR}/../etc/rabbitmq'"
   NODENAME="NODENAME='${SELF_NODE}'"
-  SERVER_START_ARGS="SERVER_START_ARGS='-rabbitmq_clusterer config \"${CLUSTER_CONFIG}\" -rabbit log_levels [{connection,info}] -rabbit disk_free_limit 1000000 -rabbit cluster_partition_handling autoheal -rabbit halt_on_upgrade_failure false -rabbitmq_mqtt subscription_ttl 1800000"
+
+  SERVER_START_ARGS="SERVER_START_ARGS='-rabbitmq_clusterer config \"${CLUSTER_CONFIG}\" -rabbit log_levels [{connection,info}] -rabbit disk_free_limit 1000000 -rabbit cluster_partition_handling <%= cluster_partition_handling %> -rabbit halt_on_upgrade_failure false -rabbitmq_mqtt subscription_ttl 1800000"
   SERVER_START_ARGS="${SERVER_START_ARGS} -rabbitmq_management http_log_dir \"${LOG_DIR}\""
 
 <% if ssl %>

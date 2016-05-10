@@ -20,6 +20,30 @@ RSpec.describe "RabbitMQ server configuration" do
     end
   end
 
+  describe "Partition handling policy" do
+    let(:cluster_partition_handling) {  ssh_gateway.execute_on(rmq_host, "ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl environment", :root => true) }
+
+    it "should be use autoheal" do
+      expect(cluster_partition_handling).to include('{cluster_partition_handling,autoheal}')
+    end
+
+    context "when pause_minority is set" do
+      before(:each) do
+        modify_and_deploy_manifest do |manifest|
+          manifest['properties']['rabbitmq-server']['cluster_partition_handling'] = 'pause_minority'
+        end
+      end
+
+      after(:all) do
+        bosh_director.deploy(environment.bosh_manifest.path)
+      end
+
+      it "should be use pause_minority" do
+        expect(cluster_partition_handling).to include('{cluster_partition_handling,pause_minority}')
+      end
+    end
+  end
+
   describe 'SSL' do
     let(:ssl_options) {  ssh_gateway.execute_on(rmq_host, "ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl eval 'application:get_env(rabbit, ssl_options).'", :root => true) }
 
