@@ -3,6 +3,7 @@ name: rabbitmq-broker
 
 packages:
 - java
+- rabbitmq-common
 - rabbitmq-broker
 - util-linux
 - route-registrar
