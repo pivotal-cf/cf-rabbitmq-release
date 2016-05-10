@@ -27,28 +27,9 @@
   [config]
   (log/set-level! (keyword (cfg/log-level config))))
 
-(defn own-pid
-  "Returns PID of the current OS process"
-  []
-  (let [^String name (-> (ManagementFactory/getRuntimeMXBean) .getName)]
-    (Long/valueOf ^String (first (.split name "@")))))
-
-(defn drop-pid
-  "Writes PID of the current OS process to file at path.
-   The file will be created if it does not exists."
-  [^String path]
-  (let [f  (File. path)]
-    (with-open [wr (io/writer f)]
-      (doto f
-        .createNewFile
-        .deleteOnExit)
-      (.write wr (String/valueOf (own-pid))))))
-
 (defn announce-start
   [config]
-  (log/infof "Starting. PID: %s, PID path: %s, CC endpoint: %s"
-             (own-pid)
-             (cfg/pid-path config)
+  (log/infof "Starting. CC endpoint: %s"
              (cfg/cc-endpoint config)))
 
 (defn log-if-using-tls
@@ -268,7 +249,6 @@
 (defn start
   [config]
   (initialize-logger config)
-  (drop-pid (cfg/pid-path config))
   (announce-start config)
   (install-signal-traps)
   (init-catalog! config)

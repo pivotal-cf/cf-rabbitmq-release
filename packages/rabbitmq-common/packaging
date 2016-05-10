@@ -1,0 +1,3 @@
+set -e
+
+cp -a rabbitmq-common/* ${BOSH_INSTALL_TARGET}
