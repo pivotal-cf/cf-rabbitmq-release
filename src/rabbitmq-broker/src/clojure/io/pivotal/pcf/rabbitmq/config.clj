@@ -24,8 +24,6 @@
     (validation-set
      ;; CC
      (presence-of :cc_endpoint :message missing-msg)
-     ;; PID file location
-     (presence-of :pid :message missing-msg)
      ;; logging
      (presence-of [:logging :level] :message missing-msg)
      (inclusion-of [:logging :level] :in #{"debug" "info" "warn" "error" "fatal"})
@@ -85,10 +83,6 @@
 (defn print-stack-traces?
   [m]
   (true? (get-in m [:logging :print_stack_traces] false)))
-
-(defn ^String pid-path
-  [m]
-  (get m :pid))
 
 (defn ^String cc-endpoint
   [m]

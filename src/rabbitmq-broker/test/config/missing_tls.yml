@@ -13,7 +13,6 @@ service:
   plan_uuid: 11111111-1111-1111-1111-111111111111
 logging:
   level: debug
-pid: /tmp/rabbitmq_gateway.pid
 rabbitmq:
   hosts:
     - 127.0.0.1

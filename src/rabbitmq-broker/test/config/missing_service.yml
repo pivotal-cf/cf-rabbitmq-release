@@ -6,7 +6,6 @@ uaa_client:
   password: "p1-rabbitpwd"
 logging:
   level: debug
-pid: /tmp/cf_rabbitmq_broker.pid
 rabbitmq:
   ssl: false
   hosts:

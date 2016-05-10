@@ -12,7 +12,6 @@ service:
   plan_uuid: 11111111-1111-1111-1111-111111111111
 logging:
   level: debug
-pid: /tmp/cf_rabbitmq_broker.pid
 rabbitmq:
   ssl: false
   hosts:

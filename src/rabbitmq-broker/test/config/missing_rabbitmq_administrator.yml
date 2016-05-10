@@ -17,4 +17,3 @@ service:
 logging:
   level: debug
   print_stack_traces: true
-pid: /tmp/cf_rabbitmq_broker.pid
