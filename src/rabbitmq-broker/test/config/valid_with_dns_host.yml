@@ -11,7 +11,6 @@ service:
 logging:
   level: debug
   print_stack_traces: true
-pid: /tmp/cf_rabbitmq_broker.pid
 rabbitmq:
   management_domain: pivotal-rabbitmq.127.0.0.1
   hosts:

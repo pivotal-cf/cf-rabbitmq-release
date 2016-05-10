@@ -2,7 +2,6 @@
 cc_endpoint: http://127.0.0.1:8181
 logging:
   level: debug
-pid: /tmp/cf_rabbitmq_broker.pid
 rabbitmq:
   ssl: false
   hosts:
