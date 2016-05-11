@@ -25,6 +25,7 @@ function pid_guard() {
   echo "------------ STARTING $(basename "$0") at $(date) --------------" | tee /dev/stderr
 
   if [ ! -f "${pidfile}" ]; then
+    echo "Pidfile ${pidfile} doesn't exist"
     return 0
   fi
 
@@ -36,7 +37,7 @@ function pid_guard() {
     exit 1
   fi
 
-  echo "Removing stale pidfile"
+  echo "Removing stale pidfile ${pidfile} for pid ${pid}"
   rm "${pidfile}"
 }
 
@@ -108,12 +109,12 @@ function kill_and_wait() {
   fi
 
   echo "Killing ${pidfile}: ${pid} "
-  kill "${pid}"
+  pkill -TERM -P "${pid}"
 
   if ! wait_pid_death "${pid}" "${timeout}"; then
     if [ "${sigkill_on_timeout}" = "1" ]; then
       echo "Kill timed out, using kill -9 on ${pid}"
-      kill -9 "${pid}"
+      pkill -KILL -P "${pid}"
       sleep 0.5
     fi
   fi
