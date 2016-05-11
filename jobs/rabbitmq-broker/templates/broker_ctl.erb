@@ -16,14 +16,11 @@ CONFIG=$JOB_DIR/config/rabbitmq_broker.yml
 INIT_LOG_DIR=/var/vcap/sys/log/rabbitmq-broker
 
 PID_FILE=/var/vcap/sys/run/rabbitmq-broker/pid
-
-START_PROG=/usr/bin/setsid
 TIMESTAMP=/bin/date
 
 source /var/vcap/packages/rabbitmq-common/utils.sh
 
 test -x "${BROKER}"
-test -x "${START_PROG}"
 test -f "${CONFIG}"
 
 ensure_dir() {
@@ -40,12 +37,12 @@ ensure_dirs() {
 }
 
 start_broker() {
-    pid_guard "$PIDFILE" "RabbitMQ Broker"
+    pid_guard "$PID_FILE" "RabbitMQ Broker"
     ensure_dirs
 
     echo "$("${TIMESTAMP}"): Starting RabbitMQ service broker" >> "${INIT_LOG_DIR}/startup_stdout.log"
+
     echo $$ > $PID_FILE
-    set +e
     exec chpst -u vcap:vcap "${BROKER}" "${CONFIG}" \
         1>> "${INIT_LOG_DIR}/startup_stdout.log" \
         2>> "${INIT_LOG_DIR}/startup_stderr.log" \
@@ -53,7 +50,7 @@ start_broker() {
 }
 
 stop_broker() {
-    kill_and_wait $PIDFILE
+    kill_and_wait $PID_FILE
 }
 
 # RETVAL = 0 if running, != 0 if stopped
