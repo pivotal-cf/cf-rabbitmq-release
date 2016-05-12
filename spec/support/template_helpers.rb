@@ -4,27 +4,27 @@ require 'yaml'
 module TemplateHelpers
   include Bosh::Template::PropertyHelper
 
-  def compiled_template(job_name, template_name, manifest_properties = {})
-    manifest = emulate_bosh_director_merge(job_name, manifest_properties)
-    renderer = Bosh::Template::Renderer.new({context: manifest})
+  def compiled_template(job_name, template_name, manifest_properties = {}, network_properties = [])
+    manifest = emulate_bosh_director_merge(job_name, manifest_properties, network_properties)
+    renderer = Bosh::Template::Renderer.new(context: manifest)
     renderer.render("jobs/#{job_name}/templates/#{template_name}.erb")
   end
 
   # Trying to emulate bosh director Bosh::Director::DeploymentPlan::Job#extract_template_properties
-  def emulate_bosh_director_merge(job_name, manifest_properties)
+  def emulate_bosh_director_merge(job_name, manifest_properties, network_properties)
     job_spec = YAML.load_file("jobs/#{job_name}/spec")
     spec_properties = job_spec['properties']
 
     default_property_values = {}
     spec_properties.each_pair do |name, definition|
-      default_value = definition["default"]
-      default_value =  '' if default_value.nil?
+      default_value = definition['default']
+      default_value = '' if default_value.nil?
       copy_property(default_property_values, {}, name, default_value)
     end
 
     effective_properties = recursive_merge(default_property_values, manifest_properties)
 
-    {"properties" => effective_properties}.to_json
+    { 'properties' => effective_properties, 'networks' => network_properties }.to_json
   end
 
   def recursive_merge(first, other)
@@ -36,5 +36,4 @@ module TemplateHelpers
       end
     end
   end
-
 end

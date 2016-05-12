@@ -29,8 +29,8 @@ frontend input-<%= port %>
 backend output-<%= port %>
         mode tcp
         balance leastconn
-<% ips.each_index do |idx| %>
-	server node<%= idx %> <%= ips[idx] %>:<%= port %> check inter 5000
+<% ips.each_with_index do |ip, idx| %>
+	server node<%= idx %> <%= ip %>:<%= port %> check inter 5000
 <% end %>
 <% end %>
 

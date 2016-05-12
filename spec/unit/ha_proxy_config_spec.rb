@@ -1,17 +1,23 @@
 require 'spec_helper'
-require 'bosh/template/renderer'
 
-RSpec.describe 'Cluster' do
-  let(:manifest){ YAML.load_file('manifests/cf-rabbitmq-lite.yml')}
+RSpec.describe 'Cluster', template: true do
+  let(:rendered_template) do
+    compiled_template('rabbitmq-haproxy', 'haproxy.config', {
+      'rabbitmq-haproxy' => {
+        'server_ips' => ['1.1.1.1', '2.2.2.2'],
+        'ports' => [ 123, 456, 789, 10000000 ]
+      }})
+  end
 
   it "should contain all rabbit nodes to load balance" do
-    renderer = Bosh::Template::Renderer.new({context: manifest.to_json})
-
-    rendered_template = renderer.render('jobs/rabbitmq-haproxy/templates/haproxy.config.erb')
-
-    [5672, 5671, 1883, 8883, 61613, 61614, 15672, 15674].each do |port|
-      expect(rendered_template).to include("server node0 10.244.9.6:#{port} check inter 5000")
-      expect(rendered_template).to include("server node1 10.244.9.10:#{port} check inter 5000")
+    [123, 456, 789].each do |port|
+      expect(rendered_template).to include("server node0 1.1.1.1:#{port} check inter 5000")
+      expect(rendered_template).to include("server node1 2.2.2.2:#{port} check inter 5000")
     end
+  end
+
+  it 'does not include too big ports' do
+    expect(rendered_template).not_to include("server node0 1.1.1.1:10000000 check inter 5000")
+    expect(rendered_template).not_to include("server node1 2.2.2.2:10000000 check inter 5000")
   end
 end

@@ -1,59 +1,50 @@
 require 'spec_helper'
-require 'bosh/template/renderer'
 require 'tempfile'
 
-RSpec.describe 'Enabling plugins' do
-  let(:manifest){ YAML.load_file('spec/assets/test_manifest.yml')}
+RSpec.describe 'Enabling plugins', template: true do
+  let(:command_output) do
+    template = compiled_template('rabbitmq-server', 'plugins.sh', {'rabbitmq-server' => { 'plugins' => ['good_plugin', 'bad_plugin']}})
 
-  context "when there is a plugin specified in the manifest but missing on server" do
-    it "should not enable the specified plugin, but give a warning" do
-      plugins_list=%{rabbitmq_management
-rabbitmq_mqtt
-      }
-      output = render_and_execute_template(plugins_list)
-      expect(output).to eq("Ignoring unrecognised plugin: rabbitmq_stomp\n")
+    Tempfile.open('plugins') do |command_file|
+      command_file.write(template)
+      command_file.close
+
+      return `RABBITMQ_PLUGINS=spec/templates/rabbitmq-plugins-stub.sh STUBBED_PLUGINS_LIST="#{plugins_list}" bash #{command_file.path}`
     end
   end
 
-  context "when there is a plugin specified in the manifest but missing on server and is displayed as a warning" do
-    it "should not enable the specified plugin, but give a warning" do
-      plugins_list=%{
-WARNING - plugins currently enabled but missing: [rabbitmq_stomp]
+  let(:plugins_list) { %{good_plugin\nunused_plugin} }
 
-rabbitmq_management
-rabbitmq_mqtt
-      }
+  context "when the specified plugin is missing on server" do
+    it "does not enable the specified plugin" do
+      expect(command_output).not_to include('Test enable: bad_plugin')
+    end
 
-      output = render_and_execute_template(plugins_list)
-      expect(output).to eq("Ignoring unrecognised plugin: rabbitmq_stomp\n")
+    it 'shows warning about missing plugin' do
+      expect(command_output).to include('Ignoring unrecognised plugin: bad_plugin')
     end
   end
 
+  context "when the specified plugin is enabled but missing on server" do
+    let(:plugins_list) do
+      %{
+WARNING - plugins currently enabled but missing: [bad plugin]
 
-  context "when there is a plugin specified in the manifest and present on the server" do
-    it "should enable the specified plugin, but not give a warning" do
-      plugins_list=%{rabbitmq_management
-rabbitmq_mqtt
-rabbitmq_stomp
+good_plugin
+unused_plugin
       }
+    end
 
-      output = render_and_execute_template(plugins_list)
-      expect(output).to be_empty
+    it "does not enable the specified plugin" do
+      expect(command_output).not_to include('Test enable: bad_plugin')
+    end
+
+    it 'shows warning about missing plugin' do
+      expect(command_output).to include('Ignoring unrecognised plugin: bad_plugin')
     end
   end
-end
 
-
-def render_and_execute_template(plugins_list)
-  renderer = Bosh::Template::Renderer.new({context: manifest.to_json})
-  rendered_template = renderer.render('jobs/rabbitmq-server/templates/plugins.sh.erb')
-
-  command_file = Tempfile.new('plugins')
-  command_file.write(rendered_template)
-  command_file.close
-  File.chmod(0744, command_file.path)
-
-  output = `RABBITMQ_PLUGINS=spec/templates/rabbitmq-plugins-stub.sh STUBBED_PLUGINS_LIST="#{plugins_list}" #{command_file.path}`
-  command_file.unlink
-  output
+  it 'enables plugin' do
+    expect(command_output).not_to include('Test enable: good_plugin')
+  end
 end
