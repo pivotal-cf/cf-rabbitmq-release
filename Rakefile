@@ -20,7 +20,7 @@ namespace :spec do
 
   desc 'run all of the unit tests'
   RSpec::Core::RakeTask.new(:unit) do |t|
-    t.pattern = FileList['spec/unit/**/*_spec.rb', 'spec/templates/**/*_spec.rb']
+    t.pattern = FileList['spec/unit/**/*_spec.rb']
   end
 end
 
