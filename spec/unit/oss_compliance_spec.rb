@@ -4,7 +4,7 @@ require 'zlib'
 require 'yaml'
 require 'httparty'
 
-RSpec.describe 'OSS Compliance' do
+RSpec.describe 'OSS Compliance', run_compliance_tests: true do
 
   describe 'Erlang blob compliance' do
     before :all do
