@@ -53,6 +53,10 @@ properties:
     description: "The file descriptor limit for the RabbitMQ process"
     default: 300000
 
+  rabbitmq-server.disk_alarm_threshold:
+    description: "The threshold in bytes of free disk space at which rabbitmq will raise an alarm"
+    default: 50000000
+
   rabbitmq-server.cluster_partition_handling:
     description: "Cluster partition recover mode property. Vald values are: pause_minority, autoheal"
     default: "pause_minority"

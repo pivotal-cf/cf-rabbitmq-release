@@ -50,6 +50,20 @@ RSpec.describe 'Configuration', template: true do
       end
     end
   end
+
+  describe 'Disk Threshold' do
+    it 'has a 50 MB as default' do
+      expect(rendered_template).to include('-rabbit disk_free_limit 50000000')
+    end
+
+    context 'when the threshold is set' do
+      let(:manifest_properties) { { 'rabbitmq-server' => { 'disk_alarm_threshold' => '20000000'} }}
+
+      it 'has the appropriate alarm value' do
+        expect(rendered_template).to include('-rabbit disk_free_limit 20000000')
+      end
+    end
+  end
 end
 
 def ssl_options_with(tls_versions)

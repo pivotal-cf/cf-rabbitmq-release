@@ -11,46 +11,95 @@ RSpec.describe "RabbitMQ server configuration" do
   let(:rmq_host) { bosh_director.ips_for_job("rmq_z1", environment.bosh_manifest.deployment_name)[0] }
   let(:rmq_admin_broker_username) { environment.bosh_manifest.property('rabbitmq-server.administrators.broker.username') }
   let(:rmq_admin_broker_password) { environment.bosh_manifest.property('rabbitmq-server.administrators.broker.password') }
+  let(:environment_settings) {  ssh_gateway.execute_on(rmq_host, "ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl environment", :root => true) }
+  let(:ssl_options) {  ssh_gateway.execute_on(rmq_host, "ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl eval 'application:get_env(rabbit, ssl_options).'", :root => true) }
 
-  it "should have a file descriptor limit set by default in BOSH spec" do
-    output = ssh_gateway.execute_on(rmq_host, "curl -u #{rmq_admin_broker_username}:#{rmq_admin_broker_password} http://#{rmq_host}:15672/api/nodes -s")
-    nodes = JSON.parse(output)
-    nodes.each do |node|
-      expect(node["fd_total"]).to eq 300000
+  describe "Defaults" do
+    it "should have a file descriptor limit set by default in BOSH spec" do
+      output = ssh_gateway.execute_on(rmq_host, "curl -u #{rmq_admin_broker_username}:#{rmq_admin_broker_password} http://#{rmq_host}:15672/api/nodes -s")
+      nodes = JSON.parse(output)
+      nodes.each do |node|
+        expect(node["fd_total"]).to eq 300000
+      end
+    end
+
+    it "should be use autoheal partition handling policy" do
+      expect(environment_settings).to include('{cluster_partition_handling,autoheal}')
+    end
+
+    it "should have disk free limit 50MB" do
+      expect(environment_settings).to include('{disk_free_limit,50000000}')
+    end
+
+    it 'does not have SSL verification enabled and peer validation enabled' do
+      expect(ssl_options).to include('{ok,[]}')
     end
   end
 
-  describe "Partition handling policy" do
-    let(:cluster_partition_handling) {  ssh_gateway.execute_on(rmq_host, "ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl environment", :root => true) }
+  context 'when properties are set' do
+    before(:all) do
+      @ha_host = bosh_director.ips_for_job('haproxy_z1', environment.bosh_manifest.deployment_name)[0]
+      @old_username = environment.bosh_manifest.property("rabbitmq-server.administrators.management.username")
+      @old_password = environment.bosh_manifest.property("rabbitmq-server.administrators.management.password")
 
-    it "should be use autoheal" do
-      expect(cluster_partition_handling).to include('{cluster_partition_handling,autoheal}')
+      @new_username = 'newusername'
+      @new_password = 'newpassword'
+
+      modify_and_deploy_manifest do |manifest|
+        manifest['properties']['rabbitmq-server']['disk_alarm_threshold'] = '20000000'
+        manifest['properties']['rabbitmq-server']['cluster_partition_handling'] = 'pause_minority'
+        manifest["properties"]["rabbitmq-server"]["fd_limit"] = 350000
+
+        management_credentials = manifest['properties']['rabbitmq-server']['administrators']['management']
+        management_credentials['username'] = @new_username
+        management_credentials['password'] = @new_password
+      end
     end
 
-    context "when pause_minority is set" do
-      before(:each) do
-        modify_and_deploy_manifest do |manifest|
-          manifest['properties']['rabbitmq-server']['cluster_partition_handling'] = 'pause_minority'
+    after(:all) do
+      bosh_director.deploy(environment.bosh_manifest.path)
+    end
+
+    it "should have hard disk alarm threshold of 20 MB" do
+      expect(environment_settings).to include('{disk_free_limit,20000000}')
+    end
+
+    it "should be use pause_minority" do
+      expect(environment_settings).to include('{cluster_partition_handling,pause_minority}')
+    end
+
+    it "should have a file descriptor limit reflecting that" do
+      output = ssh_gateway.execute_on(rmq_host, "curl -u #{@new_username}:#{@new_password} http://#{rmq_host}:15672/api/nodes -s")
+      nodes = JSON.parse(output)
+
+      nodes.each do |node|
+        # pause_minority causes one of the nodes to be down
+        if node["running"]
+          expect(node["fd_total"]).to eq 350000
         end
       end
+    end
 
-      after(:all) do
-        bosh_director.deploy(environment.bosh_manifest.path)
-      end
+    it 'it can only access the management HTTP API with the new credentials' do
+      ssh_gateway.with_port_forwarded_to(@ha_host, 15_672) do |port|
 
-      it "should be use pause_minority" do
-        expect(cluster_partition_handling).to include('{cluster_partition_handling,pause_minority}')
+        uri = URI("http://localhost:#{port}/api/whoami")
+        code = response_code(uri, {
+          :username => @new_username,
+          :password => @new_password
+        })
+        expect(code).to eq "200"
+
+        code = response_code(uri, {
+          :username => @old_username,
+          :password => @old_password
+        })
+        expect(code).to eq "401"
       end
     end
   end
 
   describe 'SSL' do
-    let(:ssl_options) {  ssh_gateway.execute_on(rmq_host, "ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl eval 'application:get_env(rabbit, ssl_options).'", :root => true) }
-
-    it 'does not have SSL verification enabled and peer validation enabled' do
-      expect(ssl_options).to include('{ok,[]}')
-    end
-
     context 'when is configured' do
       before(:all) do
         server_key = File.read(File.join(__dir__, '../..', '/spec/assets/server_key.pem'))
@@ -109,68 +158,6 @@ RSpec.describe "RabbitMQ server configuration" do
         expect(tls_version_enabled?(rmq_host, 'tls1')).to be_truthy
         expect(tls_version_enabled?(rmq_host, 'tls1_1')).to be_truthy
         expect(tls_version_enabled?(rmq_host, 'tls1_2')).to be_truthy
-      end
-    end
-  end
-
-
-  context "when the manifest specifies a different file descriptor limit" do
-    before :context do
-      modify_and_deploy_manifest do |manifest|
-        manifest["properties"]["rabbitmq-server"]["fd_limit"] = 350000
-      end
-    end
-
-    after :context do
-      modify_and_deploy_manifest do |manifest|
-        bosh_director.deploy(environment.bosh_manifest.path)
-      end
-    end
-
-    it "should have a file descriptor limit reflecting that" do
-      output = ssh_gateway.execute_on(rmq_host, "curl -u #{rmq_admin_broker_username}:#{rmq_admin_broker_password} http://#{rmq_host}:15672/api/nodes -s")
-      nodes = JSON.parse(output)
-      nodes.each do |node|
-        expect(node["fd_total"]).to eq 350000
-      end
-    end
-  end
-
-  context 'when the RabbitMQ management credentials are changed' do
-    before :context do
-      @ha_host = bosh_director.ips_for_job('haproxy_z1', environment.bosh_manifest.deployment_name)[0]
-      @old_username = environment.bosh_manifest.property("rabbitmq-server.administrators.management.username")
-      @old_password = environment.bosh_manifest.property("rabbitmq-server.administrators.management.password")
-
-      @new_username = 'newusername'
-      @new_password = 'newpassword'
-
-      modify_and_deploy_manifest do |manifest|
-        management_credentials = manifest['properties']['rabbitmq-server']['administrators']['management']
-        management_credentials['username'] = @new_username
-        management_credentials['password'] = @new_password
-      end
-    end
-
-    after :context do
-      bosh_director.deploy(environment.bosh_manifest.path)
-    end
-
-    it 'it can only access the management HTTP API with the new credentials' do
-      ssh_gateway.with_port_forwarded_to(@ha_host, 15_672) do |port|
-
-        uri = URI("http://localhost:#{port}/api/whoami")
-        code = response_code(uri, {
-          :username => @new_username,
-          :password => @new_password
-        })
-        expect(code).to eq "200"
-
-        code = response_code(uri, {
-          :username => @old_username,
-          :password => @old_password
-        })
-        expect(code).to eq "401"
       end
     end
   end

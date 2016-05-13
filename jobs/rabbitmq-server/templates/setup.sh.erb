@@ -44,6 +44,7 @@ if p("rabbitmq-server.ssl.verify")
 end
 ssl_verification_depth = p("rabbitmq-server.ssl.verification_depth")
 fail_if_no_peer_cert = p("rabbitmq-server.ssl.fail_if_no_peer_cert")
+disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
 
 %>
 (
@@ -133,7 +134,7 @@ fail_if_no_peer_cert = p("rabbitmq-server.ssl.fail_if_no_peer_cert")
   CONFIG="CONFIG_FILE='${SCRIPT_DIR}/../etc/rabbitmq'"
   NODENAME="NODENAME='${SELF_NODE}'"
 
-  SERVER_START_ARGS="SERVER_START_ARGS='-rabbitmq_clusterer config \"${CLUSTER_CONFIG}\" -rabbit log_levels [{connection,info}] -rabbit disk_free_limit 1000000 -rabbit cluster_partition_handling <%= cluster_partition_handling %> -rabbit halt_on_upgrade_failure false -rabbitmq_mqtt subscription_ttl 1800000"
+  SERVER_START_ARGS="SERVER_START_ARGS='-rabbitmq_clusterer config \"${CLUSTER_CONFIG}\" -rabbit log_levels [{connection,info}] -rabbit disk_free_limit <%= disk_alarm_threshold %> -rabbit cluster_partition_handling <%= cluster_partition_handling %> -rabbit halt_on_upgrade_failure false -rabbitmq_mqtt subscription_ttl 1800000"
   SERVER_START_ARGS="${SERVER_START_ARGS} -rabbitmq_management http_log_dir \"${LOG_DIR}\""
 
 <% if ssl %>
