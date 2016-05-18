@@ -2,10 +2,15 @@
 
 set -e
 
-cd /var/vcap/packages/cf-rabbitmq-smoke-tests/src
-
-export GOPATH=$PWD/Godeps/_workspace
+export GOPATH=/var/vcap/packages/cf-rabbitmq-smoke-tests
 export GOROOT=/var/vcap/packages/golang
 export PATH=/var/vcap/packages/cf-cli/bin:$GOPATH/bin:$GOROOT/bin:$PATH
 
-CONFIG_PATH=/var/vcap/jobs/smoke-tests/config.json ./bin/test
+export REPO_NAME=github.com/pivotal-cf/cf-rabbitmq-smoke-tests
+export REPO_DIR=${GOPATH}/src/${REPO_NAME}
+
+export CONFIG_PATH=/var/vcap/jobs/smoke-tests/config.json
+
+pushd ${REPO_DIR}
+ ./bin/test
+popd

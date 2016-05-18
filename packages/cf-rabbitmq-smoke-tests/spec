@@ -1,4 +1,4 @@
 ---
 name: cf-rabbitmq-smoke-tests
 files:
-- cf-rabbitmq-smoke-tests/**/*
+- github.com/pivotal-cf/cf-rabbitmq-smoke-tests/**/*

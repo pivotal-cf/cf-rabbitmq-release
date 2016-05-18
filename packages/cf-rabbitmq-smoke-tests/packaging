@@ -1,5 +1,15 @@
 # abort script on any command that exits with a non zero value
 set -e
 
-mkdir -p ${BOSH_INSTALL_TARGET}/src
-cp -a cf-rabbitmq-smoke-tests/* ${BOSH_INSTALL_TARGET}/src
+REPO_NAME=github.com/pivotal-cf/cf-rabbitmq-smoke-tests
+REPO_TARGET_DIR=${BOSH_INSTALL_TARGET}/src/${REPO_NAME}
+
+GINKGO_REPO_NAME=github.com/onsi/ginkgo
+GINKGO_SOURCE_DIR=${REPO_TARGET_DIR}/vendor/${GINKGO_REPO_NAME}
+GINKGO_TARGET_DIR=${BOSH_INSTALL_TARGET}/src/${GINKGO_REPO_NAME}
+
+mkdir -p ${REPO_TARGET_DIR}
+mkdir -p ${GINKGO_TARGET_DIR}
+
+cp -aR ${REPO_NAME}/* ${REPO_TARGET_DIR}
+cp -aR ${GINKGO_SOURCE_DIR}/* ${GINKGO_TARGET_DIR}
