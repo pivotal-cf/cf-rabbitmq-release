@@ -87,6 +87,11 @@ RSpec.describe 'metrics', :metrics => true do
         expect(firehose).to have_metric('rmq_z1', 0, /name:"\/p-rabbitmq\/rabbitmq\/heartbeat" value:1 unit:"boolean"/)
         expect(firehose).to have_metric('rmq_z2', 0, /name:"\/p-rabbitmq\/rabbitmq\/heartbeat" value:1 unit:"boolean"/)
       end
+
+      it 'contains the system file_descriptors metric' do
+        expect(firehose).to have_metric('rmq_z1', 0, /name:"\/p-rabbitmq\/rabbitmq\/system\/file_descriptors" value:\d+ unit:"count"/)
+        expect(firehose).to have_metric('rmq_z2', 0, /name:"\/p-rabbitmq\/rabbitmq\/system\/file_descriptors" value:\d+ unit:"count"/)
+      end
     end
 
     context 'when all RabbitMQ nodes are not running' do
