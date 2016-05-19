@@ -7,14 +7,6 @@ erlang/otp_src_oss_18.1.tgz:
   object_id: 6cf4831f-727d-44b5-9cd2-1bb33c25b4c5
   sha: cf5a7e63074a4743e976d87b5f9fe80deac61cfe
   size: 68197399
-rabbitmq-server/rabbitmq-server-generic-unix-3.6.1.904.tar.xz:
-  object_id: 6b47af78-852f-4cfb-bea0-65f23493ee54
-  sha: 57a3390db4bb32b0975fa7f29ef22142b8f105aa
-  size: 5046088
-rabbitmq-server/rabbitmq_clusterer-3.6.1.904.ez:
-  object_id: 2cae06fe-df3e-4b19-bf68-fcd0473ad14a
-  sha: 82ec26a76db0efe1e0eefa66009bde5e3c227d23
-  size: 57872
 cf-cli/cf-cli_6.17.0_linux_x86-64.tgz:
   object_id: e54af7b0-973c-4bbe-ac47-a7f95c6f8d2f
   sha: c552c8f4436a63c2034d47f66fd218426c632112
@@ -31,11 +23,11 @@ java/jre-1.8.0_77.tar.gz:
   object_id: f9f7a230-63e5-4eae-857f-fcb849966cc9
   sha: 8edb2189ef42d6756faa355efeb356aead6e6da3
   size: 71796315
-rabbitmq-server/rabbitmq-server-generic-unix-3.5.7.tar.gz:
-  object_id: 3523a3ad-bd27-4729-8406-a9f58179953e
-  sha: 9a607ffc85f1eeaa95abf93fe8af5b6dfcc1cecd
-  size: 4222515
-rabbitmq-server/rabbitmq_clusterer-3.5.7.ez:
-  object_id: 6a564af0-06cd-4b4a-bf2f-17ecb6215cfe
-  sha: 2df9cd942c8edbd00b10530b8af63c73d49ad153
-  size: 57497
+rabbitmq-server/rabbitmq-server-generic-unix-3.6.2.tar.xz:
+  object_id: 9182bc45-3a19-4e3c-87d4-00043480cf95
+  sha: 27c373b27d405026d91275488377ea66acc85114
+  size: 5093636
+rabbitmq-server/rabbitmq_clusterer-3.6.2.ez:
+  object_id: 8ab2270a-9f2e-44fe-917e-604d84d6e844
+  sha: 1b9265d2972670c6db00ba4d143089e7db1c61f0
+  size: 57789

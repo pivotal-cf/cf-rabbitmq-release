@@ -1,12 +1,12 @@
 set -e
 
-RMQ_VERSION="3.5.7"
+RMQ_VERSION="3.6.2"
 ERLANG_VERSION="18.1"
 
 echo $RMQ_VERSION > ${BOSH_INSTALL_TARGET}/rmq_version
 echo $ERLANG_VERSION > ${BOSH_INSTALL_TARGET}/erlang_version
 
-tar xzf rabbitmq-server/rabbitmq-server-generic-unix-${RMQ_VERSION}.tar.gz
+tar xf rabbitmq-server/rabbitmq-server-generic-unix-${RMQ_VERSION}.tar.xz
 
 cp -a rabbitmq_server-${RMQ_VERSION}/* ${BOSH_INSTALL_TARGET}
 
