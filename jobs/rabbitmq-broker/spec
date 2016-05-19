@@ -10,6 +10,9 @@ packages:
 - syslog_aggregator
 
 properties:
+  rabbitmq-broker.registration_interval:
+    default: "20s"
+    description: "How often the registrar should send messages to the router"
   rabbitmq-broker.route:
     default: "pivotal-rabbitmq-broker"
     description: "Hostname at which broker will be accessed"
