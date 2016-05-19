@@ -2,14 +2,17 @@ require 'spec_helper'
 require 'tempfile'
 
 RSpec.describe 'Enabling plugins', template: true do
+	let(:metadata) { {'rabbitmq-server' => { 'plugins' => ['good_plugin', 'bad_plugin']}} }
+	let(:rabbitmq_plugins_ctl) { 'spec/unit/templates/assets/rabbitmq-plugins-stub.sh' }
+
   let(:command_output) do
-    template = compiled_template('rabbitmq-server', 'plugins.sh', {'rabbitmq-server' => { 'plugins' => ['good_plugin', 'bad_plugin']}})
+		template = compiled_template('rabbitmq-server', 'plugins.sh', metadata)
 
     Tempfile.open('plugins') do |command_file|
       command_file.write(template)
       command_file.close
 
-      return `RABBITMQ_PLUGINS=spec/templates/rabbitmq-plugins-stub.sh STUBBED_PLUGINS_LIST="#{plugins_list}" bash #{command_file.path}`
+      return `RABBITMQ_PLUGINS="#{rabbitmq_plugins_ctl}" STUBBED_PLUGINS_LIST="#{plugins_list}" bash #{command_file.path}`
     end
   end
 
