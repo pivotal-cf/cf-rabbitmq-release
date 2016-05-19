@@ -3,6 +3,10 @@ message_bus_servers:
   - host: <%= p('cf.nats.host') %>:<%= p('cf.nats.port') %>
     user: <%= p('cf.nats.username') %>
     password: <%= p('cf.nats.password') %>
-external_host: <%= p('rabbitmq-broker.rabbitmq.management_domain') %>
-external_ip: <%= p('rabbitmq-broker.rabbitmq.management_ip') %>
-port: 15672
+host: <%= p('rabbitmq-broker.rabbitmq.management_ip') %>
+routes:
+  - name: <%= p('rabbitmq-broker.rabbitmq.management_domain') %>
+    registration_interval: <%= p('rabbitmq-broker.registration_interval')%>
+    port: 15672
+    uris:
+      - <%= p('rabbitmq-broker.rabbitmq.management_domain') %>
