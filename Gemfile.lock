@@ -246,7 +246,7 @@ GEM
       cliver (~> 0.3.1)
       multi_json (~> 1.0)
       websocket-driver (>= 0.2.0)
-    prof (0.31.9)
+    prof (0.31.11)
       bosh_cli
       capybara
       capybara-webkit
@@ -298,7 +298,7 @@ GEM
     rspec-expectations (3.4.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.4.0)
-    rspec-instafail (0.4.0)
+    rspec-instafail (1.0.0)
       rspec
     rspec-mocks (3.4.1)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -362,7 +362,7 @@ DEPENDENCIES
   rabbitmq_http_api_client (~> 1.3.0)
   rake (~> 10.3)
   rspec (~> 3.3)
-  rspec-instafail (~> 0.4.0)
+  rspec-instafail (~> 1.0)
   stomp (~> 1.3.1)
 
 BUNDLED WITH
