@@ -100,7 +100,7 @@
              :bindable true)
         (is (= "standard"  (get plan :name)))
         (is (= "Provides a multi-tenant RabbitMQ cluster"  (get plan :description)))
-        (is (some #(= "RabbitMQ 3.5.7" %) (get (get plan :metadata) :bullets)))
+        (is (some #(= "RabbitMQ 3.6.2" %) (get (get plan :metadata) :bullets)))
         ))))
 
 (deftest test-create-service-with-operater-set-policy
