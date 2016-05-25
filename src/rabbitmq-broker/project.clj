@@ -26,7 +26,10 @@
                  ;; validation
                  [com.novemberain/validateur "2.3.1"]
                  ;; nicer signal handling
-                 [beckon                     "0.1.1"]]
+                 [beckon                     "0.1.1"]
+                 ;; test stubbing
+                 [robert/hooke "1.3.0"]
+                 ]
   :source-paths      ["src/clojure"]
   :java-source-paths ["src/java"]
   :resource-paths    ["src/resources"]

@@ -136,7 +136,8 @@
             (if (cfg/operator-set-policy-enabled?) (rs/add-operator-set-policy id))
             (catch Exception e
               (rs/delete-vhost id)
-              (rs/delete-user mu mp)
+              (log/errorf "Failed to provision a service: %s" id)
+              (rs/delete-user mu)
               (throw e)))
           (created {:dashboard_url (rs/dashboard-url mu mp)})))
     (catch Exception e

@@ -5,7 +5,8 @@
             [io.pivotal.pcf.rabbitmq.config :as cfg]
             [io.pivotal.pcf.rabbitmq.server :as srv]
             [io.pivotal.pcf.rabbitmq.resources :as rs]
-            [cheshire.core :as json])
+            [cheshire.core :as json]
+            [robert.hooke :as hooke])
   (:import org.eclipse.jetty.server.Server
            java.util.UUID))
 
@@ -75,8 +76,8 @@
          (.stop s#)))))
 
 (defmacro ^{:private true} with-server-running-operator-set-policy-config
-  [& body]
-  `(let [^Server s# (start-server "config/valid_with_operator_set_policy.yml")]
+  [^String config-path & body]
+  `(let [^Server s# (start-server ~config-path)]
     (try
       ~@body
       (finally
@@ -113,6 +114,7 @@
                                          (is dbu)
                                          (is (.startsWith dbu (format "https://pivotal-rabbitmq.127.0.0.1/#/login/mu-%s" id))))
                                        (is (rs/vhost-exists? id))
+                                       (is (some (fn [x] (re-matches (re-pattern (format "mu-%s.*" id)) x)) (map (fn [x] (:name x)) (rs/list-users))))
                                        (th/has-policy? id (cfg/operator-set-policy-name))))))
     (testing "when there's already a vhost registered"
       (let [id (.toLowerCase ^String (str (UUID/randomUUID)))]
@@ -126,6 +128,27 @@
                                            (is (.startsWith dbu "https://pivotal-rabbitmq.127.0.0.1/#/login/")))
                                          (is (rs/vhost-exists? id))
                                          (is (th/has-no-policy? "existing-vhost" (cfg/operator-set-policy-name))))))))
+
+(defn make-it-fail [f x]
+  (throw "Injected failure for testing"))
+
+
+(deftest test-create-service-with-invalid-policy
+  (testing "broker cleans after exception"
+    (let [id (.toLowerCase ^String (str (UUID/randomUUID)))]
+      (with-server-running-operator-set-policy-config "config/valid_with_operator_set_policy.yml"
+        (provided-vhost-does-not-exist id
+                                       (hooke/add-hook #'rs/add-operator-set-policy #'make-it-fail)
+                                       (th/raw-put (format "v2/service_instances/%s" id))
+                                       (is (false? ( rs/vhost-exists? id)))
+                                       (is (not (some (fn [x] (re-matches (re-pattern (format "mu-%s.*" id)) x)) (map (fn [x] (:name x)) (rs/list-users)))))
+                                       (hooke/remove-hook #'rs/add-operator-set-policy #'make-it-fail)
+       )
+      )
+    )
+  )
+)
+
 
 (deftest test-create-service-without-operator-set-policy
   (testing "with provided service id that is NOT taken"
