@@ -1,4 +1,5 @@
 require 'rspec/expectations'
+require 'yaml'
 
 module Matchers
   class Firehose
@@ -24,6 +25,16 @@ module Matchers
       file.close
       file.unlink
     end
+
+    def self.get_deployment_name
+      manifest_path = ENV.fetch('BOSH_MANIFEST') { File.expand_path('../../manifests/cf-rabbitmq-lite.yml', __FILE__) }
+      manifest = YAML.load(File.open(manifest_path).read)
+      if manifest['properties']['metron_agent'].nil? or manifest['properties']['metron_agent']['deployment'].nil?
+        "cf-rabbitmq"
+      else
+        manifest['properties']['metron_agent']['deployment']
+      end
+    end
   end
 
   RSpec::Matchers.define :have_metric do |job_name, job_index, metric_regex_pattern|
@@ -38,7 +49,7 @@ module Matchers
 
           metric_exist = lines.grep(metric_regex_pattern).any? do |metric|
             matched = metric.include? 'origin:"p-rabbitmq"'
-            matched &= metric.include? 'deployment:"cf-rabbitmq"'
+            matched &= metric.include? "deployment:\"#{firehose.class.get_deployment_name}\""
             matched &= metric.include? 'eventType:ValueMetric'
             matched &= metric =~ /job:\".*#{job_name}.*\"/
               matched &= metric.include? "index:\"#{job_index}\""
