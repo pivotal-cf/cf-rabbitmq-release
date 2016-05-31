@@ -111,11 +111,12 @@ properties:
     admin_password: cf_password
     admin_username: cf_username
     api_url: cf_api_url
-    nats: 
-      host: "" 
-      port: "4222"
-      password: nats_password 
-      username: nats_username
+  route_registrar:
+    message_bus_servers: 
+      - host: 10.244.0.6:4222
+        user: "nats"
+        password: "nats"
+
   rabbitmq-server:
     config: (( merge || nil ))
     plugins:

@@ -57,11 +57,12 @@ properties:
     admin_password: password 
     admin_username: username
     api_url: "http://api.your.domain.com"
-    nats:
-      host: "10.10.80.11"
-      port: "4222"
-      password: password
-      username: username
+  route_registrar:
+    message_bus_servers: 
+      - host: 10.10.80.11:4222
+        user: username
+        password: password
+
   rabbitmq-server:
     administrators:
       broker:
