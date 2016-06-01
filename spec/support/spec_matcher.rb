@@ -6,24 +6,34 @@ module Matchers
     def initialize(doppler_address:, access_token:)
       @doppler_address = doppler_address
       @access_token = access_token
-    end
 
-    def read_log
-      file = Tempfile.new('smetrics')
-      pid = spawn(
+      @file = Tempfile.new('smetrics')
+      @pid = spawn(
         {
           'DOPPLER_ADDR' => @doppler_address,
           'CF_ACCESS_TOKEN' => @access_token,
         },
         'firehose',
-        [:out, :err] => [file.path, 'w']
+        [:out, :err] => [@file.path, 'w']
       )
+    end
 
-      yield(file)
+    def count
+      @count ||= 300
+    end
 
-      Process.kill("INT", pid)
-      file.close
-      file.unlink
+    def count=(value)
+      @count = value
+    end
+
+    def close
+      Process.kill("INT", @pid)
+      @file.close
+      @file.unlink
+    end
+
+    def read_log
+      yield(@file)
     end
 
     def self.get_deployment_name
@@ -40,12 +50,13 @@ module Matchers
   RSpec::Matchers.define :have_metric do |job_name, job_index, metric_regex_pattern|
     match do |firehose|
       metric_exist = false
-      @actual = []
 
       firehose.read_log do |file|
-        61.times do
+        while firehose.count > 1 do
+          firehose.count = firehose.count - 1
+
+          file.rewind
           lines = file.readlines
-          @actual << lines
 
           metric_exist = lines.grep(metric_regex_pattern).any? do |metric|
             matched = metric.include? 'origin:"p-rabbitmq"'
@@ -67,9 +78,7 @@ module Matchers
     end
 
     failure_message do |actual|
-      contents = actual.join
-
-      "expected #{contents} to contains metric '#{metric_regex_pattern}' for job '#{job_name}' with index '#{job_index}'"
+      "expected to contains metric '#{metric_regex_pattern}' for job '#{job_name}' with index '#{job_index}'"
     end
   end
 end
