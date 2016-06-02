@@ -101,6 +101,11 @@ ensure
   end
 end
 
+def wait_for(job:, status:)
+  puts "wait for #{job}"
+  ssh_gateway.execute_on(@haproxy_z1_host, "while ! ( monit summary | grep #{job} | grep \'#{status}\' > /dev/null); do true; done", :root => true)
+end
+
 module ExcludeHelper
   def self.manifest
     @bosh_manifest ||= YAML.load(File.read(ENV['BOSH_MANIFEST']))
@@ -126,6 +131,8 @@ puts ExcludeHelper::warnings
 RSpec.configure do |config|
   config.include Matchers
   config.include TemplateHelpers, template: true
+
+  Matchers::prints_logs_on_failure = bosh_director.lite?
 
   config.filter_run :focus
   config.run_all_when_everything_filtered = true

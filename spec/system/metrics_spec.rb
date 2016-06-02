@@ -18,10 +18,11 @@ RSpec.describe 'metrics', :metrics => true do
         ssh_gateway.execute_on(@rmq_z2_host, '/var/vcap/bosh/bin/monit start rabbitmq-server', :root => true)
         ssh_gateway.execute_on(@rmq_broker_host, '/var/vcap/bosh/bin/monit start rabbitmq-broker', :root => true)
 
-        ssh_gateway.execute_on(@haproxy_z1_host, 'while ! ( monit summary | grep rabbitmq-haproxy | grep \'running\' > /dev/null ); do true; done', :root => true)
-        ssh_gateway.execute_on(@rmq_z1_host, 'while ! ( monit summary | grep rabbitmq-server | grep \'running\' > /dev/null ); do true; done', :root => true)
-        ssh_gateway.execute_on(@rmq_z2_host, 'while ! ( monit summary | grep rabbitmq-server | grep \'running\' > /dev/null ); do true; done', :root => true)
-        ssh_gateway.execute_on(@rmq_broker_host, 'while ! ( monit summary | grep rabbitmq-broker | grep \'running\' > /dev/null ); do true; done', :root => true)
+        wait_for(job: @haproxy_z1_host, status: 'running')
+        wait_for(job: @rmq_z1_host, status: 'running')
+        wait_for(job: @rmq_z2_host, status: 'running')
+        wait_for(job: @rmq_broker_host, status: 'running')
+
         @firehose = Matchers::Firehose.new(doppler_address: doppler_address, access_token: cf.auth_token)
       end
 
@@ -82,10 +83,10 @@ RSpec.describe 'metrics', :metrics => true do
         ssh_gateway.execute_on(@rmq_z2_host, '/var/vcap/bosh/bin/monit stop rabbitmq-server', :root => true)
         ssh_gateway.execute_on(@rmq_broker_host, '/var/vcap/bosh/bin/monit stop rabbitmq-broker', :root => true)
 
-        ssh_gateway.execute_on(@haproxy_z1_host, 'while ! ( monit summary | grep rabbitmq-haproxy | grep \'not monitored$\' > /dev/null ); do true; done', :root => true)
-        ssh_gateway.execute_on(@rmq_z1_host, 'while ! ( monit summary | grep rabbitmq-server | grep \'not monitored$\' > /dev/null ); do true; done', :root => true)
-        ssh_gateway.execute_on(@rmq_z2_host, 'while ! ( monit summary | grep rabbitmq-server | grep \'not monitored$\' > /dev/null ); do true; done', :root => true)
-        ssh_gateway.execute_on(@rmq_broker_host, 'while ! ( monit summary | grep rabbitmq-broker | grep \'not monitored$\' > /dev/null ); do true; done', :root => true)
+        wait_for(job: @haproxy_z1_host, status: 'not monitored$')
+        wait_for(job: @rmq_z1_host, status: 'not monitored$')
+        wait_for(job: @rmq_z2_host, status: 'not monitored$')
+        wait_for(job: @rmq_broker_host, status: 'not monitored$')
 
         @firehose = Matchers::Firehose.new(doppler_address: doppler_address, access_token: cf.auth_token)
       end
@@ -98,10 +99,10 @@ RSpec.describe 'metrics', :metrics => true do
         ssh_gateway.execute_on(@rmq_z2_host, '/var/vcap/bosh/bin/monit start rabbitmq-server', :root => true)
         ssh_gateway.execute_on(@rmq_broker_host, '/var/vcap/bosh/bin/monit start rabbitmq-broker', :root => true)
 
-        ssh_gateway.execute_on(@haproxy_z1_host, 'while ! ( monit summary | grep rabbitmq-haproxy | grep \'running\' > /dev/null ); do true; done', :root => true)
-        ssh_gateway.execute_on(@rmq_z1_host, 'while ! ( monit summary | grep rabbitmq-server | grep \'running\' > /dev/null ); do true; done', :root => true)
-        ssh_gateway.execute_on(@rmq_z2_host, 'while ! ( monit summary | grep rabbitmq-server | grep \'running\' > /dev/null ); do true; done', :root => true)
-        ssh_gateway.execute_on(@rmq_broker_host, 'while ! ( monit summary | grep rabbitmq-broker | grep \'running\' > /dev/null ); do true; done', :root => true)
+        wait_for(job: @haproxy_z1_host, status: 'running')
+        wait_for(job: @rmq_z1_host, status: 'running')
+        wait_for(job: @rmq_z2_host, status: 'running')
+        wait_for(job: @rmq_broker_host, status: 'running')
       end
 
       it 'contains haproxy_z1 heartbeat metrics for rabbitmq haproxy nodes' do
@@ -123,19 +124,19 @@ RSpec.describe 'metrics', :metrics => true do
       end
 
       it 'does not contain haproxy_z1 1 amqp health connection metric' do
-        expect(@firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/health\/connections" value:\d+ unit:"count"/)
+        expect(@firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/health\/connections" value:\d+ unit:"count"/, polling_interval: 60)
       end
 
       it 'does not contain haproxy_z1 amqp queue size' do
-        expect(@firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/backend\/qsize\/amqp" value:\d+ unit:"size"/)
+        expect(@firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/backend\/qsize\/amqp" value:\d+ unit:"size"/, polling_interval: 60)
       end
 
       it 'does not contain haproxy_z1 amqp retries' do
-        expect(@firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/backend\/retries\/amqp" value:\d+ unit:"count"/)
+        expect(@firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/backend\/retries\/amqp" value:\d+ unit:"count"/, polling_interval: 60)
       end
 
       it 'does not contain haproxy_z1 amqp connection time' do
-        expect(@firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/backend\/ctime\/amqp" value:\d+ unit:"time"/)
+        expect(@firehose).to_not have_metric('haproxy_z1', 0, /name:"\/p-rabbitmq\/haproxy\/backend\/ctime\/amqp" value:\d+ unit:"time"/, polling_interval: 60)
       end
     end
   end
