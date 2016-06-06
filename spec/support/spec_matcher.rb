@@ -39,7 +39,7 @@ module Matchers
     end
   end
 
-  RSpec::Matchers.define :have_metric do |job_name, job_index, metric_regex_pattern, polling_interval: 400|
+  RSpec::Matchers.define :have_metric do |job_name, job_index, metric_regex_pattern, polling_interval: 600|
     match do |firehose|
       metric_exist = false
 
