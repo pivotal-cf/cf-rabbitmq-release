@@ -87,8 +87,9 @@ properties:
     admin_username: admin
     api_url: "http://api.your_cc_endpoint.com"
   route_registrar:
-    message_bus_servers: 
-      - host: 10.10.80.11:4222
+    message_bus_servers:
+      - host: 10.10.80.11
+        port: 4222
         user: "your-nats-username"
         password: "your-nats-password"
   rabbitmq-server:

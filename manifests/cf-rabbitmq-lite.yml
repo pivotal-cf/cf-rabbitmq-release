@@ -1,7 +1,6 @@
 ---
 name: cf-rabbitmq
 director_uuid: <%= `bosh -t lite status --uuid`.strip %>
-
 releases:
 - name: cf-rabbitmq
   version: latest
@@ -92,12 +91,14 @@ properties:
     domain: "bosh-lite.com"
   route_registrar:
     message_bus_servers: 
-      - host: 10.244.0.6:4222
+      - host: 10.244.0.6
+        port: 4222
         user: "nats"
         password: "nats"
-    # - host: 10.244.2.6:4222
-     #  user: "nats"
-     #  password: "nats"
+      - host: 10.244.2.6
+        port: 4222
+        user: "nats"
+        password: "nats"
 
   rabbitmq-server:
     plugins:
