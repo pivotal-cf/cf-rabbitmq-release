@@ -9,9 +9,3 @@ check process broker-route-registrar
   start program "/var/vcap/jobs/rabbitmq-broker/bin/route_registrar_ctl start broker" with timeout 10 seconds
   stop  program "/var/vcap/jobs/rabbitmq-broker/bin/route_registrar_ctl stop broker"  with timeout 10 seconds
   group vcap
-
-check process management-route-registrar
-  with pidfile  "/var/vcap/sys/run/management-route-registrar/management-route-registrar.pid"
-  start program "/var/vcap/jobs/rabbitmq-broker/bin/route_registrar_ctl start management" with timeout 10 seconds
-  stop  program "/var/vcap/jobs/rabbitmq-broker/bin/route_registrar_ctl stop management"  with timeout 10 seconds
-  group vcap

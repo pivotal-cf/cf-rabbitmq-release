@@ -1,7 +1,6 @@
 ---
 name: cf-rabbitmq
-director_uuid: <%= `bosh -t lite status --uuid`.strip %>
-
+director_uuid: 17a45148-1d00-43bc-af28-9882e5a6535a
 releases:
 - name: cf-rabbitmq
   version: latest
@@ -95,9 +94,9 @@ properties:
       - host: 10.244.0.6:4222
         user: "nats"
         password: "nats"
-    # - host: 10.244.2.6:4222
-     #  user: "nats"
-     #  password: "nats"
+      - host: 10.244.2.6:4222
+        user: "nats"
+        password: "nats"
 
   rabbitmq-server:
     plugins:

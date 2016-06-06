@@ -8,3 +8,12 @@ module(load="imfile")
 input(type="imfile"
       File="/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log"
       Tag="rabbitmq-haproxy_haproxy_log")
+
+input(type="imfile"
+      File="/var/vcap/sys/log/management-route-registrar/route-registrar.stdout.log"
+      Tag="rabbitmq-management-route-registrar_stdout")
+
+input(type="imfile"
+      File="/var/vcap/sys/log/management-route-registrar/route-registrar.stderr.log"
+      Tag="rabbitmq-management-route-registrar_stderr")
+
