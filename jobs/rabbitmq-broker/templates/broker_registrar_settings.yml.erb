@@ -1,14 +1,14 @@
 ---
 message_bus_servers:
   <% p("route_registrar.message_bus_servers").each do |server| %>
-  - host: <%= server["host"] %>:<%= server["port"] %>
-    user: <%= server["user"] %>
-    password: <%= server["password"] %>
+ - host: <%= server["host"] %>:<%= server["port"] %>
+   user: <%= server["user"] %>
+   password: <%= server["password"] %>
   <% end %>
 host: <%= p('rabbitmq-broker.ip')%>
 routes:
   - name: <%= p('rabbitmq-broker.route') %>
-    registration_interval: <%= p('rabbitmq-broker.registration_interval')%> 
+    registration_interval: <%= p('rabbitmq-broker.registration_interval')%>
     port: 4567
     uris:
       - <%= p('rabbitmq-broker.route')%>.<%= p('cf.domain')%>

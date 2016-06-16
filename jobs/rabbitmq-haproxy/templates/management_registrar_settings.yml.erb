@@ -1,7 +1,7 @@
 ---
 message_bus_servers:
   <% p("route_registrar.message_bus_servers").each do |server| %>
-  - host: <%= server["host"] %>
+  - host: <%= server["host"] %>:<%= server["port"] %>
     user: <%= server["user"] %>
     password: <%= server["password"] %>
   <% end %>

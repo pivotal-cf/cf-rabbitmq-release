@@ -17,7 +17,6 @@ properties:
   rabbitmq-broker.registration_interval:
     default: "20s"
     description: "How often the registrar should send messages to the router"
-
   rabbitmq-broker.rabbitmq.management_domain:
     description: "Domain that will be used to access RabbitMQ management UI, typically the system CF/CC domain."
   rabbitmq-broker.rabbitmq.management_ip:
