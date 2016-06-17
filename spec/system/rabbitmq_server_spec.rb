@@ -15,6 +15,14 @@ RSpec.describe "RabbitMQ server configuration" do
   let(:ssl_options) {  ssh_gateway.execute_on(rmq_host, "ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl eval 'application:get_env(rabbit, ssl_options).'", :root => true) }
 
   describe "Defaults" do
+    context 'guest user' do
+      it 'does not exists' do
+        output = ssh_gateway.execute_on(rmq_host, "curl -u #{rmq_admin_broker_username}:#{rmq_admin_broker_password} http://#{rmq_host}:15672/api/users -s")
+        users = JSON.parse(output)
+        expect(users.any? { |user| user["name"] == "guest"}).to eq false
+      end
+    end
+
     it "should have a file descriptor limit set by default in BOSH spec" do
       output = ssh_gateway.execute_on(rmq_host, "curl -u #{rmq_admin_broker_username}:#{rmq_admin_broker_password} http://#{rmq_host}:15672/api/nodes -s")
       nodes = JSON.parse(output)
@@ -41,22 +49,35 @@ RSpec.describe "RabbitMQ server configuration" do
       @ha_host = bosh_director.ips_for_job('haproxy_z1', environment.bosh_manifest.deployment_name)[0]
       @old_username = environment.bosh_manifest.property("rabbitmq-server.administrators.management.username")
       @old_password = environment.bosh_manifest.property("rabbitmq-server.administrators.management.password")
-
       @new_username = 'newusername'
       @new_password = 'newpassword'
 
+      @old_rmq_admin_broker_username = environment.bosh_manifest.property("rabbitmq-server.administrators.broker.username")
+      @old_rmq_admin_broker_password = environment.bosh_manifest.property("rabbitmq-server.administrators.broker.password")
+      @new_rmq_admin_broker_username = 'new_rmq_admin_broker_username'
+      @new_rmq_admin_broker_password = 'new_rmq_admin_broker_password'
+      require 'securerandom'
+      @vhost_name = SecureRandom.hex
+      ssh_gateway.execute_on(@ha_host, "curl -XPUT -H \"content-type:application/json\" -u #{@old_username}:#{@old_password} http://#{@ha_host}:15672/api/vhosts/#{@vhost_name} -s")
       modify_and_deploy_manifest do |manifest|
         manifest['properties']['rabbitmq-server']['disk_alarm_threshold'] = '20000000'
         manifest['properties']['rabbitmq-server']['cluster_partition_handling'] = 'pause_minority'
         manifest["properties"]["rabbitmq-server"]["fd_limit"] = 350000
 
-        management_credentials = manifest['properties']['rabbitmq-server']['administrators']['management']
+        administrators = manifest['properties']['rabbitmq-server']['administrators']
+        management_credentials = administrators['management']
         management_credentials['username'] = @new_username
         management_credentials['password'] = @new_password
+
+        broker_credentials = administrators['broker']
+        broker_credentials['username'] = @new_rmq_admin_broker_username
+        broker_credentials['password'] = @new_rmq_admin_broker_password
+
       end
     end
 
     after(:all) do
+      ssh_gateway.execute_on(@ha_host, "curl -XDELETE -u #{@new_username}:#{@new_password} http://#{@ha_host}:15672/api/vhosts/#{@vhost_name} -s")
       bosh_director.deploy(environment.bosh_manifest.path)
     end
 
@@ -80,21 +101,72 @@ RSpec.describe "RabbitMQ server configuration" do
       end
     end
 
-    it 'it can only access the management HTTP API with the new credentials' do
-      ssh_gateway.with_port_forwarded_to(@ha_host, 15_672) do |port|
+    context 'service broker user' do
+      it 'it can only access the management HTTP API with the new credentials' do
+        ssh_gateway.with_port_forwarded_to(@ha_host, 15_672) do |port|
 
-        uri = URI("http://localhost:#{port}/api/whoami")
-        code = response_code(uri, {
-          :username => @new_username,
-          :password => @new_password
-        })
-        expect(code).to eq "200"
+          uri = URI("http://localhost:#{port}/api/whoami")
+          code = response_code(uri, {
+              :username => @new_rmq_admin_broker_username,
+              :password => @new_rmq_admin_broker_password
+          })
+          expect(code).to eq "200"
+        end
+      end
 
-        code = response_code(uri, {
-          :username => @old_username,
-          :password => @old_password
-        })
-        expect(code).to eq "401"
+      it 'has admin access to all vhosts' do
+        ssh_gateway.with_port_forwarded_to(@ha_host, 15_672) do |port|
+
+          uri = URI("http://localhost:#{port}/api/vhosts/#{@vhost_name}/permissions")
+          resp = response(uri, {
+              :username => @new_rmq_admin_broker_username,
+              :password => @new_rmq_admin_broker_password
+          })
+          expect(resp.code).to eq "200"
+
+          rights_for_admin = JSON.parse(resp.body).detect { |rights| rights["user"] == @new_rmq_admin_broker_username }
+          expect(rights_for_admin["write"]).to eq ".*"
+          expect(rights_for_admin["read"]).to eq ".*"
+          expect(rights_for_admin["configure"]).to eq ".*"
+        end
+      end
+    end
+
+    context 'management adminisrator' do
+      it 'it can only access the management HTTP API with the new credentials' do
+        ssh_gateway.with_port_forwarded_to(@ha_host, 15_672) do |port|
+
+          uri = URI("http://localhost:#{port}/api/whoami")
+          code = response_code(uri, {
+              :username => @new_username,
+              :password => @new_password
+          })
+          expect(code).to eq "200"
+
+          code = response_code(uri, {
+            :username => @old_username,
+            :password => @old_password
+          })
+          expect(code).to eq "401"
+        end
+      end
+
+
+      it 'has admin access to all vhosts' do
+        ssh_gateway.with_port_forwarded_to(@ha_host, 15_672) do |port|
+
+          uri = URI("http://localhost:#{port}/api/vhosts/#{@vhost_name}/permissions")
+          resp = response(uri, {
+              :username => @new_username,
+              :password => @new_password
+          })
+          expect(resp.code).to eq "200"
+
+          rights_for_admin = JSON.parse(resp.body).detect { |rights| rights["user"] == @new_username }
+          expect(rights_for_admin["write"]).to eq ".*"
+          expect(rights_for_admin["read"]).to eq ".*"
+          expect(rights_for_admin["configure"]).to eq ".*"
+        end
       end
     end
   end
@@ -163,15 +235,17 @@ RSpec.describe "RabbitMQ server configuration" do
   end
 end
 
-def response_code(uri, credentials)
+def response(uri, credentials)
   req = Net::HTTP::Get.new(uri)
   req.basic_auth credentials[:username], credentials[:password]
 
-  res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+  Net::HTTP.start(uri.hostname, uri.port) do |http|
     http.request(req)
   end
+end
 
-  return res.code
+def response_code(uri, credentials)
+  response(uri, credentials).code
 end
 
 def tls_version_enabled?(host, version)
