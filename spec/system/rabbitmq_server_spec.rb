@@ -15,12 +15,10 @@ RSpec.describe "RabbitMQ server configuration" do
   let(:ssl_options) {  ssh_gateway.execute_on(rmq_host, "ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl eval 'application:get_env(rabbit, ssl_options).'", :root => true) }
 
   describe "Defaults" do
-    context 'guest user' do
-      it 'does not exists' do
+    it 'deletes guest user' do
         output = ssh_gateway.execute_on(rmq_host, "curl -u #{rmq_admin_broker_username}:#{rmq_admin_broker_password} http://#{rmq_host}:15672/api/users -s")
         users = JSON.parse(output)
         expect(users.any? { |user| user["name"] == "guest"}).to eq false
-      end
     end
 
     it "should have a file descriptor limit set by default in BOSH spec" do

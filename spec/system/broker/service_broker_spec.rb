@@ -81,6 +81,30 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
     end
   end
 
+  context 'when stomp plugin is disabled'  do
+    before(:context) do
+      modify_and_deploy_manifest do |manifest|
+        manifest['properties']['rabbitmq-server']['plugins'] = ['rabbitmq_management','rabbitmq_mqtt']
+      end
+    end
+
+    after(:context) do
+      bosh_director.deploy(environment.bosh_manifest.path)
+    end
+
+    it 'provides only amqp and mqtt connectivity', :pushes_cf_app do
+      cf.push_app_and_bind_with_service(test_app, service) do |app, _|
+
+        provides_amqp_connectivity(session, app)
+
+        provides_mqtt_connectivity(session, app)
+
+        provides_no_stomp_connectivity(session, app)
+
+      end
+    end
+  end
+
   context 'when broker is configured with HA policy' do
     before(:context) do
       modify_and_deploy_manifest do |manifest|
@@ -240,6 +264,12 @@ def provides_stomp_connectivity(session, app)
 
   expect(session.status_code).to eql(200)
   expect(session).to have_content('Payload published')
+end
+
+def provides_no_stomp_connectivity(session, app)
+  session.visit "#{app.url}/services/rabbitmq/protocols/stomp"
+
+  expect(session.status_code).to eql(500)
 end
 
 
