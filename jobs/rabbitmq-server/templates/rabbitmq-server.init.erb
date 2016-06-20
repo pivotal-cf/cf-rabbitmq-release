@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # rabbitmq-server RabbitMQ broker
 
@@ -38,6 +38,8 @@ test -x "${CONTROL}"
 test -x "${START_PROG}"
 
 RETVAL=0
+
+source /var/vcap/packages/rabbitmq-common/utils.sh
 
 [ -f "/var/vcap/store/rabbitmq/etc/default/${NAME}" ] && . "/var/vcap/store/rabbitmq/etc/default/${NAME}"
 
@@ -163,6 +165,8 @@ prepare_for_upgrade () {
 }
 
 start_rabbitmq () {
+    pid_guard "${PID_FILE}" "RabbitMQ Server"
+
     ensure_dirs
     status_rabbitmq
     if [ "${RETVAL}" = 0 ]; then
@@ -178,7 +182,7 @@ start_rabbitmq () {
             2>> "${STARTUP_ERR_LOG}" \
             0<&- &
         set +e
-        "${CONTROL}" wait "${PID_FILE}" >> "${STARTUP_LOG}" 2>> "${STARTUP_ERR_LOG}"
+        timeout "2m" "${CONTROL}" wait "${PID_FILE}" >> "${STARTUP_LOG}" 2>> "${STARTUP_ERR_LOG}"
         RETVAL=$?
         set -e
         case "${RETVAL}" in
