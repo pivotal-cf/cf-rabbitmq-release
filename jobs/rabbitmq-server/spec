@@ -4,7 +4,6 @@ packages:
 - util-linux # needed for setsid
 - erlang
 - rabbitmq-server
-- rabbitmq-common
 - rabbitmq-cluster-migration-tool
 - rabbitmq-upgrade-preparation
 - syslog_aggregator
