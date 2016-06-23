@@ -41,7 +41,7 @@ RSpec.describe "logging configuration" do
       ssh_gateway.execute_on(RMQ_Z2_HOST, "cp /tmp/rabbit@#{RMQ_HOST_Z2_DIGEST}.log /var/vcap/sys/log/rabbitmq-server")
     end
 
-    it "logs an AMQP connection acceptance at INFO level to rabbitmq server logs", :pushes_cf_app do
+    xit "logs an AMQP connection acceptance at INFO level to rabbitmq server logs", :pushes_cf_app do
       cf.push_app_and_bind_with_service(test_app, SERVICE) do |app, _|
         uri = URI("#{app.url}/services/rabbitmq/protocols/amqp091")
 

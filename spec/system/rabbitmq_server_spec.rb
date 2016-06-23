@@ -199,28 +199,28 @@ RSpec.describe "RabbitMQ server configuration" do
           deploy_manifest(@current_manifest)
         end
 
-        it 'has the right SSL verification options' do
+        xit 'has the right SSL verification options' do
           expect(ssl_options).to include('{verify,verify_peer}')
         end
 
-        it 'has the right SSL verification depth option' do
+        xit 'has the right SSL verification depth option' do
           expect(ssl_options).to include('{depth,10}')
         end
 
-        it 'has the right SSL peer options' do
+        xit 'has the right SSL peer options' do
           expect(ssl_options).to include('{fail_if_no_peer_cert,true}')
         end
       end
 
-      it 'does not have SSL verification enabled' do
+      xit 'does not have SSL verification enabled' do
         expect(ssl_options).to include('{verify,verify_none}')
       end
 
-      it 'does not have SSL peer validation enabled' do
+      xit 'does not have SSL peer validation enabled' do
         expect(ssl_options).to include('{fail_if_no_peer_cert,false}')
       end
 
-      it 'has the right SSL verification depth option' do
+      xit 'has the right SSL verification depth option' do
         expect(ssl_options).to include('{depth,5}')
       end
 
