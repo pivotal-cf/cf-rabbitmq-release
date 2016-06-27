@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # rabbitmq-server RabbitMQ broker
 
@@ -247,6 +247,11 @@ restart_rabbitmq() {
     stop_rabbitmq
     start_rabbitmq
 }
+
+send_process_ctl_to_logfile() {
+  exec 1> >(tee -a "$INIT_LOG_DIR/${NAME}_ctl.log") 2>&1
+}
+send_process_ctl_to_logfile
 
 case "$1" in
     start)
