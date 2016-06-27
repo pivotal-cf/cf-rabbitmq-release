@@ -111,7 +111,6 @@ create_admin() {
 
     set +e
     "${CONTROL}" add_user $username $password  >> "${STARTUP_LOG}" 2>&1
-    #change the password incase the OPERATOR_USERNAME_FILE does not exist & add user fails i.e. upgrading old release
     "${CONTROL}" change_password $username $password  >> "${STARTUP_LOG}" 2>&1
     "${CONTROL}" set_user_tags $username administrator >> "${STARTUP_LOG}" 2>&1
     grant_permissions_for_all_vhosts $username
