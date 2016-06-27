@@ -1,9 +1,9 @@
 ---
 message_bus_servers:
-  <% p("route_registrar.message_bus_servers").each do |server| %>
-  - host: <%= server["host"] %>:<%= server["port"] %>
-    user: <%= server["user"] %>
-    password: <%= server["password"] %>
+  <% for machine in p('cf.nats.machines') %>
+  - host: <%= machine %>:<%= p('cf.nats.port') %>
+    user: <%= p('cf.nats.username') %>
+    password: <%= p('cf.nats.password') %>
   <% end %>
 host: <%= p('rabbitmq-broker.rabbitmq.management_ip') %>
 routes:

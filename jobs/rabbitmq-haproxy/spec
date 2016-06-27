@@ -13,7 +13,6 @@ properties:
     description: "Admin username to access HaProxy stats dashboard"
   rabbitmq-haproxy.stats.password:
     description: "Admin password to access HaProxy stats dashboard"
-
   rabbitmq-broker.registration_interval:
     default: "20s"
     description: "How often the registrar should send messages to the router"
@@ -22,9 +21,14 @@ properties:
   rabbitmq-broker.rabbitmq.management_ip:
     description: "IP address RabbitMQ management UI requests will be routed to, typically that of RabbitMQ HAproxy VM"
 
-  route_registrar.message_bus_servers:
-    description: List of NATS (host/user/password), where host is specified as "IP:PORT"
-  
+  cf.nats.machines:
+    description: Hostname/IP of NATS
+  cf.nats.port:
+    description: Port that NATS listens on
+  cf.nats.username:
+    description: The user to use when authenticating with NATS
+  cf.nats.password:
+    description: The password to use when authenticating with NATS
 
   syslog_aggregator.address:
     description: "Syslog drain hostname"

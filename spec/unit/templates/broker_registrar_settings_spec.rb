@@ -1,9 +1,10 @@
 require 'spec_helper'
 
-RSpec.describe 'rabbitmq-haproxy NATS support', template: true do
+RSpec.describe 'rabbitmq-broker NATS support', template: true do
 	let(:rendered_template) do
-		YAML.load(compiled_template('rabbitmq-haproxy', 'management_registrar_settings.yml', {
+		YAML.load(compiled_template('rabbitmq-broker', 'broker_registrar_settings.yml', {
 			'cf'=> {
+				'domain'=>'cf-domain',
 				'nats'=>{
 					'username'=>'nats-user',
 					'password'=>'nats-password',
@@ -12,11 +13,9 @@ RSpec.describe 'rabbitmq-haproxy NATS support', template: true do
 				},
 			},
 			'rabbitmq-broker' => {
-				'rabbitmq'=>{
-					'management_ip'=>'1.2.3.4',
-					'management_domain'=>'this.tld'
-				},
-				'registration_interval'=>'4s',
+				'ip'=>'1.2.3.4',
+				'route'=>'my-route',
+				'registration_interval'=>'4s'
 			}
 		}))
 	end
@@ -45,9 +44,9 @@ RSpec.describe 'rabbitmq-haproxy NATS support', template: true do
 		expect(routes.length).to equal(1)
 
 		first_route = routes.first
-		expect(first_route).to include('name' => 'this.tld')
+		expect(first_route).to include('name' => 'my-route')
 		expect(first_route).to include('registration_interval' => '4s')
-		expect(first_route).to include('port' => 15672)
-		expect(first_route).to include('uris' => ['this.tld'])
+		expect(first_route).to include('port' => 4567)
+		expect(first_route).to include('uris' => ['my-route.cf-domain'])
 	end
 end
