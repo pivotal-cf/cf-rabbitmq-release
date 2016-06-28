@@ -177,13 +177,10 @@ start_rabbitmq () {
             >> "${STARTUP_LOG}" \
             2>> "${STARTUP_ERR_LOG}" \
             0<&- &
-        set +e
-        "${CONTROL}" wait "${PID_FILE}" >> "${STARTUP_LOG}" 2>> "${STARTUP_ERR_LOG}"
-        RETVAL=$?
-        set -e
-        case "${RETVAL}" in
+
+        RETVAL="$(wait_for_rabbitmq_clusterer_plugin_to_start_rabbitmq_app)"
+        case "$RETVAL" in
             0)
-                # no post-install script, so delete guest every time we start
                 delete_guest
                 [ -f $OPERATOR_USERNAME_FILE ] && delete_operator_admin
                 create_operator_admin
@@ -198,6 +195,16 @@ start_rabbitmq () {
                 ;;
         esac
     fi
+}
+
+wait_for_rabbitmq_clusterer_plugin_to_start_rabbitmq_app() {
+  local retval
+
+  set +e
+  "${CONTROL}" wait "${PID_FILE}" >> "${STARTUP_LOG}" 2>> "${STARTUP_ERR_LOG}"
+  retval="$?"
+  set -e
+  echo "$retval"
 }
 
 stop_rabbitmq() {
