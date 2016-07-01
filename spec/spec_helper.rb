@@ -102,7 +102,6 @@ ensure
 end
 
 def wait_for(job:, status:)
-  puts "wait for #{job}"
   ssh_gateway.execute_on(@haproxy_z1_host, "while ! ( monit summary | grep #{job} | grep \'#{status}\' > /dev/null); do true; done", :root => true)
 end
 
