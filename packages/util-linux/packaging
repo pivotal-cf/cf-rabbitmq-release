@@ -1,7 +1,0 @@
-set -e
-
-tar xzf util-linux/util-linux_2.20.1.orig.tar.gz
-cd util-linux-2.20.1
-./configure --prefix=${BOSH_INSTALL_TARGET}
-make
-make install
