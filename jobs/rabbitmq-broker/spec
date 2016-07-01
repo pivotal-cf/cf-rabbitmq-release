@@ -5,7 +5,6 @@ packages:
 - java
 - rabbitmq-common
 - rabbitmq-broker
-- util-linux
 - route-registrar
 - syslog_aggregator
 

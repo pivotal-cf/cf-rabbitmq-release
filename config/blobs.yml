@@ -1,8 +1,4 @@
 ---
-util-linux/util-linux_2.20.1.orig.tar.gz:
-  object_id: 00358c94-0d4b-4db5-bb8f-f8b6df178818
-  sha: d1dcff8d39e1a821cb0efda31a38452d12fd6b52
-  size: 6174190
 erlang/otp_src_oss_18.1.tgz:
   object_id: 6cf4831f-727d-44b5-9cd2-1bb33c25b4c5
   sha: cf5a7e63074a4743e976d87b5f9fe80deac61cfe
