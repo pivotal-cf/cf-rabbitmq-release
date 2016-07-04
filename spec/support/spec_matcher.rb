@@ -30,10 +30,8 @@ module Matchers
           @lines.drop(num_read_lines).each do |line|
             num_read_lines += 1
             if Time.now > killtime
-              puts "Ran out of time: stopping the firehose"
               stop
             end
-            # puts "Read lines #{num_read_lines}"
             yield line
           end
         end
