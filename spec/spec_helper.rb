@@ -167,7 +167,7 @@ RSpec.configure do |config|
   config.display_try_failure_messages = true
 
   config.around :each, :retryable do |ex|
-    ex.run_with_retry retry: 10, retry_wait: 6
+    ex.run_with_retry retry: 60, retry_wait: 10
   end
 
   Kernel.srand config.seed
