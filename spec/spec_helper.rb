@@ -3,6 +3,7 @@ require 'prof/environment/cloud_foundry'
 require 'prof/environment_manager'
 require 'prof/ssh_gateway'
 require 'yaml'
+require 'rspec/retry'
 
 Dir[File.expand_path('support/**/*.rb', __dir__)].each do |file|
   require file
@@ -159,6 +160,15 @@ RSpec.configure do |config|
   end
 
   config.disable_monkey_patching!
+
+  # show retry status in spec process
+  config.verbose_retry = true
+  # show exception that triggers a retry if verbose_retry is set to true
+  config.display_try_failure_messages = true
+
+  config.around :each, :retryable do |ex|
+    ex.run_with_retry retry: 10, retry_wait: 6
+  end
 
   Kernel.srand config.seed
 end

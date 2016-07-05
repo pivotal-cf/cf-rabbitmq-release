@@ -112,9 +112,7 @@ RSpec.describe "RabbitMQ server configuration" do
         end
       end
 
-      it 'has admin access to all vhosts' do
-        skip "This is flaky and will be redone part of the rabbitmq-server.init ctl script refactor #124356151"
-
+      it 'has admin access to all vhosts', retryable: true do
         ssh_gateway.with_port_forwarded_to(@ha_host, 15_672) do |port|
 
           uri = URI("http://localhost:#{port}/api/vhosts/#{@vhost_name}/permissions")
@@ -152,7 +150,7 @@ RSpec.describe "RabbitMQ server configuration" do
       end
 
 
-      it 'has admin access to all vhosts' do
+      it 'has admin access to all vhosts', retryable: true do
         ssh_gateway.with_port_forwarded_to(@ha_host, 15_672) do |port|
 
           uri = URI("http://localhost:#{port}/api/vhosts/#{@vhost_name}/permissions")
