@@ -1,3 +1,3 @@
 mkdir -p ${BOSH_INSTALL_TARGET}/bin
-tar zxvf cf-cli/cf-linux-amd64-6.10.tgz
+tar zxvf cf-cli/cf-linux-amd64-6.19.0.tgz
 cp cf ${BOSH_INSTALL_TARGET}/bin/cf
