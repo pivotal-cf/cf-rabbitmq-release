@@ -3,3 +3,9 @@ check process rabbitmq-haproxy
   start program "/var/vcap/jobs/rabbitmq-haproxy/bin/rabbitmq-haproxy.init start"
   stop program "/var/vcap/jobs/rabbitmq-haproxy/bin/rabbitmq-haproxy.init stop"
   group vcap
+
+check process management-route-registrar
+  with pidfile  "/var/vcap/sys/run/management-route-registrar/management-route-registrar.pid"
+  start program "/var/vcap/jobs/rabbitmq-haproxy/bin/route_registrar_ctl start management" with timeout 10 seconds
+  stop  program "/var/vcap/jobs/rabbitmq-haproxy/bin/route_registrar_ctl stop management"  with timeout 10 seconds
+  group vcap
