@@ -189,7 +189,15 @@ start_rabbitmq () {
                 create_operator_admin
                 create_broker_admin
                 __log ${STARTUP_LOG} "Finished starting RabbitMQ"
-                __log ${STARTUP_LOG} "SUCCESS"
+                __log ${STARTUP_LOG} "Running post-deploy checks ..."
+                if /var/vcap/jobs/rabbitmq-server/bin/post-deploy >> "${STARTUP_LOG}" 2>> "${STARTUP_ERR_LOG}"
+                then
+                  __log ${STARTUP_LOG} "SUCCESS"
+                else
+                  __log ${STARTUP_ERR_LOG} "RabbitMQ cluster is not healthy"
+                  remove_pid
+                  RETVAL=1
+                fi
                 ;;
             *)
                 __log ${STARTUP_ERR_LOG} "Errored starting RabbitMQ"
