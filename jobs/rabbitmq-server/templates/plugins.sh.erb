@@ -1,4 +1,6 @@
-#!/bin/bash -ex
+#!/bin/bash -e
+
+[ -z "$DEBUG" ] || set -x
 
 LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 FILE_NAME="plugins"
