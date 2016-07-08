@@ -166,6 +166,7 @@ start_rabbitmq () {
     ensure_dirs
     status_rabbitmq
     if [ "${RETVAL}" = 0 ]; then
+        echo "${CONTROL}" eval 'list_to_integer(os:getpid()).' > $PID_FILE
         __log ${STARTUP_LOG} "RabbitMQ is currently running"
     else
         RETVAL=0
