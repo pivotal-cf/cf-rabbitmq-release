@@ -2,6 +2,8 @@
 
 [ -z "$DEBUG" ] || set -x
 
+set -u
+
 export PATH=/var/vcap/packages/erlang/bin/:/var/vcap/packages/rabbitmq-server/privbin/:$PATH
 
 # shellcheck disable=SC1091
