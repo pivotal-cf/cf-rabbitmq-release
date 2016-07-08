@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 #
 # rabbitmq-server RabbitMQ broker
 
@@ -9,6 +9,8 @@
 # PID_FILE will be reset every time, correctly). However, this file will
 # still have the wrong definition of PID_FILE and so will create the
 # "wrong" directory. Meh-ish.
+
+[ -z "$DEBUG" ] || set -x
 
 export PATH=/var/vcap/packages/erlang/bin:$PATH
 
