@@ -265,7 +265,7 @@ restart_rabbitmq() {
 }
 
 send_all_output_to_logfile_and_syslog() {
-  exec 1> >(tee -a "${INIT_LOG_DIR}/${INIT_FILE_NAME}.log" | logger -t "${INIT_FILE_NAME}") 2>&1
+  exec 1> >(tee -a "${INIT_LOG_DIR}/${INIT_FILE_NAME}.log" | logger -t "${INIT_FILE_NAME}" -s 2>&1) 2>&1
 }
 send_all_output_to_logfile_and_syslog
 
