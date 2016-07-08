@@ -13,7 +13,7 @@
 export PATH=/var/vcap/packages/erlang/bin:$PATH
 
 NAME=rabbitmq-server
-INIT_FILE_NAME="${0##*/}"
+INIT_FILE_NAME="rabbitmq-server.init"
 RMQ_SERVER_PACKAGE=/var/vcap/packages/rabbitmq-server
 DAEMON=${RMQ_SERVER_PACKAGE}/bin/rabbitmq-server
 CONTROL=${RMQ_SERVER_PACKAGE}/bin/rabbitmqctl
