@@ -52,7 +52,7 @@ LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 FILE_NAME="setup"
 
 send_all_output_to_logfile() {
-  exec 1> >(tee -a "${LOG_DIR}/${FILE_NAME}.log") 2>&1
+  exec 1> >(tee -a "${LOG_DIR}/${FILE_NAME}.log" | logger -t rabbitmq-server.setup) 2>&1
 }
 send_all_output_to_logfile
 
