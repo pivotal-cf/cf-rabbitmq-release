@@ -31,6 +31,7 @@ STARTUP_LOG="${INIT_LOG_DIR}"/startup_stdout.log
 STARTUP_ERR_LOG="${INIT_LOG_DIR}"/startup_stderr.log
 SHUTDOWN_LOG="${INIT_LOG_DIR}"/shutdown_stdout.log
 SHUTDOWN_ERR_LOG="${INIT_LOG_DIR}"/shutdown_stderr.log
+CHECK_IF_UPGRADABLE_LOG="${INIT_LOG_DIR}/check_if_upgradable.log"
 
 test -x "${DAEMON}"
 test -x "${CONTROL}"
@@ -155,8 +156,7 @@ prepare_for_upgrade () {
       -node $remote_node \
       -new-rabbitmq-version $(cat ${RMQ_SERVER_PACKAGE}/rmq_version) \
       -new-erlang-version $(cat ${RMQ_SERVER_PACKAGE}/erlang_version) \
-      1>> "${STARTUP_LOG}" \
-      2>> "${STARTUP_ERR_LOG}"
+      1>> "${CHECK_IF_UPGRADABLE_LOG}" 2>&1
   done
 }
 
