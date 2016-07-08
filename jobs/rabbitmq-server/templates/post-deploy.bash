@@ -16,7 +16,7 @@ main() {
   cluster_is_healthy
   rmq_user_does_not_exist "guest"
 
-  rmq_user_exists "${RMQ_BROKER_USERNAME}s"
+  rmq_user_exists "$RMQ_BROKER_USERNAME"
   rmq_user_is_admin "$RMQ_BROKER_USERNAME"
   rmq_user_can_authenticate "$RMQ_BROKER_USERNAME" "$RMQ_BROKER_PASSWORD"
   rmq_user_has_correct_permissions_on_all_vhosts "$RMQ_BROKER_USERNAME"
