@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # rabbitmq-server RabbitMQ broker
 
@@ -15,6 +15,7 @@ set -ex
 PATH=/var/vcap/packages/erlang/bin:$PATH
 
 NAME=rabbitmq-server
+INIT_FILE_NAME="${0##*/}"
 RMQ_SERVER_PACKAGE=/var/vcap/packages/rabbitmq-server
 DAEMON=${RMQ_SERVER_PACKAGE}/bin/rabbitmq-server
 CONTROL=${RMQ_SERVER_PACKAGE}/bin/rabbitmqctl
@@ -110,7 +111,6 @@ create_admin() {
 
     set +e
     "${CONTROL}" add_user $username $password  >> "${STARTUP_LOG}" 2>&1
-    #change the password incase the OPERATOR_USERNAME_FILE does not exist & add user fails i.e. upgrading old release
     "${CONTROL}" change_password $username $password  >> "${STARTUP_LOG}" 2>&1
     "${CONTROL}" set_user_tags $username administrator >> "${STARTUP_LOG}" 2>&1
     grant_permissions_for_all_vhosts $username
@@ -177,13 +177,10 @@ start_rabbitmq () {
             >> "${STARTUP_LOG}" \
             2>> "${STARTUP_ERR_LOG}" \
             0<&- &
-        set +e
-        "${CONTROL}" wait "${PID_FILE}" >> "${STARTUP_LOG}" 2>> "${STARTUP_ERR_LOG}"
-        RETVAL=$?
-        set -e
-        case "${RETVAL}" in
+
+        RETVAL="$(wait_for_rabbitmq_clusterer_plugin_to_start_rabbitmq_app)"
+        case "$RETVAL" in
             0)
-                # no post-install script, so delete guest every time we start
                 delete_guest
                 [ -f $OPERATOR_USERNAME_FILE ] && delete_operator_admin
                 create_operator_admin
@@ -206,6 +203,16 @@ start_rabbitmq () {
                 ;;
         esac
     fi
+}
+
+wait_for_rabbitmq_clusterer_plugin_to_start_rabbitmq_app() {
+  local retval
+
+  set +e
+  "${CONTROL}" wait "${PID_FILE}" >> "${STARTUP_LOG}" 2>> "${STARTUP_ERR_LOG}"
+  retval="$?"
+  set -e
+  echo "$retval"
 }
 
 stop_rabbitmq() {
@@ -255,6 +262,11 @@ restart_rabbitmq() {
     stop_rabbitmq
     start_rabbitmq
 }
+
+send_process_ctl_to_logfile() {
+  exec 1> >(tee -a "$INIT_LOG_DIR/$INIT_FILE_NAME.log") 2>&1
+}
+send_process_ctl_to_logfile
 
 case "$1" in
     start)
