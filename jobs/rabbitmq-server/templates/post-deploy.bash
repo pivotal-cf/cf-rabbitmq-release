@@ -26,7 +26,7 @@ main() {
     rmq_user_exists "$RMQ_OPERATOR_USERNAME"
     rmq_user_is_admin "$RMQ_OPERATOR_USERNAME"
     rmq_user_can_authenticate "$RMQ_OPERATOR_USERNAME" "$RMQ_OPERATOR_PASSWORD"
-    rmq_user_has_correct_permissions_on_all_vhosts "$RMQ_ADMIN_USERNAME"
+    rmq_user_has_correct_permissions_on_all_vhosts "$RMQ_OPERATOR_USERNAME"
   fi
 }
 
