@@ -10,7 +10,7 @@
 # still have the wrong definition of PID_FILE and so will create the
 # "wrong" directory. Meh-ish.
 
-PATH=/var/vcap/packages/erlang/bin:$PATH
+export PATH=/var/vcap/packages/erlang/bin:$PATH
 
 NAME=rabbitmq-server
 INIT_FILE_NAME="${0##*/}"
