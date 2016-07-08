@@ -261,10 +261,10 @@ restart_rabbitmq() {
     start_rabbitmq
 }
 
-send_process_ctl_to_logfile() {
-  exec 1> >(tee -a "$INIT_LOG_DIR/$INIT_FILE_NAME.log") 2>&1
+send_all_output_to_logfile() {
+  exec 1> >(tee -a "${INIT_LOG_DIR}/${INIT_FILE_NAME}.log") 2>&1
 }
-send_process_ctl_to_logfile
+send_all_output_to_logfile
 
 case "$1" in
     start)
