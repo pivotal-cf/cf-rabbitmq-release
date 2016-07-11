@@ -1,6 +1,4 @@
-#!/bin/bash
-
-set -ex
+#!/bin/bash -ex
 
 log() {
   local _message=$1
@@ -29,4 +27,10 @@ check_args
 
 grep -q "status --uuid" "$BOSH_MANIFEST" && edit_manifest;
 
-bundle install && find spec/system/ -type f -exec bundle exec rspec {} \;
+bundle install
+spec_files=($(find spec/system/ -type f))
+
+for spec_file in "${spec_files[@]}"
+do
+  bundle exec rspec "$spec_file"
+done
