@@ -46,9 +46,6 @@ properties:
   rabbitmq-server.cookie:
     description: "Erlang cookie used by RabbitMQ nodes and rabbitmqctl"
 
-  rabbitmq-server.static_ips:
-    description: "Cluster node IPs"
-
   rabbitmq-server.fd_limit:
     description: "The file descriptor limit for the RabbitMQ process"
     default: 300000
@@ -82,3 +79,11 @@ templates:
   cluster-check.bash:               bin/cluster-check
   syslog_forwarder.conf.erb:        config/syslog_forwarder.conf
   rabbitmq_syslog.conf.erb:         config/rabbitmq_syslog.conf
+
+provides:
+  - name: rabbitmq-server
+    type: rabbitmq-server
+
+consumes:
+  - name: rabbitmq-server
+    type: rabbitmq-server
