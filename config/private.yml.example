@@ -1,0 +1,11 @@
+# get the values from the output of
+# lpass show "Shared-London Services/london-ci/aws-keys"
+#
+# After filling in the values move this file to config/private.yml
+#
+# This file is required to make `bosh upload blobs` work.
+---
+blobstore:
+  s3:
+    access_key_id: <aws-blobstore-access-key-id>
+    secret_access_key: <aws-blobstore-secret-access-key>
