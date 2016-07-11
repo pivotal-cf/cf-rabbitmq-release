@@ -1,6 +1,6 @@
 set -e
 
-RMQ_VERSION="3.6.2"
+RMQ_VERSION="3.6.3"
 ERLANG_VERSION="18.1"
 
 echo $RMQ_VERSION > ${BOSH_INSTALL_TARGET}/rmq_version
