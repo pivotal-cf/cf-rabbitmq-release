@@ -40,3 +40,10 @@ input(type="imfile"
       File="/var/vcap/sys/log/rabbitmq-server/access.log*"
       Tag="rabbitmq_http_api_access")
 
+input(type="imfile"
+      File="/var/vcap/sys/log/rabbitmq-server/upgrade.log"
+      Tag="rabbitmq_upgrade")
+
+input(type="imfile"
+      File="/var/vcap/sys/log/rabbitmq-server/init.log"
+      Tag="rabbitmq_init")

@@ -15,7 +15,6 @@
 export PATH=/var/vcap/packages/erlang/bin:$PATH
 
 NAME=rabbitmq-server
-INIT_FILE_NAME="rabbitmq-server.init"
 RMQ_SERVER_PACKAGE=/var/vcap/packages/rabbitmq-server
 DAEMON=${RMQ_SERVER_PACKAGE}/bin/rabbitmq-server
 CONTROL=${RMQ_SERVER_PACKAGE}/bin/rabbitmqctl
@@ -28,12 +27,11 @@ START_PROG=/usr/bin/setsid
 JOB_DIR=/var/vcap/jobs/rabbitmq-server
 TIMESTAMP=/bin/date
 
-INIT_LOG_DIR=/var/vcap/sys/log/rabbitmq-server
-STARTUP_LOG="${INIT_LOG_DIR}"/startup_stdout.log
-STARTUP_ERR_LOG="${INIT_LOG_DIR}"/startup_stderr.log
-SHUTDOWN_LOG="${INIT_LOG_DIR}"/shutdown_stdout.log
-SHUTDOWN_ERR_LOG="${INIT_LOG_DIR}"/shutdown_stderr.log
-CHECK_IF_UPGRADABLE_LOG="${INIT_LOG_DIR}/check_if_upgradable.log"
+LOG_DIR=/var/vcap/sys/log/rabbitmq-server
+STARTUP_LOG="${LOG_DIR}"/startup_stdout.log
+STARTUP_ERR_LOG="${LOG_DIR}"/startup_stderr.log
+SHUTDOWN_LOG="${LOG_DIR}"/shutdown_stdout.log
+SHUTDOWN_ERR_LOG="${LOG_DIR}"/shutdown_stderr.log
 
 test -x "${DAEMON}"
 test -x "${CONTROL}"
@@ -149,7 +147,7 @@ prepare_for_upgrade () {
       -node $remote_node \
       -new-rabbitmq-version $(cat ${RMQ_SERVER_PACKAGE}/rmq_version) \
       -new-erlang-version $(cat ${RMQ_SERVER_PACKAGE}/erlang_version) \
-      1> >(tee -a "${CHECK_IF_UPGRADABLE_LOG}" | logger -t rabbitmq-upgrade-preparation) 2>&1
+      1> >(tee -a "${LOG_DIR}"/upgrade.log) 2>&1
   done
 }
 
@@ -255,10 +253,10 @@ restart_rabbitmq() {
     start_rabbitmq
 }
 
-send_all_output_to_logfile_and_syslog() {
-  exec 1> >(tee -a "${INIT_LOG_DIR}/${INIT_FILE_NAME}.log" | logger -t "${INIT_FILE_NAME}" -s 2>&1) 2>&1
+send_all_output_to_logfile() {
+  exec 1> >(tee -a "${LOG_DIR}/init.log") 2>&1
 }
-send_all_output_to_logfile_and_syslog
+send_all_output_to_logfile
 
 case "$1" in
     start)
