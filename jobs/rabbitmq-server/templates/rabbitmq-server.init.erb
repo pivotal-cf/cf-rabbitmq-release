@@ -42,6 +42,8 @@ test -x "${START_PROG}"
 RETVAL=0
 
 [ -f "/var/vcap/store/rabbitmq/etc/default/${NAME}" ] && . "/var/vcap/store/rabbitmq/etc/default/${NAME}"
+# shellcheck disable=SC1091
+. /var/vcap/jobs/rabbitmq-server/etc/users
 
 __log() {
   MESSAGE="$("${TIMESTAMP}"): $2"
@@ -88,22 +90,11 @@ grant_permissions_for_all_vhosts() {
 }
 
 create_operator_admin() {
-  <% if_p('rabbitmq-server.administrators.management.username') do |username| %>
-    echo "<%= username %>" > $OPERATOR_USERNAME_FILE
-    <% if_p('rabbitmq-server.administrators.management.password') do |password| %>
-        create_admin <%= username %> <%= password %>
-    <% end %>
-  <% end %>
-  true
-}
-
-create_broker_admin() {
-  <%
-    username = p('rabbitmq-server.administrators.broker.username')
-    password = p('rabbitmq-server.administrators.broker.password')
-  %>
-  create_admin <%= username %> <%= password %>
-  true
+  if [ -n "$RMQ_OPERATOR_USERNAME" ]
+  then
+    echo "$RMQ_OPERATOR_USERNAME" > $OPERATOR_USERNAME_FILE
+    create_admin "$RMQ_OPERATOR_USERNAME" "$RMQ_OPERATOR_PASSWORD"
+  fi
 }
 
 create_admin() {
@@ -185,7 +176,7 @@ start_rabbitmq () {
                 delete_guest
                 [ -f $OPERATOR_USERNAME_FILE ] && delete_operator_admin
                 create_operator_admin
-                create_broker_admin
+                create_admin "$RMQ_BROKER_USERNAME" "$RMQ_BROKER_PASSWORD"
                 __log ${STARTUP_LOG} "Finished starting RabbitMQ"
                 __log ${STARTUP_LOG} "Running post-deploy checks ..."
                 if /var/vcap/jobs/rabbitmq-server/bin/post-deploy >> "${STARTUP_LOG}" 2>> "${STARTUP_ERR_LOG}"
