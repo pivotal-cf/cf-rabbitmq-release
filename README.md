@@ -7,6 +7,30 @@ It is deployable by BOSH in the usual way.
 
 Clone the repository and run `./scripts/update-release`.
 
+## Updating the RabbitMQ Package
+
+Here's an example of upgrading the `rabbitmq-server` package to version `3.6.3`.
+Assuming you have downloaded the new `rabbitmq-server-generic-unix` and
+`rabbitmq_clusterer` packages to this repositories directory.
+
+```
+bosh add blob rabbitmq-server-generic-unix-3.6.3.tar.xz rabbitmq-server
+bosh add blob rabbitmq_clusterer-3.6.3.ez rabbitmq-server
+cp config/private.yml{.example,}
+# fill in the values in config/private.yml using the instructions in the file header
+bosh upload blobs
+```
+
+The above command will modify your `config/blobs.yml` file. Then update the
+following files (could replace with a `sed` script):
+
+* `jobs/rabbitmq-server/templates/setup.sh.erb` look for `RMQ_VERSION`
+* `packages/rabbitmq-server/packaging` look for `RMQ_VERSION`
+* `packages/rabbitmq-server/spec` update the files that were added in `bosh add blob`
+* **the following are v215 specific**
+* `src/rabbitmq-broker/src/clojure/io/pivotal/pcf/rabbitmq/config.clj`
+* `src/rabbitmq-broker/test/io/pivotal/pcf/rabbitmq/integration_test.clj`
+
 ## Deploying
 
 Run the `scripts/deploy-release` script. Examples as follows:
