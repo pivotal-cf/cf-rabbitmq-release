@@ -120,7 +120,7 @@ run_script() {
     script=$1
     __log ${STARTUP_LOG} "Starting ${script}"
     set +e
-    ( . "${script}" ) \
+    "${script}" \
         1>> "${STARTUP_LOG}" \
         2>> "${STARTUP_ERR_LOG}" \
         0<&-

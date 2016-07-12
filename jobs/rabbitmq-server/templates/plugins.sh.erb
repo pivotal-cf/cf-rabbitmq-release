@@ -1,14 +1,6 @@
-#!/bin/bash -e
+#!/bin/sh -e
 
 [ -z "$DEBUG" ] || set -x
-
-LOG_DIR=/var/vcap/sys/log/rabbitmq-server
-FILE_NAME="plugins"
-
-send_all_output_to_logfile_and_syslog() {
-  exec 1> >(tee -a "${LOG_DIR}/${FILE_NAME}.log" | logger -t rabbitmq-server.plugins -s 2>&1) 2>&1
-}
-send_all_output_to_logfile_and_syslog
 
 (
   if [ -z $RABBITMQ_PLUGINS ]; then
