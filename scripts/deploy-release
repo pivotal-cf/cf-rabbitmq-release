@@ -3,7 +3,7 @@
 set -e
 
 BOSH_TARGET_ALIAS="lite"
-WORKSPACE_BASE_DIR="$HOME/workspace"
+WORKSPACE_BASE_DIR="${WORKSPACE_BASE_DIR:-$HOME/workspace}"
 RELEASE_NAME=rabbitmq
 
 log() {
