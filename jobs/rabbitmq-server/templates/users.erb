@@ -5,6 +5,7 @@ RMQ_OPERATOR_USERNAME="${RMQ_OPERATOR_USERNAME:?must be set}"
 
 <% if_p('rabbitmq-server.administrators.management.password') do |password| %>
 RMQ_OPERATOR_PASSWORD="<%= password %>"
+RMQ_OPERATOR_PASSWORD="${RMQ_OPERATOR_PASSWORD:?must be set}"
 <% end %>
 
 RMQ_BROKER_USERNAME="<%= p('rabbitmq-server.administrators.broker.username') %>"
