@@ -28,6 +28,8 @@ main() {
     rmq_user_can_authenticate "$RMQ_OPERATOR_USERNAME" "$RMQ_OPERATOR_PASSWORD"
     rmq_user_has_correct_permissions_on_all_vhosts "$RMQ_OPERATOR_USERNAME"
   fi
+
+  pid_file_contains_rabbitmq_erlang_vm_pid
 }
 
 cluster_is_healthy() {
@@ -87,6 +89,14 @@ operator_user_configured() {
 fail() {
   echo "$*"
   exit 1
+}
+
+pid_file_contains_rabbitmq_erlang_vm_pid() {
+  local tracked_pid rabbitmq_erlang_vm_pid
+  tracked_pid="$(cat /var/vcap/sys/run/rabbitmq-server/pid)"
+  rabbitmq_erlang_vm_pid="$(rabbitmqctl eval 'list_to_integer(os:getpid()).')"
+
+  [[ "$tracked_pid" = "$rabbitmq_erlang_vm_pid" ]]
 }
 
 main

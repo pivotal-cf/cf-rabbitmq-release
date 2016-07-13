@@ -163,6 +163,7 @@ start_rabbitmq () {
         run_script "${JOB_DIR}/bin/plugins.sh"
         prepare_for_upgrade
         __log ${STARTUP_LOG} "Starting RabbitMQ"
+        track_rabbitmq_erlang_vm_pid_in_pid_file
         RABBITMQ_PID_FILE="${PID_FILE}" "${START_PROG}" "${DAEMON}" \
             >> "${STARTUP_LOG}" \
             2>> "${STARTUP_ERR_LOG}" \
@@ -193,6 +194,10 @@ start_rabbitmq () {
                 ;;
         esac
     fi
+}
+
+track_rabbitmq_erlang_vm_pid_in_pid_file() {
+  export RUNNING_UNDER_SYSTEMD=true
 }
 
 wait_for_rabbitmq_clusterer_plugin_to_start_rabbitmq_app() {
