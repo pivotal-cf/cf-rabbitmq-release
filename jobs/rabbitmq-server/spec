@@ -1,3 +1,4 @@
+# vim: set filetype=yaml :
 ---
 name: rabbitmq-server
 packages:
