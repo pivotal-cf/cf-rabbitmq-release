@@ -77,5 +77,7 @@ templates:
   users.erb:                        etc/users
   pre-start.erb:                    bin/pre-start
   post-deploy.bash:                 bin/post-deploy
+  node-check.bash:                  bin/node-check
+  cluster-check.bash:               bin/cluster-check
   syslog_forwarder.conf.erb:        config/syslog_forwarder.conf
   rabbitmq_syslog.conf.erb:         config/rabbitmq_syslog.conf

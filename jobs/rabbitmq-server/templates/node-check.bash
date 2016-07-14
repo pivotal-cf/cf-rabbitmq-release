@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+[ -z "$DEBUG" ] || set -x
+
+set -u
+
+export PATH=/var/vcap/packages/erlang/bin/:/var/vcap/packages/rabbitmq-server/privbin/:$PATH
+LOG_DIR=/var/vcap/sys/log/rabbitmq-server
+
+main() {
+  pid_file_contains_rabbitmq_erlang_vm_pid
+}
+
+pid_file_contains_rabbitmq_erlang_vm_pid() {
+  local tracked_pid rabbitmq_erlang_vm_pid
+  tracked_pid="$(cat /var/vcap/sys/run/rabbitmq-server/pid)"
+  rabbitmq_erlang_vm_pid="$(rabbitmqctl eval 'list_to_integer(os:getpid()).')"
+
+  [[ "$tracked_pid" = "$rabbitmq_erlang_vm_pid" ]] ||
+  fail "Expected PID file to contain '$rabbitmq_erlang_vm_pid' but it contained '$tracked_pid'"
+}
+
+fail() {
+  echo "$*"
+  exit 1
+}
+
+send_all_output_to_logfile() {
+  exec 1> >(tee -a "${LOG_DIR}/node-check.log")
+  exec 2> >(tee -a "${LOG_DIR}/node-check.log")
+}
+
+send_all_output_to_logfile
+echo "Running node checks ..."
+main

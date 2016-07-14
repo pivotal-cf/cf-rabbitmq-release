@@ -157,6 +157,11 @@ start_rabbitmq () {
     if [ "${RETVAL}" = 0 ]; then
         "${CONTROL}" eval 'list_to_integer(os:getpid()).' > $PID_FILE
         __log ${STARTUP_LOG} "RabbitMQ is currently running"
+        if [ -f "$PID_FILE" ]
+        then
+          /var/vcap/jobs/rabbitmq-server/bin/node-check ||
+          signal_monit_that_rabbitmq_node_is_not_healthy
+        fi
     else
         RETVAL=0
         run_script "${JOB_DIR}/bin/setup.sh"
@@ -172,28 +177,47 @@ start_rabbitmq () {
         RETVAL="$(wait_for_rabbitmq_clusterer_plugin_to_start_rabbitmq_app)"
         case "$RETVAL" in
             0)
-                delete_guest
-                [ -f $OPERATOR_USERNAME_FILE ] && delete_operator_admin
-                create_operator_admin
-                create_admin "$RMQ_BROKER_USERNAME" "$RMQ_BROKER_PASSWORD"
-                __log ${STARTUP_LOG} "Finished starting RabbitMQ"
-                __log ${STARTUP_LOG} "Running post-deploy checks ..."
-                if /var/vcap/jobs/rabbitmq-server/bin/post-deploy >> "${STARTUP_LOG}" 2>> "${STARTUP_ERR_LOG}"
+                if ! /var/vcap/jobs/rabbitmq-server/bin/node-check
                 then
-                  __log ${STARTUP_LOG} "SUCCESS"
-                else
+                  signal_monit_that_rabbitmq_node_is_not_healthy
+                  break
+                fi
+
+                configure_users
+
+                if ! /var/vcap/jobs/rabbitmq-server/bin/cluster-check
+                then
                   __log ${STARTUP_ERR_LOG} "RabbitMQ cluster is not healthy"
                   remove_pid
                   RETVAL=1
+                  break
                 fi
+
+                __log ${STARTUP_LOG} "RabbitMQ cluster is healthy"
+
                 ;;
             *)
-                __log ${STARTUP_ERR_LOG} "Errored starting RabbitMQ"
+                __log ${STARTUP_ERR_LOG} "RabbitMQ application failed to start while waiting for cluster to form"
                 remove_pid
                 RETVAL=1
                 ;;
         esac
     fi
+}
+
+configure_users() {
+  __log ${STARTUP_LOG} "Configuring RabbitMQ users ..."
+
+  delete_guest
+  [ -f $OPERATOR_USERNAME_FILE ] && delete_operator_admin
+  create_operator_admin
+  create_admin "$RMQ_BROKER_USERNAME" "$RMQ_BROKER_PASSWORD"
+}
+
+signal_monit_that_rabbitmq_node_is_not_healthy() {
+  __log ${STARTUP_ERR_LOG} "RabbitMQ node is not healthy"
+
+  echo 0 > "$PID_FILE"
 }
 
 track_rabbitmq_erlang_vm_pid_in_pid_file() {
