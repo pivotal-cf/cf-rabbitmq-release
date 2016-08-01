@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -e
 #
 # rabbitmq-server RabbitMQ broker
 
@@ -10,9 +10,9 @@
 # still have the wrong definition of PID_FILE and so will create the
 # "wrong" directory. Meh-ish.
 
-set -ex
+[ -z "$DEBUG" ] || set -x
 
-PATH=/var/vcap/packages/erlang/bin:$PATH
+export PATH=/var/vcap/packages/erlang/bin:$PATH
 
 NAME=rabbitmq-server
 RMQ_SERVER_PACKAGE=/var/vcap/packages/rabbitmq-server
@@ -27,11 +27,11 @@ START_PROG=/usr/bin/setsid
 JOB_DIR=/var/vcap/jobs/rabbitmq-server
 TIMESTAMP=/bin/date
 
-INIT_LOG_DIR=/var/vcap/sys/log/rabbitmq-server
-STARTUP_LOG="${INIT_LOG_DIR}"/startup_stdout.log
-STARTUP_ERR_LOG="${INIT_LOG_DIR}"/startup_stderr.log
-SHUTDOWN_LOG="${INIT_LOG_DIR}"/shutdown_stdout.log
-SHUTDOWN_ERR_LOG="${INIT_LOG_DIR}"/shutdown_stderr.log
+LOG_DIR=/var/vcap/sys/log/rabbitmq-server
+STARTUP_LOG="${LOG_DIR}"/startup_stdout.log
+STARTUP_ERR_LOG="${LOG_DIR}"/startup_stderr.log
+SHUTDOWN_LOG="${LOG_DIR}"/shutdown_stdout.log
+SHUTDOWN_ERR_LOG="${LOG_DIR}"/shutdown_stderr.log
 
 test -x "${DAEMON}"
 test -x "${CONTROL}"
@@ -40,6 +40,8 @@ test -x "${START_PROG}"
 RETVAL=0
 
 [ -f "/var/vcap/store/rabbitmq/etc/default/${NAME}" ] && . "/var/vcap/store/rabbitmq/etc/default/${NAME}"
+# shellcheck disable=SC1091
+. /var/vcap/jobs/rabbitmq-server/etc/users
 
 __log() {
   MESSAGE="$("${TIMESTAMP}"): $2"
@@ -86,22 +88,11 @@ grant_permissions_for_all_vhosts() {
 }
 
 create_operator_admin() {
-  <% if_p('rabbitmq-server.administrators.management.username') do |username| %>
-    echo "<%= username %>" > $OPERATOR_USERNAME_FILE
-    <% if_p('rabbitmq-server.administrators.management.password') do |password| %>
-        create_admin <%= username %> <%= password %>
-    <% end %>
-  <% end %>
-  true
-}
-
-create_broker_admin() {
-  <%
-    username = p('rabbitmq-server.administrators.broker.username')
-    password = p('rabbitmq-server.administrators.broker.password')
-  %>
-  create_admin <%= username %> <%= password %>
-  true
+  if [ -n "$RMQ_OPERATOR_USERNAME" ]
+  then
+    echo "$RMQ_OPERATOR_USERNAME" > $OPERATOR_USERNAME_FILE
+    create_admin "$RMQ_OPERATOR_USERNAME" "$RMQ_OPERATOR_PASSWORD"
+  fi
 }
 
 create_admin() {
@@ -110,7 +101,6 @@ create_admin() {
 
     set +e
     "${CONTROL}" add_user $username $password  >> "${STARTUP_LOG}" 2>&1
-    #change the password incase the OPERATOR_USERNAME_FILE does not exist & add user fails i.e. upgrading old release
     "${CONTROL}" change_password $username $password  >> "${STARTUP_LOG}" 2>&1
     "${CONTROL}" set_user_tags $username administrator >> "${STARTUP_LOG}" 2>&1
     grant_permissions_for_all_vhosts $username
@@ -130,7 +120,7 @@ run_script() {
     script=$1
     __log ${STARTUP_LOG} "Starting ${script}"
     set +e
-    ( . "${script}" ) \
+    "${script}" \
         1>> "${STARTUP_LOG}" \
         2>> "${STARTUP_ERR_LOG}" \
         0<&-
@@ -157,8 +147,7 @@ prepare_for_upgrade () {
       -node $remote_node \
       -new-rabbitmq-version $(cat ${RMQ_SERVER_PACKAGE}/rmq_version) \
       -new-erlang-version $(cat ${RMQ_SERVER_PACKAGE}/erlang_version) \
-      1>> "${STARTUP_LOG}" \
-      2>> "${STARTUP_ERR_LOG}"
+      1> >(tee -a "${LOG_DIR}"/upgrade.log) 2>&1
   done
 }
 
@@ -166,38 +155,83 @@ start_rabbitmq () {
     ensure_dirs
     status_rabbitmq
     if [ "${RETVAL}" = 0 ]; then
+        "${CONTROL}" eval 'list_to_integer(os:getpid()).' > $PID_FILE
         __log ${STARTUP_LOG} "RabbitMQ is currently running"
+        if [ -f "$PID_FILE" ]
+        then
+          /var/vcap/jobs/rabbitmq-server/bin/node-check ||
+          signal_monit_that_rabbitmq_node_is_not_healthy
+        fi
     else
         RETVAL=0
         run_script "${JOB_DIR}/bin/setup.sh"
         run_script "${JOB_DIR}/bin/plugins.sh"
         prepare_for_upgrade
         __log ${STARTUP_LOG} "Starting RabbitMQ"
+        track_rabbitmq_erlang_vm_pid_in_pid_file
         RABBITMQ_PID_FILE="${PID_FILE}" "${START_PROG}" "${DAEMON}" \
             >> "${STARTUP_LOG}" \
             2>> "${STARTUP_ERR_LOG}" \
             0<&- &
-        set +e
-        "${CONTROL}" wait "${PID_FILE}" >> "${STARTUP_LOG}" 2>> "${STARTUP_ERR_LOG}"
-        RETVAL=$?
-        set -e
-        case "${RETVAL}" in
+
+        RETVAL="$(wait_for_rabbitmq_clusterer_plugin_to_start_rabbitmq_app)"
+        case "$RETVAL" in
             0)
-                # no post-install script, so delete guest every time we start
-                delete_guest
-                [ -f $OPERATOR_USERNAME_FILE ] && delete_operator_admin
-                create_operator_admin
-                create_broker_admin
-                __log ${STARTUP_LOG} "Finished starting RabbitMQ"
-                __log ${STARTUP_LOG} "SUCCESS"
+                if ! /var/vcap/jobs/rabbitmq-server/bin/node-check
+                then
+                  signal_monit_that_rabbitmq_node_is_not_healthy
+                  break
+                fi
+
+                configure_users
+
+                if ! /var/vcap/jobs/rabbitmq-server/bin/cluster-check
+                then
+                  __log ${STARTUP_ERR_LOG} "RabbitMQ cluster is not healthy"
+                  remove_pid
+                  RETVAL=1
+                  break
+                fi
+
+                __log ${STARTUP_LOG} "RabbitMQ cluster is healthy"
+
                 ;;
             *)
-                __log ${STARTUP_ERR_LOG} "Errored starting RabbitMQ"
+                __log ${STARTUP_ERR_LOG} "RabbitMQ application failed to start while waiting for cluster to form"
                 remove_pid
                 RETVAL=1
                 ;;
         esac
     fi
+}
+
+configure_users() {
+  __log ${STARTUP_LOG} "Configuring RabbitMQ users ..."
+
+  delete_guest
+  [ -f $OPERATOR_USERNAME_FILE ] && delete_operator_admin
+  create_operator_admin
+  create_admin "$RMQ_BROKER_USERNAME" "$RMQ_BROKER_PASSWORD"
+}
+
+signal_monit_that_rabbitmq_node_is_not_healthy() {
+  __log ${STARTUP_ERR_LOG} "RabbitMQ node is not healthy"
+
+  echo 0 > "$PID_FILE"
+}
+
+track_rabbitmq_erlang_vm_pid_in_pid_file() {
+  export RUNNING_UNDER_SYSTEMD=true
+}
+
+wait_for_rabbitmq_clusterer_plugin_to_start_rabbitmq_app() {
+  local retval
+
+  set +e
+  "${CONTROL}" wait "${PID_FILE}" >> "${STARTUP_LOG}" 2>> "${STARTUP_ERR_LOG}"
+  retval="$?"
+  set -e
+  echo "$retval"
 }
 
 stop_rabbitmq() {
@@ -247,6 +281,11 @@ restart_rabbitmq() {
     stop_rabbitmq
     start_rabbitmq
 }
+
+send_all_output_to_logfile() {
+  exec 1> >(tee -a "${LOG_DIR}/init.log") 2>&1
+}
+send_all_output_to_logfile
 
 case "$1" in
     start)

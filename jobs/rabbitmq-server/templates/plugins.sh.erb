@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/sh -e
 
-set -e
+[ -z "$DEBUG" ] || set -x
 
 (
   if [ -z $RABBITMQ_PLUGINS ]; then

@@ -1,3 +1,4 @@
+# vim: set filetype=yaml :
 ---
 name: rabbitmq-server
 packages:
@@ -74,6 +75,10 @@ templates:
   cacert.pem.erb:                   etc/cacert.pem
   cert.pem.erb:                     etc/cert.pem
   key.pem.erb:                      etc/key.pem
+  users.erb:                        etc/users
   pre-start.erb:                    bin/pre-start
+  post-deploy.bash:                 bin/post-deploy
+  node-check.bash:                  bin/node-check
+  cluster-check.bash:               bin/cluster-check
   syslog_forwarder.conf.erb:        config/syslog_forwarder.conf
   rabbitmq_syslog.conf.erb:         config/rabbitmq_syslog.conf

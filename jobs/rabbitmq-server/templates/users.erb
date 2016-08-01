@@ -1,0 +1,14 @@
+<% if_p('rabbitmq-server.administrators.management.username') do |username| %>
+RMQ_OPERATOR_USERNAME="<%= username %>"
+RMQ_OPERATOR_USERNAME="${RMQ_OPERATOR_USERNAME:?must be set}"
+<% end %>
+
+<% if_p('rabbitmq-server.administrators.management.password') do |password| %>
+RMQ_OPERATOR_PASSWORD="<%= password %>"
+RMQ_OPERATOR_PASSWORD="${RMQ_OPERATOR_PASSWORD:?must be set}"
+<% end %>
+
+RMQ_BROKER_USERNAME="<%= p('rabbitmq-server.administrators.broker.username') %>"
+RMQ_BROKER_USERNAME="${RMQ_BROKER_USERNAME:?must be set}"
+
+RMQ_BROKER_PASSWORD="<%= p('rabbitmq-server.administrators.broker.password') %>"
