@@ -39,6 +39,7 @@
      (presence-of [:rabbitmq :management_domain] :message missing-msg)
      ;; rabbitmq info
      (presence-of [:rabbitmq :hosts] :message missing-msg)
+     (presence-of [:rabbitmq :regular_user_tags] :message missing-msg)
      (validate-with-predicate [:rabbitmq :hosts] present-and-non-empty? :message "must have at least one entry")
      (presence-of [:rabbitmq :administrator :username] :message missing-msg)
      (presence-of [:rabbitmq :administrator :password] :message missing-msg))))
@@ -214,3 +215,9 @@
      (mapv
        #(format "http://%s:%d" % management-ui-port)
        (node-hosts m))))
+
+(defn regular-user-tags
+  ([]
+    (regular-user-tags final-config))
+  ([m]
+    (get-in m [:rabbitmq :regular_user_tags])))
