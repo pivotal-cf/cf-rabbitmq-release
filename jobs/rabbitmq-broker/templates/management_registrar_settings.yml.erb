@@ -1,8 +1,16 @@
 ---
 message_bus_servers:
+<% if !properties.cf.nats_servers.empty? %>
+  <% p('cf.nats_servers').each do |server| %>
+  - host: <%= server["host"] %>:<%= server["port"] %>
+    user: <%= server["username"] %>
+    password: <%= server["password"] %>
+  <% end %>
+<% else %>
   - host: <%= p('cf.nats.host') %>:<%= p('cf.nats.port') %>
     user: <%= p('cf.nats.username') %>
     password: <%= p('cf.nats.password') %>
+<% end %>
 host: <%= p('rabbitmq-broker.rabbitmq.management_ip') %>
 routes:
   - name: <%= p('rabbitmq-broker.rabbitmq.management_domain') %>

@@ -97,6 +97,9 @@ properties:
     description: "The user to use when authenticating with NATS"
   cf.nats.password:
     description: "The password to use when authenticating with NATS"
+  cf.nats_servers:
+    description: "An array of NATS server host, port, username and password"
+    default: []
 
   syslog_aggregator.address:
     description: "Syslog drain hostname"
