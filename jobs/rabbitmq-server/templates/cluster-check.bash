@@ -96,5 +96,5 @@ send_all_output_to_logfile() {
 }
 
 send_all_output_to_logfile
-echo "Running cluster checks ..."
+echo "Running cluster checks at $(date)..."
 main
