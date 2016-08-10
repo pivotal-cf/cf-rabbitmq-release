@@ -16,17 +16,21 @@ def environment
                        bosh_service_broker_job_name: 'cf-rabbitmq-broker'
                      }
 
-                     options[:cloud_foundry_domain]   = ENV['CF_DOMAIN']    ? ENV['CF_DOMAIN']    : 'bosh-lite.com'
-                     options[:cloud_foundry_username] = ENV['CF_USERNAME']  ? ENV['CF_USERNAME']  : 'admin'
-                     options[:cloud_foundry_password] = ENV['CF_PASSWORD']  ? ENV['CF_PASSWORD']  : 'admin'
-                     options[:cloud_foundry_api_url]  = ENV['CF_API']       ? ENV['CF_API']       : 'api.bosh-lite.com'
+                     options[:cloud_foundry_domain]   = ENV.fetch('CF_DOMAIN', 'bosh-lite.com')
+                     options[:cloud_foundry_username] = ENV.fetch('CF_USERNAME', 'admin')
+                     options[:cloud_foundry_password] = ENV.fetch('CF_PASSWORD', 'admin')
+                     options[:cloud_foundry_api_url]  = ENV.fetch('CF_API', 'api.bosh-lite.com')
 
-                     options[:bosh_target]          = ENV['BOSH_TARGET']   if ENV.key?('BOSH_TARGET')
-                     options[:bosh_username]        = ENV['BOSH_USERNAME'] if ENV.key?('BOSH_USERNAME')
-                     options[:bosh_password]        = ENV['BOSH_PASSWORD'] if ENV.key?('BOSH_PASSWORD')
+                     options[:bosh_target]          = ENV['BOSH_TARGET']
+                     options[:bosh_username]        = ENV['BOSH_USERNAME']
+                     options[:bosh_password]        = ENV['BOSH_PASSWORD']
                      options[:ssh_gateway_host]     = URI.parse(ENV['BOSH_TARGET']).host if ENV.key?('BOSH_TARGET')
 
-                     options[:ssh_gateway_username] = ENV['BOSH_SSH_USERNAME'] ? ENV['BOSH_SSH_USERNAME'] : 'ubuntu' if ENV.key?('BOSH_TARGET')
+                     options[:ssh_gateway_username] = ENV.fetch('BOSH_SSH_USERNAME', 'ubuntu') if ENV.key?('BOSH_TARGET')
+
+                     options.keep_if do |key, value|
+                       not value.nil?
+                     end
 
                      Prof::Environment::CloudFoundry.new(options)
                    end
