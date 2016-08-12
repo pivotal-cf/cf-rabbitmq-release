@@ -87,6 +87,9 @@ properties:
   rabbitmq-broker.rabbitmq.operator_set_policy.policy_priority:
     description: "Operator policy priority"
     default: 50
+  rabbitmq-broker.rabbitmq.regular_user_tags:
+    description: "New users permission tags"
+    default: "policymaker,management"
   cf.domain:
     description: "Domain shared by the UAA and CF API, e.g. 'bosh-lite.com'"
   cf.nats.host:
