@@ -1,0 +1,28 @@
+meta:
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: latest
+
+networks: (( merge ))
+
+resource_pools:
+- name: services-small-z1
+  cloud_properties:
+    instance_type: m1.medium
+    availability_zone: z1
+  network: rabbitmq_z1
+  stemcell: (( meta.stemcell ))
+
+- name: services-small-z2
+  cloud_properties:
+    instance_type: m1.medium
+    availability_zone: z2
+  network: rabbitmq_z2
+  stemcell: (( meta.stemcell ))
+
+compilation:
+  cloud_properties:
+    instance_type: m1.medium
+  network: rabbitmq_z1
+  reuse_compilation_vms: true
+  workers: 3
