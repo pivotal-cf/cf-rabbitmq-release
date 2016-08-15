@@ -12,8 +12,9 @@ infrastructure="${1:?}"
 
 shift
 
-if [ "$infrastructure" != "aws" ]; then
-  echo "usage: ./scripts/generate-manifest aws [stubs...]" 1>&2
+if [ "$infrastructure" != "openstack" ] && \
+    [ "$infrastructure" != "aws" ]; then
+  echo "usage: ./scripts/generate-manifest <aws|openstack> [stubs...]" 1>&2
   exit 1
 fi
 
