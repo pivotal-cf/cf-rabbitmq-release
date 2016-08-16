@@ -4,6 +4,7 @@ set -eux
 
 JOB_DIR=/var/vcap/jobs/rabbitmq-server
 INIT_LOG_DIR=/var/vcap/sys/log/rabbitmq-server
+HTTP_ACCESS_LOG_DIR="${INIT_LOG_DIR}"/management-ui
 STARTUP_LOG="${INIT_LOG_DIR}"/startup_stdout.log
 STARTUP_ERR_LOG="${INIT_LOG_DIR}"/startup_stderr.log
 SHUTDOWN_LOG="${INIT_LOG_DIR}"/shutdown_stdout.log
@@ -26,6 +27,7 @@ ensure_log_files() {
 }
 
 ensure_dir "${INIT_LOG_DIR}"
+ensure_dir "${HTTP_ACCESS_LOG_DIR}"
 ensure_log_files
 
 # syslog forwarding
