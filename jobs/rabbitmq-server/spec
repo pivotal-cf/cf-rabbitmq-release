@@ -79,6 +79,7 @@ templates:
   cluster-check.bash:               bin/cluster-check
   syslog_forwarder.conf.erb:        config/syslog_forwarder.conf
   rabbitmq_syslog.conf.erb:         config/rabbitmq_syslog.conf
+  clean-management-ui-logs.bash:    bin/clean-management-ui-logs
 
 provides:
   - name: rabbitmq-server
