@@ -7,7 +7,7 @@ export T_fail
 . spec/bash/test_helpers
 
 # shellcheck disable=SC1091
-. jobs/rabbitmq-server/templates/clean-management-ui-logs.bash
+. jobs/rabbitmq-server/templates/delete_files_over_a_day_old_in_dir.bash
 
 in_tmp_dir() {
   local tmp_dir
