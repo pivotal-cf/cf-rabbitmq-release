@@ -1,9 +1,8 @@
-<%
-  ips = link('rabbitmq-server').instances.map(&:address)
-  ports = p("rabbitmq-haproxy.ports").to_s.
-    split(/[\[\], ]/).
-    map { |port| port.to_i }.
-    select { |port| port > 0 && port < 65536 }
+<% ips = p("rabbitmq-haproxy.server_ips")
+   ports = p("rabbitmq-haproxy.ports").to_s.
+   split(/[\[\], ]/).
+   map { |port| port.to_i }.
+   select { |port| port > 0 && port < 65536 }
 %>
 global
 	daemon

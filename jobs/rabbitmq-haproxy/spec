@@ -1,11 +1,11 @@
 ---
 name: rabbitmq-haproxy
-
 packages:
 - haproxy
 - syslog_aggregator
-
 properties:
+  rabbitmq-haproxy.server_ips:
+    description: "List of IP addresses for the RabbitMQ cluster to proxy"
   rabbitmq-haproxy.ports:
     description: "List of ports (as string!) to forward to the RabbitMQ cluster"
   rabbitmq-haproxy.stats.username:
@@ -17,14 +17,9 @@ properties:
     description: "Syslog drain hostname"
   syslog_aggregator.port:
     description: "Syslog drain port"
-
 templates:
   rabbitmq-haproxy.init.erb:  bin/rabbitmq-haproxy.init
   haproxy.config.erb:         haproxy.config
   pre-start.erb:              bin/pre-start
   syslog_forwarder.conf.erb:  config/syslog_forwarder.conf
   haproxy_syslog.conf.erb:    config/haproxy_syslog.conf
-
-consumes:
-  - name: rabbitmq-server
-    type: rabbitmq-server

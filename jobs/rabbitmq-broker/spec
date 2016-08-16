@@ -32,6 +32,8 @@ properties:
     description: "Set to true if RabbitMQ cluster is configured to use TLS/SSL"
   rabbitmq-broker.rabbitmq.management_domain:
     description: "Domain that will be used to access RabbitMQ management UI, typically the system CF/CC domain."
+  rabbitmq-broker.rabbitmq.management_ip:
+    description: "IP address RabbitMQ management UI requests will be routed to, typically that of RabbitMQ HAproxy VM"
   rabbitmq-broker.logging.level:
     default: "info"
     description: "Logging level"
