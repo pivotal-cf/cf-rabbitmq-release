@@ -26,7 +26,7 @@ def environment
                      options[:bosh_password]        = ENV['BOSH_PASSWORD']
                      options[:ssh_gateway_host]     = URI.parse(ENV['BOSH_TARGET']).host if ENV.key?('BOSH_TARGET')
 
-                     options[:ssh_gateway_username] = ENV.fetch('BOSH_SSH_USERNAME', 'ubuntu') if ENV.key?('BOSH_TARGET')
+                     options[:ssh_gateway_username] = ENV.fetch('BOSH_SSH_USERNAME', 'vcap') if ENV.key?('BOSH_TARGET')
 
                      options.keep_if do |key, value|
                        not value.nil?
