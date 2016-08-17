@@ -25,14 +25,14 @@ create_log_file() {
   touch -t "$ago" "$file_name"
 }
 
-T_when_log_files_older_than_24_hours_it_removes_them() {
+T_when_log_files_older_than_7_days_it_removes_them() {
   local actual
 
   (
     in_tmp_dir
 
-    create_log_file "access.log.24_hours_ago" "24"
-    create_log_file "access.log.25_hours_ago" "25"
+    create_log_file "access.log.7_days_ago" "$(( 24 * 7))"
+    create_log_file "access.log.8_days_ago" "$(( 24 * 8 ))"
 
     delete_files_over_a_day_old_in_dir .
 
@@ -42,12 +42,13 @@ T_when_log_files_older_than_24_hours_it_removes_them() {
   ) || $T_fail
 }
 
-T_when_log_files_younger_than_24_hours_it_does_not_remove_them() {
+T_when_log_files_younger_than_7_days_it_does_not_remove_them() {
   local actual expected
 
   (
     in_tmp_dir
 
+    create_log_file "access.log.6_days_ago" "$(( 24 * 6 ))"
     create_log_file "access.log.18_hours_ago" "18"
     create_log_file "access.log.2_hours_ago" "2"
     expected=$(find . -name "access.log.*")

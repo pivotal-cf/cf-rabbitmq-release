@@ -27,7 +27,7 @@ ensure_log_files() {
 }
 
 ensure_http_log_cleanup_cron_job() {
-  cp "${JOB_DIR}/bin/cleanup-http-logs" /etc/cron.hourly
+  cp "${JOB_DIR}/bin/cleanup-http-logs" /etc/cron.daily
 }
 
 ensure_dir "${INIT_LOG_DIR}"

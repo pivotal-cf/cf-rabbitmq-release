@@ -6,7 +6,7 @@ delete_files_over_a_day_old_in_dir() {
 
   if [[ -d "$log_dir" ]]
   then
-    find "$log_dir" -mmin +$((24*60)) -delete
+    find "$log_dir" -mmin +$(( 7*24*60 )) -delete
   else
     echo "logs path is not a directory" > /dev/stderr
     return 1
