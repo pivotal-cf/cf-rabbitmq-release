@@ -26,9 +26,14 @@ ensure_log_files() {
   chown vcap:vcap "${INIT_LOG_DIR}"/shutdown*
 }
 
+ensure_http_log_cleanup_cron_job() {
+  cp "${JOB_DIR}/bin/cleanup-http-logs" /etc/cron.daily
+}
+
 ensure_dir "${INIT_LOG_DIR}"
 ensure_dir "${HTTP_ACCESS_LOG_DIR}"
 ensure_log_files
+ensure_http_log_cleanup_cron_job
 
 # syslog forwarding
 /var/vcap/packages/syslog_aggregator/enable_syslog_config rabbitmq_syslog.conf $JOB_DIR/config
