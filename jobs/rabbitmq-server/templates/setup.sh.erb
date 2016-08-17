@@ -63,7 +63,7 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   COOKIE=<%= cookie %>
   USER=vcap
   HOME_DIR=/var/vcap/store/rabbitmq
-  LOG_DIR=/var/vcap/sys/log/rabbitmq-server
+  HTTP_ACCESS_LOG_DIR=/var/vcap/sys/log/rabbitmq-server/management-ui
   RABBITMQ_MNESIA_BASE="${HOME_DIR}/mnesia"
   RABBITMQ_MNESIA_DIR="${RABBITMQ_MNESIA_BASE}/db"
   RABBITMQ_PLUGINS_EXPAND_DIR="$RABBITMQ_MNESIA_BASE/db-plugins-expand"
@@ -136,7 +136,7 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   NODENAME="NODENAME='${SELF_NODE}'"
 
   SERVER_START_ARGS="SERVER_START_ARGS='-rabbitmq_clusterer config \"${CLUSTER_CONFIG}\" -rabbit log_levels [{connection,info}] -rabbit disk_free_limit <%= disk_alarm_threshold %> -rabbit cluster_partition_handling <%= cluster_partition_handling %> -rabbit halt_on_upgrade_failure false -rabbitmq_mqtt subscription_ttl 1800000"
-  SERVER_START_ARGS="${SERVER_START_ARGS} -rabbitmq_management http_log_dir \"${LOG_DIR}\""
+  SERVER_START_ARGS="${SERVER_START_ARGS} -rabbitmq_management http_log_dir \"${HTTP_ACCESS_LOG_DIR}\""
 
 <% if ssl %>
   # if TLS is enabled, disable the non-TLS listener for AMQP 0-9-1 and make the management/HTTP API
