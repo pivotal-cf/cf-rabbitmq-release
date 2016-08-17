@@ -85,10 +85,3 @@ templates:
   delete_files_over_a_day_old_in_dir.bash:  lib/delete_files_over_a_day_old_in_dir.bash
   cleanup-http-logs.bash:                   bin/cleanup-http-logs
 
-provides:
-  - name: rabbitmq-server
-    type: rabbitmq-server
-
-consumes:
-  - name: rabbitmq-server
-    type: rabbitmq-server
