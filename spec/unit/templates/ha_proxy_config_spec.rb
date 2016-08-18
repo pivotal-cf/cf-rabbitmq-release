@@ -2,11 +2,22 @@ require 'spec_helper'
 
 RSpec.describe 'Cluster', template: true do
   let(:rendered_template) do
-    compiled_template('rabbitmq-haproxy', 'haproxy.config', {
-      'rabbitmq-haproxy' => {
-        'server_ips' => ['1.1.1.1', '2.2.2.2'],
-        'ports' => [ 123, 456, 789, 10000000 ]
-      }})
+    properties = {}
+    links = {
+      'rabbitmq-server' => {
+        'instances' => [
+          { "address" => '1.1.1.1' },
+          { "address" => '2.2.2.2' }
+        ],
+        'properties' => {
+          'rabbitmq-server' => {
+            'ports' => [ 123, 456, 789, 10000000 ]
+          }
+        }
+      }
+    }
+
+    compiled_template('rabbitmq-haproxy', 'haproxy.config', properties, links)
   end
 
   it "should contain all rabbit nodes to load balance" do

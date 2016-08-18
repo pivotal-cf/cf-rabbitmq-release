@@ -33,7 +33,7 @@ check_args() {
   if [ -z "$BOSH_MANIFEST" ]
   then
     log "Please set the BOSH_MANIFEST environment variable to the path to your manifest file"
-    log "E.G. export BOSH_MANIFEST=~/workspace/london-ci-tools/manifests/${RELEASE_NAME}/develop/development/bosh-lite.yml"
+    log "e.g. export BOSH_MANIFEST=~/workspace/cf-rabbitmq-release/manifests/cf-rabbitmq-lite.yml"
     exit 1
   fi
 

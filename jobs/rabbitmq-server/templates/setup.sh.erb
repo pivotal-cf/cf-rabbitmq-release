@@ -21,6 +21,7 @@ if_p("rabbitmq-server.ssl.key") do |key|
 end
 
 ips = link('rabbitmq-server').instances.map(&:address)
+ips = [job_ip] unless ips.size > 1
 
 require 'digest'
 job_ip_md5 = Digest::MD5.hexdigest(job_ip)

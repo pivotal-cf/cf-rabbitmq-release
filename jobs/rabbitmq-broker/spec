@@ -5,7 +5,6 @@ packages:
 - java
 - rabbitmq-common
 - rabbitmq-broker
-- route-registrar
 - syslog_aggregator
 
 properties:
@@ -19,8 +18,6 @@ properties:
     description: "Broker IP"
   rabbitmq-broker.cc_endpoint:
     description: "URL for CC"
-  rabbitmq-broker.rabbitmq.hosts:
-    description: "List of IPs of the Rabbit servers (maybe proxied) upon which to allocate resources"
   rabbitmq-broker.rabbitmq.dns_host:
     description: "External load balancer host"
   rabbitmq-broker.rabbitmq.administrator.username:
@@ -90,14 +87,6 @@ properties:
     default: "policymaker,management"
   cf.domain:
     description: "Domain shared by the UAA and CF API, e.g. 'bosh-lite.com'"
-  cf.nats.host:
-    description: "Hostname/IP of NATS"
-  cf.nats.port:
-    description: "Port that NATS listens on"
-  cf.nats.username:
-    description: "The user to use when authenticating with NATS"
-  cf.nats.password:
-    description: "The password to use when authenticating with NATS"
 
   syslog_aggregator.address:
     description: "Syslog drain hostname"
@@ -108,8 +97,15 @@ templates:
   broker_config.yml.erb:    config/rabbitmq_broker.yml
   broker_ctl.erb: bin/rabbitmq_broker_ctl
   pre-start.erb: bin/pre-start
-  route_registrar_ctl.erb: bin/route_registrar_ctl
-  broker_registrar_settings.yml.erb: config/broker_registrar_settings.yml
-  management_registrar_settings.yml.erb: config/management_registrar_settings.yml
   syslog_forwarder.conf.erb: config/syslog_forwarder.conf
   broker_syslog.conf.erb:  config/broker_syslog.conf
+
+provides:
+- name: rabbitmq-broker
+  type: rabbitmq-broker
+
+consumes:
+- name: rabbitmq-broker
+  type: rabbitmq-broker
+- name: rabbitmq-haproxy
+  type: rabbitmq-haproxy

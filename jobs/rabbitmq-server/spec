@@ -29,7 +29,9 @@ properties:
     default: false
 
   rabbitmq-server.plugins:
-    description: "RabbitMQ plugins (array of strings)"
+    description: "List of RabbitMQ plugins"
+  rabbitmq-server.ports:
+    description: "List of ports on which the RabbitMQ cluster accepts connections"
 
   rabbitmq-server.administrators.broker.username:
     description: "RabbitMQ admin username for broker"
@@ -55,7 +57,7 @@ properties:
     default: 50000000
 
   rabbitmq-server.cluster_partition_handling:
-    description: "Cluster partition recover mode property. Vald values are: pause_minority, autoheal"
+    description: "Cluster partition recover mode property. Valid values are: pause_minority, autoheal"
     default: "pause_minority"
 
   syslog_aggregator.address:
@@ -85,6 +87,8 @@ templates:
 provides:
   - name: rabbitmq-server
     type: rabbitmq-server
+    properties:
+    - rabbitmq-server
 
 consumes:
   - name: rabbitmq-server

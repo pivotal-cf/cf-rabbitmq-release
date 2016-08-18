@@ -6,8 +6,6 @@ packages:
 - syslog_aggregator
 
 properties:
-  rabbitmq-haproxy.ports:
-    description: "List of ports (as string!) to forward to the RabbitMQ cluster"
   rabbitmq-haproxy.stats.username:
     description: "Admin username to access HaProxy stats dashboard"
   rabbitmq-haproxy.stats.password:
@@ -24,6 +22,10 @@ templates:
   pre-start.erb:              bin/pre-start
   syslog_forwarder.conf.erb:  config/syslog_forwarder.conf
   haproxy_syslog.conf.erb:    config/haproxy_syslog.conf
+
+provides:
+  - name: rabbitmq-haproxy
+    type: rabbitmq-haproxy
 
 consumes:
   - name: rabbitmq-server

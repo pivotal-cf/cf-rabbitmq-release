@@ -1,6 +1,6 @@
 <%
   ips = link('rabbitmq-server').instances.map(&:address)
-  ports = p("rabbitmq-haproxy.ports").to_s.
+  ports = link('rabbitmq-server').p('rabbitmq-server.ports').to_s.
     split(/[\[\], ]/).
     map { |port| port.to_i }.
     select { |port| port > 0 && port < 65536 }
@@ -50,7 +50,7 @@ listen stats
     stats realm HAProxy\ Statistics
 
     #The user/pass you want to use.
-    stats auth <%= p("rabbitmq-haproxy.stats.username") %>:<%= p("rabbitmq-haproxy.stats.password") %>
+    stats auth <%= p('rabbitmq-haproxy.stats.username') %>:<%= p('rabbitmq-haproxy.stats.password') %>
 
     #This allows you to take down and bring up back end servers.
     #This will produce an error on older versions of HAProxy.

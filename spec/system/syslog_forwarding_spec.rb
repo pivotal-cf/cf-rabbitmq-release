@@ -64,19 +64,10 @@ RSpec.describe "Syslog forwarding" do
     end
 
     it "should forward the Service Broker logs" do
-        # Generate some logs in the shutdown_err files to test against.
-        # These files are empty at normal startup/shutdown.
-        ssh_gateway.execute_on(@broker_host, "echo 'This is a test log' >> /var/vcap/sys/log/management-route-registrar/route-registrar.stderr.log")
-        ssh_gateway.execute_on(@broker_host, "echo 'This is a test log' >> /var/vcap/sys/log/broker-route-registrar/route-registrar.stderr.log")
-
         output = ssh_gateway.execute_on(@broker_host, "cat log.txt")
 
         expect(output).to include "rabbitmq-service-broker_startup_stdout [job=#{@broker_job_name} index=#{@bosh_job_index}]"
         expect(output).to include "rabbitmq-service-broker_startup_stderr [job=#{@broker_job_name} index=#{@bosh_job_index}]"
-        expect(output).to include "rabbitmq-management-route-registrar_stdout [job=#{@broker_job_name} index=#{@bosh_job_index}]"
-        expect(output).to include "rabbitmq-management-route-registrar_stderr [job=#{@broker_job_name} index=#{@bosh_job_index}]"
-        expect(output).to include "rabbitmq-service-broker-route-registrar_stdout [job=#{@broker_job_name} index=#{@bosh_job_index}]"
-        expect(output).to include "rabbitmq-service-broker-route-registrar_stderr [job=#{@broker_job_name} index=#{@bosh_job_index}]"
       end
 
       it "should forward the haproxy logs" do

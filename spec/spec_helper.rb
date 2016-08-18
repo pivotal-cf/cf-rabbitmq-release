@@ -3,6 +3,7 @@ require 'prof/environment/cloud_foundry'
 require 'prof/environment_manager'
 require 'prof/ssh_gateway'
 require 'yaml'
+require 'pry'
 require 'rspec/retry'
 
 Dir[File.expand_path('support/**/*.rb', __dir__)].each do |file|
