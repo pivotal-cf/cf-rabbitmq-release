@@ -25,7 +25,7 @@ namespace :spec do
 
   desc 'runs basht unit tests'
   task :bash_unit do
-    cmd = './scripts/run_basht_tests'
+    cmd = './scripts/run-basht-tests'
     system("bash -c #{cmd.shellescape}")
     status = $?
     if status != 0
