@@ -7,7 +7,7 @@ export T_fail
 . spec/bash/test_helpers
 
 # shellcheck disable=SC1091
-. jobs/rabbitmq-server/templates/delete_files_over_a_day_old_in_dir.bash
+. jobs/rabbitmq-server/templates/delete_old_files.bash
 
 in_tmp_dir() {
   local tmp_dir
@@ -34,7 +34,7 @@ T_when_log_files_older_than_7_days_it_removes_them() {
     create_log_file "access.log.7_days_ago" "$(( 24 * 7))"
     create_log_file "access.log.8_days_ago" "$(( 24 * 8 ))"
 
-    delete_files_over_a_day_old_in_dir .
+    delete_old_files .
 
     actual=$(find . -name "access.log.*")
 
@@ -53,7 +53,7 @@ T_when_log_files_younger_than_7_days_it_does_not_remove_them() {
     create_log_file "access.log.2_hours_ago" "2"
     expected=$(find . -name "access.log.*")
 
-    delete_files_over_a_day_old_in_dir .
+    delete_old_files .
 
     actual=$(find . -name "access.log.*")
 
@@ -61,19 +61,19 @@ T_when_log_files_younger_than_7_days_it_does_not_remove_them() {
   ) || $T_fail
 }
 
-T_when_not_provided_a_path_clean_it_should_error() {
+T_when_not_provided_a_path_it_should_error() {
   local actual expected
 
-  actual=$(delete_files_over_a_day_old_in_dir 2>&1)
+  actual=$(delete_old_files 2>&1)
   expected="first argument must be logs path"
 
   expect_to_contain "$actual" "$expected" || $T_fail
 }
 
-T_when_not_provided_a_path_clean_it_should_error() {
+T_when_provided_a_broken_path_it_should_error() {
   local actual expected
 
-  actual=$(delete_files_over_a_day_old_in_dir /i_do_not_exist 2>&1)
+  actual=$(delete_old_files /i_do_not_exist 2>&1)
   expected="logs path is not a directory"
 
   expect_to_contain "$actual" "$expected" || $T_fail

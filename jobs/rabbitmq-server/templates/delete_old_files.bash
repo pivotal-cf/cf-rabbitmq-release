@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-delete_files_over_a_day_old_in_dir() {
+delete_old_files() {
   local log_dir
   log_dir="${1:?first argument must be logs path}"
 
