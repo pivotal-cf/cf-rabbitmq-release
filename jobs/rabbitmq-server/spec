@@ -67,21 +67,21 @@ properties:
     description: "Syslog drain port"
 
 templates:
-  plugins.sh.erb:                           bin/plugins.sh
-  rabbitmq-server.init.erb:                 bin/rabbitmq-server.init
-  setup.sh.erb:                             bin/setup.sh
-  node_name_migration.sh:                   bin/node_name_migration.sh
-  rabbitmq.config.erb:                      etc/rabbitmq.config
-  cacert.pem.erb:                           etc/cacert.pem
-  cert.pem.erb:                             etc/cert.pem
-  key.pem.erb:                              etc/key.pem
-  users.erb:                                etc/users
-  pre-start.erb:                            bin/pre-start
-  post-deploy.bash:                         bin/post-deploy
-  node-check.bash:                          bin/node-check
-  cluster-check.bash:                       bin/cluster-check
-  syslog_forwarder.conf.erb:                config/syslog_forwarder.conf
-  rabbitmq_syslog.conf.erb:                 config/rabbitmq_syslog.conf
-  delete_files_over_a_day_old_in_dir.bash:  lib/delete_files_over_a_day_old_in_dir.bash
-  cleanup-http-logs.bash:                   bin/cleanup-http-logs
+  plugins.sh.erb:             bin/plugins.sh
+  rabbitmq-server.init.erb:   bin/rabbitmq-server.init
+  setup.sh.erb:               bin/setup.sh
+  node_name_migration.sh:     bin/node_name_migration.sh
+  rabbitmq.config.erb:        etc/rabbitmq.config
+  cacert.pem.erb:             etc/cacert.pem
+  cert.pem.erb:               etc/cert.pem
+  key.pem.erb:                etc/key.pem
+  users.erb:                  etc/users
+  pre-start.erb:              bin/pre-start
+  post-deploy.bash:           bin/post-deploy
+  node-check.bash:            bin/node-check
+  cluster-check.bash:         bin/cluster-check
+  syslog_forwarder.conf.erb:  config/syslog_forwarder.conf
+  rabbitmq_syslog.conf.erb:   config/rabbitmq_syslog.conf
+  delete_old_files.bash:      lib/delete_old_files.bash
+  cleanup-http-logs.bash:     bin/cleanup-http-logs
 
