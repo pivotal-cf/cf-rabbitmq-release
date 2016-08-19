@@ -15,12 +15,20 @@ in_tmp_dir() {
   cd "$tmp_dir" || exit
 }
 
+date_cmd() {
+  if [[ $(uname) = "Darwin" ]]; then
+    gdate "$@"
+  else
+    date "$@"
+  fi
+}
+
 create_log_file() {
   local file_name hours_ago ago
   file_name="$1"
   hours_ago="$2"
 
-  ago=$(date -v -"${hours_ago}"H +'%Y%m%d%H%M')
+  ago=$(date_cmd -d "- ${hours_ago} hours" +'%Y%m%d%H%M')
 
   touch -t "$ago" "$file_name"
 }
