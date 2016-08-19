@@ -45,7 +45,6 @@ RSpec.describe "Syslog forwarding" do
 
     it "should forward the RabbitMQ server logs" do
       # Hit the HTTP Management endpoint to generate access log
-      puts "curl -u #{@rmq_admin_broker_username}:#{@rmq_admin_broker_password} http://#{@rmq_host}:15672/api/overview -s"
       ssh_gateway.execute_on(@rmq_host, "curl -u #{@rmq_admin_broker_username}:#{@rmq_admin_broker_password} http://#{@rmq_host}:15672/api/overview -s")
 
       # Generate some logs in the shutdown_err files to test against.
@@ -65,20 +64,34 @@ RSpec.describe "Syslog forwarding" do
     end
 
     it "should forward the Service Broker logs" do
+      # Generate some logs in the shutdown_err files to test against.
+      # These files are empty at normal startup/shutdown.
+      ssh_gateway.execute_on(@broker_host, "echo 'This is a test log' >> /var/vcap/sys/log/route_registrar/route_registrar.err.log")
+
       output = ssh_gateway.execute_on(@broker_host, "cat log.txt")
 
       expect(output).to include "rabbitmq-service-broker_startup_stdout [job=#{@broker_job_name} index=#{@bosh_job_index}]"
       expect(output).to include "rabbitmq-service-broker_startup_stderr [job=#{@broker_job_name} index=#{@bosh_job_index}]"
+
+      expect(output).to include "rabbitmq-service-broker-route_registrar_stdout [job=#{@broker_job_name} index=#{@bosh_job_index}]"
+      expect(output).to include "rabbitmq-service-broker-route_registrar_stderr [job=#{@broker_job_name} index=#{@bosh_job_index}]"
     end
 
     it "should forward the haproxy logs" do
       ssh_gateway.execute_on(@haproxy_host, "curl localhost")
+
+      # Generate some logs in the shutdown_err files to test against.
+      # These files are empty at normal startup/shutdown.
+      ssh_gateway.execute_on(@haproxy_host, "echo 'This is a test log' >> /var/vcap/sys/log/route_registrar/route_registrar.err.log")
 
       output_from_syslog = ssh_gateway.execute_on(@haproxy_host, "cat log.txt")
       output_from_file = ssh_gateway.execute_on(@haproxy_host, "cat /var/vcap/sys/log/rabbitmq-haproxy/haproxy.log")
 
       expect(output_from_syslog).to include "rabbitmq-haproxy_haproxy_log [job=#{@haproxy_job_name} index=#{@bosh_job_index}]"
       expect(output_from_file).to include "localhost haproxy"
+
+      expect(output_from_syslog).to include "rabbitmq-haproxy-route_registrar_stdout [job=#{@haproxy_job_name} index=#{@bosh_job_index}]"
+      expect(output_from_syslog).to include "rabbitmq-haproxy-route_registrar_stderr [job=#{@haproxy_job_name} index=#{@bosh_job_index}]"
     end
   end
 end
