@@ -23,11 +23,11 @@ RSpec.describe 'Logging a Cloud Foundry service broker' do
   RMQ_BROKER_JOB = "rmq-broker"
   RMQ_BROKER_JOB_INDEX = 0
 
-  RMQ_SERVER_Z1_JOB = "rmq_z1"
+  RMQ_SERVER_Z1_JOB = "rmq"
   RMQ_SERVER_Z1_JOB_INDEX = 0
 
-  RMQ_SERVER_Z2_JOB = "rmq_z2"
-  RMQ_SERVER_Z2_JOB_INDEX = 0
+  RMQ_SERVER_Z2_JOB = "rmq"
+  RMQ_SERVER_Z2_JOB_INDEX = 1
 
   RMQ_SERVER_PORT = 15672
 

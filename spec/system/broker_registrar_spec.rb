@@ -57,9 +57,9 @@ RSpec.describe 'Broker Registrar', test_with_errands: true do
       @disabled_orgs = @orgs[2, 4]
 
       modify_and_deploy_manifest do |manifest|
-        job = manifest['jobs'].detect{ |j| j['name'] == 'broker-registrar' }
-        job['properties'] ||= {}
-        job['properties']['broker-registrar'] = { 'orgs' => @enabled_orgs }
+        errand = manifest.fetch('instance_groups').detect{ |j| j['name'] == 'broker-registrar' }
+        errand['properties'] ||= {}
+        errand['properties']['broker-registrar'] = { 'orgs' => @enabled_orgs }
       end
 
       register_broker

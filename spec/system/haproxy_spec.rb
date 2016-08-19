@@ -18,14 +18,14 @@ RSpec.describe "haproxy" do
     )
   end
 
-  %w(rmq_z1 rmq_z2).each do |job_name|
-    context "when the job #{job_name}/0 is down", :pushes_cf_app do
+  [0, 1].each do |job_index|
+    context "when the job rmq/#{job_index} is down", :pushes_cf_app do
       before(:all) do
-        bosh_director.stop(job_name, 0)
+        `bosh -n stop rmq #{job_index} --force`
       end
 
       after(:all) do
-        bosh_director.start(job_name, 0)
+        `bosh -n start rmq #{job_index} --force`
       end
 
       it "is still possible to read and write to a queue" do

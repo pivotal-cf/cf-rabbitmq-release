@@ -13,7 +13,7 @@ Clone the repository and run `./scripts/update-release`.
 
 Here's an example of upgrading the `rabbitmq-server` package to version `3.6.3`.
 Assuming you have downloaded the new `rabbitmq-server-generic-unix` and
-`rabbitmq_clusterer` packages to this repositories directory.
+`rabbitmq_clusterer` packages to this repositories directory:
 
 ```sh
 bosh add blob rabbitmq-server-generic-unix-3.6.3.tar.xz rabbitmq-server
@@ -35,23 +35,7 @@ following files (could replace with a `sed` script):
 
 ## Deploying
 
-Run the `scripts/deploy-release` script. Examples as follows:
-
-```sh
-# Deploying locally to BOSH lite
-export BOSH_MANIFEST=~/workspace/cf-rabbitmq-release/manifests/cf-rabbitmq-lite.yml
-./scripts/deploy-release lite
-
-# Deploying to a different BOSH director
-export BOSH_MANIFEST=/path/to/manifest.yml
-./scripts/deploy-release my-bosh-alias
-```
-
-Note that the argument is a BOSH alias, which you must have configured prior to running the script. E.G.
-
-```sh
-bosh target https://192.168.50.4:25555 lite
-```
+Once you have a [BOSH Lite up and running locally](https://github.com/cloudfoundry/bosh-lite), run `scripts/deploy-bosh-lite`
 
 ## Testing
 
@@ -61,9 +45,7 @@ To run the unit tests locally, just run: `bundle exec rake spec:unit`.
 
 ### Integration Tests
 
-`bundle exec rake spec:integration`
-
-You can run tests on BOSH lite. You just need BOSH_MANIFEST environment variable and do deployment.
+Ensure you have deployed the release to BOSH Lite. Set `BOSH_MANIFEST` env to `$PWD/manifests/cf-rabbitmq.yml` and run `bundle exec rake spec:system`
 
 If you want to run tests on custom BOSH you need to set following environment variables:
 

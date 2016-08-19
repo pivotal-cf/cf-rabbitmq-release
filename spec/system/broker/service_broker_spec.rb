@@ -32,7 +32,7 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
   let(:session) { Capybara::Session.new(:poltergeist) }
 
   let(:rmq_host) do
-    bosh_director.ips_for_job("rmq_z1", environment.bosh_manifest.deployment_name)[0]
+    bosh_director.ips_for_job("rmq", environment.bosh_manifest.deployment_name)[0]
   end
 
   let(:rmq_server_admin_broker_username) do
@@ -156,29 +156,6 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
   end
 
   context 'when broker is configured' do
-    context 'when a dns host is configured' do
-      before(:context) do
-        modify_and_deploy_manifest do |manifest|
-          rabbit_manifest = manifest['properties']['rabbitmq-broker']['rabbitmq']
-          rabbit_manifest['dns_host'] = rabbit_manifest['hosts'].first
-          rabbit_manifest['hosts'] = ['Verify that this ip is not used over the dns_host']
-        end
-      end
-
-      after(:context) do
-        bosh_director.deploy(environment.bosh_manifest.path)
-      end
-
-      it 'is still possible to read and write to a queue', :pushes_cf_app do
-        cf.push_app_and_bind_with_service(test_app, service) do |app, _|
-          session.visit "#{app.url}/services/rabbitmq/protocols/amqp091"
-          expect(session.status_code).to eql(200)
-          expect(session).to have_content('amq.gen')
-        end
-      end
-    end
-
-
     context 'when the service broker is configured with particular service metadata' do
       let(:service_info) { broker_catalog['services'].first }
       let(:broker_catalog_metadata) { service_info['metadata'] }
@@ -274,7 +251,7 @@ end
 
 
 def provides_direct_amqp_connectivity(service_key_data)
-  amqp_proto = service_key_data['protocols']['amqp'].dup
+  amqp_proto = service_key_data['protocols']['amqp+ssl'].dup
 
   result = ssh_gateway.with_port_forwarded_to(amqp_proto['host'], amqp_proto['port']) do |port|
     hc = LabRat::AggregateHealthChecker.new

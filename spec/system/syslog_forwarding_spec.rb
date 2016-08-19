@@ -5,9 +5,9 @@ require 'hula/bosh_manifest'
 RSpec.describe "Syslog forwarding" do
 
   before(:all) do
-    @rmq_job_name = 'rmq_z1'
+    @rmq_job_name = 'rmq'
     @broker_job_name = "rmq-broker"
-    @haproxy_job_name = "haproxy_z1"
+    @haproxy_job_name = "haproxy"
     @bosh_job_index = 0
     @rmq_host = bosh_director.ips_for_job(@rmq_job_name, environment.bosh_manifest.deployment_name)[@bosh_job_index]
     @broker_host = bosh_director.ips_for_job(@broker_job_name, environment.bosh_manifest.deployment_name)[@bosh_job_index]
@@ -44,41 +44,42 @@ RSpec.describe "Syslog forwarding" do
     end
 
     it "should forward the RabbitMQ server logs" do
-        # Hit the HTTP Management endpoint to generate access log
-        ssh_gateway.execute_on(@rmq_host, "curl -u #{@rmq_admin_broker_username}:#{@rmq_admin_broker_password} http://#{@rmq_host}:15672/api/overview -s")
+      # Hit the HTTP Management endpoint to generate access log
+      puts "curl -u #{@rmq_admin_broker_username}:#{@rmq_admin_broker_password} http://#{@rmq_host}:15672/api/overview -s"
+      ssh_gateway.execute_on(@rmq_host, "curl -u #{@rmq_admin_broker_username}:#{@rmq_admin_broker_password} http://#{@rmq_host}:15672/api/overview -s")
 
-        # Generate some logs in the shutdown_err files to test against.
-        # These files are empty at normal startup/shutdown.
-        ssh_gateway.execute_on(@rmq_host, "echo 'This is a test stdout log' >> /var/vcap/sys/log/rabbitmq-server/shutdown_stdout.log")
-        ssh_gateway.execute_on(@rmq_host, "echo 'This is a test stderr log' >> /var/vcap/sys/log/rabbitmq-server/shutdown_stderr.log")
+      # Generate some logs in the shutdown_err files to test against.
+      # These files are empty at normal startup/shutdown.
+      ssh_gateway.execute_on(@rmq_host, "echo 'This is a test stdout log' >> /var/vcap/sys/log/rabbitmq-server/shutdown_stdout.log")
+      ssh_gateway.execute_on(@rmq_host, "echo 'This is a test stderr log' >> /var/vcap/sys/log/rabbitmq-server/shutdown_stderr.log")
 
-        output = ssh_gateway.execute_on(@rmq_host, "cat log.txt")
-        expect(output).to include "rabbitmq_startup_stdout [job=#{@rmq_job_name} index=#{@bosh_job_index}]"
-        expect(output).to include "rabbitmq_startup_stderr [job=#{@rmq_job_name} index=#{@bosh_job_index}]"
-        expect(output).to include "rabbitmq [job=#{@rmq_job_name} index=#{@bosh_job_index}]"
+      output = ssh_gateway.execute_on(@rmq_host, "cat log.txt")
+      expect(output).to include "rabbitmq_startup_stdout [job=#{@rmq_job_name} index=#{@bosh_job_index}]"
+      expect(output).to include "rabbitmq_startup_stderr [job=#{@rmq_job_name} index=#{@bosh_job_index}]"
+      expect(output).to include "rabbitmq [job=#{@rmq_job_name} index=#{@bosh_job_index}]"
 
-        expect(output).to include "rabbitmq_http_api_access [job=#{@rmq_job_name} index=#{@bosh_job_index}]"
+      expect(output).to include "rabbitmq_http_api_access [job=#{@rmq_job_name} index=#{@bosh_job_index}]"
 
-        expect(output).to include "rabbitmq_shutdown_stdout [job=#{@rmq_job_name} index=#{@bosh_job_index}] This is a test stdout log"
-        expect(output).to include "rabbitmq_shutdown_stderr [job=#{@rmq_job_name} index=#{@bosh_job_index}] This is a test stderr log"
+      expect(output).to include "rabbitmq_shutdown_stdout [job=#{@rmq_job_name} index=#{@bosh_job_index}] This is a test stdout log"
+      expect(output).to include "rabbitmq_shutdown_stderr [job=#{@rmq_job_name} index=#{@bosh_job_index}] This is a test stderr log"
     end
 
     it "should forward the Service Broker logs" do
-        output = ssh_gateway.execute_on(@broker_host, "cat log.txt")
+      output = ssh_gateway.execute_on(@broker_host, "cat log.txt")
 
-        expect(output).to include "rabbitmq-service-broker_startup_stdout [job=#{@broker_job_name} index=#{@bosh_job_index}]"
-        expect(output).to include "rabbitmq-service-broker_startup_stderr [job=#{@broker_job_name} index=#{@bosh_job_index}]"
-      end
+      expect(output).to include "rabbitmq-service-broker_startup_stdout [job=#{@broker_job_name} index=#{@bosh_job_index}]"
+      expect(output).to include "rabbitmq-service-broker_startup_stderr [job=#{@broker_job_name} index=#{@bosh_job_index}]"
+    end
 
-      it "should forward the haproxy logs" do
-        ssh_gateway.execute_on(@haproxy_host, "curl localhost")
+    it "should forward the haproxy logs" do
+      ssh_gateway.execute_on(@haproxy_host, "curl localhost")
 
-        output_from_syslog = ssh_gateway.execute_on(@haproxy_host, "cat log.txt")
-        output_from_file = ssh_gateway.execute_on(@haproxy_host, "cat /var/vcap/sys/log/rabbitmq-haproxy/haproxy.log")
+      output_from_syslog = ssh_gateway.execute_on(@haproxy_host, "cat log.txt")
+      output_from_file = ssh_gateway.execute_on(@haproxy_host, "cat /var/vcap/sys/log/rabbitmq-haproxy/haproxy.log")
 
-        expect(output_from_syslog).to include "rabbitmq-haproxy_haproxy_log [job=#{@haproxy_job_name} index=#{@bosh_job_index}]"
-        expect(output_from_file).to include "localhost haproxy"
-      end
+      expect(output_from_syslog).to include "rabbitmq-haproxy_haproxy_log [job=#{@haproxy_job_name} index=#{@bosh_job_index}]"
+      expect(output_from_file).to include "localhost haproxy"
+    end
   end
 end
 

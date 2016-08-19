@@ -1,0 +1,286 @@
+---
+name: cf-rabbitmq
+director_uuid: <%= `bosh -t lite status --uuid`.strip %>
+
+releases:
+- name: cf-rabbitmq
+  version: latest
+- name: routing
+  version: 0.136.0
+
+stemcells:
+- alias: trusty
+  os: ubuntu-trusty
+  version: latest
+
+instance_groups:
+- name: rmq
+  instances: 2
+  jobs:
+  - name: rabbitmq-server
+    release: cf-rabbitmq
+  vm_type: m3.medium
+  stemcell: trusty
+  persistent_disk_type: 2GB
+  azs:
+  - eu-west-1a
+  - eu-west-1b
+  networks:
+  - name: services
+
+- name: rmq-broker
+  instances: 1
+  jobs:
+  - name: rabbitmq-broker
+    release: cf-rabbitmq
+  - name: route_registrar
+    release: routing
+    properties:
+      nats:
+        machines:
+        - 10.244.0.6
+        port: 4222
+        user: nats
+        password: nats
+      route_registrar:
+        routes:
+        - name: pivotal-rabbitmq-broker
+          port: 4567
+          registration_interval: 20s
+          uris:
+          - pivotal-rabbitmq-broker.bosh-lite.com
+  vm_type: m3.medium
+  stemcell: trusty
+  azs:
+  - eu-west-1a
+  networks:
+  - name: services
+
+- name: haproxy
+  instances: 1
+  jobs:
+  - name: rabbitmq-haproxy
+    release: cf-rabbitmq
+  - name: route_registrar
+    release: routing
+    properties:
+      nats:
+        machines:
+        - 10.244.0.6
+        port: 4222
+        user: nats
+        password: nats
+      route_registrar:
+        routes:
+        - name: pivotal-rabbitmq
+          port: 15672
+          registration_interval: 20s
+          uris:
+          - pivotal-rabbitmq.bosh-lite.com
+  vm_type: m3.medium
+  stemcell: trusty
+  azs:
+  - eu-west-1a
+  - eu-west-1b
+  networks:
+  - name: services
+
+- name: broker-registrar
+  jobs:
+  - name: broker-registrar
+    release: cf-rabbitmq
+  instances: 1
+  lifecycle: errand
+  vm_type: t2.micro
+  stemcell: trusty
+  azs:
+  - eu-west-1a
+  networks:
+  - name: services
+
+- name: broker-deregistrar
+  jobs:
+  - name: broker-deregistrar
+    release: cf-rabbitmq
+  instances: 1
+  lifecycle: errand
+  vm_type: t2.micro
+  stemcell: trusty
+  azs:
+  - eu-west-1a
+  networks:
+  - name: services
+
+- name: smoke-tests
+  jobs:
+  - name: smoke-tests
+    release: cf-rabbitmq
+  instances: 1
+  lifecycle: errand
+  vm_type: m3.medium
+  stemcell: trusty
+  azs:
+  - eu-west-1a
+  networks:
+  - name: services
+
+properties:
+  # for broker and route registrars
+  cf:
+    admin_password: "admin"
+    admin_username: "admin"
+    api_url: "http://api.bosh-lite.com"
+    domain: "bosh-lite.com"
+  rabbitmq-server:
+    plugins:
+    - rabbitmq_management
+    - rabbitmq_mqtt
+    - rabbitmq_stomp
+    ports:
+    - 5672
+    - 5671
+    - 1883
+    - 8883
+    - 61613
+    - 61614
+    - 15672
+    - 15674
+    administrators:
+      management:
+        username: admin
+        password: admin
+      broker:
+        username: broker
+        password: CkY26kTuAyZT8r2
+    cookie: "rabbit-cluster:aws"
+    cluster_partition_handling: autoheal
+    ssl:
+      verify: false
+      cert: |
+        -----BEGIN CERTIFICATE-----
+        MIIC+zCCAeOgAwIBAgIBAjANBgkqhkiG9w0BAQUFADAnMRUwEwYDVQQDEwxNeVRl
+        c3RSb290Q0ExDjAMBgNVBAcTBTY0MTAzMB4XDTE0MDkwNDA3MjIwOFoXDTI0MDkw
+        MTA3MjIwOFowKjEXMBUGA1UEAxMObWVyY3VyaW8ubG9jYWwxDzANBgNVBAoTBnNl
+        cnZlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANxxSzf958VIm8lp
+        qQ4BHSmz1z8yU/KEKSbuEfIqpGwpVx6TZ+ZYiXa0cMV2pE7UKR4OyJiuvtvv9kzu
+        6g+HTXmJo2cqVonGCAMp6d9TkCAMaMF76IrbLyGmvXQDcjOmWarvsGHW/w6gJpw9
+        svDP9EXyXTBUfaJq3T8+9UQBfMsL4dHwAt79YgvSQLsYiIi2rzQixK/4PHFeHf3G
+        I/UDgjG0YG9iCWp2g1Sc3Z6hYB/0pOCBxE7LCrSGS6/M/7c2569yK7NqSSNN7Lqz
+        ZoQSF1NYE6KRd2MK2A0QaKrn9v8K5/Lp0fk70bvwtLxTWtp3wq3bYQg8UdqY/6R8
+        UATS/aMCAwEAAaMvMC0wCQYDVR0TBAIwADALBgNVHQ8EBAMCBSAwEwYDVR0lBAww
+        CgYIKwYBBQUHAwEwDQYJKoZIhvcNAQEFBQADggEBAHC89mK1HJgDqwxjsGpa3V7t
+        Nuqe/XxEIUUN3Lm4gBLKq4wed4c6z4csv16f3uL9cypyHPSrQmMPV7CDgWLX4F7g
+        YN9PGaVfIp/rGNsDWJEVNU2rfIEDIUfcL+o844jE8CtmzZ4bGVrCHqKW5pAraai1
+        o5h3JaU4yDLo49rqPeRft2n/gj+5E3gi/1TsnuLuzB7kK1gaTTOrV3GASiGokCEN
+        4v1ZjaqMSGMcwA/esaLv2N6UYJgd5lyJ7PEL4ddE8QCTo2EPhYyltLxRqOjrxa+5
+        KONA94PDj14gOSSsoXkoj7gWQsuHT2RXmurYXk4/PkS+k1j0+ZCzKi/ZxF5jt50=
+        -----END CERTIFICATE-----
+      key: |
+        -----BEGIN RSA PRIVATE KEY-----
+        MIIEowIBAAKCAQEA3HFLN/3nxUibyWmpDgEdKbPXPzJT8oQpJu4R8iqkbClXHpNn
+        5liJdrRwxXakTtQpHg7ImK6+2+/2TO7qD4dNeYmjZypWicYIAynp31OQIAxowXvo
+        itsvIaa9dANyM6ZZqu+wYdb/DqAmnD2y8M/0RfJdMFR9omrdPz71RAF8ywvh0fAC
+        3v1iC9JAuxiIiLavNCLEr/g8cV4d/cYj9QOCMbRgb2IJanaDVJzdnqFgH/Sk4IHE
+        TssKtIZLr8z/tzbnr3Irs2pJI03surNmhBIXU1gTopF3YwrYDRBoquf2/wrn8unR
+        +TvRu/C0vFNa2nfCrdthCDxR2pj/pHxQBNL9owIDAQABAoIBAEaVH/h1m9hXP0pm
+        QnLxeFz58FmTy71DA8orQCPB85OOSQ7JM+NVRe50KAeRzVpQJDozkZcRnJrfYoWP
+        mfIO6IeZwnAt5jeG6Nnaeb/ACc25K3GIMxUCyTyFHvQehlpzURKiXF93b4NHVBWC
+        y+C/NP+QcrYe13tBrEWr6uwzbbm1JABlXXbMoK3QaEv+IgbDg6YtW7mqkjQpjW4K
+        oLUtmBUnVwT4RzrNEcGmY4jLy2F1HVfIwaqm66V8iOAtv+oGvSv+WTca9ddjfBrr
+        ovSJPXMOEt5lf8Yj+j6B00xUDykyzL3emovGYiH0QHRKSYVjnEYkcfvWwa166mE5
+        BCQ6IgECgYEA92jrvhpkoQmNV/d61iQvO7VlbWk4WQhXdooKwubqUQ7UTXCIHDHH
+        5mDueejqd7lX9yYgZtxxi6p4GVVoK6CZB64VqwfC6yh1UjZvgA8lEPhRwLd77Ii/
+        yaNnPpvEzUNxBP9bHg/L41LErwLp2IjPU+EEfkNwr/JjmDPK/StCrAMCgYEA5Bit
+        PLbPUVOnHbTM3GXT8E1wtAGrvGLt2EGQ13GrVG7pS4zEgFykszhKe7qaQrZw+CK8
+        aAsVZLtKoUPEkjZaP9A5/Ka5EdMbg2fFDGuaVb+CAZCCMQSa4wyAo5dkaeNlslbf
+        HlzJdE+38uGW0kF93Ba2YlN5lSro44jbB7ufReECgYEA1vhjXZqxNPuHxJdUNBzc
+        rZS/vIFgZHvLA0SOdSsPDb9E2MSef2EBwDsY+vRWRhDVTfnizX1da22DTP/Ys4+n
+        Z/Tq/uCPjKRqzDRgTXTbUBNzdW/4TV3Exv8kBlJyfafL2/vEwCoZjjusiiSN64d0
+        Hf22Wb9feoGx592Y0sFz/OECgYA8Nhdk84z+luqCePurImY0BP0/R0GiVSsb7xLh
+        DGyBuVV0UBB/IfWIKc/foX6fJbHkjqbVgDeBg79LmqwFPLvOJJVqEEjCX8vfgEEP
+        6kevYwJaj18OuXx5ew9qH8it+w0Zar0zMqMrRO/1+X7quccTlhtHEWoC6nTXu4S2
+        Id0FgQKBgCGNRs4rPJ4MrKn/khm2yVHG0MKKJQRhY4k5CKFq+89WQZiHA2n1z72M
+        Pg/ph3WFwppZs/uEUuDmdTpM/9nIkIR4TUH55xi4zJbfWXLbKvUKCOjkze3U8t1S
+        x4fDjuJAz2rzIMyfYaCQWB1MPrwk/247HADyqEB7tsRJdKpF0rBe
+        -----END RSA PRIVATE KEY-----
+      cacert: |
+        -----BEGIN CERTIFICATE-----
+        MIIC7jCCAdagAwIBAgIJAOVQO4z11jrPMA0GCSqGSIb3DQEBBQUAMCcxFTATBgNV
+        BAMTDE15VGVzdFJvb3RDQTEOMAwGA1UEBxMFNjQxMDMwHhcNMTQwOTA0MDcyMjA4
+        WhcNMjQwOTAxMDcyMjA4WjAnMRUwEwYDVQQDEwxNeVRlc3RSb290Q0ExDjAMBgNV
+        BAcTBTY0MTAzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuXXjHbjm
+        LnX8r04/XCQNroV/n483LmhVzZhpR1Fe3iV7aR/QNnMlIoNlHvccxydnO/AOYkN9
+        97oGj99oPZnUElYGbQCoFLwthcoEXRkaJCqNRSc4JiZbqkqbeZGUExXcYPNUaMjJ
+        2JRmn5V3RofaodPrT2SkXsXwDJlj+Um1yDIOjJ7yGzbrVzT89Nduo7ehQKmb6YIn
+        EIf2cP5yviMrPVi4mqNwUjKhnAiENz1t0c53HnjYssG7TsjZiE9fxcqDtisG7QTU
+        MNkqv6P2WtOYITi6AxB7B5db/ou0BOLZ7KSUa4b/j9o13nrFQyS0xf7jHmTcOO+r
+        4jmHirwcAXzo3wIDAQABox0wGzAMBgNVHRMEBTADAQH/MAsGA1UdDwQEAwIBBjAN
+        BgkqhkiG9w0BAQUFAAOCAQEASuQmBRxtMRx1/Oiozh+MiJLrcN9Q53BrQ2tl8QeG
+        SUQ5r1jBezBhGDN684TJOgZrgQrukspN0dT9i41rRGhu1IXBgkehChfR7PYt5vww
+        MPz2uCYoAQZJgbbSK+X7ZNE4E3Tao+hrUKL3vu9awEptPdkUH4vBBT88GzzqRJxw
+        /BmqGdTGCLsZzlO0Jrc6o9NZLPh4SEn3d22Dz2yzN5x6rxWS1yHWRK/a7eEn0gkd
+        NqEeEGnW/T0WA/FosIxUEXyP1d252yeeV47LfJsV6qHg0ksRPQFJfW71Nzi3NQTr
+        3nizs9vfxcMfGQ88CyUQSvZ4CVdF3lYbw8a96NHJH71ROQ==
+        -----END CERTIFICATE-----
+      security_options:
+        - enable_tls1_0 #required until warden rootfs is upgraded to trusty
+      verification_depth: 10
+      fail_if_no_peer_cert: false
+
+  rabbitmq-haproxy:
+    stats:
+      username: admin
+      password: admin
+  broker:
+    host: pivotal-rabbitmq-broker.bosh-lite.com
+    protocol: https
+    name: p-rabbitmq
+    username: "p1-rabbit"
+    password: "p1-rabbit-devpwd"
+  rabbitmq-broker:
+    route: pivotal-rabbitmq-broker
+    cc_endpoint: http://api.bosh-lite.com
+    service:
+      username: "p1-rabbit"
+      password: "p1-rabbit-devpwd"
+      name: p-rabbitmq
+      uuid: 163b47c6-a2f3-43b1-97f7-b83b37ecabcd
+      plan_uuid: 4e816145-4e71-4e24-a402-0c686b868e2d
+    logging:
+      level: debug
+      print_stack_traces: false
+    rabbitmq:
+      operator_set_policy:
+        enabled: true
+        policy_name: "operator_set_policy"
+        policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
+        policy_priority: 50
+      management_domain: pivotal-rabbitmq.bosh-lite.com
+      ssl: |
+        -----BEGIN CERTIFICATE-----
+        MIIC+zCCAeOgAwIBAgIBAjANBgkqhkiG9w0BAQUFADAnMRUwEwYDVQQDEwxNeVRl
+        c3RSb290Q0ExDjAMBgNVBAcTBTY0MTAzMB4XDTE0MDkwNDA3MjIwOFoXDTI0MDkw
+        MTA3MjIwOFowKjEXMBUGA1UEAxMObWVyY3VyaW8ubG9jYWwxDzANBgNVBAoTBnNl
+        cnZlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANxxSzf958VIm8lp
+        qQ4BHSmz1z8yU/KEKSbuEfIqpGwpVx6TZ+ZYiXa0cMV2pE7UKR4OyJiuvtvv9kzu
+        6g+HTXmJo2cqVonGCAMp6d9TkCAMaMF76IrbLyGmvXQDcjOmWarvsGHW/w6gJpw9
+        svDP9EXyXTBUfaJq3T8+9UQBfMsL4dHwAt79YgvSQLsYiIi2rzQixK/4PHFeHf3G
+        I/UDgjG0YG9iCWp2g1Sc3Z6hYB/0pOCBxE7LCrSGS6/M/7c2569yK7NqSSNN7Lqz
+        ZoQSF1NYE6KRd2MK2A0QaKrn9v8K5/Lp0fk70bvwtLxTWtp3wq3bYQg8UdqY/6R8
+        UATS/aMCAwEAAaMvMC0wCQYDVR0TBAIwADALBgNVHQ8EBAMCBSAwEwYDVR0lBAww
+        CgYIKwYBBQUHAwEwDQYJKoZIhvcNAQEFBQADggEBAHC89mK1HJgDqwxjsGpa3V7t
+        Nuqe/XxEIUUN3Lm4gBLKq4wed4c6z4csv16f3uL9cypyHPSrQmMPV7CDgWLX4F7g
+        YN9PGaVfIp/rGNsDWJEVNU2rfIEDIUfcL+o844jE8CtmzZ4bGVrCHqKW5pAraai1
+        o5h3JaU4yDLo49rqPeRft2n/gj+5E3gi/1TsnuLuzB7kK1gaTTOrV3GASiGokCEN
+        4v1ZjaqMSGMcwA/esaLv2N6UYJgd5lyJ7PEL4ddE8QCTo2EPhYyltLxRqOjrxa+5
+        KONA94PDj14gOSSsoXkoj7gWQsuHT2RXmurYXk4/PkS+k1j0+ZCzKi/ZxF5jt50=
+        -----END CERTIFICATE-----
+      administrator:
+        username: broker
+        password: CkY26kTuAyZT8r2
+
+update:
+  canaries: 1
+  canary_watch_time: 30000-180000
+  update_watch_time: 30000-180000
+  max_in_flight: 4

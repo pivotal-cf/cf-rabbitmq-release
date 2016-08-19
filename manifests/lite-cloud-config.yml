@@ -1,0 +1,49 @@
+---
+networks:
+- name: compilation
+  type: manual
+  subnets:
+  - range: 10.244.2.0/24
+    gateway: 10.244.2.1
+    az: eu-west-1a
+
+- name: cf_private
+  type: manual
+  subnets:
+  - range: 10.244.0.0/24
+    gateway: 10.244.0.1
+    static: ["10.244.0.34", "10.244.0.54", "10.244.0.6", "10.244.0.42", "10.244.0.30", "10.244.0.26", "10.244.0.22"]
+    az: eu-west-1a
+
+- name: services
+  type: manual
+  subnets:
+  - range: 10.244.1.0/24
+    gateway: 10.244.1.1
+    az: eu-west-1a
+  - range: 10.244.3.0/24
+    gateway: 10.244.3.1
+    az: eu-west-1b
+
+azs:
+- name: eu-west-1a
+- name: eu-west-1b
+
+vm_types:
+- name: t2.micro
+- name: m3.medium
+- name: r3.large
+- name: c3.large
+
+disk_types:
+- name: 1GB
+  disk_size: 1_000
+- name: 2GB
+  disk_size: 2_000
+
+compilation:
+  workers: 3
+  reuse_compilation_vms: true
+  network: compilation
+  az: eu-west-1a
+  vm_type: c3.large

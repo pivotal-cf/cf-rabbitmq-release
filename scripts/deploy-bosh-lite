@@ -1,0 +1,98 @@
+#!/bin/bash -e
+
+[ -z "$DEBUG" ] || set -x
+
+BOSH_LITE_URL="https://192.168.50.4:25555"
+BOSH_LITE_STEMCELL="bosh-stemcell-3262.2-warden-boshlite-ubuntu-trusty-go_agent.tgz"
+BOSH_LITE_STEMCELL_URL="https://s3.amazonaws.com/bosh-warden-stemcells/$BOSH_LITE_STEMCELL"
+CF_ROUTING_RELEASE_VERSION="0.136.0"
+CF_ROUTING_RELEASE="cf-routing-release-${CF_ROUTING_RELEASE_VERSION}.tgz"
+CF_ROUTING_RELEASE_URL="http://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=$CF_ROUTING_RELEASE_VERSION"
+BOSH_CLOUD_CONFIG="manifests/lite-cloud-config.yml"
+BOSH_MANIFEST="manifests/cf-rabbitmq.yml"
+
+main() {
+  target_bosh_lite
+  upload_stemcell
+
+  download_blob_packages
+  download_src_packages
+
+  create_dev_release
+  upload_dev_release
+  upload_routing_release
+
+  update_cloud_config
+  set_deployment
+  deploy
+
+  target_cf || cf_required
+  check_if_broker_registered || register_broker
+}
+
+target_bosh_lite() {
+  bosh target "$BOSH_LITE_URL" lite
+}
+
+upload_stemcell() {
+  (
+    cd ~/workspace
+    [ -f "$BOSH_LITE_STEMCELL" ] || curl -LO "$BOSH_LITE_STEMCELL_URL"
+    bosh upload stemcell --skip-if-exists "$BOSH_LITE_STEMCELL"
+  )
+}
+
+download_blob_packages() {
+  bosh sync blobs
+}
+
+download_src_packages() {
+  git submodule update --init --recursive
+}
+
+create_dev_release() {
+  bosh create release --force
+}
+
+upload_dev_release() {
+  bosh upload release
+}
+
+upload_routing_release() {
+  (
+    cd ~/workspace
+    [ -f "$CF_ROUTING_RELEASE" ] || curl -L -o "$CF_ROUTING_RELEASE" "$CF_ROUTING_RELEASE_URL"
+    bosh upload release "$CF_ROUTING_RELEASE"
+  )
+}
+
+update_cloud_config() {
+  bosh update cloud-config "$BOSH_CLOUD_CONFIG"
+}
+
+set_deployment() {
+  bosh deployment "$BOSH_MANIFEST"
+}
+
+deploy() {
+  bosh -n deploy
+}
+
+target_cf() {
+  cf l -a api.bosh-lite.com -u admin -p admin --skip-ssl-validation
+}
+
+check_if_broker_registered() {
+  [[ "$(cf service-brokers)" =~ p-rabbitmq ]]
+}
+
+register_broker(){
+   bosh run errand broker-registrar
+}
+
+cf_required() {
+  echo "Cloud Foundry v238+ must be deployed on this BOSH director, http://docs.cloudfoundry.org/deploying/boshlite/index.html"
+  exit 1
+}
+
+main
