@@ -20,13 +20,17 @@ if_p("rabbitmq-server.ssl.key") do |key|
   end
 end
 
-ips = [job_ip]
+ips = nil
 if_p("rabbitmq-server.static_ips") do |cluster_ips|
-  if cluster_ips && cluster_ips.length > 1
+  if cluster_ips && cluster_ips.length > 0
     ips = cluster_ips
   end
 end
 
+if ips.nil?
+  default_network = spec.networks.marshal_dump().detect { |_, network_spec| network_spec.default }.last
+  ips = [default_network.ip]
+end
 
 require 'digest'
 job_ip_md5 = Digest::MD5.hexdigest(job_ip)
@@ -71,7 +75,6 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   SCRIPT_DIR="$(${DIRNAME} $0)"
   JOB_IP=<%= job_ip %>
   RMQ_VERSION=3.6.3
-
 
   # Unfortunate tight coupling. Beware.
   # We need this for CONF_ENV_FILE, HOME, ERL_INETRC, and for MNESIA_BASE

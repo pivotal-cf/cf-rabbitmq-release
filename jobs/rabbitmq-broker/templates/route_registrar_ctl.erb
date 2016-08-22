@@ -2,11 +2,11 @@
 set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
 
-JOB_NAME=${2}-route-registrar
+JOB_NAME=rabbitmq-${2}-route-registrar
 
-RUN_DIR=/var/vcap/sys/run/${2}-route-registrar
-LOG_DIR=/var/vcap/sys/log/${2}-route-registrar
-PIDFILE=$RUN_DIR/${2}-route-registrar.pid
+RUN_DIR=/var/vcap/sys/run/rabbitmq-broker
+LOG_DIR=/var/vcap/sys/log/rabbitmq-broker
+PIDFILE=$RUN_DIR/${JOB_NAME}.pid
 
 pid_guard() {
   PIDFILE=$1
@@ -115,12 +115,12 @@ start)
   echo $$ > $PIDFILE
 
   # Need to be in the right directory
-  cd /var/vcap/packages/route-registrar
+  cd /var/vcap/packages/cf-rabbitmq-route-registrar
 
-  exec chpst -u vcap:vcap /var/vcap/packages/route-registrar/route-registrar \
+  exec chpst -u vcap:vcap /var/vcap/packages/cf-rabbitmq-route-registrar/route-registrar \
     -configPath /var/vcap/jobs/rabbitmq-broker/config/${2}_registrar_settings.yml \
-    >>$LOG_DIR/route-registrar.stdout.log
-    2>>$LOG_DIR/route-registrar.stderr.log
+    >>$LOG_DIR/${JOB_NAME}.stdout.log
+    2>>$LOG_DIR/${JOB_NAME}.stderr.log
 ;;
 
 stop)

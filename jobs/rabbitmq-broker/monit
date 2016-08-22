@@ -1,11 +1,11 @@
 check process rabbitmq-broker
   with pidfile  "/var/vcap/sys/run/rabbitmq-broker/pid"
-  start program "/var/vcap/jobs/rabbitmq-broker/bin/rabbitmq_broker_ctl start" with timeout 30 seconds
-  stop  program "/var/vcap/jobs/rabbitmq-broker/bin/rabbitmq_broker_ctl stop"  with timeout 30 seconds
+  start program "/var/vcap/jobs/rabbitmq-broker/bin/rabbitmq_broker_ctl start" with timeout 600 seconds
+  stop  program "/var/vcap/jobs/rabbitmq-broker/bin/rabbitmq_broker_ctl stop" with timeout 600 seconds
   group vcap
 
-check process broker-route-registrar
-  with pidfile  "/var/vcap/sys/run/broker-route-registrar/broker-route-registrar.pid"
+check process rabbitmq-broker-route-registrar
+  with pidfile  "/var/vcap/sys/run/rabbitmq-broker/rabbitmq-broker-route-registrar.pid"
   start program "/var/vcap/jobs/rabbitmq-broker/bin/route_registrar_ctl start broker" with timeout 10 seconds
   stop  program "/var/vcap/jobs/rabbitmq-broker/bin/route_registrar_ctl stop broker"  with timeout 10 seconds
   group vcap

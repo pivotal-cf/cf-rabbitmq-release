@@ -1,0 +1,6 @@
+---
+name: cf-rabbitmq-route-registrar
+dependencies:
+- cf-rabbitmq-golang
+files:
+- route-registrar/**/*
