@@ -65,6 +65,8 @@ properties:
     description: "Syslog drain hostname"
   syslog_aggregator.port:
     description: "Syslog drain port"
+  syslog_aggregator.transport:
+    description: "Syslog drain protocol"
 
 templates:
   plugins.sh.erb:             bin/plugins.sh
