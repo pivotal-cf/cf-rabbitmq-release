@@ -11,6 +11,7 @@ logging:
   level: debug
   print_stack_traces: true
 rabbitmq:
+  regular_user_tags: "policymaker,management"
   management_domain: pivotal-rabbitmq.127.0.0.1
   ssl: server-certificate-goes-here
   hosts:

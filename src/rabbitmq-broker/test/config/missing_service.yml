@@ -3,6 +3,7 @@ cc_endpoint: http://127.0.0.1:8181
 logging:
   level: debug
 rabbitmq:
+  regular_user_tags: "policymaker,management"
   ssl: false
   hosts:
     - 127.0.0.1

@@ -10,6 +10,7 @@ service:
 logging:
   level: debug
 rabbitmq:
+  regular_user_tags: "policymaker,management"
   hosts:
     - 127.0.0.1
   administrator:
