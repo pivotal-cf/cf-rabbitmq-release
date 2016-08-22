@@ -12,6 +12,7 @@ logging:
   level: debug
   print_stack_traces: true
 rabbitmq:
+  regular_user_tags: "policymaker,management"
   operator_set_policy:
     enabled: true
     policy_name: "operator_set_policy"

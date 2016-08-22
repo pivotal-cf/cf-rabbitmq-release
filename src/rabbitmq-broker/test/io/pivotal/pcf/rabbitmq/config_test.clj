@@ -57,7 +57,9 @@
   (testing "config with missing management domain"
     (is (not (cfg/valid? (load-config "config/missing_management_domain.yml")))))
   (testing "config with missing RabbitMQ administrator"
-    (is (not (cfg/valid? (load-config "config/missing_rabbitmq_administrator.yml"))))))
+    (is (not (cfg/valid? (load-config "config/missing_rabbitmq_administrator.yml")))))
+  (testing "config with missing RabbitMQ regular user tags"
+    (is (not (cfg/valid? (load-config "config/missing_regular_user_tags.yml"))))))
 
 (deftest test-service-info
   (let [m (load-config "config/valid.yml")
@@ -118,3 +120,7 @@
 (deftest test-rabbitmq-administrator-uris
   (let [m (load-config "config/valid.yml")]
     (is (= (set (cfg/rabbitmq-administrator-uris m)) #{"http://127.0.0.1:15672" "http://127.0.0.2:15672"}))))
+
+(deftest test-rabbitmq-regular-user-tags
+  (let [m (load-config "config/valid.yml")]
+    (is (= (cfg/regular-user-tags m) "policymaker,management"))))
