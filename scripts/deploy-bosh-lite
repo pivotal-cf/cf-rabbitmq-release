@@ -17,8 +17,8 @@ main() {
   target_bosh_lite
   upload_stemcell
 
-  download_blob_packages
-  download_src_packages
+  download_blobs
+  update_src_dependencies
 
   create_dev_release
   upload_dev_release
@@ -44,11 +44,11 @@ upload_stemcell() {
   )
 }
 
-download_blob_packages() {
+download_blobs() {
   bosh sync blobs
 }
 
-download_src_packages() {
+update_src_dependencies() {
   git submodule update --init --recursive
 }
 
