@@ -251,7 +251,7 @@ end
 
 
 def provides_direct_amqp_connectivity(service_key_data)
-  amqp_proto = service_key_data['protocols']['amqp+ssl'].dup
+  amqp_proto = service_key_data['protocols']['amqp'].dup
 
   result = ssh_gateway.with_port_forwarded_to(amqp_proto['host'], amqp_proto['port']) do |port|
     hc = LabRat::AggregateHealthChecker.new
