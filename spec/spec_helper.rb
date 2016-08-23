@@ -13,7 +13,7 @@ end
 def environment
   @environment ||= begin
                      options = {
-                       bosh_manifest_path: ENV.fetch('BOSH_MANIFEST') { File.expand_path('../../manifests/cf-rabbitmq-lite.yml', __FILE__) },
+                       bosh_manifest_path: ENV.fetch('BOSH_MANIFEST') { File.expand_path('../../manifests/cf-rabbitmq.yml', __FILE__) },
                        bosh_service_broker_job_name: 'cf-rabbitmq-broker'
                      }
 

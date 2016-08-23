@@ -115,7 +115,7 @@ module Matchers
   end
 
   def deployment_name
-    manifest_path = ENV.fetch('BOSH_MANIFEST') { File.expand_path('../../manifests/cf-rabbitmq-lite.yml', __FILE__) }
+    manifest_path = ENV.fetch('BOSH_MANIFEST') { File.expand_path('../../manifests/cf-rabbitmq.yml', __FILE__) }
     manifest = YAML.load(File.open(manifest_path).read)
     if manifest["name"].nil? or manifest["name"].empty?
       "cf-rabbitmq"
