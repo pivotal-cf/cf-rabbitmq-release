@@ -69,6 +69,7 @@ end
 def deploy_manifest(manifest)
   Tempfile.open('manifest.yml') do |manifest_file|
     manifest_file.write(manifest.to_yaml)
+    manifest_file.flush
     bosh_director.deploy(manifest_file.path)
   end
 end
