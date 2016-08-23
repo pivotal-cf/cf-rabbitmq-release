@@ -18,8 +18,7 @@ TMP_MANIFEST=/tmp/bosh_manifest.yml
 
 edit_manifest() {
   uuid=$(bosh -t lite status --uuid)
-  cp "$BOSH_MANIFEST" "$TMP_MANIFEST"
-  sed -i "s/director_uuid: .*/director_uuid: ${uuid}/" "$TMP_MANIFEST"
+  sed "s/director_uuid: .*/director_uuid: ${uuid}/" "$BOSH_MANIFEST" > "$TMP_MANIFEST"
   BOSH_MANIFEST="$TMP_MANIFEST"
 }
 
