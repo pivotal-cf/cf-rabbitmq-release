@@ -50,7 +50,7 @@ RSpec.describe 'Logging a Cloud Foundry service broker' do
     context 'when the nodes are down' do
       it 'writes the error in stderr log', :creates_service_key do
         stop_connections_to_job(:hosts => [rmq_server_z1_host, rmq_server_z2_host], :port => RMQ_SERVER_PORT) do
-          expect{ cf.provision_and_create_service_key(service) }.to raise_error do |e|
+          expect{ cf.provision_and_create_service_key(service) { |_,_,_| } }.to raise_error do |e|
             service_instance_id = get_uuid(e.message)
             expect(rmq_broker_stderr_log).to include "Failed to provision a service: #{service_instance_id}"
           end
