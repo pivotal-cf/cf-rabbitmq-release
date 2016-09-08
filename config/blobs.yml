@@ -3,10 +3,6 @@ util-linux/util-linux_2.20.1.orig.tar.gz:
   object_id: 00358c94-0d4b-4db5-bb8f-f8b6df178818
   sha: d1dcff8d39e1a821cb0efda31a38452d12fd6b52
   size: 6174190
-java/jre1.8.0_20.tar.gz:
-  object_id: 49264d83-d6a7-4444-a801-88e4af6e0691
-  sha: 30745df3fca966a222a2800052aa2406ad987de3
-  size: 62751094
 cf-cli/cf-linux-amd64-6.19.0.tgz:
   object_id: cda6b19b-8df2-4583-a1b5-a0ab78ba191d
   sha: f845800310e4b702a39a2f1191e3d71862630103
