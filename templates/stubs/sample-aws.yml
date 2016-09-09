@@ -1,6 +1,9 @@
 meta:
   stemcell:
     version: 3130
+  compilation_az: us-east-1a
+  az1: us-east-1a
+  az2: us-east-1b
 
 director_uuid: bosh-director-uuid
 name: cf-rabbitmq
