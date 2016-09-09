@@ -117,7 +117,6 @@ properties:
       password: nats_password 
       username: nats_username
   rabbitmq-server:
-    config: (( merge || nil ))
     plugins:
     - rabbitmq_management
     - rabbitmq_mqtt
@@ -170,7 +169,7 @@ properties:
       administrator:
         username: (( .properties.rabbitmq-server.administrators.broker.username ))
         password: (( .properties.rabbitmq-server.administrators.broker.password ))
-  
+    uaa_client: (( merge | {} ))
 networks: (( merge ))
 
 resource_pools: (( merge ))
