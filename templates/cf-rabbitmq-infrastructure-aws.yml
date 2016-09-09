@@ -1,4 +1,5 @@
 meta:
+  <<: (( merge ))
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: 3130
@@ -9,18 +10,21 @@ resource_pools:
 - name: services-small-z1
   cloud_properties:
     instance_type: m3.medium
+    availability_zone: (( meta.az1 ))
   network: rabbitmq_z1
   stemcell: (( meta.stemcell ))
 
 - name: services-small-z2
   cloud_properties:
     instance_type: m3.medium
+    availability_zone: (( meta.az2 ))
   network: rabbitmq_z2
   stemcell: (( meta.stemcell ))
 
 compilation:
   cloud_properties:
     instance_type: c3.xlarge
+    availability_zone: (( meta.compilation_az ))
   network: rabbitmq_z1
   reuse_compilation_vms: true
   workers: 6
