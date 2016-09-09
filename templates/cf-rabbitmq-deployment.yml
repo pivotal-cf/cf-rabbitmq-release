@@ -169,7 +169,8 @@ properties:
       administrator:
         username: (( .properties.rabbitmq-server.administrators.broker.username ))
         password: (( .properties.rabbitmq-server.administrators.broker.password ))
-    uaa_client: (( merge | {} ))
+    uaa_client:
+      <<: (( merge ))
 networks: (( merge ))
 
 resource_pools: (( merge ))
