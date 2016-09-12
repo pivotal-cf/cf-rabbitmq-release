@@ -13,6 +13,8 @@ properties:
     description: 'Password of the admin user'
   broker.name:
     description: 'Name of the service broker'
+  broker.service.name:
+    description: 'Name of the service the broker provides'
   cf.skip_ssl_validation:
     description: 'Trust self signed cf certificates'
     default: true
