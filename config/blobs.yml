@@ -15,10 +15,10 @@ rabbitmq-server/rabbitmq_clusterer-3.5.7.ez:
   object_id: 6a564af0-06cd-4b4a-bf2f-17ecb6215cfe
   sha: 2df9cd942c8edbd00b10530b8af63c73d49ad153
   size: 57497
-erlang/otp_src_oss_18.3.tgz:
-  object_id: d9b2c206-6cb6-49b1-870a-9b5b479b4046
-  sha: 2189e3bde4965442246c774c66ee9f5004e9096e
-  size: 134967639
+erlang/otp_src_oss_18.1.tgz:
+  object_id: 6cf4831f-727d-44b5-9cd2-1bb33c25b4c5
+  sha: cf5a7e63074a4743e976d87b5f9fe80deac61cfe
+  size: 68197399
 golang/go1.6.3.linux-amd64.tar.gz:
   object_id: 7d05939b-fe46-4ee4-a4d3-9e81386dae27
   sha: 5e916ba4dd8c2fc43beafca4c08b334c4d0686f3
