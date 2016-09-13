@@ -15,6 +15,7 @@ properties:
     description: 'Name of the service broker'
   broker.service.name:
     description: 'Name of the service the broker provides'
+    default: 'p-rabbitmq'
   cf.skip_ssl_validation:
     description: 'Trust self signed cf certificates'
     default: true
