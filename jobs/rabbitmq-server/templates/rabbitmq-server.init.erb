@@ -159,7 +159,7 @@ start_rabbitmq () {
         __log ${STARTUP_LOG} "RabbitMQ is currently running"
         if [ -f "$PID_FILE" ]
         then
-          /var/vcap/jobs/rabbitmq-server/bin/node-check ||
+          /var/vcap/jobs/rabbitmq-server/bin/node-check "rabbitmq-server.init" ||
           signal_monit_that_rabbitmq_node_is_not_healthy
         fi
     else
@@ -177,7 +177,7 @@ start_rabbitmq () {
         RETVAL="$(wait_for_rabbitmq_clusterer_plugin_to_start_rabbitmq_app)"
         case "$RETVAL" in
             0)
-                if ! /var/vcap/jobs/rabbitmq-server/bin/node-check
+                if ! /var/vcap/jobs/rabbitmq-server/bin/node-check "rabbitmq-server.init"
                 then
                   signal_monit_that_rabbitmq_node_is_not_healthy
                   return
@@ -185,7 +185,7 @@ start_rabbitmq () {
 
                 configure_users
 
-                if ! /var/vcap/jobs/rabbitmq-server/bin/cluster-check
+                if ! /var/vcap/jobs/rabbitmq-server/bin/cluster-check "rabbitmq-server.init"
                 then
                   __log ${STARTUP_ERR_LOG} "RabbitMQ cluster is not healthy"
                   remove_pid

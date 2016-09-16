@@ -98,5 +98,7 @@ send_all_output_to_logfile() {
 }
 
 send_all_output_to_logfile
-echo "Running cluster checks at $(date)..."
+SCRIPT_CALLER="${1:-cluster-check}"
+echo "Running cluster checks at $(date) from $SCRIPT_CALLER..."
 main
+echo "Cluster check running from $SCRIPT_CALLER passed"
