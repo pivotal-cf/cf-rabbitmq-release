@@ -180,7 +180,7 @@ start_rabbitmq () {
                 if ! /var/vcap/jobs/rabbitmq-server/bin/node-check
                 then
                   signal_monit_that_rabbitmq_node_is_not_healthy
-                  break
+                  return
                 fi
 
                 configure_users
@@ -190,7 +190,7 @@ start_rabbitmq () {
                   __log ${STARTUP_ERR_LOG} "RabbitMQ cluster is not healthy"
                   remove_pid
                   RETVAL=1
-                  break
+                  return
                 fi
 
                 __log ${STARTUP_LOG} "RabbitMQ cluster is healthy"
