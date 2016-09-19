@@ -3,7 +3,7 @@ require 'rbconfig'
 RELEASE_FOLDER = "./"
 
 desc 'run all the specs'
-task spec: %w(spec:unit spec:broker spec:system)
+task spec: %w(spec:unit spec:system)
 
 desc 'Installs noaa'
 task :install_noaa do
@@ -40,7 +40,7 @@ namespace :spec do
     execute_cmd('./scripts/run-basht-tests')
   end
 
-  task :unit => [:bash_unit, :rspec_unit]
+  task :unit => [:bash_unit, :rspec_unit, :broker]
 end
 
 def execute_cmd(cmd)
