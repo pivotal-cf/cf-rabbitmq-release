@@ -1,6 +1,6 @@
 ---
 name: rabbitmq-upgrade-preparation
 dependencies:
-- cf-rabbitmq-golang
+- golang-1.6.1
 files:
 - rabbitmq-upgrade-preparation/**/*.go

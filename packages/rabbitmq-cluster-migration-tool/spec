@@ -1,6 +1,6 @@
 ---
 name: rabbitmq-cluster-migration-tool
 dependencies:
-- cf-rabbitmq-golang
+- golang-1.6.1
 files:
 - rabbitmq-cluster-migration-tool/**/*.go

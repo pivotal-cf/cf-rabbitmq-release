@@ -1,5 +1,5 @@
 ---
-name: cf-rabbitmq-golang
+name: golang-1.6.1
 
 files:
   - golang/go1.6.1.linux-amd64.tar.gz
