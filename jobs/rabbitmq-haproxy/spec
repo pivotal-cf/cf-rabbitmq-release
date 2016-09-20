@@ -3,7 +3,7 @@ name: rabbitmq-haproxy
 
 packages:
 - haproxy
-- cf-rabbitmq-syslog_aggregator
+- rabbitmq-syslog-aggregator
 
 properties:
   rabbitmq-haproxy.stats.username:

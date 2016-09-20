@@ -6,7 +6,7 @@ packages:
 - rabbitmq-server
 - rabbitmq-cluster-migration-tool
 - rabbitmq-upgrade-preparation
-- cf-rabbitmq-syslog_aggregator
+- rabbitmq-syslog-aggregator
 
 properties:
   rabbitmq-server.ssl.cacert:

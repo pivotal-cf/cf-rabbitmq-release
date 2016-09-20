@@ -1,4 +1,0 @@
----
-name: cf-rabbitmq-syslog_aggregator
-files:
-- syslog_aggregator/**/*
