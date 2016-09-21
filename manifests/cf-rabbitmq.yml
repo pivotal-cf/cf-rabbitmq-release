@@ -7,6 +7,8 @@ releases:
   version: latest
 - name: routing
   version: 0.136.0
+- name: syslog
+  version: 7
 
 stemcells:
 - alias: trusty
@@ -77,6 +79,25 @@ instance_groups:
           registration_interval: 20s
           uris:
           - pivotal-rabbitmq.bosh-lite.com
+  - name: syslog_forwarder
+    release: syslog
+    properties:
+      syslog:
+        custom_rule: |
+          # Send messages of all types sent to local2 logging facility to haproxy.log,
+          # "-" in front of the file means to not flush to disk after every write
+          local2.* -/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log
+
+          module(load="imfile")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/route_registrar/route_registrar.log")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/route_registrar/route_registrar.err.log")
   vm_type: m3.medium
   stemcell: trusty
   azs:
