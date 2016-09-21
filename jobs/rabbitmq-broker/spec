@@ -5,7 +5,6 @@ packages:
 - java
 - rabbitmq-common
 - rabbitmq-broker
-- rabbitmq-syslog-aggregator
 
 properties:
   rabbitmq-broker.registration_interval:
@@ -90,17 +89,10 @@ properties:
   cf.domain:
     description: "Domain shared by the UAA and CF API, e.g. 'bosh-lite.com'"
 
-  syslog_aggregator.address:
-    description: "Syslog drain hostname"
-  syslog_aggregator.port:
-    description: "Syslog drain port"
-
 templates:
   broker_config.yml.erb:    config/rabbitmq_broker.yml
   broker_ctl.erb: bin/rabbitmq_broker_ctl
   pre-start.erb: bin/pre-start
-  syslog_forwarder.conf.erb: config/syslog_forwarder.conf
-  broker_syslog.conf.erb:  config/broker_syslog.conf
 
 provides:
 - name: rabbitmq-broker

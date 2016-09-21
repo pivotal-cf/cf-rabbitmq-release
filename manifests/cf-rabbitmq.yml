@@ -51,6 +51,24 @@ instance_groups:
           registration_interval: 20s
           uris:
           - pivotal-rabbitmq-broker.bosh-lite.com
+  - name: syslog_forwarder
+    release: syslog
+    properties:
+      syslog:
+        custom_rule: |
+          module(load="imfile")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-broker/startup_stdout.log")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-broker/startup_stderr.log")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/route_registrar/route_registrar.log")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/route_registrar/route_registrar.err.log")
   vm_type: m3.medium
   stemcell: trusty
   azs:
