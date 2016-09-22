@@ -3,7 +3,7 @@
 [ -z "$DEBUG" ] || set -x
 
 WORKSPACE="${WORKSPACE:-$HOME/workspace}"
-BOSH_LITE_URL="https://192.168.50.4:25555"
+BOSH_LITE_URL="${1:-https://192.168.50.4:25555}"
 BOSH_LITE_STEMCELL="bosh-stemcell-3262.2-warden-boshlite-ubuntu-trusty-go_agent.tgz"
 BOSH_LITE_STEMCELL_URL="https://s3.amazonaws.com/bosh-warden-stemcells/$BOSH_LITE_STEMCELL"
 CF_ROUTING_RELEASE_VERSION="0.136.0"
