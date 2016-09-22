@@ -9,6 +9,9 @@ BOSH_LITE_STEMCELL_URL="https://s3.amazonaws.com/bosh-warden-stemcells/$BOSH_LIT
 CF_ROUTING_RELEASE_VERSION="0.136.0"
 CF_ROUTING_RELEASE="cf-routing-release-${CF_ROUTING_RELEASE_VERSION}.tgz"
 CF_ROUTING_RELEASE_URL="http://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=$CF_ROUTING_RELEASE_VERSION"
+SYSLOG_RELEASE_VERSION="7"
+SYSLOG_RELEASE="syslog-release-${SYSLOG_RELEASE_VERSION}.tgz"
+SYSLOG_RELEASE_URL="http://bosh.io/d/github.com/cloudfoundry/syslog-release?v=$SYSLOG_RELEASE_VERSION"
 BOSH_CLOUD_CONFIG="manifests/lite-cloud-config.yml"
 
 read -rep "BOSH manifest for the cf-rabbitmq deployment (default: $PWD/manifests/cf-rabbitmq.yml): " BOSH_MANIFEST
@@ -24,6 +27,7 @@ main() {
   create_dev_release
   upload_dev_release
   upload_routing_release
+  upload_syslog_release
 
   update_cloud_config
   set_deployment
@@ -66,6 +70,14 @@ upload_routing_release() {
     cd "$WORKSPACE"
     [ -f "$CF_ROUTING_RELEASE" ] || curl -L -o "$CF_ROUTING_RELEASE" "$CF_ROUTING_RELEASE_URL"
     bosh upload release "$CF_ROUTING_RELEASE"
+  )
+}
+
+upload_syslog_release() {
+  (
+    cd "$WORKSPACE"
+    [ -f "$SYSLOG_RELEASE" ] || curl -L -o "$SYSLOG_RELEASE" "$SYSLOG_RELEASE_URL"
+    bosh upload release "$SYSLOG_RELEASE"
   )
 }
 
