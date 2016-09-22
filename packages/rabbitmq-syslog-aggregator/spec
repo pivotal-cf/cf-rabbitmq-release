@@ -1,0 +1,4 @@
+---
+name: rabbitmq-syslog-aggregator
+files:
+- rabbitmq-syslog-aggregator/**/*

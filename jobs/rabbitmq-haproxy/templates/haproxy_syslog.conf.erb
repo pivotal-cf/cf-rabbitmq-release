@@ -1,0 +1,18 @@
+$ModLoad imudp
+$UDPServerRun 514
+
+local2.*                        -/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log
+
+module(load="imfile")
+
+input(type="imfile"
+      File="/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log"
+      Tag="rabbitmq-haproxy_haproxy_log")
+
+input(type="imfile"
+      File="/var/vcap/sys/log/route_registrar/route_registrar.log"
+      Tag="rabbitmq-haproxy-route_registrar_stdout")
+
+input(type="imfile"
+      File="/var/vcap/sys/log/route_registrar/route_registrar.err.log"
+      Tag="rabbitmq-haproxy-route_registrar_stderr")

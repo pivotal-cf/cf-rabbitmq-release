@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -e
+
+SYSLOG_FILE_NAME=$1
+CONFIG_DIR=$2
+
+
+if [[ -z $CONFIG_DIR ]]
+then
+  echo "Usage: enable_syslog_config [config_file_name] [config dir]"
+  exit 1
+fi
+
+# warden stemcells currently run an older version of rsyslog (7.4.6),
+# which requires imfile.so to exist in the /usr/local/lib/rsyslog dir
+# newer, non-warden stemcells do not have this dir
+if [ -d /usr/local/lib/rsyslog/ ]; then
+  ln -fs /usr/lib/rsyslog/imfile.so /usr/local/lib/rsyslog/imfile.so
+fi
+
+chmod 755 /var/vcap/data/sys/
+chmod 755 /var/vcap/data/sys/log/
+
+cp $CONFIG_DIR/$SYSLOG_FILE_NAME /etc/rsyslog.d/$SYSLOG_FILE_NAME

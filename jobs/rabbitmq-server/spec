@@ -6,6 +6,7 @@ packages:
 - rabbitmq-server
 - rabbitmq-cluster-migration-tool
 - rabbitmq-upgrade-preparation
+- rabbitmq-syslog-aggregator
 
 properties:
   rabbitmq-server.ssl.cacert:
@@ -59,12 +60,20 @@ properties:
     description: "Cluster partition recover mode property. Valid values are: pause_minority, autoheal"
     default: "pause_minority"
 
+  syslog_aggregator.address:
+    description: "Syslog drain hostname"
+  syslog_aggregator.port:
+    description: "Syslog drain port"
+
 templates:
   add-rabbitmqctl-to-path.bash: bin/add-rabbitmqctl-to-path
   cacert.pem.erb:               etc/cacert.pem
   cert.pem.erb:                 etc/cert.pem
   cleanup-http-logs.bash:       bin/cleanup-http-logs
   cluster-check.bash:           bin/cluster-check
+  add-rabbitmqctl-to-path.bash: bin/add-rabbitmqctl-to-path
+  syslog_forwarder.conf.erb:    config/syslog_forwarder.conf
+  rabbitmq_syslog.conf.erb:     config/rabbitmq_syslog.conf
   delete_old_files.bash:        lib/delete_old_files.bash
   drain.bash:                   bin/drain
   key.pem.erb:                  etc/key.pem

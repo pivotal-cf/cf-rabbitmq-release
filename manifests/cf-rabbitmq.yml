@@ -9,8 +9,6 @@ releases:
   version: latest
 - name: routing
   version: 0.136.0
-- name: syslog
-  version: 7
 
 stemcells:
 - alias: trusty
@@ -23,62 +21,6 @@ instance_groups:
   jobs:
   - name: rabbitmq-server
     release: cf-rabbitmq
-  - name: syslog_forwarder
-    release: syslog
-    properties:
-      syslog:
-        address: &syslog-address syslog-aggregator.example.com
-        port: &syslog-port 514
-        custom_rule: |
-          module(load="imfile")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/rabbitmq-server/rabbit@*.log"
-                Tag="rmq_server")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/rabbitmq-server/rabbit@*-sasl.log"
-                Tag="rmq_server_sasl")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/rabbitmq-server/startup_stderr.log"
-                Tag="rmq_server_startup_stderr")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/rabbitmq-server/startup_stdout.log"
-                Tag="rmq_server_startup_stdout")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/rabbitmq-server/shutdown_stdout.log"
-                Tag="rmq_server_shutdown_stdout")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/rabbitmq-server/shutdown_stderr.log"
-                Tag="rmq_server_shutdown_stderr")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/rabbitmq-server/management-ui/access.log*"
-                Tag="rmq_server_http_api_access")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/rabbitmq-server/upgrade.log"
-                Tag="rmq_server_upgrade")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/rabbitmq-server/init.log"
-                Tag="rmq_server_init")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/rabbitmq-server/node-check.log"
-                Tag="rmq_server_node_check")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/rabbitmq-server/cluster-check.log"
-                Tag="rmq_server_cluster_check")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/rabbitmq-server/pre-start.log"
-                Tag="rmq_server_pre_start")
   - name: syslog-configuration-test
     release: cf-rabbitmq-test
     properties:
@@ -135,30 +77,6 @@ instance_groups:
           registration_interval: 20s
           uris:
           - pivotal-rabbitmq-broker.bosh-lite.com
-  - name: syslog_forwarder
-    release: syslog
-    properties:
-      syslog:
-        address: *syslog-address
-        port: *syslog-port
-        custom_rule: |
-          module(load="imfile")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/rabbitmq-broker/startup_stdout.log"
-                Tag="rmq_broker_startup_stdout")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/rabbitmq-broker/startup_stderr.log"
-                Tag="rmq_broker_startup_stderr")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/route_registrar/route_registrar.log"
-                Tag="rmq_broker_route_registrar_stdout")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/route_registrar/route_registrar.err.log"
-                Tag="rmq_broker_route_registrar_stderr")
   - name: syslog-configuration-test
     release: cf-rabbitmq-test
     properties:
@@ -203,30 +121,6 @@ instance_groups:
           registration_interval: 20s
           uris:
           - pivotal-rabbitmq.bosh-lite.com
-  - name: syslog_forwarder
-    release: syslog
-    properties:
-      syslog:
-        address: *syslog-address
-        port: *syslog-port
-        custom_rule: |
-          # Send messages of all types sent to local2 logging facility to haproxy.log,
-          # "-" in front of the file means to not flush to disk after every write
-          local2.* -/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log
-
-          module(load="imfile")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log"
-                Tag="rmq_haproxy")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/route_registrar/route_registrar.log"
-                Tag="rmq_haproxy_route_registrar_stdout")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/route_registrar/route_registrar.err.log"
-                Tag="rmq_haproxy_route_registrar_stderr")
   - name: syslog-configuration-test
     release: cf-rabbitmq-test
     properties:
@@ -242,7 +136,6 @@ instance_groups:
         directories:
         - "/var/vcap/jobs/rabbitmq-haproxy"
         - "/var/vcap/sys/log"
-
   vm_type: m3.medium
   stemcell: trusty
   azs:
