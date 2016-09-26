@@ -2,8 +2,6 @@
 
 [ -z "$DEBUG" ] || set -x
 
-set -u
-
 # shellcheck disable=SC1091
 . /var/vcap/jobs/rabbitmq-server/etc/users
 
