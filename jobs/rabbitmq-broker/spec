@@ -18,6 +18,8 @@ properties:
     description: "Broker IP"
   rabbitmq-broker.cc_endpoint:
     description: "URL for CC"
+  rabbitmq-broker.rabbitmq.hosts:
+    description: "RabbitMQ Hosts"
   rabbitmq-broker.rabbitmq.dns_host:
     description: "External load balancer host"
   rabbitmq-broker.rabbitmq.administrator.username:
