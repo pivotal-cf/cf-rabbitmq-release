@@ -40,6 +40,8 @@ disk_types:
   disk_size: 1_000
 - name: 2GB
   disk_size: 2_000
+- name: 10GB
+  disk_size: 10_000
 
 compilation:
   workers: 3
