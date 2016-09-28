@@ -19,9 +19,9 @@ instance_groups:
   jobs:
   - name: rabbitmq-server
     release: cf-rabbitmq
-  vm_type: m3.medium
+  vm_type: r3.large
   stemcell: trusty
-  persistent_disk_type: 2GB
+  persistent_disk_type: 10GB
   azs:
   - eu-west-1a
   - eu-west-1b
