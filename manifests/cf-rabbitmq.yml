@@ -32,47 +32,47 @@ instance_groups:
 
           input(type="imfile"
                 File="/var/vcap/sys/log/rabbitmq-server/rabbit@*.log"
-                Tag="rabbitmq")
+                Tag="rmq_server")
 
           input(type="imfile"
                 File="/var/vcap/sys/log/rabbitmq-server/rabbit@*-sasl.log"
-                Tag="rabbitmq_sasl")
+                Tag="rmq_server_sasl")
 
           input(type="imfile"
                 File="/var/vcap/sys/log/rabbitmq-server/startup_stderr.log"
-                Tag="rabbitmq_startup_stderr")
+                Tag="rmq_server_startup_stderr")
 
           input(type="imfile"
                 File="/var/vcap/sys/log/rabbitmq-server/startup_stdout.log"
-                Tag="rabbitmq_startup_stdout")
+                Tag="rmq_server_startup_stdout")
 
           input(type="imfile"
                 File="/var/vcap/sys/log/rabbitmq-server/shutdown_stdout.log"
-                Tag="rabbitmq_shutdown_stdout")
+                Tag="rmq_server_shutdown_stdout")
 
           input(type="imfile"
                 File="/var/vcap/sys/log/rabbitmq-server/shutdown_stderr.log"
-                Tag="rabbitmq_shutdown_stderr")
+                Tag="rmq_server_shutdown_stderr")
 
           input(type="imfile"
                 File="/var/vcap/sys/log/rabbitmq-server/management-ui/access.log*"
-                Tag="rabbitmq_http_api_access")
+                Tag="rmq_server_http_api_access")
 
           input(type="imfile"
                 File="/var/vcap/sys/log/rabbitmq-server/upgrade.log"
-                Tag="rabbitmq_upgrade")
+                Tag="rmq_server_upgrade")
 
           input(type="imfile"
                 File="/var/vcap/sys/log/rabbitmq-server/init.log"
-                Tag="rabbitmq_init")
+                Tag="rmq_server_init")
 
           input(type="imfile"
                 File="/var/vcap/sys/log/rabbitmq-server/node-check.log"
-                Tag="rabbitmq_node_check")
+                Tag="rmq_server_node_check")
 
           input(type="imfile"
                 File="/var/vcap/sys/log/rabbitmq-server/cluster-check.log"
-                Tag="rabbitmq_cluster_check")
+                Tag="rmq_server_cluster_check")
   - name: syslog-configuration-test
     release: cf-rabbitmq-test
     properties:
@@ -127,16 +127,20 @@ instance_groups:
           module(load="imfile")
 
           input(type="imfile"
-                File="/var/vcap/sys/log/rabbitmq-broker/startup_stdout.log")
+                File="/var/vcap/sys/log/rabbitmq-broker/startup_stdout.log"
+                Tag="rmq_broker_startup_stdout")
 
           input(type="imfile"
-                File="/var/vcap/sys/log/rabbitmq-broker/startup_stderr.log")
+                File="/var/vcap/sys/log/rabbitmq-broker/startup_stderr.log"
+                Tag="rmq_broker_startup_stderr")
 
           input(type="imfile"
-                File="/var/vcap/sys/log/route_registrar/route_registrar.log")
+                File="/var/vcap/sys/log/route_registrar/route_registrar.log"
+                Tag="rmq_broker_route_registrar_stdout")
 
           input(type="imfile"
-                File="/var/vcap/sys/log/route_registrar/route_registrar.err.log")
+                File="/var/vcap/sys/log/route_registrar/route_registrar.err.log"
+                Tag="rmq_broker_route_registrar_stderr")
   - name: syslog-configuration-test
     release: cf-rabbitmq-test
     properties:
@@ -186,13 +190,17 @@ instance_groups:
           module(load="imfile")
 
           input(type="imfile"
-                File="/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log")
+                File="/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log"
+                Tag="rmq_haproxy")
+
 
           input(type="imfile"
-                File="/var/vcap/sys/log/route_registrar/route_registrar.log")
+                File="/var/vcap/sys/log/route_registrar/route_registrar.log"
+                Tag="rmq_haproxy_route_registrar_stdout")
 
           input(type="imfile"
-                File="/var/vcap/sys/log/route_registrar/route_registrar.err.log")
+                File="/var/vcap/sys/log/route_registrar/route_registrar.err.log"
+                Tag="rmq_haproxy_route_registrar_stderr")
   - name: syslog-configuration-test
     release: cf-rabbitmq-test
     properties:
