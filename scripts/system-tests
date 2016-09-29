@@ -2,7 +2,7 @@
 
 main() {
   install_dependencies
-  run_unit_test
+  run_unit_tests
   run_system_tests_individually_to_isolate_state
 }
 
