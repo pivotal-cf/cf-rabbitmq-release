@@ -10,7 +10,7 @@ DEPLOYMENT_NAME = ENV.fetch("DEPLOYMENT_NAME")
 BOSH_DIRECTOR_URL = ENV.fetch("BOSH_DIRECTOR_URL")
 DEPLOYMENT_INSTANCES = JSON.parse(
   HTTParty.get(
-    "#{BOSH_DIRECTOR_URL}/deployments/cf-rabbitmq-eve/instances",
+    "#{BOSH_DIRECTOR_URL}/deployments/#{DEPLOYMENT_NAME}/instances",
     verify: false
   )
 ).map { |i| OpenStruct.new(i) }
