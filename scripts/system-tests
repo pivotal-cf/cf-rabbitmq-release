@@ -4,6 +4,7 @@ main() {
   install_dependencies
   run_unit_tests
   run_system_tests_individually_to_isolate_state
+  delete_bosh_deployment_to_remove_state
 }
 
 install_dependencies() {
@@ -22,6 +23,10 @@ run_system_tests_individually_to_isolate_state() {
   do
     bundle exec rspec "$spec_file" --fail-fast
   done
+}
+
+delete_bosh_deployment_to_remove_state() {
+  BOSH_USER="${BOSH_USERNAME:?env required}" bosh -t "${BOSH_TARGET:?env required}" -n delete deployment "${DEPLOYMENT_NAME:?env required}"
 }
 
 main
