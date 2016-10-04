@@ -25,13 +25,11 @@ HOME_DIR=/var/vcap/store/rabbitmq
 OPERATOR_USERNAME_FILE="${HOME_DIR}/operator_administrator.username"
 START_PROG=/usr/bin/setsid
 JOB_DIR=/var/vcap/jobs/rabbitmq-server
-TIMESTAMP=/bin/date
 
 LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 STARTUP_LOG="${LOG_DIR}"/startup_stdout.log
 STARTUP_ERR_LOG="${LOG_DIR}"/startup_stderr.log
 SHUTDOWN_LOG="${LOG_DIR}"/shutdown_stdout.log
-SHUTDOWN_ERR_LOG="${LOG_DIR}"/shutdown_stderr.log
 
 test -x "${DAEMON}"
 test -x "${CONTROL}"
@@ -39,23 +37,16 @@ test -x "${START_PROG}"
 
 RETVAL=0
 
+# shellcheck disable=SC1090
 [ -f "/var/vcap/store/rabbitmq/etc/default/${NAME}" ] && . "/var/vcap/store/rabbitmq/etc/default/${NAME}"
 # shellcheck disable=SC1091
 . /var/vcap/jobs/rabbitmq-server/etc/users
 
-__log() {
-  MESSAGE="$("${TIMESTAMP}"): $2"
-  echo "${MESSAGE}"
-  echo "${MESSAGE}" >> ${1}
-}
-
 ensure_dir() {
     DIR=$1
-    if [ ! -d "${DIR}" ]; then
-        mkdir -p "${DIR}"
-        chown -R "${USER}":"${USER}" "${DIR}"
-        chmod 755 "${DIR}"
-    fi
+    mkdir -p "${DIR}"
+    chown -fR "${USER}":"${USER}" "${DIR}"
+    chmod 755 "${DIR}"
 }
 
 ensure_dirs() {
@@ -65,7 +56,6 @@ ensure_dirs() {
 
 remove_pid() {
     rm -f "${PID_FILE}"
-    rmdir "$(dirname "${PID_FILE}")" || :
 }
 
 delete_guest() {
@@ -81,7 +71,7 @@ grant_permissions_for_all_vhosts() {
     VHOSTS=$(${CONTROL} list_vhosts | tail -n +2)
     for vhost in $VHOSTS
     do
-    "${CONTROL}" set_permissions -p $vhost $username ".*" ".*" ".*"  >> "${STARTUP_LOG}" 2>&1
+    "${CONTROL}" set_permissions -p "$vhost" "$username" ".*" ".*" ".*"  >> "${STARTUP_LOG}" 2>&1
     done
     true
     set -e
@@ -100,17 +90,19 @@ create_admin() {
     password=$2
 
     set +e
-    "${CONTROL}" add_user $username $password  >> "${STARTUP_LOG}" 2>&1
-    "${CONTROL}" change_password $username $password  >> "${STARTUP_LOG}" 2>&1
-    "${CONTROL}" set_user_tags $username administrator >> "${STARTUP_LOG}" 2>&1
-    grant_permissions_for_all_vhosts $username
+    {
+      "${CONTROL}" add_user "$username" "$password"
+      "${CONTROL}" change_password "$username" "$password"
+      "${CONTROL}" set_user_tags "$username" administrator
+    } >> "${STARTUP_LOG}" 2>&1
+    grant_permissions_for_all_vhosts "$username"
     set -e
 }
 
 delete_operator_admin() {
   set +e
   USERNAME=$(cat $OPERATOR_USERNAME_FILE)
-  "${CONTROL}" delete_user $USERNAME  >> "${SHUTDOWN_LOG}" 2>&1
+  "${CONTROL}" delete_user "$USERNAME" >> "${SHUTDOWN_LOG}" 2>&1
   set -e
   true
 }
@@ -118,7 +110,7 @@ delete_operator_admin() {
 run_script() {
     local script
     script=$1
-    __log ${STARTUP_LOG} "Starting ${script}"
+    echo ${STARTUP_LOG} "Starting ${script}"
     set +e
     "${script}" \
         1>> "${STARTUP_LOG}" \
@@ -128,11 +120,11 @@ run_script() {
     set -e
     case "${RETVAL}" in
         0)
-            __log ${STARTUP_LOG} "Finished ${script}"
+            echo ${STARTUP_LOG} "Finished ${script}"
             return 0
             ;;
         *)
-            __log ${STARTUP_ERR_LOG} "Errored ${script}"
+            echo ${STARTUP_ERR_LOG} "Errored ${script}"
             RETVAL=1
             exit "${RETVAL}"
             ;;
@@ -140,13 +132,15 @@ run_script() {
 }
 
 prepare_for_upgrade () {
-  __log ${STARTUP_LOG} "Preparing RabbitMQ for potential upgrade"
-  for remote_node in $(cat /var/vcap/data/upgrade_preparation_nodes); do
+  echo ${STARTUP_LOG} "Preparing RabbitMQ for potential upgrade"
+  local remote_nodes
+  remote_nodes="$(cat /var/vcap/data/upgrade_preparation_nodes)"
+  for remote_node in "${remote_nodes[@]}"; do
     /var/vcap/packages/rabbitmq-upgrade-preparation/bin/rabbitmq-upgrade-preparation \
-      -rabbitmqctl-path $CONTROL \
-      -node $remote_node \
-      -new-rabbitmq-version $(cat ${RMQ_SERVER_PACKAGE}/rmq_version) \
-      -new-erlang-version $(cat ${RMQ_SERVER_PACKAGE}/erlang_version) \
+      -rabbitmqctl-path "$CONTROL" \
+      -node "$remote_node" \
+      -new-rabbitmq-version "$(cat ${RMQ_SERVER_PACKAGE}/rmq_version)" \
+      -new-erlang-version "$(cat ${RMQ_SERVER_PACKAGE}/erlang_version)" \
       1> >(tee -a "${LOG_DIR}"/upgrade.log) 2>&1
   done
 }
@@ -156,7 +150,7 @@ start_rabbitmq () {
     status_rabbitmq
     if [ "${RETVAL}" = 0 ]; then
         "${CONTROL}" eval 'list_to_integer(os:getpid()).' > $PID_FILE
-        __log ${STARTUP_LOG} "RabbitMQ is currently running"
+        echo ${STARTUP_LOG} "RabbitMQ is currently running"
         if [ -f "$PID_FILE" ]
         then
           /var/vcap/jobs/rabbitmq-server/bin/node-check "rabbitmq-server.init" ||
@@ -167,7 +161,7 @@ start_rabbitmq () {
         run_script "${JOB_DIR}/bin/setup.sh"
         run_script "${JOB_DIR}/bin/plugins.sh"
         prepare_for_upgrade
-        __log ${STARTUP_LOG} "Starting RabbitMQ"
+        echo ${STARTUP_LOG} "Starting RabbitMQ"
         track_rabbitmq_erlang_vm_pid_in_pid_file
         RABBITMQ_PID_FILE="${PID_FILE}" "${START_PROG}" "${DAEMON}" \
             >> "${STARTUP_LOG}" \
@@ -187,17 +181,17 @@ start_rabbitmq () {
 
                 if ! /var/vcap/jobs/rabbitmq-server/bin/cluster-check "rabbitmq-server.init"
                 then
-                  __log ${STARTUP_ERR_LOG} "RabbitMQ cluster is not healthy"
+                  echo ${STARTUP_ERR_LOG} "RabbitMQ cluster is not healthy"
                   remove_pid
                   RETVAL=1
                   return
                 fi
 
-                __log ${STARTUP_LOG} "RabbitMQ cluster is healthy"
+                echo ${STARTUP_LOG} "RabbitMQ cluster is healthy"
 
                 ;;
             *)
-                __log ${STARTUP_ERR_LOG} "RabbitMQ application failed to start while waiting for cluster to form"
+                echo ${STARTUP_ERR_LOG} "RabbitMQ application failed to start while waiting for cluster to form"
                 remove_pid
                 RETVAL=1
                 ;;
@@ -206,7 +200,7 @@ start_rabbitmq () {
 }
 
 configure_users() {
-  __log ${STARTUP_LOG} "Configuring RabbitMQ users ..."
+  echo ${STARTUP_LOG} "Configuring RabbitMQ users ..."
 
   delete_guest
   [ -f $OPERATOR_USERNAME_FILE ] && delete_operator_admin
@@ -215,7 +209,7 @@ configure_users() {
 }
 
 signal_monit_that_rabbitmq_node_is_not_healthy() {
-  __log ${STARTUP_ERR_LOG} "RabbitMQ node is not healthy"
+  echo ${STARTUP_ERR_LOG} "RabbitMQ node is not healthy"
 
   echo 0 > "$PID_FILE"
 }
@@ -234,26 +228,6 @@ wait_for_rabbitmq_clusterer_plugin_to_start_rabbitmq_app() {
   echo "$retval"
 }
 
-stop_rabbitmq() {
-    status_rabbitmq
-    if [ "${RETVAL}" = 0 ]; then
-        set +e
-        "${CONTROL}" stop "${PID_FILE}" >> "${SHUTDOWN_LOG}" 2>> "${SHUTDOWN_ERR_LOG}"
-        RETVAL=$?
-        set -e
-        if [ "${RETVAL}" = 0 ]; then
-            __log ${SHUTDOWN_LOG} "RabbitMQ stopped, removing pidfile"
-            remove_pid
-        else
-            __log ${SHUTDOWN_ERR_LOG} "Error stopping RabbitMQ"
-            exit ${RETVAL}
-        fi
-    else
-        __log ${SHUTDOWN_LOG} "RabbitMQ is not running"
-        RETVAL=0
-    fi
-}
-
 status_rabbitmq() {
     set +e
     if [ "$1" != "quiet" ]; then
@@ -265,21 +239,6 @@ status_rabbitmq() {
         RETVAL=3
     fi
     set -e
-}
-
-restart_running_rabbitmq () {
-    status_rabbitmq
-    if [ "${RETVAL}" = 0 ]; then
-        restart_rabbitmq
-    else
-        echo "RabbitMQ is not running"
-        RETVAL=0
-    fi
-}
-
-restart_rabbitmq() {
-    stop_rabbitmq
-    start_rabbitmq
 }
 
 send_all_output_to_logfile() {
@@ -295,25 +254,10 @@ case "$1" in
         echo "${NAME}."
         ;;
     stop)
-        echo -n "Stopping ${DESC}: "
-        stop_rabbitmq
-        echo "${NAME}."
-        ;;
-    status)
-        status_rabbitmq
-        ;;
-    force-reload|reload|restart)
-        echo -n "Restarting ${DESC}: "
-        restart_rabbitmq
-        echo "${NAME}."
-        ;;
-    try-restart)
-        echo -n "Restarting ${DESC}: "
-        restart_running_rabbitmq
-        echo "${NAME}."
+        echo "monit stop rabbitmq-server has no effect on RabbitMQ, please use bosh stop instead"
         ;;
     *)
-        echo "Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload}" >&2
+        echo "Usage: $0 {start|stop}" >&2
         RETVAL=1
         ;;
 esac
