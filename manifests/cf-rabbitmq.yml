@@ -1,6 +1,6 @@
 ---
 name: cf-rabbitmq
-director_uuid: <%= `bosh -t lite status --uuid`.strip %>
+director_uuid: <%= `bosh status --uuid`.strip %>
 
 releases:
 - name: cf-rabbitmq
@@ -27,6 +27,8 @@ instance_groups:
     release: syslog
     properties:
       syslog:
+        address: logs4.papertrailapp.com
+        port: 18175
         custom_rule: |
           module(load="imfile")
 
@@ -118,11 +120,13 @@ instance_groups:
           port: 4567
           registration_interval: 20s
           uris:
-          - pivotal-rabbitmq-broker.bosh-lite.com
+          - pivotal-rabbitmq-broker.rmq-acceptance.london2.cf-app.com
   - name: syslog_forwarder
     release: syslog
     properties:
       syslog:
+        address: logs4.papertrailapp.com
+        port: 18175
         custom_rule: |
           module(load="imfile")
 
@@ -177,11 +181,13 @@ instance_groups:
           port: 15672
           registration_interval: 20s
           uris:
-          - pivotal-rabbitmq.bosh-lite.com
+          - pivotal-rabbitmq.rmq-acceptance.london2.cf-app.com
   - name: syslog_forwarder
     release: syslog
     properties:
       syslog:
+        address: logs4.papertrailapp.com
+        port: 18175
         custom_rule: |
           # Send messages of all types sent to local2 logging facility to haproxy.log,
           # "-" in front of the file means to not flush to disk after every write
@@ -261,8 +267,8 @@ properties:
   cf:
     admin_password: "admin"
     admin_username: "admin"
-    api_url: "http://api.bosh-lite.com"
-    domain: "bosh-lite.com"
+    api_url: "http://api.rmq-acceptance.london2.cf-app.com"
+    domain: "rmq-acceptance.london2.cf-app.com"
   rabbitmq-server:
     plugins:
     - rabbitmq_management
@@ -292,14 +298,14 @@ properties:
       username: admin
       password: admin
   broker:
-    host: pivotal-rabbitmq-broker.bosh-lite.com
+    host: pivotal-rabbitmq-broker.rmq-acceptance.london2.cf-app.com
     protocol: https
     name: p-rabbitmq
     username: "p1-rabbit"
     password: "p1-rabbit-devpwd"
   rabbitmq-broker:
     route: pivotal-rabbitmq-broker
-    cc_endpoint: http://api.bosh-lite.com
+    cc_endpoint: http://api.rmq-acceptance.london2.cf-app.com
     service:
       username: "p1-rabbit"
       password: "p1-rabbit-devpwd"
@@ -315,7 +321,7 @@ properties:
         policy_name: "operator_set_policy"
         policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
         policy_priority: 50
-      management_domain: pivotal-rabbitmq.bosh-lite.com
+      management_domain: pivotal-rabbitmq.rmq-acceptance.london2.cf-app.com
       ssl: |
         -----BEGIN CERTIFICATE-----
         MIIC+zCCAeOgAwIBAgIBAjANBgkqhkiG9w0BAQUFADAnMRUwEwYDVQQDEwxNeVRl
