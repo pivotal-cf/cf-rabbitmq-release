@@ -40,6 +40,8 @@ RETVAL=0
 [ -f "/var/vcap/store/rabbitmq/etc/default/${NAME}" ] && . "/var/vcap/store/rabbitmq/etc/default/${NAME}"
 # shellcheck disable=SC1091
 . /var/vcap/jobs/rabbitmq-server/etc/users
+# shellcheck disable=SC1091
+. /var/vcap/jobs/rabbitmq-server/etc/config
 
 ensure_dir() {
     DIR=$1
@@ -248,7 +250,7 @@ send_all_output_to_logfile
 case "$1" in
     start)
         echo -n "Starting ${DESC}: "
-        ulimit -n <%= p('rabbitmq-server.fd_limit') %>
+        ulimit -n "$RMQ_FD_LIMIT"
         start_rabbitmq
         echo "${NAME}."
         ;;

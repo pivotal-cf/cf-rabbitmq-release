@@ -73,10 +73,11 @@ templates:
   plugins.sh.erb:               bin/plugins.sh
   post-deploy.bash:             bin/post-deploy
   pre-start.erb:                bin/pre-start
-  rabbitmq-server.init.erb:     bin/rabbitmq-server.init
+  rabbitmq-server.init.bash:    bin/rabbitmq-server.init
   rabbitmq.config.erb:          etc/rabbitmq.config
   setup.sh.erb:                 bin/setup.sh
   users.erb:                    etc/users
+  config.erb:                   etc/config
 
 provides:
   - name: rabbitmq-server
