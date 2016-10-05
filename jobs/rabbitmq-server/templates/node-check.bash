@@ -39,6 +39,6 @@ send_all_output_to_logfile() {
 
 send_all_output_to_logfile
 SCRIPT_CALLER="${1:-node-check}"
-echo "Running node checks from $SCRIPT_CALLER..."
+echo "Running node checks at $(date) from $SCRIPT_CALLER..."
 main
 echo "Node checks running from $SCRIPT_CALLER passed"
