@@ -67,22 +67,21 @@ properties:
     description: "Syslog drain port"
 
 templates:
-  plugins.sh.erb:             bin/plugins.sh
-  rabbitmq-server.init.erb:   bin/rabbitmq-server.init
-  setup.sh.erb:               bin/setup.sh
-  node_name_migration.sh:     bin/node_name_migration.sh
-  rabbitmq.config.erb:        etc/rabbitmq.config
-  cacert.pem.erb:             etc/cacert.pem
-  cert.pem.erb:               etc/cert.pem
-  key.pem.erb:                etc/key.pem
-  users.erb:                  etc/users
-  pre-start.erb:              bin/pre-start
-  post-deploy.bash:           bin/post-deploy
-  node-check.bash:            bin/node-check
-  cluster-check.bash:         bin/cluster-check
-  syslog_forwarder.conf.erb:  config/syslog_forwarder.conf
-  rabbitmq_syslog.conf.erb:   config/rabbitmq_syslog.conf
-  delete_old_files.bash:      lib/delete_old_files.bash
-  prepare_for_upgrade.bash:   lib/prepare_for_upgrade.bash
-  cleanup-http-logs.bash:     bin/cleanup-http-logs
-
+  add-rabbitmqctl-to-path.bash: bin/add-rabbitmqctl-to-path
+  cacert.pem.erb:               etc/cacert.pem
+  cert.pem.erb:                 etc/cert.pem
+  cleanup-http-logs.bash:       bin/cleanup-http-logs
+  cluster-check.bash:           bin/cluster-check
+  delete_old_files.bash:        lib/delete_old_files.bash
+  drain.bash:                   bin/drain
+  key.pem.erb:                  etc/key.pem
+  node-check.bash:              bin/node-check
+  node_name_migration.sh:       bin/node_name_migration.sh
+  plugins.sh.erb:               bin/plugins.sh
+  post-deploy.bash:             bin/post-deploy
+  pre-start.erb:                bin/pre-start
+  rabbitmq-server.init.bash:    bin/rabbitmq-server.init
+  rabbitmq.config.erb:          etc/rabbitmq.config
+  setup.sh.erb:                 bin/setup.sh
+  users.erb:                    etc/users
+  config.erb:                   etc/config

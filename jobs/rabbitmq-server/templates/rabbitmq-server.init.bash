@@ -43,6 +43,8 @@ RETVAL=0
 # shellcheck disable=SC1091
 . /var/vcap/jobs/rabbitmq-server/etc/users
 # shellcheck disable=SC1091
+. /var/vcap/jobs/rabbitmq-server/etc/config
+# shellcheck disable=SC1091
 . /var/vcap/jobs/rabbitmq-server/lib/prepare_for_upgrade.bash
 
 __log() {
@@ -280,7 +282,7 @@ send_all_output_to_logfile
 case "$1" in
     start)
         echo -n "Starting ${DESC}: "
-        ulimit -n <%= p('rabbitmq-server.fd_limit') %>
+        ulimit -n "$RMQ_FD_LIMIT"
         start_rabbitmq
         echo "${NAME}."
         ;;
