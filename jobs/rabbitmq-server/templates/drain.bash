@@ -39,6 +39,17 @@ rabbitmq_node_is_stopped() {
   then
     ! erlang_pid_points_to_a_running_process
   fi
+
+  ! rabbitmqctl_returns_an_erlang_pid
+  ! something_is_using_the_rabbit_store
+}
+
+rabbitmqctl_returns_an_erlang_pid() {
+  rabbitmqctl eval 'list_to_integer(os:getpid()).' 1> /dev/null
+}
+
+something_is_using_the_rabbit_store() {
+  lsof /var/vcap/store/rabbitmq 1> /dev/null
 }
 
 erlang_pid_file_exists() {
@@ -46,7 +57,7 @@ erlang_pid_file_exists() {
 }
 
 erlang_pid_points_to_a_running_process() {
-  ps "$(cat $ERLANG_PID_FILE)" > /dev/null
+  ps "$(cat $ERLANG_PID_FILE)" 1> /dev/null
 }
 
 rabbitmq_node_is_healthy() {
