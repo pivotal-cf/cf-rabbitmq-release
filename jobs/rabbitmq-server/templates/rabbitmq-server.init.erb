@@ -29,7 +29,6 @@ JOB_DIR=/var/vcap/jobs/rabbitmq-server
 LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 STARTUP_LOG="${LOG_DIR}"/startup_stdout.log
 STARTUP_ERR_LOG="${LOG_DIR}"/startup_stderr.log
-SHUTDOWN_LOG="${LOG_DIR}"/shutdown_stdout.log
 
 test -x "${DAEMON}"
 test -x "${CONTROL}"
@@ -102,7 +101,7 @@ create_admin() {
 delete_operator_admin() {
   set +e
   USERNAME=$(cat $OPERATOR_USERNAME_FILE)
-  "${CONTROL}" delete_user "$USERNAME" >> "${SHUTDOWN_LOG}" 2>&1
+  "${CONTROL}" delete_user "$USERNAME" >> "${STARTUP_LOG}" 2>&1
   set -e
   true
 }
