@@ -2,7 +2,7 @@
 
 [ -z "$DEBUG" ] || set -x
 
-export PATH=/var/vcap/packages/erlang/bin:/var/vcap/packages/rabbitmq-server/bin:$PATH
+export PATH=/var/vcap/jobs/rabbitmq-server/bin:/var/vcap/packages/erlang/bin:/var/vcap/packages/rabbitmq-server/bin:$PATH
 
 ERLANG_PID_FILE=/var/vcap/sys/run/rabbitmq-server/pid
 
@@ -62,10 +62,11 @@ erlang_pid_points_to_a_running_process() {
 
 rabbitmq_node_is_healthy() {
   log "Check RabbitMQ node is healthy ..."
+  node-check "rabbitmq-server/drain"
 }
 
 cluster_is_healthy() {
-  log "Check RabbitMQ cluster is healthy ..."
+  log "TODO: Check RabbitMQ cluster is healthy ..."
 }
 
 main
