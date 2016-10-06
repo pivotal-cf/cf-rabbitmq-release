@@ -1,6 +1,6 @@
 ---
 name: cf-rabbitmq
-director_uuid: <%= `bosh -t lite status --uuid`.strip %>
+director_uuid: <%= `bosh -t zhou-lite status --uuid`.strip %>
 releases:
 - name: cf-rabbitmq
   version: latest
@@ -49,7 +49,7 @@ jobs:
   - name: services1
   properties:
     broker:
-      host: pivotal-rabbitmq-broker.bosh-lite.com
+      host: pivotal-rabbitmq-broker.zhou-lite.london2.cf-app.com
       name: p-rabbitmq
       username: "p1-rabbit"
       password: "p1-rabbit-devpwd"
@@ -64,7 +64,7 @@ jobs:
   - name: services1
   properties:
     broker:
-      host: pivotal-rabbitmq-broker.bosh-lite.com
+      host: pivotal-rabbitmq-broker.zhou-lite.london2.cf-app.com
       name: p-rabbitmq
       username: "p1-rabbit"
       password: "p1-rabbit-devpwd"
@@ -85,10 +85,10 @@ jobs:
 properties:
   # for broker and route registrars
   cf:
-    admin_password: "admin"
+    admin_password: "genially5-comedienne"
     admin_username: "admin"
-    api_url: "http://api.bosh-lite.com"
-    domain: "bosh-lite.com"
+    api_url: "http://api.zhou-lite.london2.cf-app.com"
+    domain: "zhou-lite.london2.cf-app.com"
     nats:
       machines:
         - 10.244.0.6
@@ -97,7 +97,7 @@ properties:
       username: "nats"
       password: "nats"
   route_registrar:
-    message_bus_servers: 
+    message_bus_servers:
       - host: 10.244.0.6
         port: 4222
         user: "nats"
@@ -211,7 +211,7 @@ properties:
   rabbitmq-broker:
     route: pivotal-rabbitmq-broker
     ip: 10.244.9.14
-    cc_endpoint: http://api.bosh-lite.com
+    cc_endpoint: http://api.zhou-lite.london2.cf-app.com
     service:
       username: "p1-rabbit"
       password: "p1-rabbit-devpwd"
@@ -227,7 +227,7 @@ properties:
         policy_name: "operator_set_policy"
         policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
         policy_priority: 50
-      management_domain: pivotal-rabbitmq.bosh-lite.com
+      management_domain: pivotal-rabbitmq.zhou-lite.london2.cf-app.com
       management_ip: "10.244.9.50"
       ssl: |
         -----BEGIN CERTIFICATE-----
