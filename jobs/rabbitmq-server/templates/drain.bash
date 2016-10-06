@@ -11,6 +11,9 @@ SHUTDOWN_LOG="${LOG_DIR}"/shutdown_stdout.log
 SHUTDOWN_ERR_LOG="${LOG_DIR}"/shutdown_stderr.log
 DRAIN_LOG="${LOG_DIR}/drain.log"
 
+# shellcheck disable=SC1091
+. /var/vcap/jobs/rabbitmq-server/etc/config
+
 main() {
   log "Begin RabbitMQ node shutdown ..."
 
@@ -62,7 +65,11 @@ rabbitmq_node_is_healthy() {
 }
 
 cluster_is_healthy() {
-  log "TODO: Check RabbitMQ cluster is healthy ..."
+  log "Check RabbitMQ cluster is healthy ..."
+  if [[ $BOOTSTRAP_NODE == "true" ]]
+  then
+    cluster-check "rabbitmq-server/drain" 1>> "$DRAIN_LOG" 2>&1
+  fi
 }
 
 stop_erlang_vm_and_rabbitmq_app() {
