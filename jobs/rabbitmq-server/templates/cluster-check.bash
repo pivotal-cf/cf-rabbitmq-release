@@ -12,7 +12,7 @@ RMQ_USERS=($(rabbitmqctl list_users | tail -n +2))
 RMQ_VHOSTS=($(rabbitmqctl list_vhosts | tail -n +2))
 
 main() {
-  cluster_is_healthy
+  rabbitmq_application_is_running
   rmq_user_does_not_exist "guest"
 
   rmq_user_exists "$RMQ_BROKER_USERNAME"
@@ -31,9 +31,12 @@ main() {
   fi
 }
 
-cluster_is_healthy() {
+# rabbitmq_application_is_running checks the health of the node to determine
+# whether the application is running. We assume if the application is not
+# running that the cluster is not healthy.
+rabbitmq_application_is_running() {
   rabbitmqctl node_health_check ||
-  fail "RabbitMQ cluster is not healthy"
+  fail "RabbitMQ application is not running"
 }
 
 rmq_user_does_not_exist() {
