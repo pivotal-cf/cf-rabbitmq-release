@@ -21,7 +21,6 @@ main() {
   then
     log "RabbitMQ node is not running, nothing to shutdown."
   else
-    rabbitmq_node_is_healthy
     cluster_is_healthy
     log "Stop RabbitMQ node..."
     stop_erlang_vm_and_rabbitmq_app
@@ -57,11 +56,6 @@ erlang_pid_file_exists() {
 
 erlang_pid_points_to_a_running_process() {
   ps "$(cat $ERLANG_PID_FILE)" 1>> "$DRAIN_LOG" 2>&1
-}
-
-rabbitmq_node_is_healthy() {
-  log "Check RabbitMQ node is healthy ..."
-  node-check "rabbitmq-server/drain" 1>> "$DRAIN_LOG" 2>&1
 }
 
 cluster_is_healthy() {
