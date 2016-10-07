@@ -16,9 +16,9 @@ rabbitmq-server/rabbitmq-server-generic-unix-3.6.5.tar.xz:
   sha: ef3e347f185d1c19312bc92f69c75dc627a84356
   size: 5316336
 rabbitmq-server/rabbitmq_clusterer-3.6.5.ez:
-  object_id: 485c7ce5-e953-4396-bd4e-a228a7adcce9
-  sha: da7ca5dd229a5c301b6fbfa917d98eb1b2ea0861
-  size: 59582
+  object_id: 7f239ae1-57cd-4b82-b41e-3869c228a108
+  sha: 3469acac9d4b029cb7c8216d09a1f959a68c2e29
+  size: 58675
 golang/go1.6.3.linux-amd64.tar.gz:
   object_id: 4efe2587-9d73-41fe-bc64-6c66f3a035cc
   sha: 5e916ba4dd8c2fc43beafca4c08b334c4d0686f3
