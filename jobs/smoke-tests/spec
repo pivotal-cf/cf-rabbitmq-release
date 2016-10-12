@@ -28,3 +28,6 @@ properties:
   smoke_tests.timeout_scale:
     description: Timeout scale to be used by the smoke tests errand
     default: 3
+  smoke_tests.test_password:
+    description: The password to use for the user with which smoke tests are run.
+    default: ""
