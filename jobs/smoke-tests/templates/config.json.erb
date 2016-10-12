@@ -8,5 +8,6 @@
   "plan_names":                       [ "standard" ],
   "timeout_scale":                    <%= p('smoke_tests.timeout_scale') %>,
   "skip_ssl_validation":              true,
-  "create_permissive_security_group": true
+  "create_permissive_security_group": true,
+  "test_password":                    "<%= p('smoke_tests.test_password') %>"
 }
