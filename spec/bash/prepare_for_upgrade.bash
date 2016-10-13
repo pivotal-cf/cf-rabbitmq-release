@@ -4,7 +4,15 @@
 export T_fail
 
 # shellcheck disable=SC1091
+. spec/bash/test_helpers
+
+# shellcheck disable=SC1091
 . jobs/rabbitmq-server/templates/prepare_for_upgrade.bash
+
+T_when_mnesia_dir_not_provided_it_fails() {
+  expect_to_contain "$(run_prepare_for_upgrade_when_first_deploy 2>&1)" "mnesia_dir must be provided as first argument" ||
+  $T_fail
+}
 
 T_when_mnesia_dir_exists_it_runs_prepare_for_upgrade() {
   (

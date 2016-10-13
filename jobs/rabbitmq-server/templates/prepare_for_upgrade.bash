@@ -20,11 +20,10 @@ prepare_for_upgrade () {
 
 run_prepare_for_upgrade_when_first_deploy() {
   local mnesia_dir
-  mnesia_dir="$1"
+  mnesia_dir="${1:?mnesia_dir must be provided as first argument}"
 
   if [ -d "$mnesia_dir" ]
   then
     prepare_for_upgrade
   fi
 }
-

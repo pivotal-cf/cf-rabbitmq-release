@@ -156,7 +156,7 @@ start_rabbitmq () {
         RETVAL=0
         run_script "${JOB_DIR}/bin/setup.sh"
         run_script "${JOB_DIR}/bin/plugins.sh"
-        run_prepare_for_upgrade_when_first_deploy
+        run_prepare_for_upgrade_when_first_deploy "/var/vcap/store/rabbitmq/mnesia"
         __log ${STARTUP_LOG} "Starting RabbitMQ"
         track_rabbitmq_erlang_vm_pid_in_pid_file
         RABBITMQ_PID_FILE="${PID_FILE}" "${START_PROG}" "${DAEMON}" \
