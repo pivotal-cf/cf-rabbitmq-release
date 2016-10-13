@@ -83,5 +83,6 @@ templates:
   syslog_forwarder.conf.erb:  config/syslog_forwarder.conf
   rabbitmq_syslog.conf.erb:   config/rabbitmq_syslog.conf
   delete_old_files.bash:      lib/delete_old_files.bash
+  prepare_for_upgrade.bash:   lib/prepare_for_upgrade.bash
   cleanup-http-logs.bash:     bin/cleanup-http-logs
 

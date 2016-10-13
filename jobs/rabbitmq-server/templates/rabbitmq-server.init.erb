@@ -42,6 +42,8 @@ RETVAL=0
 [ -f "/var/vcap/store/rabbitmq/etc/default/${NAME}" ] && . "/var/vcap/store/rabbitmq/etc/default/${NAME}"
 # shellcheck disable=SC1091
 . /var/vcap/jobs/rabbitmq-server/etc/users
+# shellcheck disable=SC1091
+. /var/vcap/jobs/rabbitmq-server/lib/prepare_for_upgrade
 
 __log() {
   MESSAGE="$("${TIMESTAMP}"): $2"
@@ -139,18 +141,6 @@ run_script() {
     esac
 }
 
-prepare_for_upgrade () {
-  __log ${STARTUP_LOG} "Preparing RabbitMQ for potential upgrade"
-  for remote_node in $(cat /var/vcap/data/upgrade_preparation_nodes); do
-    /var/vcap/packages/rabbitmq-upgrade-preparation/bin/rabbitmq-upgrade-preparation \
-      -rabbitmqctl-path $CONTROL \
-      -node $remote_node \
-      -new-rabbitmq-version $(cat ${RMQ_SERVER_PACKAGE}/rmq_version) \
-      -new-erlang-version $(cat ${RMQ_SERVER_PACKAGE}/erlang_version) \
-      1> >(tee -a "${LOG_DIR}"/upgrade.log) 2>&1
-  done
-}
-
 start_rabbitmq () {
     ensure_dirs
     status_rabbitmq
@@ -166,7 +156,7 @@ start_rabbitmq () {
         RETVAL=0
         run_script "${JOB_DIR}/bin/setup.sh"
         run_script "${JOB_DIR}/bin/plugins.sh"
-        prepare_for_upgrade
+        run_prepare_for_upgrade_when_first_deploy
         __log ${STARTUP_LOG} "Starting RabbitMQ"
         track_rabbitmq_erlang_vm_pid_in_pid_file
         RABBITMQ_PID_FILE="${PID_FILE}" "${START_PROG}" "${DAEMON}" \
