@@ -76,6 +76,7 @@ templates:
   cert.pem.erb:                 etc/cert.pem
   cleanup-http-logs.bash:       bin/cleanup-http-logs
   cluster-check.bash:           bin/cluster-check
+  config.erb:                   etc/config
   delete_old_files.bash:        lib/delete_old_files.bash
   drain.bash:                   bin/drain
   key.pem.erb:                  etc/key.pem
@@ -84,8 +85,10 @@ templates:
   plugins.sh.erb:               bin/plugins.sh
   post-deploy.bash:             bin/post-deploy
   pre-start.erb:                bin/pre-start
+  prepare-for-upgrade.bash      lib/prepare-for-upgrade.bash
   rabbitmq-server.init.bash:    bin/rabbitmq-server.init
   rabbitmq.config.erb:          etc/rabbitmq.config
+  rabbitmq_syslog.conf.erb:     config/rabbitmq_syslog.conf
   setup.sh.erb:                 bin/setup.sh
+  syslog_forwarder.conf.erb:    config/syslog_forwarder.conf
   users.erb:                    etc/users
-  config.erb:                   etc/config
