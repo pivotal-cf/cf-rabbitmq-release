@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash -e
 
-prepare_for_upgrade () {
+run_rabbitmq_upgrade_preparation_on_every_node() {
   __log "$STARTUP_LOG" "Preparing RabbitMQ for potential upgrade"
 
   local remote_nodes remote_node new_rabbitmq_version new_erlang_version
@@ -16,6 +16,13 @@ prepare_for_upgrade () {
       -new-erlang-version "$new_erlang_version" \
       1> >(tee -a "${LOG_DIR}/upgrade.log") 2>&1
   done
+}
+
+prepare_for_upgrade() {
+  if [ -z "$SKIP_PREPARE_FOR_UPGRADE" ]
+  then
+    run_rabbitmq_upgrade_preparation_on_every_node
+  fi
 }
 
 run_prepare_for_upgrade_when_first_deploy() {
