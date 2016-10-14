@@ -45,7 +45,7 @@ RETVAL=0
 # shellcheck disable=SC1091
 . /var/vcap/jobs/rabbitmq-server/etc/config
 # shellcheck disable=SC1091
-. /var/vcap/jobs/rabbitmq-server/lib/prepare_for_upgrade.bash
+. /var/vcap/jobs/rabbitmq-server/lib/prepare-for-upgrade.bash
 
 __log() {
   MESSAGE="$("${TIMESTAMP}"): $2"
