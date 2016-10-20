@@ -31,3 +31,7 @@ java/jre-1.8.0_102.tar.gz:
   object_id: 7ebce62f-8a15-414f-95b0-fd437b9ce5d6
   sha: 826e439a697b4506455e8fbb7aa949e774b18992
   size: 71885713
+erlang/otp_src_oss_18.3.4.4.tgz:
+  object_id: 0cf2f5b4-36d4-487f-b738-934c47ce7e43
+  sha: 0de974b4309cb59103a1feb6912e4c90fd509f4b
+  size: 35429734

@@ -154,10 +154,18 @@ RSpec.describe "RabbitMQ server configuration" do
         expect(ssl_options).to include('{depth,5}')
       end
 
-      it 'should have TLS enabled' do
-        expect(tls_version_enabled?(rmq_host, 'tls1')).to be_truthy
-        expect(tls_version_enabled?(rmq_host, 'tls1_1')).to be_truthy
-        expect(tls_version_enabled?(rmq_host, 'tls1_2')).to be_truthy
+      describe "TLS" do
+        it 'should have TLS 1.0 enabled' do
+          expect(tls_version_enabled?(rmq_host, 'tls1')).to be_truthy
+        end
+
+        it 'should have TLS 1.1 enabled' do
+          expect(tls_version_enabled?(rmq_host, 'tls1_1')).to be_truthy
+        end
+
+        it 'should have TLS 1.2 enabled' do
+          expect(tls_version_enabled?(rmq_host, 'tls1_2')).to be_truthy
+        end
       end
     end
   end
