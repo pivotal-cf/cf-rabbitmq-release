@@ -13,3 +13,4 @@ gem "stomp", '~> 1.3.1'
 gem "prof", '~> 0.31.15'
 gem "hula", '~> 0.8.10'
 gem "rspec-retry"
+gem "nokogiri", "~> 1.6.8.1"
