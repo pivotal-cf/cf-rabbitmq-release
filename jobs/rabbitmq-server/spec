@@ -77,6 +77,7 @@ templates:
   cluster-check.bash:           bin/cluster-check
   config.erb:                   etc/config
   delete_old_files.bash:        lib/delete_old_files.bash
+  drain.bash:                   bin/drain
   key.pem.erb:                  etc/key.pem
   node-check.bash:              bin/node-check
   node_name_migration.sh:       bin/node_name_migration.sh
