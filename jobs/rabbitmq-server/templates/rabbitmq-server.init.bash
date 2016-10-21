@@ -109,7 +109,7 @@ delete_operator_admin() {
 run_script() {
     local script
     script=$1
-    echo ${STARTUP_LOG} "Starting ${script}"
+    echo "Starting ${script}"
     set +e
     "${script}" \
         1>> "${STARTUP_LOG}" \
@@ -119,11 +119,11 @@ run_script() {
     set -e
     case "${RETVAL}" in
         0)
-            echo ${STARTUP_LOG} "Finished ${script}"
+            echo "Finished ${script}"
             return 0
             ;;
         *)
-            echo ${STARTUP_ERR_LOG} "Errored ${script}"
+            echo "Errored ${script}"
             RETVAL=1
             exit "${RETVAL}"
             ;;
@@ -131,7 +131,7 @@ run_script() {
 }
 
 prepare_for_upgrade () {
-  echo ${STARTUP_LOG} "Preparing RabbitMQ for potential upgrade"
+  echo "Preparing RabbitMQ for potential upgrade"
   local remote_nodes
   remote_nodes="$(cat /var/vcap/data/upgrade_preparation_nodes)"
   for remote_node in "${remote_nodes[@]}"; do
@@ -149,7 +149,7 @@ start_rabbitmq () {
     status_rabbitmq
     if [ "${RETVAL}" = 0 ]; then
         "${CONTROL}" eval 'list_to_integer(os:getpid()).' > $PID_FILE
-        echo ${STARTUP_LOG} "RabbitMQ is currently running"
+        echo "RabbitMQ is currently running"
         if [ -f "$PID_FILE" ]
         then
           /var/vcap/jobs/rabbitmq-server/bin/node-check "rabbitmq-server.init" ||
@@ -160,7 +160,7 @@ start_rabbitmq () {
         run_script "${JOB_DIR}/bin/setup.sh"
         run_script "${JOB_DIR}/bin/plugins.sh"
         prepare_for_upgrade
-        echo ${STARTUP_LOG} "Starting RabbitMQ"
+        echo "Starting RabbitMQ"
         track_rabbitmq_erlang_vm_pid_in_pid_file
         RABBITMQ_PID_FILE="${PID_FILE}" "${START_PROG}" "${DAEMON}" \
             >> "${STARTUP_LOG}" \
@@ -180,17 +180,17 @@ start_rabbitmq () {
 
                 if ! /var/vcap/jobs/rabbitmq-server/bin/cluster-check "rabbitmq-server.init"
                 then
-                  echo ${STARTUP_ERR_LOG} "RabbitMQ cluster is not healthy"
+                  echo "RabbitMQ cluster is not healthy"
                   remove_pid
                   RETVAL=1
                   return
                 fi
 
-                echo ${STARTUP_LOG} "RabbitMQ cluster is healthy"
+                echo "RabbitMQ cluster is healthy"
 
                 ;;
             *)
-                echo ${STARTUP_ERR_LOG} "RabbitMQ application failed to start while waiting for cluster to form"
+                echo "RabbitMQ application failed to start while waiting for cluster to form"
                 remove_pid
                 RETVAL=1
                 ;;
@@ -199,7 +199,7 @@ start_rabbitmq () {
 }
 
 configure_users() {
-  echo ${STARTUP_LOG} "Configuring RabbitMQ users ..."
+  echo "Configuring RabbitMQ users ..."
 
   delete_guest
   [ -f $OPERATOR_USERNAME_FILE ] && delete_operator_admin
@@ -208,7 +208,7 @@ configure_users() {
 }
 
 signal_monit_that_rabbitmq_node_is_not_healthy() {
-  echo ${STARTUP_ERR_LOG} "RabbitMQ node is not healthy"
+  echo "RabbitMQ node is not healthy"
 
   echo 0 > "$PID_FILE"
 }
