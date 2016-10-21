@@ -1,5 +1,4 @@
 check process rabbitmq-server
   with pidfile "/var/vcap/sys/run/rabbitmq-server/pid"
-  start program "/var/vcap/jobs/rabbitmq-server/bin/rabbitmq-server.init start"
-  stop program "/var/vcap/jobs/rabbitmq-server/bin/rabbitmq-server.init stop"
+  start program "/var/vcap/jobs/rabbitmq-server/bin/rabbitmq-server.init"
   group vcap
