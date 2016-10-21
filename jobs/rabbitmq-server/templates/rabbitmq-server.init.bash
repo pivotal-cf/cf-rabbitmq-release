@@ -147,6 +147,10 @@ prepare_for_upgrade () {
 start_rabbitmq () {
     ensure_dirs
     status_rabbitmq
+
+    ulimit -n "$RMQ_FD_LIMIT"
+    echo "Start RabbitMQ node... "
+
     if [ "${RETVAL}" = 0 ]; then
         "${CONTROL}" eval 'list_to_integer(os:getpid()).' > $PID_FILE
         echo "RabbitMQ is currently running"
@@ -195,6 +199,8 @@ start_rabbitmq () {
                 RETVAL=1
                 ;;
         esac
+
+        echo "RabbitMQ node started successfully."
     fi
 }
 
@@ -245,18 +251,6 @@ send_all_output_to_logfile() {
 }
 send_all_output_to_logfile
 
-case "$1" in
-    start)
-        ulimit -n "$RMQ_FD_LIMIT"
-        start_rabbitmq
-        ;;
-    stop)
-        echo "monit stop rabbitmq-server has no effect on RabbitMQ, please use bosh stop instead"
-        ;;
-    *)
-        echo "Usage: $0 {start|stop}" >&2
-        RETVAL=1
-        ;;
-esac
+start_rabbitmq
 
 exit "${RETVAL}"
