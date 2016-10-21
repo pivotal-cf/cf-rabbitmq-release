@@ -14,11 +14,9 @@
 
 export PATH=/var/vcap/packages/erlang/bin:$PATH
 
-NAME=rabbitmq-server
 RMQ_SERVER_PACKAGE=/var/vcap/packages/rabbitmq-server
 DAEMON=${RMQ_SERVER_PACKAGE}/bin/rabbitmq-server
 CONTROL=${RMQ_SERVER_PACKAGE}/bin/rabbitmqctl
-DESC=rabbitmq-server
 USER=vcap
 PID_FILE=/var/vcap/sys/run/rabbitmq-server/pid
 HOME_DIR=/var/vcap/store/rabbitmq
@@ -37,7 +35,7 @@ test -x "${START_PROG}"
 RETVAL=0
 
 # shellcheck disable=SC1090
-[ -f "/var/vcap/store/rabbitmq/etc/default/${NAME}" ] && . "/var/vcap/store/rabbitmq/etc/default/${NAME}"
+[ -f "/var/vcap/store/rabbitmq/etc/default/rabbitmq-server" ] && . "/var/vcap/store/rabbitmq/etc/default/rabbitmq-server"
 # shellcheck disable=SC1091
 . /var/vcap/jobs/rabbitmq-server/etc/users
 # shellcheck disable=SC1091
@@ -249,10 +247,8 @@ send_all_output_to_logfile
 
 case "$1" in
     start)
-        echo -n "Starting ${DESC}: "
         ulimit -n "$RMQ_FD_LIMIT"
         start_rabbitmq
-        echo "${NAME}."
         ;;
     stop)
         echo "monit stop rabbitmq-server has no effect on RabbitMQ, please use bosh stop instead"
