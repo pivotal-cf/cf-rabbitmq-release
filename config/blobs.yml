@@ -1,12 +1,4 @@
 ---
-erlang/otp_src_oss_18.1.tgz:
-  object_id: 6cf4831f-727d-44b5-9cd2-1bb33c25b4c5
-  sha: cf5a7e63074a4743e976d87b5f9fe80deac61cfe
-  size: 68197399
-cf-cli/cf-cli_6.17.0_linux_x86-64.tgz:
-  object_id: e54af7b0-973c-4bbe-ac47-a7f95c6f8d2f
-  sha: c552c8f4436a63c2034d47f66fd218426c632112
-  size: 6153376
 cf-cli/cf-cli_6.19.0_linux_x86-64.tgz:
   object_id: 22ad54c4-568e-4ca3-aa73-12b691e3f678
   sha: 625170654ffa4568dae97b4d3915e87557b29261
