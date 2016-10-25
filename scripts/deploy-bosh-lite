@@ -2,7 +2,7 @@
 
 [ -z "$DEBUG" ] || set -x
 
-WORKSPACE="${WORKSPACE:-$HOME/workspace}"
+WORKSPACE="$(cd $(dirname ${BASH_SOURCE[0]})/../../ && pwd)" #taken from https://github.com/cloudfoundry/bosh-lite/blob/master/bin/provision_cf#L7
 BOSH_LITE_URL="${1:-https://192.168.50.4:25555}"
 BOSH_LITE_STEMCELL="bosh-stemcell-3262.2-warden-boshlite-ubuntu-trusty-go_agent.tgz"
 BOSH_LITE_STEMCELL_URL="https://s3.amazonaws.com/bosh-warden-stemcells/$BOSH_LITE_STEMCELL"
