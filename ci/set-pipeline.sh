@@ -1,4 +1,4 @@
-#!/bin/bash -eu
+#!/bin/bash -e
 
 if ! which lpass > /dev/null 2>&1
 then

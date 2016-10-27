@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+[ -z "$DEBUG" ] || set -x
+
+WORKDIR=$GOPATH/src/github.com/pivotal-cf/rabbitmq-upgrade-preparation
+
+main() {
+  setup_workdir
+  script/setup
+  script/run_tests
+}
+
+setup_workdir() {
+  mkdir -p "$WORKDIR"
+  cp -r "$PWD"/rabbitmq-upgrade-preparation/* "$WORKDIR"/
+  cd "$WORKDIR"
+}
+
+main

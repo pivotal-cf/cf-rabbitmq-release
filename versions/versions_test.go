@@ -1,6 +1,7 @@
 package versions_test
 
 import (
+	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/pivotal-cf/rabbitmq-upgrade-preparation/versions"
 
 	. "github.com/onsi/ginkgo"
@@ -9,25 +10,37 @@ import (
 
 var _ = Describe("Versions", func() {
 	Describe("RabbitVersions", func() {
-		It("detects a minor version bump in RabbitMQ", func() {
-			versions := &RabbitVersions{Desired: "3.5", Deployed: "3.4.3.1"}
-			Expect(versions.PreparationRequired()).To(BeTrue())
-		})
+		DescribeTable("upgrade preparation required",
+			func(deployedVersion, desiredVersion string) {
+				versions := &RabbitVersions{Desired: desiredVersion, Deployed: deployedVersion}
+				Expect(versions.PreparationRequired()).To(BeTrue())
+			},
+			Entry("3.4.4.1 to 3.6.3 requires upgrade preparation", "3.4.4.1", "3.6.3"),
+			Entry("3.4.4.1 to 3.6.1.904 requires upgrade preparation", "3.4.4.1", "3.6.1.904"),
+			Entry("3.5.7 to 3.6.3 requires upgrade preparation", "3.5.7", "3.6.3"),
+			Entry("3.6.1.904 to 3.6.6 requires upgrade preparation", "3.6.1.904", "3.6.6"),
+			Entry("3.6.3 to 3.6.6 requires upgrade preparation", "3.6.3", "3.6.6"),
+			Entry("3.6.5 to 3.6.6 requires upgrade preparation", "3.6.5", "3.6.6"),
+			Entry("3.6.3 to 3.6.7 requires upgrade preparation", "3.6.3", "3.6.7"),
+			Entry("3.6.5 to 3.6.7 requires upgrade preparation", "3.6.5", "3.6.7"),
+			Entry("3.6.5 to 3.7.0 requires upgrade preparation", "3.6.5", "3.7.0"),
+			Entry("3.6.6 to 3.7.0 requires upgrade preparation", "3.6.6", "3.7.0"),
+		)
 
-		It("detects a major version bump in RabbitMQ", func() {
-			versions := &RabbitVersions{Desired: "4.4", Deployed: "3.4.3.1"}
-			Expect(versions.PreparationRequired()).To(BeTrue())
-		})
-
-		It("detects no change required for a patch version bump in RabbitMQ", func() {
-			versions := &RabbitVersions{Desired: "3.4.4.1", Deployed: "3.4.3.1"}
-			Expect(versions.PreparationRequired()).To(BeFalse())
-		})
-
-		It("detects no change required for a hotfix version bump in RabbitMQ", func() {
-			versions := &RabbitVersions{Desired: "3.4.3.2", Deployed: "3.4.3.1"}
-			Expect(versions.PreparationRequired()).To(BeFalse())
-		})
+		DescribeTable("upgrade preparation not required",
+			func(deployedVersion, desiredVersion string) {
+				versions := &RabbitVersions{Desired: desiredVersion, Deployed: deployedVersion}
+				Expect(versions.PreparationRequired()).To(BeFalse())
+			},
+			Entry("3.6.1.904 to 3.6.1.904 requires no upgrade preparation", "3.6.1.904", "3.6.1.904"),
+			Entry("3.6.1.904 to 3.6.3 requires no upgrade preparation", "3.6.1.904", "3.6.3"),
+			Entry("3.6.3 to 3.6.3 requires no upgrade preparation", "3.6.3", "3.6.3"),
+			Entry("3.6.3 to 3.6.5 requires no upgrade preparation", "3.6.3", "3.6.5"),
+			Entry("3.6.5 to 3.6.5 requires no upgrade preparation", "3.6.5", "3.6.5"),
+			Entry("3.6.6 to 3.6.6 requires no upgrade preparation", "3.6.6", "3.6.6"),
+			Entry("3.6.6 to 3.6.7 requires no upgrade preparation", "3.6.6", "3.6.7"),
+			Entry("3.7.0 to 3.7.0 requires no upgrade preparation", "3.7.0", "3.7.0"),
+		)
 	})
 
 	Describe("ErlangVersions", func() {

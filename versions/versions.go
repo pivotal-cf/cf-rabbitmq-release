@@ -1,6 +1,13 @@
 package versions
 
-import "strings"
+import (
+	"fmt"
+	"log"
+	"strconv"
+	"strings"
+
+	version "github.com/hashicorp/go-version"
+)
 
 type VersionDifference interface {
 	PreparationRequired() bool
@@ -17,12 +24,13 @@ type ErlangVersions struct {
 }
 
 func (v *RabbitVersions) PreparationRequired() bool {
-	return isMinorOrMajorRabbitUpgrade(versionComponents(v.Desired), versionComponents(v.Deployed))
-}
+	toVersion := enforceSemver(v.Desired)
+	fromVersion := enforceSemver(v.Deployed)
+	breakingVersion := enforceSemver("3.6.6")
 
-func isMinorOrMajorRabbitUpgrade(desiredRabbitVersionComponents, deployedRabbitVersionComponents []string) bool {
-	return desiredRabbitVersionComponents[0] != deployedRabbitVersionComponents[0] ||
-		desiredRabbitVersionComponents[1] != deployedRabbitVersionComponents[1]
+	patchUpgrade, _ := version.NewConstraint(fmt.Sprintf("~> %s", fromVersion))
+	breakingVersionUpgrade, _ := version.NewConstraint(fmt.Sprintf("> %s, <= %s", fromVersion, toVersion))
+	return breakingVersionUpgrade.Check(breakingVersion) || !patchUpgrade.Check(toVersion)
 }
 
 func (v *ErlangVersions) PreparationRequired() bool {
@@ -35,4 +43,20 @@ func isMajorErlangUpgrade(desiredErlangVersionComponents, deployedErlangVersionC
 
 func versionComponents(version string) []string {
 	return strings.Split(version, ".")
+}
+
+func enforceSemver(v string) *version.Version {
+	semver, err := version.NewVersion(v)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	var segments []string
+	for i := 0; i < 3; i++ {
+		segments = append(segments, strconv.Itoa(semver.Segments()[i]))
+	}
+
+	semver, _ = version.NewVersion(strings.Join(segments, "."))
+
+	return semver
 }
