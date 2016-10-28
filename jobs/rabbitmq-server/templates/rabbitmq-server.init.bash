@@ -133,7 +133,7 @@ run_script() {
 prepare_for_upgrade () {
   echo "Preparing RabbitMQ for potential upgrade"
   local remote_nodes
-  remote_nodes="$(cat /var/vcap/data/upgrade_preparation_nodes)"
+  remote_nodes=($(cat /var/vcap/data/upgrade_preparation_nodes))
   for remote_node in "${remote_nodes[@]}"; do
     /var/vcap/packages/rabbitmq-upgrade-preparation/bin/rabbitmq-upgrade-preparation \
       -rabbitmqctl-path "$CONTROL" \
