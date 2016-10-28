@@ -19,11 +19,11 @@ cf-cli/cf-cli_6.19.0_linux_x86-64.tgz:
   object_id: 22ad54c4-568e-4ca3-aa73-12b691e3f678
   sha: 625170654ffa4568dae97b4d3915e87557b29261
   size: 6450885
-rabbitmq-server/rabbitmq-server-generic-unix-3.6.3.tar.xz:
-  object_id: 7235da6d-0ac3-45e2-ba7a-a0b46c56ae5b
-  sha: 1764be3802462cd388fa1e749ab0aeb0773ea400
-  size: 5309960
-rabbitmq-server/rabbitmq_clusterer-3.6.3.ez:
-  object_id: 8f3dee15-d2c8-4d4d-9529-ec551f7628f6
-  sha: d702ae21923f947ff64705e4b5d122af958ed4f8
-  size: 57770
+rabbitmq-server/rabbitmq-server-generic-unix-3.6.5.906.tar.xz:
+  object_id: 1f202f4b-dd9e-4ce6-9241-53d677f93031
+  sha: 5040014e4b1ab6c0240f73085849a7d9fb518b19
+  size: 5282688
+rabbitmq-server/rabbitmq_clusterer-3.6.5.906.ez:
+  object_id: 82b023cd-ec3c-4d14-90cc-7ea6263b7a82
+  sha: 1b68e7ca22ca0c90662d89e1eed3a4683aebdd85
+  size: 57475
