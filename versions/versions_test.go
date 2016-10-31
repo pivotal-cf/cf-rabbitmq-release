@@ -41,6 +41,14 @@ var _ = Describe("Versions", func() {
 			Entry("3.6.6 to 3.6.7 requires no upgrade preparation", "3.6.6", "3.6.7"),
 			Entry("3.7.0 to 3.7.0 requires no upgrade preparation", "3.7.0", "3.7.0"),
 		)
+
+		Describe("UpgradeMessage", func() {
+			It("returns the upgrade message", func() {
+				versions := &RabbitVersions{Desired: "3.6.6-rc1", Deployed: "3.6.5"}
+
+				Expect(versions.UpgradeMessage()).To(Equal("It looks like you are trying to upgrade from RabbitMQ 3.6.5 to RabbitMQ 3.6.6-rc1"))
+			})
+		})
 	})
 
 	Describe("ErlangVersions", func() {
@@ -58,5 +66,14 @@ var _ = Describe("Versions", func() {
 			versions := &ErlangVersions{Desired: "18.1", Deployed: "18.1"}
 			Expect(versions.PreparationRequired()).To(BeFalse())
 		})
+
+		Describe("UpgradeMessage", func() {
+			It("returns the upgrade message", func() {
+				versions := &ErlangVersions{Desired: "18.3.4.1", Deployed: "18.3"}
+
+				Expect(versions.UpgradeMessage()).To(Equal("It looks like you are trying to upgrade from Erlang 18.3 to Erlang 18.3.4.1"))
+			})
+		})
+
 	})
 })

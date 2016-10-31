@@ -49,7 +49,9 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 			contents, err := ioutil.ReadFile(tmpFile)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(strings.Count(string(contents), "stop_app -n my-node\n")).To(Equal(1))
-			Eventually(session.Out).Should(gbytes.Say("Stopping RabbitMQ application"))
+			Eventually(session.Out).Should(gbytes.Say("It looks like you are trying to upgrade"))
+			Eventually(session.Out).Should(gbytes.Say("The cluster needs to be taken offline as it cannot run in mixed mode"))
+			Eventually(session.Out).Should(gbytes.Say("Stopping RabbitMQ on my-node"))
 		})
 	}
 
@@ -57,7 +59,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		It("doesn't call stop app", func() {
 			_, err := os.Stat(tmpFile)
 			Expect(os.IsNotExist(err)).To(BeTrue())
-			Consistently(session.Out).ShouldNot(gbytes.Say("Stopping RabbitMQ application"))
+			Consistently(session.Out).ShouldNot(gbytes.Say("Stopping RabbitMQ"))
 		})
 	}
 
@@ -87,11 +89,8 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 	Context("Any time the tool is run", func() {
 		It("should log the arguments it has received", func() {
-			Eventually(session.Out).Should(gbytes.Say("Checking whether upgrade preparation is necessary:"))
-			Eventually(session.Out).Should(gbytes.Say("-rabbitmqctl-path /idontexist/rabbitmqctl"))
-			Eventually(session.Out).Should(gbytes.Say("-node node"))
-			Eventually(session.Out).Should(gbytes.Say("-new-rabbitmq-version 0.0.1"))
-			Eventually(session.Out).Should(gbytes.Say("-new-erlang-version 17"))
+			Eventually(session.Out).Should(gbytes.Say("Checking whether upgrade preparation is necessary for node"))
+			Eventually(session.Out).Should(gbytes.Say("Safe to proceed without stopping RabbitMQ node application, exiting: RabbitMQ application already stopped"))
 		})
 	})
 
@@ -111,7 +110,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itDoesntCallStopApp()
 
 		It("logs the fact that it doesn't need to stop RabbitMQ", func() {
-			Eventually(session.Out).Should(gbytes.Say("Safe to proceed without stopping RabbitMQ application, exiting: No breaking upgrade"))
+			Eventually(session.Out).Should(gbytes.Say("Safe to proceed without taking the cluster offline"))
 		})
 	})
 
@@ -182,7 +181,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itDoesntCallStopApp()
 
 		It("logs that RabbitMQ is down through stdout (no need to stop, not an error)", func() {
-			Eventually(session.Out).Should(gbytes.Say("Safe to proceed without stopping RabbitMQ application, exiting: RabbitMQ application already stopped"))
+			Eventually(session.Out).Should(gbytes.Say("Safe to proceed without stopping RabbitMQ my-node application, exiting: RabbitMQ application already stopped"))
 		})
 	})
 
@@ -203,7 +202,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itDoesntCallStopApp()
 
 		It("logs that the 'rabbit' node is down through stdout (no need to stop)", func() {
-			Eventually(session.Out).Should(gbytes.Say("Safe to proceed without stopping RabbitMQ application, exiting"))
+			Eventually(session.Out).Should(gbytes.Say("RabbitMQ my-node already stopped: No rabbit node running"))
 		})
 	})
 
@@ -224,7 +223,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itDoesntCallStopApp()
 
 		It("logs that the remote epmd cannot be reached, but that this is OK", func() {
-			Eventually(session.Out).Should(gbytes.Say("Safe to proceed without stopping RabbitMQ application, exiting"))
+			Eventually(session.Out).Should(gbytes.Say("RabbitMQ my-node already stopped: Unable to reach epmd but host seems up"))
 		})
 	})
 
@@ -245,7 +244,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itDoesntCallStopApp()
 
 		It("logs to stderr, because we're in an unsafe state", func() {
-			Eventually(session.Err).Should(gbytes.Say("Not safe to proceed, exiting"))
+			Eventually(session.Err).Should(gbytes.Say("Cannot get RabbitMQ status for my-node: Unable to reach epmd and host seems down"))
 		})
 	})
 

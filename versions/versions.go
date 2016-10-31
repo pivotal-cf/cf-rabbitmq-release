@@ -11,14 +11,10 @@ import (
 
 type VersionDifference interface {
 	PreparationRequired() bool
+	UpgradeMessage() string
 }
 
 type RabbitVersions struct {
-	Desired  string
-	Deployed string
-}
-
-type ErlangVersions struct {
 	Desired  string
 	Deployed string
 }
@@ -33,8 +29,21 @@ func (v *RabbitVersions) PreparationRequired() bool {
 	return breakingVersionUpgrade.Check(breakingVersion) || !patchUpgrade.Check(toVersion)
 }
 
+func (v *RabbitVersions) UpgradeMessage() string {
+	return fmt.Sprintf("It looks like you are trying to upgrade from RabbitMQ %s to RabbitMQ %s", v.Deployed, v.Desired)
+}
+
+type ErlangVersions struct {
+	Desired  string
+	Deployed string
+}
+
 func (v *ErlangVersions) PreparationRequired() bool {
 	return isMajorErlangUpgrade(versionComponents(v.Desired), versionComponents(v.Deployed))
+}
+
+func (v *ErlangVersions) UpgradeMessage() string {
+	return fmt.Sprintf("It looks like you are trying to upgrade from Erlang %s to Erlang %s", v.Deployed, v.Desired)
 }
 
 func isMajorErlangUpgrade(desiredErlangVersionComponents, deployedErlangVersionComponents []string) bool {

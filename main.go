@@ -10,32 +10,27 @@ import (
 )
 
 func main() {
-	stdoutLog := log.New(os.Stdout, "", 0)
+	logger := log.New(os.Stdout, "", 0)
 	log.SetFlags(0)
 
 	args := parseArgs()
 
-	stdoutLog.Printf(
-		"Checking whether upgrade preparation is necessary: -rabbitmqctl-path %s -node %s -new-rabbitmq-version %s -new-erlang-version %s",
-		args.rabbitmqctlPath, args.node, args.desiredRabbitMQVersion, args.desiredErlangVersion,
-	)
-
+	logger.Printf("Checking whether upgrade preparation is necessary for %s\n", args.node)
 	rabbitMQCtl := rabbitmqctl.New(args.rabbitmqctlPath)
 
 	status, err := rabbitMQCtl.Status(args.node)
 	if err != nil {
 		if err.Status == rabbitmqctl.UnreachableHost {
-			log.Fatalf("Not safe to proceed, exiting: %s", err)
+			log.Fatalf("Cannot get RabbitMQ status for %s: %s\n", args.node, err)
 		} else if err.Status == rabbitmqctl.UnreachableEpmd || err.Status == rabbitmqctl.StoppedRabbitNode {
-			stdoutLog.Printf("Safe to proceed without stopping RabbitMQ application, exiting: %s", err)
+			logger.Printf("RabbitMQ %s already stopped: %s\n", args.node, err)
 			return
 		}
 	}
 
 	deployedRabbitVersion, ok := status.RabbitMQVersion()
 	if !ok {
-		stdoutLog.Println(
-			"Safe to proceed without stopping RabbitMQ application, exiting: RabbitMQ application already stopped")
+		logger.Printf("Safe to proceed without stopping RabbitMQ %s application, exiting: RabbitMQ application already stopped\n", args.node)
 		return
 	}
 
@@ -47,16 +42,17 @@ func main() {
 	}
 
 	for _, difference := range differences {
+		logger.Printf("%s\n", difference.UpgradeMessage())
 		if difference.PreparationRequired() {
-			stdoutLog.Println("Stopping RabbitMQ application")
+			logger.Println("The cluster needs to be taken offline as it cannot run in mixed mode")
+			logger.Printf("Stopping RabbitMQ on %s\n", args.node)
 			if err := rabbitMQCtl.StopApp(args.node); err != nil {
-				log.Fatalf("Failed to stop RabbitMQ: %s", err)
+				log.Fatalf("Failed to stop RabbitMQ on %s: %s", args.node, err)
 			}
 			return
 		}
 	}
-
-	stdoutLog.Println("Safe to proceed without stopping RabbitMQ application, exiting: No breaking upgrade")
+	logger.Println("Safe to proceed without taking the cluster offline")
 }
 
 type Args struct {
