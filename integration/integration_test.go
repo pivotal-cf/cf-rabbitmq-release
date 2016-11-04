@@ -15,6 +15,7 @@ import (
 
 var _ = Describe("Upgrading RabbitMQ", func() {
 	execBin := func(args ...string) *gexec.Session {
+		args = append(args, "-timeout=1s")
 		cmd := exec.Command(binPath, args...)
 		session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
 		Expect(err).ToNot(HaveOccurred())
@@ -244,7 +245,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itDoesntCallStopApp()
 
 		It("logs to stderr, because we're in an unsafe state", func() {
-			Eventually(session.Err).Should(gbytes.Say("Cannot get RabbitMQ status for my-node: Unable to reach epmd and host seems down"))
+			Eventually(session.Err).Should(gbytes.Say("Unable to connect to node my-node after 3 retries within 1s: Unable to reach epmd and host seems down"))
 		})
 	})
 

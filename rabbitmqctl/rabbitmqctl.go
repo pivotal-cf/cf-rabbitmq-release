@@ -34,7 +34,7 @@ func New(path string) *RabbitMQCtl {
 	return &RabbitMQCtl{path}
 }
 
-func (r *RabbitMQCtl) Status(node string) (RabbitMQCtlStatus, *Error) {
+func (r *RabbitMQCtl) Status(node string) (RabbitMQCtlStatus, error) {
 	out, err := exec.Command(r.path, "status", "-n", node).CombinedOutput()
 
 	if err != nil {

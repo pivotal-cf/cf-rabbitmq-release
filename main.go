@@ -4,7 +4,9 @@ import (
 	"flag"
 	"log"
 	"os"
+	"time"
 
+	"github.com/cenkalti/backoff"
 	"github.com/pivotal-cf/rabbitmq-upgrade-preparation/rabbitmqctl"
 	"github.com/pivotal-cf/rabbitmq-upgrade-preparation/versions"
 )
@@ -17,11 +19,26 @@ func main() {
 
 	logger.Printf("Checking whether upgrade preparation is necessary for %s\n", args.node)
 	rabbitMQCtl := rabbitmqctl.New(args.rabbitmqctlPath)
+	backOffStrategy := backoff.NewExponentialBackOff()
+	backOffStrategy.MaxElapsedTime = args.timeout
+	backOffStrategy.Multiplier = 1.0
 
-	status, err := rabbitMQCtl.Status(args.node)
-	if err != nil {
+	var (
+		status     rabbitmqctl.RabbitMQCtlStatus
+		retryCount int
+	)
+
+	retryErr := backoff.Retry(func() error {
+		retryCount++
+		var statusErr error
+		status, statusErr = rabbitMQCtl.Status(args.node)
+		return statusErr
+	}, backOffStrategy)
+
+	if retryErr != nil {
+		err := retryErr.(*rabbitmqctl.Error)
 		if err.Status == rabbitmqctl.UnreachableHost {
-			log.Fatalf("Cannot get RabbitMQ status for %s: %s\n", args.node, err)
+			log.Fatalf("Unable to connect to node %s after %d retries within %v: %s", args.node, retryCount, args.timeout, err)
 		} else if err.Status == rabbitmqctl.UnreachableEpmd || err.Status == rabbitmqctl.StoppedRabbitNode {
 			logger.Printf("RabbitMQ %s already stopped: %s\n", args.node, err)
 			return
@@ -60,6 +77,7 @@ type Args struct {
 	node                   string
 	desiredRabbitMQVersion string
 	desiredErlangVersion   string
+	timeout                time.Duration
 }
 
 func parseArgs() Args {
@@ -67,6 +85,7 @@ func parseArgs() Args {
 	node := flag.String("node", "", "RabbitMQ node to prepare")
 	newRabbitmqVersion := flag.String("new-rabbitmq-version", "", "Version of RabbitMQ that we are upgrading to")
 	newErlangVersion := flag.String("new-erlang-version", "", "Version of Erlang that we are upgrading to")
+	timeout := flag.Duration("timeout", 60*time.Second, "Maximum time in seconds that you allow rabbitmqctl status to take")
 	flag.Parse()
 
 	assertFlag(*rabbitmqctlPath, "rabbitmqctl-path")
@@ -79,6 +98,7 @@ func parseArgs() Args {
 		node:            *node,
 		desiredRabbitMQVersion: *newRabbitmqVersion,
 		desiredErlangVersion:   *newErlangVersion,
+		timeout:                *timeout,
 	}
 }
 
