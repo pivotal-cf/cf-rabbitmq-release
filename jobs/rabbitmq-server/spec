@@ -72,7 +72,8 @@ templates:
   node_name_migration.sh:       bin/node_name_migration.sh
   plugins.sh.erb:               bin/plugins.sh
   post-deploy.bash:             bin/post-deploy
-  pre-start.erb:                bin/pre-start
+  prepare-for-upgrade.bash:     bin/prepare-for-upgrade
+  pre-start.bash:               bin/pre-start
   rabbitmq-server.init.bash:    bin/rabbitmq-server.init
   rabbitmq.config.erb:          etc/rabbitmq.config
   setup.sh.erb:                 bin/setup.sh

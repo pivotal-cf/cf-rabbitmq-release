@@ -17,12 +17,10 @@ export PATH=/var/vcap/packages/erlang/bin:$PATH
 RMQ_SERVER_PACKAGE=/var/vcap/packages/rabbitmq-server
 DAEMON=${RMQ_SERVER_PACKAGE}/bin/rabbitmq-server
 CONTROL=${RMQ_SERVER_PACKAGE}/bin/rabbitmqctl
-USER=vcap
 PID_FILE=/var/vcap/sys/run/rabbitmq-server/pid
 HOME_DIR=/var/vcap/store/rabbitmq
 OPERATOR_USERNAME_FILE="${HOME_DIR}/operator_administrator.username"
 START_PROG=/usr/bin/setsid
-JOB_DIR=/var/vcap/jobs/rabbitmq-server
 
 LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 STARTUP_LOG="${LOG_DIR}"/startup_stdout.log
@@ -34,24 +32,12 @@ test -x "${START_PROG}"
 
 RETVAL=0
 
-# shellcheck disable=SC1090
+# shellcheck disable=SC1091
 [ -f "/var/vcap/store/rabbitmq/etc/default/rabbitmq-server" ] && . "/var/vcap/store/rabbitmq/etc/default/rabbitmq-server"
 # shellcheck disable=SC1091
 . /var/vcap/jobs/rabbitmq-server/etc/users
 # shellcheck disable=SC1091
 . /var/vcap/jobs/rabbitmq-server/etc/config
-
-ensure_dir() {
-    DIR=$1
-    mkdir -p "${DIR}"
-    chown -fR "${USER}":"${USER}" "${DIR}"
-    chmod 755 "${DIR}"
-}
-
-ensure_dirs() {
-    ensure_dir "$(dirname "${PID_FILE}")"
-    ensure_dir "${HOME_DIR}"
-}
 
 remove_pid() {
     rm -f "${PID_FILE}"
@@ -106,46 +92,7 @@ delete_operator_admin() {
   true
 }
 
-run_script() {
-    local script
-    script=$1
-    echo "Starting ${script}"
-    set +e
-    "${script}" \
-        1>> "${STARTUP_LOG}" \
-        2>> "${STARTUP_ERR_LOG}" \
-        0<&-
-    RETVAL=$?
-    set -e
-    case "${RETVAL}" in
-        0)
-            echo "Finished ${script}"
-            return 0
-            ;;
-        *)
-            echo "Errored ${script}"
-            RETVAL=1
-            exit "${RETVAL}"
-            ;;
-    esac
-}
-
-prepare_for_upgrade () {
-  echo "Preparing RabbitMQ for potential upgrade"
-  local remote_nodes
-  remote_nodes=($(cat /var/vcap/data/upgrade_preparation_nodes))
-  for remote_node in "${remote_nodes[@]}"; do
-    /var/vcap/packages/rabbitmq-upgrade-preparation/bin/rabbitmq-upgrade-preparation \
-      -rabbitmqctl-path "$CONTROL" \
-      -node "$remote_node" \
-      -new-rabbitmq-version "$(cat ${RMQ_SERVER_PACKAGE}/rmq_version)" \
-      -new-erlang-version "$(cat ${RMQ_SERVER_PACKAGE}/erlang_version)" \
-      1> >(tee -a "${LOG_DIR}"/upgrade.log) 2>&1
-  done
-}
-
 start_rabbitmq () {
-    ensure_dirs
     status_rabbitmq
 
     ulimit -n "$RMQ_FD_LIMIT"
@@ -161,9 +108,6 @@ start_rabbitmq () {
         fi
     else
         RETVAL=0
-        run_script "${JOB_DIR}/bin/setup.sh"
-        run_script "${JOB_DIR}/bin/plugins.sh"
-        prepare_for_upgrade
         echo "Starting RabbitMQ"
         track_rabbitmq_erlang_vm_pid_in_pid_file
         RABBITMQ_PID_FILE="${PID_FILE}" "${START_PROG}" "${DAEMON}" \

@@ -75,6 +75,10 @@ instance_groups:
           input(type="imfile"
                 File="/var/vcap/sys/log/rabbitmq-server/cluster-check.log"
                 Tag="rmq_server_cluster_check")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-server/pre-start.log"
+                Tag="rmq_server_pre_start")
   - name: syslog-configuration-test
     release: cf-rabbitmq-test
     properties:
@@ -91,6 +95,7 @@ instance_groups:
         - "/var/vcap/sys/log/rabbitmq-server/init.log"
         - "/var/vcap/sys/log/rabbitmq-server/node-check.log"
         - "/var/vcap/sys/log/rabbitmq-server/cluster-check.log"
+        - "/var/vcap/sys/log/rabbitmq-server/pre-start.log"
   vm_type: r3.large
   stemcell: trusty
   persistent_disk_type: 10GB
