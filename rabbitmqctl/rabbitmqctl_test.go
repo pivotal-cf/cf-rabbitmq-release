@@ -53,7 +53,14 @@ var _ = Describe("Rabbitmqctl", func() {
 		statusForScriptWithNode := func(script, node string) (RabbitMQCtlStatus, *Error) {
 			cwd, _ := os.Getwd()
 			path := filepath.Join(cwd, "test-assets", script)
-			return New(path).Status(node)
+			status, err := New(path).Status(node)
+			var statusErr *Error
+
+			if err != nil {
+				statusErr = err.(*Error)
+			}
+
+			return status, statusErr
 		}
 
 		statusForScript := func(script string) (RabbitMQCtlStatus, *Error) {
