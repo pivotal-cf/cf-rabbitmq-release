@@ -125,7 +125,7 @@ instance_groups:
           port: 4567
           registration_interval: 20s
           uris:
-          - pivotal-rabbitmq-broker.rmq-acceptance.london2.cf-app.com
+          - pivotal-rabbitmq-broker.bosh-lite.com
   - name: syslog_forwarder
     release: syslog
     properties:
@@ -186,7 +186,7 @@ instance_groups:
           port: 15672
           registration_interval: 20s
           uris:
-          - pivotal-rabbitmq.rmq-acceptance.london2.cf-app.com
+          - pivotal-rabbitmq.bosh-lite.com
   - name: syslog_forwarder
     release: syslog
     properties:
@@ -272,8 +272,8 @@ properties:
   cf:
     admin_password: "admin"
     admin_username: "admin"
-    api_url: "http://api.rmq-acceptance.london2.cf-app.com"
-    domain: "rmq-acceptance.london2.cf-app.com"
+    api_url: "http://api.bosh-lite.com"
+    domain: "bosh-lite.com"
   rabbitmq-server:
     plugins:
     - rabbitmq_management
@@ -303,14 +303,14 @@ properties:
       username: admin
       password: admin
   broker:
-    host: pivotal-rabbitmq-broker.rmq-acceptance.london2.cf-app.com
+    host: pivotal-rabbitmq-broker.bosh-lite.com
     protocol: https
     name: p-rabbitmq
     username: "p1-rabbit"
     password: "p1-rabbit-devpwd"
   rabbitmq-broker:
     route: pivotal-rabbitmq-broker
-    cc_endpoint: http://api.rmq-acceptance.london2.cf-app.com
+    cc_endpoint: http://api.bosh-lite.com
     service:
       username: "p1-rabbit"
       password: "p1-rabbit-devpwd"
@@ -326,7 +326,7 @@ properties:
         policy_name: "operator_set_policy"
         policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
         policy_priority: 50
-      management_domain: pivotal-rabbitmq.rmq-acceptance.london2.cf-app.com
+      management_domain: pivotal-rabbitmq.bosh-lite.com
       ssl: |
         -----BEGIN CERTIFICATE-----
         MIIC+zCCAeOgAwIBAgIBAjANBgkqhkiG9w0BAQUFADAnMRUwEwYDVQQDEwxNeVRl
