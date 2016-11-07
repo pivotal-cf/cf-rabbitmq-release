@@ -19,18 +19,17 @@ func main() {
 
 	logger.Printf("Checking whether upgrade preparation is necessary for %s\n", args.node)
 	rabbitMQCtl := rabbitmqctl.New(args.rabbitmqctlPath)
+
 	backOffStrategy := backoff.NewExponentialBackOff()
 	backOffStrategy.MaxElapsedTime = args.timeout
 	backOffStrategy.Multiplier = 1.0
 
-	var (
-		status     rabbitmqctl.RabbitMQCtlStatus
-		retryCount int
-	)
+	var status rabbitmqctl.RabbitMQCtlStatus
+	var statusErr error
+	var retryCount int
 
-	retryErr := backoff.Retry(func() error {
+	operation := func() error {
 		retryCount++
-		var statusErr error
 		status, statusErr = rabbitMQCtl.Status(args.node)
 		if statusErr != nil {
 			err := statusErr.(*rabbitmqctl.Error)
@@ -42,7 +41,8 @@ func main() {
 		}
 
 		return statusErr
-	}, backOffStrategy)
+	}
+	retryErr := backoff.Retry(operation, backOffStrategy)
 
 	if retryErr != nil {
 		err := retryErr.(*rabbitmqctl.Error)
