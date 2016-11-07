@@ -221,9 +221,8 @@ GEM
       net-ssh (>= 2.6.5)
     netaddr (1.5.1)
     netrc (0.11.0)
-    nokogiri (1.6.8)
+    nokogiri (1.6.8.1)
       mini_portile2 (~> 2.1.0)
-      pkg-config (~> 1.1.7)
     open4 (1.3.4)
     ops_manager_ui_drivers (2.22.4)
       activesupport
@@ -250,7 +249,6 @@ GEM
     papertrail (0.9.17)
       ansi (~> 1.5)
       chronic (~> 0.10)
-    pkg-config (1.1.7)
     poltergeist (1.10.0)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
@@ -383,4 +381,4 @@ DEPENDENCIES
   stomp (~> 1.3.1)
 
 BUNDLED WITH
-   1.13.1
+   1.13.6
