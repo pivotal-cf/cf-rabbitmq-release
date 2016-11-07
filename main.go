@@ -32,6 +32,15 @@ func main() {
 		retryCount++
 		var statusErr error
 		status, statusErr = rabbitMQCtl.Status(args.node)
+		if statusErr != nil {
+			err := statusErr.(*rabbitmqctl.Error)
+
+			if err.Status == rabbitmqctl.UnreachableEpmd || err.Status == rabbitmqctl.StoppedRabbitNode {
+				logger.Printf("RabbitMQ %s already stopped: %s\n", args.node, err)
+				return nil
+			}
+		}
+
 		return statusErr
 	}, backOffStrategy)
 
@@ -39,9 +48,6 @@ func main() {
 		err := retryErr.(*rabbitmqctl.Error)
 		if err.Status == rabbitmqctl.UnreachableHost {
 			log.Fatalf("Unable to connect to node %s after %d retries within %v: %s", args.node, retryCount, args.timeout, err)
-		} else if err.Status == rabbitmqctl.UnreachableEpmd || err.Status == rabbitmqctl.StoppedRabbitNode {
-			logger.Printf("RabbitMQ %s already stopped: %s\n", args.node, err)
-			return
 		}
 	}
 
