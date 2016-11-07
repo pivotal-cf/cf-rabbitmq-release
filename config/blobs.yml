@@ -27,3 +27,7 @@ rabbitmq-server/rabbitmq_clusterer-3.6.5.906.ez:
   object_id: 82b023cd-ec3c-4d14-90cc-7ea6263b7a82
   sha: 1b68e7ca22ca0c90662d89e1eed3a4683aebdd85
   size: 57475
+golang/go1.7.3.linux-amd64.tar.gz:
+  object_id: d2536f7c-5e75-4bcd-a25c-33d2e2760d21
+  sha: ead40e884ad4d6512bcf7b3c7420dd7fa4a96140
+  size: 82565628
