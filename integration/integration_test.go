@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -249,7 +250,11 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		})
 
 		It("logs connection retry to node", func() {
-			Eventually(session.Out).Should(gbytes.Say(`Failed to connect to my-node, retrying in \d+\.\d+ms`))
+			Eventually(session.Out).Should(gbytes.Say(`Failed to connect to my-node after \d retries, retrying in \d+\.\d+ms`))
+		})
+
+		It("does not log connection retry to node after retry timeout is exceeded", func() {
+			Consistently(session.Out, 2*time.Second).ShouldNot(gbytes.Say("Failed to connect to my-node after 3 retries, retrying in -1ns"))
 		})
 
 		It("logs to stderr, because we're in an unsafe state", func() {

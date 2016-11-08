@@ -40,8 +40,10 @@ func main() {
 				return nil
 			}
 		}
-		logger.Printf("Failed to connect to %s, retrying in %s\n", args.node, backOffStrategy.NextBackOff())
 
+		if backOffStrategy.NextBackOff() != backoff.Stop {
+			logger.Printf("Failed to connect to %s after %d retries, retrying in %s\n", args.node, retryCount, backOffStrategy.NextBackOff())
+		}
 		return statusErr
 	}
 	retryErr := backoff.Retry(operation, backOffStrategy)
