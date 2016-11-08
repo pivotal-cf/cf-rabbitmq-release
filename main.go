@@ -30,6 +30,7 @@ func main() {
 
 	operation := func() error {
 		retryCount++
+		logger.Printf("Trying to connect to %s...\n", args.node)
 		status, statusErr = rabbitMQCtl.Status(args.node)
 		if statusErr != nil {
 			err := statusErr.(*rabbitmqctl.Error)
@@ -39,6 +40,7 @@ func main() {
 				return nil
 			}
 		}
+		logger.Printf("Failed to connect to %s, retrying in %s\n", args.node, backOffStrategy.NextBackOff())
 
 		return statusErr
 	}

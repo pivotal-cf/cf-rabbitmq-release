@@ -244,6 +244,14 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itExitsWithNonZero()
 		itDoesntCallStopApp()
 
+		It("logs connection attempt to node", func() {
+			Eventually(session.Out).Should(gbytes.Say("Trying to connect to my-node..."))
+		})
+
+		It("logs connection retry to node", func() {
+			Eventually(session.Out).Should(gbytes.Say(`Failed to connect to my-node, retrying in \d+\.\d+ms`))
+		})
+
 		It("logs to stderr, because we're in an unsafe state", func() {
 			Eventually(session.Err).Should(gbytes.Say("Unable to connect to node my-node after 3 retries within 1s: Unable to reach epmd and host seems down"))
 		})
