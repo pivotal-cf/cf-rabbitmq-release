@@ -50,10 +50,10 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 			contents, err := ioutil.ReadFile(tmpFile)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(strings.Count(string(contents), "stop_app -n my-node\n")).To(Equal(1))
+			Expect(strings.Count(string(contents), "stop_app -n rabbit@host\n")).To(Equal(1))
 			Eventually(session.Out).Should(gbytes.Say("It looks like you are trying to upgrade"))
 			Eventually(session.Out).Should(gbytes.Say("The cluster needs to be taken offline as it cannot run in mixed mode"))
-			Eventually(session.Out).Should(gbytes.Say("Stopping RabbitMQ on my-node"))
+			Eventually(session.Out).Should(gbytes.Say("Stopping RabbitMQ on rabbit@host"))
 		})
 	}
 
@@ -102,7 +102,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 			Expect(err).NotTo(HaveOccurred())
 			args = []string{
 				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-erlang-17-rabbit-3.4.3.1.sh"),
-				"-node", "my-node",
+				"-node", "rabbit@host",
 				"-new-rabbitmq-version", "3.4.3.1",
 				"-new-erlang-version", "17",
 			}
@@ -123,7 +123,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 			args = []string{
 				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-erlang-17-rabbit-3.4.3.1.sh"),
-				"-node", "my-node",
+				"-node", "rabbit@host",
 				"-new-rabbitmq-version", "3.4.3.1",
 				"-new-erlang-version", "17.1",
 			}
@@ -140,7 +140,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 			args = []string{
 				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-erlang-17-rabbit-3.4.3.1.sh"),
-				"-node", "my-node",
+				"-node", "rabbit@host",
 				"-new-rabbitmq-version", "4.4.0.0",
 				"-new-erlang-version", "17",
 			}
@@ -157,7 +157,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 			args = []string{
 				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-erlang-17-rabbit-3.4.3.1.sh"),
-				"-node", "my-node",
+				"-node", "rabbit@host",
 				"-new-rabbitmq-version", "4.4.0.0",
 				"-new-erlang-version", "17.1",
 			}
@@ -173,7 +173,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 			args = []string{
 				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-rabbitmq-app-stopped.sh"),
-				"-node", "my-node",
+				"-node", "rabbit@host",
 				"-new-rabbitmq-version", "3.4.3.1",
 				"-new-erlang-version", "17",
 			}
@@ -183,7 +183,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itDoesntCallStopApp()
 
 		It("logs that RabbitMQ is down through stdout (no need to stop, not an error)", func() {
-			Eventually(session.Out).Should(gbytes.Say("Safe to proceed without stopping RabbitMQ my-node application, exiting: RabbitMQ application already stopped"))
+			Eventually(session.Out).Should(gbytes.Say("Safe to proceed without stopping RabbitMQ rabbit@host application, exiting: RabbitMQ application already stopped"))
 		})
 	})
 
@@ -194,7 +194,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 			args = []string{
 				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-stopped-rabbit-node.sh"),
-				"-node", "my-node",
+				"-node", "rabbit@host",
 				"-new-rabbitmq-version", "3.4.3.1",
 				"-new-erlang-version", "17",
 			}
@@ -204,7 +204,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itDoesntCallStopApp()
 
 		It("logs that the 'rabbit' node is down through stdout (no need to stop)", func() {
-			Eventually(session.Out).Should(gbytes.Say("RabbitMQ my-node already stopped: No rabbit node running"))
+			Eventually(session.Out).Should(gbytes.Say("RabbitMQ rabbit@host already stopped: No rabbit node running"))
 		})
 	})
 
@@ -215,7 +215,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 			args = []string{
 				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-epmd-down-host-up.sh"),
-				"-node", "my-node",
+				"-node", "rabbit@host",
 				"-new-rabbitmq-version", "3.4.3.1",
 				"-new-erlang-version", "17",
 			}
@@ -225,7 +225,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itDoesntCallStopApp()
 
 		It("logs that the remote epmd cannot be reached, but that this is OK", func() {
-			Eventually(session.Out).Should(gbytes.Say("RabbitMQ my-node already stopped: Unable to reach epmd but host seems up"))
+			Eventually(session.Out).Should(gbytes.Say("RabbitMQ rabbit@host already stopped: Unable to reach epmd but host seems up"))
 		})
 	})
 
@@ -236,7 +236,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 			args = []string{
 				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-host-down.sh"),
-				"-node", "my-node",
+				"-node", "rabbit@host",
 				"-new-rabbitmq-version", "3.4.3.1",
 				"-new-erlang-version", "17",
 			}
@@ -246,19 +246,19 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itDoesntCallStopApp()
 
 		It("logs connection attempt to node", func() {
-			Eventually(session.Out).Should(gbytes.Say("Trying to connect to my-node..."))
+			Eventually(session.Out).Should(gbytes.Say("Trying to connect to rabbit@host..."))
 		})
 
 		It("logs connection retry to node", func() {
-			Eventually(session.Out).Should(gbytes.Say(`Failed to connect to my-node after \d retries, retrying in \d+\.\d+ms`))
+			Eventually(session.Out).Should(gbytes.Say(`Failed to connect to rabbit@host after \d retries, retrying in \d+\.\d+ms`))
 		})
 
 		It("does not log connection retry to node after retry timeout is exceeded", func() {
-			Consistently(session.Out, 2*time.Second).ShouldNot(gbytes.Say("Failed to connect to my-node after 3 retries, retrying in -1ns"))
+			Consistently(session.Out, 2*time.Second).ShouldNot(gbytes.Say("Failed to connect to rabbit@host after 3 retries, retrying in -1ns"))
 		})
 
 		It("logs to stderr, because we're in an unsafe state", func() {
-			Eventually(session.Err).Should(gbytes.Say("Unable to connect to node my-node after 3 retries within 1s: Unable to reach epmd and host seems down"))
+			Eventually(session.Err).Should(gbytes.Say("Unable to connect to node rabbit@host after 3 retries within 1s: Unable to reach epmd and host seems down"))
 		})
 	})
 
@@ -269,7 +269,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 			args = []string{
 				"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-stop_app-fails.sh"),
-				"-node", "my-node",
+				"-node", "rabbit@host",
 				"-new-rabbitmq-version", "3.5.6",
 				"-new-erlang-version", "17",
 			}
