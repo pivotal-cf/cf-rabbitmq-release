@@ -22,7 +22,7 @@ func main() {
 
 	backOffStrategy := backoff.NewExponentialBackOff()
 	backOffStrategy.MaxElapsedTime = args.timeout
-	backOffStrategy.Multiplier = 1.0
+	backOffStrategy.InitialInterval = 100 * time.Millisecond
 
 	var status rabbitmqctl.RabbitMQCtlStatus
 	var statusErr error
