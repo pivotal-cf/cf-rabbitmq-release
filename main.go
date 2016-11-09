@@ -95,7 +95,7 @@ func parseArgs() Args {
 	node := flag.String("node", "", "RabbitMQ node to prepare")
 	newRabbitmqVersion := flag.String("new-rabbitmq-version", "", "Version of RabbitMQ that we are upgrading to")
 	newErlangVersion := flag.String("new-erlang-version", "", "Version of Erlang that we are upgrading to")
-	timeout := flag.Duration("timeout", 60*time.Second, "Maximum time in seconds that you allow rabbitmqctl status to take")
+	timeout := flag.Duration("timeout", 60*time.Second, "Maximum time in seconds to wait for the RabbitMQ node that is being prepared")
 	flag.Parse()
 
 	assertFlag(*rabbitmqctlPath, "rabbitmqctl-path")
