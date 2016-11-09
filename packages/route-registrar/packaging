@@ -3,7 +3,7 @@
 set -e # exit immediately if a simple command exits with a non-zero status
 
 #compile
-export GOROOT=$(readlink -nf /var/vcap/packages/golang)
+export GOROOT=$(readlink -nf /var/vcap/packages/golang-1.7.3)
 export PATH=/var/vcap/packages/git/bin:$PATH
 export PATH=$GOROOT/bin:$PATH
 REPO=route-registrar/src/github.com/cloudfoundry-incubator/route-registrar
