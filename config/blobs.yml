@@ -1,8 +1,4 @@
 ---
-erlang/otp_src_oss_18.1.tgz:
-  object_id: 6cf4831f-727d-44b5-9cd2-1bb33c25b4c5
-  sha: cf5a7e63074a4743e976d87b5f9fe80deac61cfe
-  size: 68197399
 golang/go1.6.1.linux-amd64.tar.gz:
   object_id: 6483bb0d-c45f-4b69-a732-d4cac4f88cc7
   sha: c73492474dcc7a233772d27e948b74468d9f1849
@@ -31,3 +27,7 @@ golang/go1.7.3.linux-amd64.tar.gz:
   object_id: d2536f7c-5e75-4bcd-a25c-33d2e2760d21
   sha: ead40e884ad4d6512bcf7b3c7420dd7fa4a96140
   size: 82565628
+erlang/otp_src_oss_18.3.4.4.tgz:
+  object_id: 0cf2f5b4-36d4-487f-b738-934c47ce7e43
+  sha: 0de974b4309cb59103a1feb6912e4c90fd509f4b
+  size: 35429734
