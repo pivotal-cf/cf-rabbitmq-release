@@ -7,10 +7,6 @@ cf-cli/cf-linux-amd64-6.19.0.tgz:
   object_id: cda6b19b-8df2-4583-a1b5-a0ab78ba191d
   sha: f845800310e4b702a39a2f1191e3d71862630103
   size: 4803309
-rabbitmq-server/rabbitmq-server-generic-unix-3.5.7.tar.gz:
-  object_id: 3523a3ad-bd27-4729-8406-a9f58179953e
-  sha: 9a607ffc85f1eeaa95abf93fe8af5b6dfcc1cecd
-  size: 4222515
 rabbitmq-server/rabbitmq_clusterer-3.5.7.ez:
   object_id: 6a564af0-06cd-4b4a-bf2f-17ecb6215cfe
   sha: 2df9cd942c8edbd00b10530b8af63c73d49ad153
@@ -31,3 +27,7 @@ haproxy/haproxy-1.5.18.tar.gz:
   object_id: f892c0e4-a898-449e-9993-f3aabf5f4541
   sha: 041c02197316ec342aecfe52e989c70b49856063
   size: 1360582
+rabbitmq-server/rabbitmq-server-generic-unix-3.5.8.tar.gz:
+  object_id: 651b84dc-1ed3-4900-86c2-1b954b742d9e
+  sha: 5e89d61291b4bc6865097fa57c92e5214dce239a
+  size: 4222924

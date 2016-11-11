@@ -60,7 +60,8 @@ fail_if_no_peer_cert = p("rabbitmq-server.ssl.fail_if_no_peer_cert")
   CLUSTER_CONFIG="${HOME_DIR}/etc/rabbitmq/cluster.config"
   SCRIPT_DIR="$(${DIRNAME} $0)"
   JOB_IP=<%= job_ip %>
-  RMQ_VERSION=3.5.7
+  RMQ_VERSION=3.5.8 # Seems to not be used
+  RMQ_CLUSTERER_VERSION=3.5.7
 
   <% if_p("syslog_aggregator.address", "syslog_aggregator.port") do %>
   /var/vcap/packages/syslog_aggregator/setup_syslog_forwarder $JOB_DIR/config
@@ -151,7 +152,7 @@ fail_if_no_peer_cert = p("rabbitmq-server.ssl.fail_if_no_peer_cert")
   fi
 
   RABBITMQ_BOOT_MODULE="RABBITMQ_BOOT_MODULE=rabbit_clusterer"
-  RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS="RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=\"-pa /var/vcap/packages/rabbitmq-server/plugins/rabbitmq_clusterer-${RMQ_VERSION}.ez/rabbitmq_clusterer-${RMQ_VERSION}/ebin\""
+  RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS="RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=\"-pa /var/vcap/packages/rabbitmq-server/plugins/rabbitmq_clusterer-${RMQ_CLUSTERER_VERSION}.ez/rabbitmq_clusterer-${RMQ_CLUSTERER_VERSION}/ebin\""
   ${SED} "/${PREFIX}/,/${SUFFIX}/d" < ${DIR}/env.backup > ${DIR}/env
   printf "${PREFIX}\n${NODENAME}\n${RABBITMQ_BOOT_MODULE}\n${RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS}\n${CONFIG}\n${SERVER_START_ARGS}\n${SUFFIX}\n" >> ${DIR}/env
 
