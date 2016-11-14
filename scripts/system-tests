@@ -1,32 +1,32 @@
-#!/bin/bash
+#!/bin/bash -ex
 
-set -ex
-
-log() {
-  local _message=$1
-  echo -e "$_message"
+main() {
+  install_dependencies
+  run_unit_tests
+  run_system_tests_individually_to_isolate_state
+  delete_bosh_deployment_to_remove_state
 }
 
-check_args() {
-  if [ -z "$BOSH_MANIFEST" ]
-  then
-    log "Please set the BOSH_MANIFEST environment variable to the path to your manifest file"
-    log "E.G. export BOSH_MANIFEST=/home/example/cf-redis-release/manifests/bosh-lite.yml"
-    exit 1
-  fi
+install_dependencies() {
+  bundle install
 }
 
-TMP_MANIFEST=/tmp/bosh_manifest.yml
-
-edit_manifest() {
-  uuid=$(bosh -t lite status --uuid)
-  cp "$BOSH_MANIFEST" "$TMP_MANIFEST"
-  sed -i "s/director_uuid: .*/director_uuid: ${uuid}/" "$TMP_MANIFEST"
-  BOSH_MANIFEST="$TMP_MANIFEST"
+run_unit_tests() {
+  bundle exec rake spec:unit
 }
 
-check_args
 
-grep -q "status --uuid" "$BOSH_MANIFEST" && edit_manifest;
+run_system_tests_individually_to_isolate_state() {
+  spec_files=($(find spec/system/ -type f))
 
-bundle install && bundle exec rake spec
+  for spec_file in "${spec_files[@]}"
+  do
+    bundle exec rspec "$spec_file" --fail-fast
+  done
+}
+
+delete_bosh_deployment_to_remove_state() {
+  BOSH_USER="${BOSH_USERNAME:?env required}" bosh -t "${BOSH_TARGET:?env required}" -n delete deployment "${DEPLOYMENT_NAME:?env required}"
+}
+
+main
