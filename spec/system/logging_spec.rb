@@ -26,6 +26,10 @@ RSpec.describe "logging configuration" do
     plan: 'standard'
   )
 
+  def wait_for_user_creation_to_finish_and_avoid_race_conditions
+    sleep 30
+  end
+
   context "when a connection is made over AMQP" do
     before :context do
       ssh_gateway.execute_on(RMQ_Z1_HOST, "cp /var/vcap/sys/log/rabbitmq-server/rabbit@#{RMQ_HOST_Z1_DIGEST}.log /tmp")
@@ -42,6 +46,7 @@ RSpec.describe "logging configuration" do
     end
 
     it "logs an AMQP connection acceptance at INFO level to rabbitmq server logs", :pushes_cf_app do
+      wait_for_user_creation_to_finish_and_avoid_race_conditions
       cf.push_app_and_bind_with_service(test_app, SERVICE) do |app, _|
         uri = URI("#{app.url}/services/rabbitmq/protocols/amqp091")
 
@@ -71,6 +76,7 @@ RSpec.describe "logging configuration" do
     end
 
     it "logs an entry to the haproxy logs" do
+      wait_for_user_creation_to_finish_and_avoid_race_conditions
       haproxy_log = ssh_gateway.execute_on(HAPROXY_HOST, "cat #{HAPROXY_LOG_LOCATION}")
       expect(haproxy_log).to include "input-15672 output-15672/node"
     end
