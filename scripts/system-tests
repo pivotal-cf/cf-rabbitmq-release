@@ -1,5 +1,12 @@
 #!/bin/bash -ex
 
+export BOSH_USER
+BOSH_USER="${BOSH_USERNAME:?env required}"
+BOSH_TARGET="${BOSH_TARGET:?env required}"
+BOSH_MANIFEST="${BOSH_MANIFEST:?env required}"
+DEPLOYMENT_NAME="$(awk -F ': ' '/^name/ { print $2 }' < "$BOSH_MANIFEST")"
+DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?failed to find deployment name in manifest}"
+
 main() {
   install_dependencies
   run_unit_tests
@@ -15,7 +22,6 @@ run_unit_tests() {
   bundle exec rake spec:unit
 }
 
-
 run_system_tests_individually_to_isolate_state() {
   spec_files=($(find spec/system/ -type f))
 
@@ -26,7 +32,7 @@ run_system_tests_individually_to_isolate_state() {
 }
 
 delete_bosh_deployment_to_remove_state() {
-  BOSH_USER="${BOSH_USERNAME:?env required}" bosh -t "${BOSH_TARGET:?env required}" -n delete deployment "${DEPLOYMENT_NAME:?env required}"
+  bosh -t "$BOSH_TARGET" -n delete deployment "$DEPLOYMENT_NAME"
 }
 
 main
