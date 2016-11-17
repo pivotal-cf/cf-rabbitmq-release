@@ -1,8 +1,4 @@
 ---
-erlang/otp_src_oss_18.1.tgz:
-  object_id: 6cf4831f-727d-44b5-9cd2-1bb33c25b4c5
-  sha: cf5a7e63074a4743e976d87b5f9fe80deac61cfe
-  size: 68197399
 haproxy/haproxy-1.6.4.tar.gz:
   object_id: f790a114-2611-4f78-8bf7-99f714c268d8
   sha: df3d7f216fe4974d9eac55d76c7f729560c6e975
@@ -27,3 +23,7 @@ golang/go1.7.3.linux-amd64.tar.gz:
   object_id: 6f5b6f0f-5518-4414-8423-150e943b2281
   sha: ead40e884ad4d6512bcf7b3c7420dd7fa4a96140
   size: 82565628
+erlang/otp_src_oss_18.3.4.4.tgz:
+  object_id: 0cf2f5b4-36d4-487f-b738-934c47ce7e43
+  sha: 0de974b4309cb59103a1feb6912e4c90fd509f4b
+  size: 35429734
