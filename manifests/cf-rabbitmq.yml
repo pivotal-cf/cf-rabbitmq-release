@@ -96,6 +96,15 @@ instance_groups:
         - "/var/vcap/sys/log/rabbitmq-server/node-check.log"
         - "/var/vcap/sys/log/rabbitmq-server/cluster-check.log"
         - "/var/vcap/sys/log/rabbitmq-server/pre-start.log"
+  - name: permissions-test
+    release: cf-rabbitmq-test
+    properties:
+      permissions-test:
+        directories:
+        - "/var/vcap/jobs/rabbitmq-server/etc"
+        - "/var/vcap/jobs/rabbitmq-server/bin"
+        - "/var/vcap/jobs/rabbitmq-server/lib"
+
   vm_type: r3.large
   stemcell: trusty
   persistent_disk_type: 10GB
