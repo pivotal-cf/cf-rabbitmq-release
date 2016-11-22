@@ -27,8 +27,8 @@ instance_groups:
     release: syslog
     properties:
       syslog:
-        address: logs4.papertrailapp.com
-        port: 18175
+        address: &syslog-address syslog-aggregator.example.com
+        port: &syslog-port 514
         custom_rule: |
           module(load="imfile")
 
@@ -139,8 +139,8 @@ instance_groups:
     release: syslog
     properties:
       syslog:
-        address: logs4.papertrailapp.com
-        port: 18175
+        address: *syslog-address
+        port: *syslog-port
         custom_rule: |
           module(load="imfile")
 
@@ -200,8 +200,8 @@ instance_groups:
     release: syslog
     properties:
       syslog:
-        address: logs4.papertrailapp.com
-        port: 18175
+        address: *syslog-address
+        port: *syslog-port
         custom_rule: |
           # Send messages of all types sent to local2 logging facility to haproxy.log,
           # "-" in front of the file means to not flush to disk after every write
@@ -212,7 +212,6 @@ instance_groups:
           input(type="imfile"
                 File="/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log"
                 Tag="rmq_haproxy")
-
 
           input(type="imfile"
                 File="/var/vcap/sys/log/route_registrar/route_registrar.log"
