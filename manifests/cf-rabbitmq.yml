@@ -101,9 +101,9 @@ instance_groups:
     properties:
       permissions-test:
         directories:
-        - "/var/vcap/jobs/rabbitmq-server/etc"
-        - "/var/vcap/jobs/rabbitmq-server/bin"
-        - "/var/vcap/jobs/rabbitmq-server/lib"
+        - "/var/vcap/jobs/rabbitmq-server"
+        - "/var/vcap/store/rabbitmq"
+        - "/var/vcap/sys/log"
 
   vm_type: r3.large
   stemcell: trusty
