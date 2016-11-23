@@ -18,11 +18,9 @@ main() {
   ensure_dir "${HTTP_ACCESS_LOG_DIR}"
   ensure_dir "$(dirname "${PID_FILE}")"
   ensure_dir "${HOME_DIR}"
+  ensure_dir "${JOB_DIR}"
   ensure_log_files
   ensure_http_log_cleanup_cron_job
-  ensure_dir_is_not_world_readable "${JOB_DIR}/bin"
-  ensure_dir_is_not_world_readable "${JOB_DIR}/etc"
-  ensure_dir_is_not_world_readable "${JOB_DIR}/lib"
 
   # shellcheck disable=SC1090
   . "${JOB_DIR}"/bin/prepare-for-upgrade
@@ -31,8 +29,8 @@ main() {
 ensure_dir() {
     _dir=$1
     mkdir -p "${_dir}"
-    chown -fR "${USER}":"${USER}" "${_dir}"
-    chmod 755 "${_dir}"
+    chown -R "${USER}":"${USER}" "${_dir}"
+    chmod 750 "${_dir}"
 }
 
 ensure_log_files() {
@@ -46,12 +44,6 @@ ensure_log_files() {
 
 ensure_http_log_cleanup_cron_job() {
   cp "${JOB_DIR}/bin/cleanup-http-logs" /etc/cron.daily
-}
-
-ensure_dir_is_not_world_readable() {
-  _dir=$1
-  chmod -R o-r "${_dir}"
-  chown -fR "${USER}":"${USER}" "${_dir}"/*
 }
 
 main
