@@ -5,6 +5,7 @@
 JOB_DIR=/var/vcap/jobs/rabbitmq-server
 PID_FILE=/var/vcap/sys/run/rabbitmq-server/pid
 HOME_DIR=/var/vcap/store/rabbitmq
+ROOT_LOG_DIR=/var/vcap/sys/log
 INIT_LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 HTTP_ACCESS_LOG_DIR="${INIT_LOG_DIR}"/management-ui
 STARTUP_LOG="${INIT_LOG_DIR}"/startup_stdout.log
@@ -14,7 +15,7 @@ SHUTDOWN_ERR_LOG="${INIT_LOG_DIR}"/shutdown_stderr.log
 USER=vcap
 
 main() {
-  ensure_dir "${INIT_LOG_DIR}"
+  ensure_dir "${ROOT_LOG_DIR}"
   ensure_dir "${HTTP_ACCESS_LOG_DIR}"
   ensure_dir "$(dirname "${PID_FILE}")"
   ensure_dir "${HOME_DIR}"
@@ -29,7 +30,7 @@ main() {
 ensure_dir() {
     _dir=$1
     mkdir -p "${_dir}"
-    chown -R "${USER}":"${USER}" "${_dir}"
+    chown -LR "${USER}":"${USER}" "${_dir}"
     chmod 750 "${_dir}"
 }
 
