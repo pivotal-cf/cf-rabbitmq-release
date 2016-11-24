@@ -1,14 +1,20 @@
-#!/bin/sh
+#!/bin/bash -e
 
-set -eux
+[ -z "$DEBUG" ] || set -x
 
-INIT_LOG_DIR=/var/vcap/sys/log/rabbitmq-haproxy
+JOB_DIR=/var/vcap/jobs/rabbitmq-haproxy
+ROOT_LOG_DIR=/var/vcap/sys/log
+
+main() {
+    ensure_dir "${ROOT_LOG_DIR}"
+    ensure_dir "${JOB_DIR}"
+}
 
 ensure_dir() {
     _dir=$1
     mkdir -p "${_dir}"
-    chown -R vcap:vcap "${_dir}"
-    chmod 755 "${_dir}"
+    chown -LR vcap:vcap "${_dir}"
+    chmod 750 "${_dir}"
 }
 
-ensure_dir "${INIT_LOG_DIR}"
+main

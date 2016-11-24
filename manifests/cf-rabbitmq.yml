@@ -168,6 +168,13 @@ instance_groups:
         - "/var/vcap/sys/log/rabbitmq-broker/startup_stderr.log"
         - "/var/vcap/sys/log/route_registrar/route_registrar.log"
         - "/var/vcap/sys/log/route_registrar/route_registrar.err.log"
+  - name: permissions-test
+    release: cf-rabbitmq-test
+    properties:
+      permissions-test:
+        directories:
+        - "/var/vcap/jobs/rabbitmq-broker"
+        - "/var/vcap/sys/log"
   vm_type: m3.medium
   stemcell: trusty
   azs:
@@ -228,6 +235,14 @@ instance_groups:
         - "/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log"
         - "/var/vcap/sys/log/route_registrar/route_registrar.err.log"
         - "/var/vcap/sys/log/route_registrar/route_registrar.log"
+  - name: permissions-test
+    release: cf-rabbitmq-test
+    properties:
+      permissions-test:
+        directories:
+        - "/var/vcap/jobs/rabbitmq-haproxy"
+        - "/var/vcap/sys/log"
+
   vm_type: m3.medium
   stemcell: trusty
   azs:
