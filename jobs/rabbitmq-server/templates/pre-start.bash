@@ -7,6 +7,7 @@ PID_FILE=/var/vcap/sys/run/rabbitmq-server/pid
 HOME_DIR=/var/vcap/store/rabbitmq
 ROOT_LOG_DIR=/var/vcap/sys/log
 INIT_LOG_DIR=/var/vcap/sys/log/rabbitmq-server
+DATA_TMP_DIR=/var/vcap/data/tmp
 HTTP_ACCESS_LOG_DIR="${INIT_LOG_DIR}"/management-ui
 STARTUP_LOG="${INIT_LOG_DIR}"/startup_stdout.log
 STARTUP_ERR_LOG="${INIT_LOG_DIR}"/startup_stderr.log
@@ -20,6 +21,7 @@ main() {
   ensure_dir "$(dirname "${PID_FILE}")"
   ensure_dir "${HOME_DIR}"
   ensure_dir "${JOB_DIR}"
+  ensure_dir "${DATA_TMP_DIR}"
   ensure_log_files
   ensure_http_log_cleanup_cron_job
 

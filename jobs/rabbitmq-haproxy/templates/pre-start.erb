@@ -4,10 +4,12 @@
 
 JOB_DIR=/var/vcap/jobs/rabbitmq-haproxy
 ROOT_LOG_DIR=/var/vcap/sys/log
+DATA_TMP_DIR=/var/vcap/data/tmp
 
 main() {
     ensure_dir "${ROOT_LOG_DIR}"
     ensure_dir "${JOB_DIR}"
+    ensure_dir "${DATA_TMP_DIR}"
 }
 
 ensure_dir() {
