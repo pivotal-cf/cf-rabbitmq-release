@@ -104,7 +104,6 @@ instance_groups:
         - "/var/vcap/jobs/rabbitmq-server"
         - "/var/vcap/store/rabbitmq"
         - "/var/vcap/sys/log"
-        - "/var/vcap/data/tmp"
 
   vm_type: r3.large
   stemcell: trusty
@@ -176,7 +175,6 @@ instance_groups:
         directories:
         - "/var/vcap/jobs/rabbitmq-broker"
         - "/var/vcap/sys/log"
-        - "/var/vcap/data/tmp"
   vm_type: m3.medium
   stemcell: trusty
   azs:
@@ -244,7 +242,6 @@ instance_groups:
         directories:
         - "/var/vcap/jobs/rabbitmq-haproxy"
         - "/var/vcap/sys/log"
-        - "/var/vcap/data/tmp"
 
   vm_type: m3.medium
   stemcell: trusty

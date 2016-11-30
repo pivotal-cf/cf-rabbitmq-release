@@ -4,7 +4,6 @@
 
 JOB_DIR=/var/vcap/jobs/rabbitmq-broker
 ROOT_LOG_DIR=/var/vcap/sys/log
-DATA_TMP_DIR=/var/vcap/data/tmp
 
 ensure_dir() {
     _dir=$1
@@ -16,7 +15,6 @@ ensure_dir() {
 main() {
   ensure_dir "${JOB_DIR}"
   ensure_dir "${ROOT_LOG_DIR}"
-  ensure_dir "${DATA_TMP_DIR}"
 }
 
 main
