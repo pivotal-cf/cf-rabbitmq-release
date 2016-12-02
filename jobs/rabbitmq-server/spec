@@ -72,7 +72,7 @@ templates:
   cleanup-http-logs.bash:       bin/cleanup-http-logs
   cluster-check.bash:           bin/cluster-check
   syslog_forwarder.conf.erb:    config/syslog_forwarder.conf
-  rabbitmq_syslog.conf.erb:     config/rabbitmq_syslog.conf
+  rabbitmq_syslog.conf:         config/rabbitmq_syslog.conf
   delete_old_files.bash:        lib/delete_old_files.bash
   drain.bash:                   bin/drain
   key.pem.erb:                  etc/key.pem
