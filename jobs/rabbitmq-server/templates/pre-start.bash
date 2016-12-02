@@ -16,6 +16,7 @@ USER=vcap
 
 main() {
   ensure_dir "${ROOT_LOG_DIR}"
+  ensure_dir "${INIT_LOG_DIR}"
   ensure_dir "${HTTP_ACCESS_LOG_DIR}"
   ensure_dir "$(dirname "${PID_FILE}")"
   ensure_dir "${HOME_DIR}"
@@ -48,3 +49,10 @@ ensure_http_log_cleanup_cron_job() {
 }
 
 main
+
+# syslog forwarding
+/var/vcap/packages/rabbitmq-syslog-aggregator/enable_syslog_config rabbitmq_syslog.conf $JOB_DIR/config
+/var/vcap/packages/rabbitmq-syslog-aggregator/setup_syslog_forwarder $JOB_DIR/config
+
+# restart rsyslog to use the latest configuration
+/usr/sbin/service rsyslog restart
