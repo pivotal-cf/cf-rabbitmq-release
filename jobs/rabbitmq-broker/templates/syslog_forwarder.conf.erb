@@ -20,7 +20,7 @@ template(name="CfLogTemplate" type="list") {
         property(name="timestamp" dateFormat="rfc3339")
         constant(value=" <%= job_ip %> ")
         property(name="programname")
-        constant(value=" [job=<%= name %> index=<%= spec.index.to_i %>] ")
+        constant(value=" [job=<%= name %> index=<%= spec.index.to_i %> id=<%= spec.id %>] ")
         property(name="msg")
 }
 
