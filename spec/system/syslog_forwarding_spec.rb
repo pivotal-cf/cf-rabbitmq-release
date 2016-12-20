@@ -38,7 +38,7 @@ RSpec.describe "Syslog forwarding" do
 
     rmq_server_hosts.each do |rmq_server_host|
       search_string = host_search_string(rmq_server_host)
-      it "forwards rmq_server hosts logs (#{search_string})" do
+      xit "forwards rmq_server hosts logs (#{search_string})" do
         expect(search_for_events(search_string).size).to be > 0
       end
     end
@@ -49,7 +49,7 @@ RSpec.describe "Syslog forwarding" do
 
     rmq_broker_hosts.each do |rmq_broker_host|
       search_string = host_search_string(rmq_broker_host)
-      it "forwards rmq_broker hosts logs (#{search_string})" do
+      xit "forwards rmq_broker hosts logs (#{search_string})" do
         expect(search_for_events(search_string).size).to be > 0
       end
     end
@@ -60,7 +60,7 @@ RSpec.describe "Syslog forwarding" do
 
     rmq_haproxy_hosts.each do |rmq_haproxy_host|
       search_string = host_search_string(rmq_haproxy_host)
-      it "forwards rmq_haproxy hosts logs (#{search_string})" do
+      xit "forwards rmq_haproxy hosts logs (#{search_string})" do
         expect(search_for_events(search_string).size).to be > 0
       end
     end
