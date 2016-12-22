@@ -4,8 +4,8 @@ set -e
 
 RMQ_VERSION="3.6.5"
 RMQ_VERSION_SEMVER="3.6.5"
+RMQ_CLUSTERER_VERSION="3.6.5"
 ERLANG_VERSION="18.1"
-ERLANG_VERSION="18.3.4.4"
 
 echo "$RMQ_VERSION_SEMVER" > "$BOSH_INSTALL_TARGET/rmq_version"
 echo "$ERLANG_VERSION" > "$BOSH_INSTALL_TARGET/erlang_version"
@@ -23,6 +23,5 @@ do
     chmod 0755 "$BOSH_INSTALL_TARGET/bin/$script"
 done
 
-cp -a rabbitmq-server/rabbitmq-defaults "$BOSH_INSTALL_TARGET/privbin/"
-
-cp -a "rabbitmq-server/rabbitmq_clusterer-$RMQ_VERSION.ez" "$BOSH_INSTALL_TARGET/plugins/"
+cp -a "rabbitmq-server/rabbitmq-defaults" "$BOSH_INSTALL_TARGET/privbin/"
+cp -a "rabbitmq-server/rabbitmq_clusterer-${RMQ_CLUSTERER_VERSION}.ez" "${BOSH_INSTALL_TARGET}/plugins/"
