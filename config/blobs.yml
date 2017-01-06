@@ -15,10 +15,6 @@ cf-cli/cf-cli_6.19.0_linux_x86-64.tgz:
   object_id: 22ad54c4-568e-4ca3-aa73-12b691e3f678
   sha: 625170654ffa4568dae97b4d3915e87557b29261
   size: 6450885
-rabbitmq-server/rabbitmq_clusterer-3.6.5.ez:
-  object_id: aca4b381-2afc-487c-913a-643fef65b3d1
-  sha: 3469acac9d4b029cb7c8216d09a1f959a68c2e29
-  size: 58675
 golang/go1.7.3.linux-amd64.tar.gz:
   object_id: d2536f7c-5e75-4bcd-a25c-33d2e2760d21
   sha: ead40e884ad4d6512bcf7b3c7420dd7fa4a96140
@@ -31,3 +27,7 @@ rabbitmq-server/rabbitmq-server-generic-unix-3.6.6.902.tar.xz:
   object_id: 6c170268-3375-434e-b0bf-92b5dd6b4e4f
   sha: 33bd853ac870155f44c53bfafe19beea081bb709
   size: 4567036
+rabbitmq-server/rabbitmq_clusterer-3.6.7.custom-compiled-bug-fix.ez:
+  object_id: 68de8c7e-9ffd-4733-8da3-3c2c5db49919
+  sha: 50ed7530586f8a664a82cd263fa222fbf48cac76
+  size: 58047

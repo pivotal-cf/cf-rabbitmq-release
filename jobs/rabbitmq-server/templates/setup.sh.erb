@@ -66,7 +66,7 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   SCRIPT_DIR="$(${DIRNAME} $0)"
   JOB_IP=<%= job_ip %>
   RMQ_VERSION=3.6.7
-  RMQ_CLUSTERER_VERSION=3.6.5
+  RMQ_CLUSTERER_VERSION=3.6.7.custom-compiled-bug-fix
 
   # Unfortunate tight coupling. Beware.
   # We need this for CONF_ENV_FILE, HOME, ERL_INETRC, and for MNESIA_BASE
