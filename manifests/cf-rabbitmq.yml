@@ -21,6 +21,8 @@ instance_groups:
   jobs:
   - name: rabbitmq-server
     release: cf-rabbitmq
+  - name: rabbitmq-statsdb-reset-cron-test
+    release: cf-rabbitmq-test
   - name: syslog-configuration-test
     release: cf-rabbitmq-test
     properties:
@@ -191,6 +193,7 @@ properties:
     api_url: "http://api.bosh-lite.com"
     domain: "bosh-lite.com"
   rabbitmq-server:
+    restart_statsdb_cron_schedule: "42 */4 * * *"
     plugins:
     - rabbitmq_management
     - rabbitmq_mqtt
