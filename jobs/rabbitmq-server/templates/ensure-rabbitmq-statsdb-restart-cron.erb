@@ -1,0 +1,6 @@
+<% if p("rabbitmq-server.restart_statsdb_cron_schedule") %>
+tmpfile=$(mktemp)
+echo 'PATH=/usr/bin:/bin:/var/vcap/packages/erlang/bin:/var/vcap/packages/rabbitmq-server/bin' > "${tmpfile}"
+echo '<%= p("rabbitmq-server.restart_statsdb_cron_schedule") %> vcap /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl eval "supervisor2:terminate_child(rabbit_mgmt_sup_sup, rabbit_mgmt_sup),rabbit_mgmt_sup_sup:start_child()."' >> "${tmpfile}"
+cp "${tmpfile}" "/etc/cron.d/rabbitmq-statsdb-reset"
+<% end %>
