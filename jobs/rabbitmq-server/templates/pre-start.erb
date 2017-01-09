@@ -34,6 +34,7 @@ ensure_dir "${INIT_LOG_DIR}"
 ensure_dir "${HTTP_ACCESS_LOG_DIR}"
 ensure_log_files
 ensure_http_log_cleanup_cron_job
+${JOB_DIR}/bin/ensure-rabbitmq-statsdb-restart-cron
 
 # syslog forwarding
 /var/vcap/packages/syslog_aggregator/enable_syslog_config rabbitmq_syslog.conf $JOB_DIR/config
