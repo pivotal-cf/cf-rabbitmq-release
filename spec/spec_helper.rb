@@ -131,7 +131,7 @@ RSpec.configure do |config|
   config.include Matchers
   config.include TemplateHelpers, template: true
 
-  Matchers::prints_logs_on_failure = bosh_director.lite?
+  Matchers::prints_logs_on_failure = true
 
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
