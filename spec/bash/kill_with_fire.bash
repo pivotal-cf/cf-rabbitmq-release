@@ -3,6 +3,9 @@
 # basht macro, shellcheck fix
 export T_fail
 
+export LOG_DIR=$(mktemp -d -t basht_kill_with_fire_logs)
+SHUTDOWN_LOG="${LOG_DIR}/shutdown_stdout.log"
+
 # shellcheck disable=SC1091
 . spec/bash/test_helpers
 
@@ -71,5 +74,14 @@ T_should_remove_pid_file() {
 
     [[ ! -e "$PID_FILE" ]]
   ) || $T_fail "PID_FILE should be deleted after the process is killed"
+}
 
+T_should_log_a_message_if_a_process_existed() {
+  (
+    start_a_process_running
+
+    run_the_kill_script "$PID_FILE"
+
+    grep "We found a rabbitmq-server process during monit stop and we had to kill it" "$SHUTDOWN_LOG"
+  ) || $T_fail "Should log message when a process is killed"
 }
