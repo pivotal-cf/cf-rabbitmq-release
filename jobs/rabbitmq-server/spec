@@ -91,6 +91,7 @@ templates:
   users.erb:                                etc/users
   config.erb:                               etc/config
   ensure-rabbitmq-statsdb-restart-cron.erb: bin/ensure-rabbitmq-statsdb-restart-cron
+  kill-with-fire.bash:                      bin/kill-with-fire
 
 provides:
   - name: rabbitmq-server
