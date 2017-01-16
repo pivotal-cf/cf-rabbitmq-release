@@ -121,7 +121,7 @@
                     :description "Provides a multi-tenant RabbitMQ cluster"
                     :metadata    {"displayName" "Standard"
                                   "costs"       [pcf-product-cost]
-                                  "bullets"     ["RabbitMQ 3.6.7" "Multi-tenant"]}}]}))
+                                  "bullets"     ["RabbitMQ 3.7.0" "Multi-tenant"]}}]}))
 
 (defn using-tls?
   ([]
