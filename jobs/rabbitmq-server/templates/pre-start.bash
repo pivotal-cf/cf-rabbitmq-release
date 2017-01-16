@@ -5,6 +5,7 @@
 JOB_DIR=/var/vcap/jobs/rabbitmq-server
 PID_FILE=/var/vcap/sys/run/rabbitmq-server/pid
 HOME_DIR=/var/vcap/store/rabbitmq
+SERVICE_METRICS_DIR=/var/vcap/sys/log/service-metrics
 ROOT_LOG_DIR=/var/vcap/sys/log
 INIT_LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 HTTP_ACCESS_LOG_DIR="${INIT_LOG_DIR}"/management-ui
@@ -21,6 +22,7 @@ main() {
   ensure_dir "$(dirname "${PID_FILE}")"
   ensure_dir "${HOME_DIR}"
   ensure_dir "${JOB_DIR}"
+  ensure_dir "${SERVICE_METRICS_DIR}"
   ensure_log_files
   ensure_http_log_cleanup_cron_job
   ${JOB_DIR}/bin/ensure-rabbitmq-statsdb-restart-cron
