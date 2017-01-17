@@ -15,6 +15,9 @@ Once you have a [BOSH Lite up and running locally](https://github.com/cloudfound
 
 ## Testing
 
+### Dependencies
+In order to run the integration tests you need to have `phantomjs` available in the `$PATH`. `phantomjs` is required by `capybara` at runtime.
+
 ### Unit Tests
 
 To run the unit tests locally, just run: `bundle exec rake spec:unit`.
