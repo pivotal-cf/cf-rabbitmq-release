@@ -3,7 +3,7 @@
 # basht macro, shellcheck fix
 export T_fail
 
-export LOG_DIR=$(mktemp -d -t basht_kill_with_fire_logs)
+export LOG_DIR=$(mktemp -d)
 SHUTDOWN_LOG="${LOG_DIR}/shutdown_stdout.log"
 
 # shellcheck disable=SC1091
@@ -14,7 +14,7 @@ start_a_process_running() {
   local running_pid
   (spec/assets/unkillable-script.bash) &
   RUNNING_PID="$!"
-  PID_FILE=$(mktemp -t basht_kill_with_fire)
+  PID_FILE=$(mktemp)
   echo "$RUNNING_PID" > "$PID_FILE"
 }
 
@@ -60,7 +60,7 @@ T_should_warn_the_user_if_not_provided_a_pid() {
 
 T_should_do_nothing_when_the_pid_does_not_exist() {
   (
-    PID_FILE=$(mktemp -t basht_kill_with_fire_invalid_pid)
+    PID_FILE=$(mktemp)
     echo "non-existing-pid" > "$PID_FILE"
     run_the_kill_script "$PID_FILE"
   ) || $T_fail "Should exit 0 when the given PID does not exist"
