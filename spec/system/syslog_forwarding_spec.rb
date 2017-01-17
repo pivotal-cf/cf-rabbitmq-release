@@ -2,18 +2,27 @@ require 'spec_helper'
 require 'ostruct'
 require 'papertrail'
 require 'httparty'
+require 'uri'
 
 REMOTE_LOG_DESTINATION = Papertrail::Connection.new(token: ENV.fetch("PAPERTRAIL_TOKEN"))
 PAPERTRAIL_GROUP_ID = ENV.fetch("PAPERTRAIL_GROUP_ID")
 
+def get_instances(bosh_director_url, deployment_name)
+  bosh_director_uri = URI(bosh_director_url)
+  bosh_director_username, bosh_director_password = URI.unescape(bosh_director_uri.userinfo).split(":")
+
+  JSON.parse(
+    HTTParty.get(
+      "#{bosh_director_uri.scheme}://#{bosh_director_uri.host}:#{bosh_director_uri.port}/deployments/#{deployment_name}/instances",
+      basic_auth: {username: bosh_director_username, password: bosh_director_password},
+      verify: false
+    )
+  ).map { |instance| OpenStruct.new(instance) }
+end
+
 DEPLOYMENT_NAME = ENV.fetch("DEPLOYMENT_NAME")
 BOSH_DIRECTOR_URL = ENV.fetch("BOSH_DIRECTOR_URL")
-DEPLOYMENT_INSTANCES = JSON.parse(
-  HTTParty.get(
-    "#{BOSH_DIRECTOR_URL}/deployments/#{DEPLOYMENT_NAME}/instances",
-    verify: false
-  )
-).map { |i| OpenStruct.new(i) }
+DEPLOYMENT_INSTANCES = get_instances(BOSH_DIRECTOR_URL, DEPLOYMENT_NAME)
 
 def host_search_string(host)
   "[job=#{host.job} index=#{host.index} id=#{host.id}]"
