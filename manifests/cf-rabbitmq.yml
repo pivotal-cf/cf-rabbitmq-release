@@ -188,8 +188,8 @@ instance_groups:
 properties:
   # for broker and route registrars
   cf:
-    admin_password: "admin"
     admin_username: "admin"
+    admin_password: "admin"
     api_url: "http://api.bosh-lite.com"
     domain: "bosh-lite.com"
   rabbitmq-server:
