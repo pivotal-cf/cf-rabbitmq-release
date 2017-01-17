@@ -3,6 +3,9 @@
 set -e
 set -x
 
+. /var/vcap/jobs/broker-registrar/bin/change-permissions
+. /var/vcap/jobs/broker-registrar/bin/permissions-test
+
 export PATH=$PATH:/var/vcap/packages/cf-cli/bin
 
 CF_API_URL='<%= p("cf.api_url") %>'
