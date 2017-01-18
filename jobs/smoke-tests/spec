@@ -7,6 +7,8 @@ packages:
 templates:
   config.json.erb: config.json
   errand.sh.erb: bin/run
+  change-permissions.sh.erb: bin/change-permissions
+  permissions-test.sh.erb: bin/permissions-test
 properties:
   cf.api_url:
     description: 'Full URL of Cloud Foundry API'
