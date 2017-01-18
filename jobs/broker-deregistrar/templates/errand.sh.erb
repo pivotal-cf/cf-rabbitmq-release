@@ -3,6 +3,9 @@
 set -e
 set -x
 
+. /var/vcap/jobs/broker-deregistrar/bin/change-permissions
+. /var/vcap/jobs/broker-deregistrar/bin/permissions-test
+
 export PATH=$PATH:/var/vcap/packages/cf-cli/bin
 
 cf --version

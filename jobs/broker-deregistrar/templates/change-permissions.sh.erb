@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+[ -z "$DEBUG" ] || set -x
+
+ensure_directories_are_not_world_readable() {
+  chown -LR vcap:vcap "/var/vcap/jobs/broker-deregistrar"
+  chmod 750 "/var/vcap/jobs/broker-deregistrar"
+}
+
+ensure_directories_are_not_world_readable
