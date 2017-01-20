@@ -60,6 +60,10 @@ properties:
     description: "Cluster partition recover mode property. Valid values are: pause_minority, autoheal"
     default: "pause_minority"
 
+  rabbitmq-server.force-unsafe-upgrade.disable-version-checking:
+    description: "This property is for support cases only. Leave as false unless you are prepared to get your cluster in an unrecoverable state, including complete data loss."
+    default: false
+
   rabbitmq-server.restart_statsdb_cron_schedule:
     description: "Schedule of when to restart the RabbitMQ StatsDB."
 
