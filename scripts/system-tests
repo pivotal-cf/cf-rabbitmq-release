@@ -2,7 +2,6 @@
 
 main() {
   install_dependencies
-  run_unit_tests
   run_system_tests_individually_to_isolate_state
   delete_bosh_deployment_to_remove_state
 }
@@ -10,11 +9,6 @@ main() {
 install_dependencies() {
   bundle install
 }
-
-run_unit_tests() {
-  bundle exec rake spec:unit
-}
-
 
 run_system_tests_individually_to_isolate_state() {
   spec_files=($(find spec/system/ -type f))
