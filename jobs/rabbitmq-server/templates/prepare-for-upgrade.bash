@@ -6,53 +6,41 @@ export PATH=/var/vcap/packages/erlang/bin:$PATH
 
 RMQ_SERVER_PACKAGE=/var/vcap/packages/rabbitmq-server
 CONTROL=${RMQ_SERVER_PACKAGE}/bin/rabbitmqctl
-JOB_DIR=/var/vcap/jobs/rabbitmq-server
 
 LOG_DIR=/var/vcap/sys/log/rabbitmq-server
-STDOUT_LOG="${LOG_DIR}"/pre-start.stdout.log
-STDERR_LOG="${LOG_DIR}"/pre-start.stderr.log
 
-main() {
-  run_script "${JOB_DIR}/bin/setup.sh"
-  run_script "${JOB_DIR}/bin/plugins.sh"
-  prepare_for_upgrade
-}
+run_rabbitmq_upgrade_preparation_on_every_node() {
+  __log "$STARTUP_LOG" "Preparing RabbitMQ for potential upgrade"
 
-run_script() {
-    local script
-    script=$1
-    echo "Starting ${script}"
-    set +e
-    "${script}" \
-        1>> "${STDOUT_LOG}" \
-        2>> "${STDERR_LOG}"
-    RETVAL=$?
-    set -e
-    case "${RETVAL}" in
-        0)
-            echo "Finished ${script}"
-            return 0
-            ;;
-        *)
-            echo "Errored ${script}"
-            RETVAL=1
-            exit "${RETVAL}"
-            ;;
-    esac
-}
-
-prepare_for_upgrade () {
-  echo "Preparing RabbitMQ for potential upgrade"
-  local remote_nodes
+  local remote_nodes remote_node new_rabbitmq_version new_erlang_version
   remote_nodes=($(cat /var/vcap/data/upgrade_preparation_nodes))
-  for remote_node in "${remote_nodes[@]}"; do
+  new_rabbitmq_version="$(cat "${RMQ_SERVER_PACKAGE}/rmq_version")"
+  new_erlang_version="$(cat "${RMQ_SERVER_PACKAGE}/erlang_version")"
+
+  for remote_node in "${remote_nodes[@]}" ; do
     /var/vcap/packages/rabbitmq-upgrade-preparation/bin/rabbitmq-upgrade-preparation \
-      -rabbitmqctl-path "${CONTROL}" \
+      -rabbitmqctl-path "$CONTROL" \
       -node "$remote_node" \
-      -new-rabbitmq-version "$(cat "${RMQ_SERVER_PACKAGE}"/rmq_version)" \
-      -new-erlang-version "$(cat "${RMQ_SERVER_PACKAGE}"/erlang_version)" \
-      1> >(tee -a "${LOG_DIR}"/upgrade.log) 2>&1
+      -new-rabbitmq-version "$new_rabbitmq_version" \
+      -new-erlang-version "$new_erlang_version" \
+      1> >(tee -a "${LOG_DIR}/upgrade.log") 2>&1
   done
 }
 
-main
+prepare_for_upgrade () {
+  if [ -z "$SKIP_PREPARE_FOR_UPGRADE" ]
+  then
+    run_rabbitmq_upgrade_preparation_on_every_node
+  fi
+}
+
+run_prepare_for_upgrade_when_first_deploy() {
+  local mnesia_dir
+  mnesia_dir="${1:?mnesia_dir must be provided as first argument}"
+
+  if [ -d "$mnesia_dir" ]
+  then
+    prepare_for_upgrade
+  fi
+}
+

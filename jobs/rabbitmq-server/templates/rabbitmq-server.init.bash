@@ -22,6 +22,8 @@ HOME_DIR=/var/vcap/store/rabbitmq
 OPERATOR_USERNAME_FILE="${HOME_DIR}/operator_administrator.username"
 START_PROG=/usr/bin/setsid
 
+JOB_DIR=/var/vcap/jobs/rabbitmq-server
+
 LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 STARTUP_LOG="${LOG_DIR}"/startup_stdout.log
 STARTUP_ERR_LOG="${LOG_DIR}"/startup_stderr.log
@@ -92,6 +94,29 @@ delete_operator_admin() {
   true
 }
 
+run_script() {
+    local script
+    script=$1
+    echo "Starting ${script}"
+    set +e
+    "${script}" \
+        1>> "${STARTUP_LOG}" \
+        2>> "${STARTUP_ERR_LOG}"
+    RETVAL=$?
+    set -e
+    case "${RETVAL}" in
+        0)
+            echo "Finished ${script}"
+            return 0
+            ;;
+        *)
+            echo "Errored ${script}"
+            RETVAL=1
+            exit "${RETVAL}"
+            ;;
+    esac
+}
+
 start_rabbitmq () {
     status_rabbitmq
 
@@ -108,6 +133,10 @@ start_rabbitmq () {
         fi
     else
         RETVAL=0
+        run_script "${JOB_DIR}/bin/setup.sh"
+        run_script "${JOB_DIR}/bin/plugins.sh"
+        run_prepare_for_upgrade_when_first_deploy "/var/vcap/store/rabbitmq/mnesia"
+
         echo "Starting RabbitMQ"
         track_rabbitmq_erlang_vm_pid_in_pid_file
         RABBITMQ_PID_FILE="${PID_FILE}" "${START_PROG}" "${DAEMON}" \
