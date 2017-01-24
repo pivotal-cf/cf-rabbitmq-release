@@ -172,7 +172,7 @@ instance_groups:
     release: cf-rabbitmq
   instances: 1
   lifecycle: errand
-  vm_type: m3.medium
+  vm_type: medium
   stemcell: trusty
   azs:
   - europe-west1-b
