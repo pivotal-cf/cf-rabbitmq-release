@@ -50,7 +50,7 @@ instance_groups:
         - "/var/vcap/sys/log"
   vm_type: large
   stemcell: trusty
-  persistent_disk_type: 10GB
+  persistent_disk_type: '102400'
   azs:
   - europe-west1-b
   - europe-west1-c
