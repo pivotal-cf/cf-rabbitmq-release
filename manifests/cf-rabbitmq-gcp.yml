@@ -184,8 +184,8 @@ properties:
   cf:
     admin_username: "admin"
     admin_password: "admin"
-    api_url: "http://api."sys.zumba.gcp.london.cf-app.com
-    domain: ""sys.zumba.gcp.london.cf-app.com
+    api_url: "http://api.sys.zumba.gcp.london.cf-app.com"
+    domain: "sys.zumba.gcp.london.cf-app.com"
   rabbitmq-server:
     restart_statsdb_cron_schedule: "42 */4 * * *"
     plugins:
