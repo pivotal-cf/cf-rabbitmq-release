@@ -28,7 +28,7 @@ main() {
   ${JOB_DIR}/bin/ensure-rabbitmq-statsdb-restart-cron
 
   # shellcheck disable=SC1090
-  . "${JOB_DIR}"/bin/prepare-for-upgrade
+  . "${JOB_DIR}"/lib/prepare-for-upgrade.bash
 
   # syslog forwarding
   /var/vcap/packages/rabbitmq-syslog-aggregator/enable_syslog_config rabbitmq_syslog.conf $JOB_DIR/config
@@ -59,3 +59,4 @@ ensure_http_log_cleanup_cron_job() {
 }
 
 main
+

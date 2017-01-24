@@ -40,6 +40,8 @@ RETVAL=0
 . /var/vcap/jobs/rabbitmq-server/etc/users
 # shellcheck disable=SC1091
 . /var/vcap/jobs/rabbitmq-server/etc/config
+# shellcheck disable=SC1091
+. /var/vcap/jobs/rabbitmq-server/lib/prepare-for-upgrade.bash
 
 remove_pid() {
     rm -f "${PID_FILE}"
@@ -121,7 +123,7 @@ start_rabbitmq () {
     status_rabbitmq
 
     ulimit -n "$RMQ_FD_LIMIT"
-    echo "Start RabbitMQ node... "
+    echo "Start RabbitMQ node..."
 
     if [ "${RETVAL}" = 0 ]; then
         "${CONTROL}" eval 'list_to_integer(os:getpid()).' > $PID_FILE
