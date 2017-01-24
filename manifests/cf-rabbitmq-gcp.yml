@@ -160,7 +160,7 @@ instance_groups:
     release: cf-rabbitmq
   instances: 1
   lifecycle: errand
-  vm_type: t2.micro
+  vm_type: micro
   stemcell: trusty
   azs:
   - europe-west1-b
