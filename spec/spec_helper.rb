@@ -85,6 +85,11 @@ def get_uuid(content)
   uuid_regex.match(content)[0]
 end
 
+def get_uuid_for_service_instance(content)
+  uuid_regex = /service_instances\/(\w{8}(-\w{4}){3}-\w{12}?)\/service_bindings/
+  uuid_regex.match(content)[1]
+end
+
 def stop_connections_to_job(options = {})
   job_hosts = options.fetch(:hosts)
   protocol = options.fetch(:protocol, 'tcp')
