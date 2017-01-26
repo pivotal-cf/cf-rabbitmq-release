@@ -1,9 +1,16 @@
 #!/bin/bash -ex
 
 main() {
+  write_ca_cert
   install_dependencies
   run_system_tests_individually_to_isolate_state
   delete_bosh_deployment_to_remove_state
+}
+
+write_ca_cert() {
+  if [[ $BOSH_CERT ]]; then
+    echo -e $BOSH_CERT > cert.pem
+  fi
 }
 
 install_dependencies() {
