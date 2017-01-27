@@ -45,18 +45,37 @@ T_should_kill_a_pid() {
   ) || $T_fail "Process still existed after running the kill script"
 }
 
-T_should_exit_non_zero_if_not_provided_a_pid() {
+T_should_exit_non_zero_if_not_provided_a_pid_file() {
   (
-    run_the_kill_script || return 0
+    if run_the_kill_script ; then
+      return 1
+    else
+      return 0
+    fi
   ) || $T_fail "Exited zero when not provided a PID"
 }
 
-T_should_warn_the_user_if_not_provided_a_pid() {
+T_should_log_if_not_provided_a_pid_file() {
   (
-    output=$(run_the_kill_script 2>&1)
-    expect_to_contain "$output" "must be a valid PID file"
+    run_the_kill_script
+
+    grep "must be a valid PID file" "$SHUTDOWN_LOG"
   ) || $T_fail "Did not provide the correct output when no PID is provided"
 }
+
+T_should_warn_the_user_if_provided_a_non_existent_pid_file() {
+  (
+    run_the_kill_script /path/does/not/exist
+    grep "PID file did not exist, continuing." "$SHUTDOWN_LOG"
+  ) || $T_fail "Did not output that it's continuing after PID file was not found"
+}
+
+T_should_exit_zero_if_provided_a_non_existent_pid_file() {
+  (
+    run_the_kill_script /path/does/not/exist
+  ) || $T_fail "Exited non zero when provided a non existent PID file"
+}
+
 
 T_should_do_nothing_when_the_pid_does_not_exist() {
   (
