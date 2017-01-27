@@ -1,0 +1,103 @@
+---
+packages:
+- name: cf-cli
+  version: 68cbd378bc91c97fd0847075d71528c3eb1f7928
+  fingerprint: 68cbd378bc91c97fd0847075d71528c3eb1f7928
+  sha1: 8be3d68e19b7dc8ec2f3db7fcedd46dd1d12800d
+  dependencies: []
+- name: cf-rabbitmq-smoke-tests
+  version: b674b591adfffa72e6ddbe9eaa202f3dfae45b80
+  fingerprint: b674b591adfffa72e6ddbe9eaa202f3dfae45b80
+  sha1: 3ae0bb93c33fb1450da0be4adec7582544f8f254
+  dependencies: []
+- name: erlang
+  version: bebb805b36fbddb8627b7c381a64467de6bd2650
+  fingerprint: bebb805b36fbddb8627b7c381a64467de6bd2650
+  sha1: 29be2ca5280ee2ff429ce8d174cbf79bb334bd33
+  dependencies: []
+- name: golang-1.7.3
+  version: 65a8c296d8c2319d411165f5dc837a63b3846c7b
+  fingerprint: 65a8c296d8c2319d411165f5dc837a63b3846c7b
+  sha1: f9c23f0a2e555dc7a72c6866779ffe13b213b1ac
+  dependencies: []
+- name: haproxy
+  version: f0f2335dc5e7cab5c8a7232fd4aa9d92cbc8dba8
+  fingerprint: f0f2335dc5e7cab5c8a7232fd4aa9d92cbc8dba8
+  sha1: 0ad1d93e8966f684f7fa94b1694ad53765c5ae13
+  dependencies: []
+- name: java
+  version: 4cc1119c49707a07d69b3863914b6f1307e611b5
+  fingerprint: 4cc1119c49707a07d69b3863914b6f1307e611b5
+  sha1: 3a9380d3362e3b144638667b33615cdf8bad2bdc
+  dependencies: []
+- name: rabbitmq-broker
+  version: 487e9860992f4d90d7691e95401cc719af47ef4c
+  fingerprint: 487e9860992f4d90d7691e95401cc719af47ef4c
+  sha1: a517e173b14fc669f5d533645993a8dc9d43d821
+  dependencies: []
+- name: rabbitmq-cluster-migration-tool
+  version: 779d9da54c8f0de14ef1caded1644de54044ef2f
+  fingerprint: 779d9da54c8f0de14ef1caded1644de54044ef2f
+  sha1: 9cb7e11ebf903b1c50b230fd63d4f605fe911760
+  dependencies:
+  - golang-1.7.3
+- name: rabbitmq-common
+  version: a1ceb4166602035b5e8783f2d90a2048a654875f
+  fingerprint: a1ceb4166602035b5e8783f2d90a2048a654875f
+  sha1: 8d1b3638e58d93796534325d1bfd0649e250a839
+  dependencies: []
+- name: rabbitmq-server
+  version: 5015c948c09a4af9085d34c52df4f28cce3a736c
+  fingerprint: 5015c948c09a4af9085d34c52df4f28cce3a736c
+  sha1: dc20fa3f1ec349267203d2103a92fd9dab355213
+  dependencies: []
+- name: rabbitmq-upgrade-preparation
+  version: 8c58d6eb2dec4d2f5e12c10278bf09e7c5cfe2f1
+  fingerprint: 8c58d6eb2dec4d2f5e12c10278bf09e7c5cfe2f1
+  sha1: 565bc90f4ce3a1cea0ba44e13366fcf5f3a7d82f
+  dependencies:
+  - golang-1.7.3
+- name: route-registrar
+  version: 9201df16302b0cb33f2200416e53920cc63f6fbc
+  fingerprint: 9201df16302b0cb33f2200416e53920cc63f6fbc
+  sha1: 565ac0fbc186e52dbf20f78c9df3e4a009991ef5
+  dependencies:
+  - golang-1.7.3
+- name: syslog_aggregator
+  version: f5f41827f10190520d60460b84e7e956c04fb7a8
+  fingerprint: f5f41827f10190520d60460b84e7e956c04fb7a8
+  sha1: a77ab9e50006e148c488705ffd5ccd5dd9f7b84c
+  dependencies: []
+jobs:
+- name: broker-deregistrar
+  version: da670f4b4220387c768a26c02c567d85eb93e1ce
+  fingerprint: da670f4b4220387c768a26c02c567d85eb93e1ce
+  sha1: 2dab5975bde74551af40c0798c4ad109e98d7587
+- name: broker-registrar
+  version: e354968e46093de4e61d825a875bb33bffef79e3
+  fingerprint: e354968e46093de4e61d825a875bb33bffef79e3
+  sha1: 7ebb83309c3286d4221ee82aafec15d20af0504c
+- name: rabbitmq-broker
+  version: bb197b09314e30e48265a8c8b4df209cb6000a08
+  fingerprint: bb197b09314e30e48265a8c8b4df209cb6000a08
+  sha1: 6e773b3e6717f16172ee657ded80020f0c48dd77
+- name: rabbitmq-haproxy
+  version: e699ebe54572e3bd9221cbb991b5e6afe03bc6d4
+  fingerprint: e699ebe54572e3bd9221cbb991b5e6afe03bc6d4
+  sha1: aa92cb0055aec0e646397714bf92a558bb8ca92f
+- name: rabbitmq-server
+  version: aa411e96ba902e24f08d53c0b5f7287d6bc0c61f
+  fingerprint: aa411e96ba902e24f08d53c0b5f7287d6bc0c61f
+  sha1: fd5b5453b15177bac04af0a414625ae6707c7910
+- name: smoke-tests
+  version: f13c7c6715a31242bbd312769704cbe36e6c6516
+  fingerprint: f13c7c6715a31242bbd312769704cbe36e6c6516
+  sha1: 9553ad0294788f8532c380e92d39a28571c3bcda
+license:
+  version: c3a4ca7589687d67435c0c8061b5052f8e5e8103
+  fingerprint: c3a4ca7589687d67435c0c8061b5052f8e5e8103
+  sha1: f0d5b261b4a0ed5e07c7ca498cd778c125be31cc
+commit_hash: 6efd0908
+uncommitted_changes: true
+name: cf-rabbitmq
+version: 222.11.0
