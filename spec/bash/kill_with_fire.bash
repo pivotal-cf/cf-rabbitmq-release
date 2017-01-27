@@ -54,7 +54,7 @@ T_should_exit_non_zero_if_not_provided_a_pid() {
 T_should_warn_the_user_if_not_provided_a_pid() {
   (
     output=$(run_the_kill_script 2>&1)
-    expect_to_contain "$output" "must be a running PID"
+    expect_to_contain "$output" "must be a valid PID file"
   ) || $T_fail "Did not provide the correct output when no PID is provided"
 }
 

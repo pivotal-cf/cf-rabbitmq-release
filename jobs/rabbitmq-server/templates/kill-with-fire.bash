@@ -2,7 +2,7 @@
 
 SHUTDOWN_LOG="${LOG_DIR:-/var/vcap/sys/log/rabbitmq-server}/shutdown_stdout.log"
 
-PID_FILE="${1:?First argument must be a running PID}"
+PID_FILE="${1:?First argument must be a valid PID file}"
 RUNNING_PID=$(cat "$PID_FILE")
 
 if kill -0 "$RUNNING_PID"; then
