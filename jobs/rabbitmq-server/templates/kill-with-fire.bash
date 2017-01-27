@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-SHUTDOWN_LOG="${LOG_DIR}/shutdown_stdout.log"
+SHUTDOWN_LOG="${LOG_DIR:-/var/vcap/sys/log/rabbitmq-server}/shutdown_stdout.log"
 
 PID_FILE="${1:?First argument must be a running PID}"
 RUNNING_PID=$(cat "$PID_FILE")
