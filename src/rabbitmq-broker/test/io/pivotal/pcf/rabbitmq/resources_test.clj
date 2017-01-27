@@ -142,7 +142,7 @@
 
 (deftest test-protocol-info-for
   (testing "without TLS"
-    (let [protos {"stomp" 61613 "mqtt" 1883  "amqp" 5672 "http" 15672}
+    (let [protos {"stomp" 61613 "mqtt" 1883  "amqp" 5672}
           ssl?   false
           out    {"amqp"       {:uri      "amqp://guest:guest@mercurio.local:5672/my-app"
                                 :uris     ["amqp://guest:guest@mercurio.local:5672/my-app" "amqp://guest:guest@other.local:5672/my-app"]

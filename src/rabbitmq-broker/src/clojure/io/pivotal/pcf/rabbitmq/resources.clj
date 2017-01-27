@@ -122,7 +122,6 @@
   [proto tls?]
   (case (.toLowerCase ^String (name proto))
     "amqp"      "amqp"
-    "http"      "management"
     "mqtt"      "mqtt"
     "stomp"     "stomp"
     "amqp/ssl"  "amqp+ssl"
@@ -165,7 +164,6 @@
   (let [s (.toLowerCase proto)]
     (case s
       "amqp"      false
-      "http"      false
       "mqtt"      false
       "stomp"     false
       "amqps"     true
