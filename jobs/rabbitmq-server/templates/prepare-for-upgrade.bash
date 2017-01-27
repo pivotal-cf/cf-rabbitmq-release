@@ -10,7 +10,7 @@ CONTROL=${RMQ_SERVER_PACKAGE}/bin/rabbitmqctl
 LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 
 run_rabbitmq_upgrade_preparation_on_every_node() {
-  __log "$STARTUP_LOG" "Preparing RabbitMQ for potential upgrade"
+  echo "$STARTUP_LOG" "Preparing RabbitMQ for potential upgrade"
 
   local remote_nodes remote_node new_rabbitmq_version new_erlang_version
   remote_nodes=($(cat /var/vcap/data/upgrade_preparation_nodes))
