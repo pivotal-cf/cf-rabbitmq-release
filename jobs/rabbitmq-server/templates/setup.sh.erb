@@ -70,8 +70,7 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   CLUSTER_CONFIG="${HOME_DIR}/etc/rabbitmq/cluster.config"
   SCRIPT_DIR="$(${DIRNAME} $0)"
   JOB_IP=<%= job_ip %>
-  RMQ_VERSION=3.6.6
-  RMQ_CLUSTERER_VERSION=3.6.5
+  RMQ_VERSION=3.6.5
 
 
   # Unfortunate tight coupling. Beware.
@@ -160,7 +159,7 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   fi
 
   RABBITMQ_BOOT_MODULE="RABBITMQ_BOOT_MODULE=rabbit_clusterer"
-  RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS="RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=\"-pa /var/vcap/packages/rabbitmq-server/plugins/rabbitmq_clusterer-${RMQ_CLUSTERER_VERSION}.ez/rabbitmq_clusterer-${RMQ_CLUSTERER_VERSION}/ebin\""
+  RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS="RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=\"-pa /var/vcap/packages/rabbitmq-server/plugins/rabbitmq_clusterer-${RMQ_VERSION}.ez/rabbitmq_clusterer-${RMQ_VERSION}/ebin\""
   ${SED} "/${PREFIX}/,/${SUFFIX}/d" < ${DIR}/env.backup > ${DIR}/env
   printf "${PREFIX}\n${NODENAME}\n${RABBITMQ_BOOT_MODULE}\n${RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS}\n${CONFIG}\n${SERVER_START_ARGS}\n${SUFFIX}\n" >> ${DIR}/env
 
