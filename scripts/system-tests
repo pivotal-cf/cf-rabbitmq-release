@@ -1,15 +1,19 @@
 #!/bin/bash -ex
 
 main() {
-  write_ca_cert
+  write_keys_to_file
   install_dependencies
   run_system_tests_individually_to_isolate_state
   delete_bosh_deployment_to_remove_state
 }
 
-write_ca_cert() {
+write_keys_to_file() {
   if [[ $BOSH_CERT ]]; then
     echo -e $BOSH_CERT > cert.pem
+  fi
+  if [[ $BOSH_INSTANCE_SSH_KEY ]]; then
+    echo -e $BOSH_INSTANCE_SSH_KEY > instance_ssh_key.pem
+    export BOSH_INSTANCE_SSH_KEY=$(PWD)"/instance_ssh_key.pem"
   fi
 }
 
