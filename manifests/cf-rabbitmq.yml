@@ -1,9 +1,9 @@
 ---
-name: cf-rabbitmq
+name: cf-rabbitmq-v2
 director_uuid: <%= `bosh status --uuid`.strip %>
 
 releases:
-- name: cf-rabbitmq
+- name: cf-rabbitmq-v2
   version: latest
 - name: cf-rabbitmq-test
   version: latest
@@ -20,7 +20,7 @@ instance_groups:
   instances: 2
   jobs:
   - name: rabbitmq-server
-    release: cf-rabbitmq
+    release: cf-rabbitmq-v2
   - name: rabbitmq-statsdb-reset-cron-test
     release: cf-rabbitmq-test
   - name: syslog-configuration-test
@@ -62,7 +62,7 @@ instance_groups:
   instances: 1
   jobs:
   - name: rabbitmq-broker
-    release: cf-rabbitmq
+    release: cf-rabbitmq-v2
   - name: route_registrar
     release: routing
     properties:
@@ -106,7 +106,7 @@ instance_groups:
   instances: 1
   jobs:
   - name: rabbitmq-haproxy
-    release: cf-rabbitmq
+    release: cf-rabbitmq-v2
   - name: route_registrar
     release: routing
     properties:
@@ -149,7 +149,7 @@ instance_groups:
 - name: broker-registrar
   jobs:
   - name: broker-registrar
-    release: cf-rabbitmq
+    release: cf-rabbitmq-v2
   instances: 1
   lifecycle: errand
   vm_type: t2.micro
@@ -162,7 +162,7 @@ instance_groups:
 - name: broker-deregistrar
   jobs:
   - name: broker-deregistrar
-    release: cf-rabbitmq
+    release: cf-rabbitmq-v2
   instances: 1
   lifecycle: errand
   vm_type: t2.micro
@@ -175,7 +175,7 @@ instance_groups:
 - name: smoke-tests
   jobs:
   - name: smoke-tests
-    release: cf-rabbitmq
+    release: cf-rabbitmq-v2
   instances: 1
   lifecycle: errand
   vm_type: m3.medium
