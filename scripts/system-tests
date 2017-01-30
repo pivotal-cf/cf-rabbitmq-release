@@ -11,10 +11,6 @@ write_keys_to_file() {
   if [[ $BOSH_CERT ]]; then
     echo -e $BOSH_CERT > cert.pem
   fi
-  if [[ $BOSH_INSTANCE_SSH_KEY ]]; then
-    echo -e $BOSH_INSTANCE_SSH_KEY > instance_ssh_key.pem
-    export BOSH_INSTANCE_SSH_KEY=$(PWD)"/instance_ssh_key.pem"
-  fi
 }
 
 install_dependencies() {
