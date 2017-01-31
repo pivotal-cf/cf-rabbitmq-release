@@ -74,11 +74,11 @@ instance_groups:
         password: nats
       route_registrar:
         routes:
-        - name: pivotal-rabbitmq-broker
+        - name: pivotal-rabbitmq-broker-v2
           port: 4567
           registration_interval: 20s
           uris:
-          - pivotal-rabbitmq-broker.bosh-lite.com
+          - pivotal-rabbitmq-broker-v2.bosh-lite.com
   - name: syslog-configuration-test
     release: cf-rabbitmq-test
     properties:
@@ -118,11 +118,11 @@ instance_groups:
         password: nats
       route_registrar:
         routes:
-        - name: pivotal-rabbitmq
+        - name: pivotal-rabbitmq-v2
           port: 15672
           registration_interval: 20s
           uris:
-          - pivotal-rabbitmq.bosh-lite.com
+          - pivotal-rabbitmq-v2.bosh-lite.com
   - name: syslog-configuration-test
     release: cf-rabbitmq-test
     properties:
@@ -222,13 +222,13 @@ properties:
       username: admin
       password: admin
   broker:
-    host: pivotal-rabbitmq-broker.bosh-lite.com
+    host: pivotal-rabbitmq-broker-v2.bosh-lite.com
     protocol: https
     name: p-rabbitmq
     username: "p1-rabbit"
     password: "p1-rabbit-devpwd"
   rabbitmq-broker:
-    route: pivotal-rabbitmq-broker
+    route: pivotal-rabbitmq-broker-v2
     cc_endpoint: http://api.bosh-lite.com
     service:
       username: "p1-rabbit"
@@ -245,7 +245,7 @@ properties:
         policy_name: "operator_set_policy"
         policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
         policy_priority: 50
-      management_domain: pivotal-rabbitmq.bosh-lite.com
+      management_domain: pivotal-rabbitmq-v2.bosh-lite.com
       ssl: |
         -----BEGIN CERTIFICATE-----
         MIIC+zCCAeOgAwIBAgIBAjANBgkqhkiG9w0BAQUFADAnMRUwEwYDVQQDEwxNeVRl
