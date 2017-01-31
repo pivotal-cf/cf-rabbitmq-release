@@ -7,7 +7,7 @@ mkdir -p $(dirname $PACKAGE_DIR)
 
 cp -a $(basename $PACKAGE_NAME)/ $PACKAGE_DIR
 
-export GOROOT=$(readlink -nf /var/vcap/packages/golang)
+export GOROOT=$(readlink -nf "/var/vcap/packages/golang-1.7.5")
 export GOPATH=$BOSH_INSTALL_TARGET
 export PATH=$GOROOT/bin:$PATH
 

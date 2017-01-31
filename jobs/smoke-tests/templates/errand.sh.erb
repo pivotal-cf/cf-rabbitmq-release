@@ -5,7 +5,7 @@ set -e
 cd /var/vcap/packages/cf-rabbitmq-smoke-tests/src
 
 export GOPATH=$PWD/Godeps/_workspace
-export GOROOT=/var/vcap/packages/golang
+export GOROOT="/var/vcap/packages/golang-1.7.5"
 export PATH=/var/vcap/packages/cf-cli/bin:$GOPATH/bin:$GOROOT/bin:$PATH
 
 CONFIG_PATH=/var/vcap/jobs/smoke-tests/config.json ./bin/test

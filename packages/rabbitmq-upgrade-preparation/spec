@@ -1,6 +1,6 @@
 ---
 name: rabbitmq-upgrade-preparation
 dependencies:
-- golang
+- golang-1.7.5
 files:
 - rabbitmq-upgrade-preparation/**/*.go

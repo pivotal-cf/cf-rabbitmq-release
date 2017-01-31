@@ -15,10 +15,6 @@ erlang/otp_src_oss_18.1.tgz:
   object_id: 6cf4831f-727d-44b5-9cd2-1bb33c25b4c5
   sha: cf5a7e63074a4743e976d87b5f9fe80deac61cfe
   size: 68197399
-golang/go1.6.3.linux-amd64.tar.gz:
-  object_id: 7d05939b-fe46-4ee4-a4d3-9e81386dae27
-  sha: 5e916ba4dd8c2fc43beafca4c08b334c4d0686f3
-  size: 84856920
 java/jre1.8.0_102.tar.gz:
   object_id: 47eaf4d5-39ff-410d-8f27-cebf479a7113
   sha: 826e439a697b4506455e8fbb7aa949e774b18992
@@ -31,3 +27,7 @@ rabbitmq-server/rabbitmq-server-generic-unix-3.5.8.tar.gz:
   object_id: 651b84dc-1ed3-4900-86c2-1b954b742d9e
   sha: 5e89d61291b4bc6865097fa57c92e5214dce239a
   size: 4222924
+golang/go1.7.5.linux-amd64.tar.gz:
+  object_id: fce49545-1098-4e29-979f-0a58f6634ac5
+  sha: 7c6902ce8cd3b9963082d748c50df074e4896796
+  size: 84176916
