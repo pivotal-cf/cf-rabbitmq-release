@@ -1,0 +1,16 @@
+#!/bin/bash -ex
+
+main() {
+  install_dependencies
+  run_unit_tests
+}
+
+install_dependencies() {
+  bundle install
+}
+
+run_unit_tests() {
+  bundle exec rake spec:unit
+}
+
+main
