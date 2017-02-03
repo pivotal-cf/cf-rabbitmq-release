@@ -1,9 +1,9 @@
 ---
-name: cf-rabbitmq-v2
+name: cf-rabbitmq
 director_uuid: <%= `bosh status --uuid`.strip %>
 
 releases:
-- name: cf-rabbitmq-v2
+- name: cf-rabbitmq
   version: latest
 - name: cf-rabbitmq-test
   version: latest
@@ -17,10 +17,10 @@ stemcells:
 
 instance_groups:
 - name: rmq
-  instances: 2
+  instances: 3
   jobs:
   - name: rabbitmq-server
-    release: cf-rabbitmq-v2
+    release: cf-rabbitmq
   - name: rabbitmq-statsdb-reset-cron-test
     release: cf-rabbitmq-test
   - name: syslog-configuration-test
@@ -62,7 +62,7 @@ instance_groups:
   instances: 1
   jobs:
   - name: rabbitmq-broker
-    release: cf-rabbitmq-v2
+    release: cf-rabbitmq
   - name: route_registrar
     release: routing
     properties:
@@ -74,11 +74,11 @@ instance_groups:
         password: nats
       route_registrar:
         routes:
-        - name: pivotal-rabbitmq-broker-v2
+        - name: pivotal-rabbitmq-broker
           port: 4567
           registration_interval: 20s
           uris:
-          - pivotal-rabbitmq-broker-v2.bosh-lite.com
+          - pivotal-rabbitmq-broker.bosh-lite.com
   - name: syslog-configuration-test
     release: cf-rabbitmq-test
     properties:
@@ -106,7 +106,7 @@ instance_groups:
   instances: 1
   jobs:
   - name: rabbitmq-haproxy
-    release: cf-rabbitmq-v2
+    release: cf-rabbitmq
   - name: route_registrar
     release: routing
     properties:
@@ -118,11 +118,11 @@ instance_groups:
         password: nats
       route_registrar:
         routes:
-        - name: pivotal-rabbitmq-v2
+        - name: pivotal-rabbitmq
           port: 15672
           registration_interval: 20s
           uris:
-          - pivotal-rabbitmq-v2.bosh-lite.com
+          - pivotal-rabbitmq.bosh-lite.com
   - name: syslog-configuration-test
     release: cf-rabbitmq-test
     properties:
@@ -149,7 +149,7 @@ instance_groups:
 - name: broker-registrar
   jobs:
   - name: broker-registrar
-    release: cf-rabbitmq-v2
+    release: cf-rabbitmq
   instances: 1
   lifecycle: errand
   vm_type: t2.micro
@@ -162,7 +162,7 @@ instance_groups:
 - name: broker-deregistrar
   jobs:
   - name: broker-deregistrar
-    release: cf-rabbitmq-v2
+    release: cf-rabbitmq
   instances: 1
   lifecycle: errand
   vm_type: t2.micro
@@ -175,7 +175,7 @@ instance_groups:
 - name: smoke-tests
   jobs:
   - name: smoke-tests
-    release: cf-rabbitmq-v2
+    release: cf-rabbitmq
   instances: 1
   lifecycle: errand
   vm_type: m3.medium
@@ -222,13 +222,13 @@ properties:
       username: admin
       password: admin
   broker:
-    host: pivotal-rabbitmq-broker-v2.bosh-lite.com
+    host: pivotal-rabbitmq-broker.bosh-lite.com
     protocol: https
     name: p-rabbitmq
     username: "p1-rabbit"
     password: "p1-rabbit-devpwd"
   rabbitmq-broker:
-    route: pivotal-rabbitmq-broker-v2
+    route: pivotal-rabbitmq-broker
     cc_endpoint: http://api.bosh-lite.com
     service:
       username: "p1-rabbit"
@@ -245,7 +245,7 @@ properties:
         policy_name: "operator_set_policy"
         policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
         policy_priority: 50
-      management_domain: pivotal-rabbitmq-v2.bosh-lite.com
+      management_domain: pivotal-rabbitmq.bosh-lite.com
       ssl: |
         -----BEGIN CERTIFICATE-----
         MIIC+zCCAeOgAwIBAgIBAjANBgkqhkiG9w0BAQUFADAnMRUwEwYDVQQDEwxNeVRl
