@@ -12,6 +12,6 @@ gem 'bunny', '~> 1.6.3'
 gem 'mqtt',  '~> 0.1.0'
 gem 'stomp', '~> 1.3.1'
 gem 'prof', '~> 0.31.15'
-gem 'hula', :git => "git://github.com/pivotal-cf-experimental/hula", :branch => "ca_cert"
+gem 'hula', '~> 0.8.10'
 gem 'rspec-retry'
 gem 'papertrail'
