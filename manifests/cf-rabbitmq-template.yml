@@ -1,0 +1,277 @@
+---
+name: ((deployment-name))
+director_uuid: ((director-uuid))
+
+releases:
+- name: ((cf-rabbitmq-release-name))
+  version: latest
+- name: cf-rabbitmq-test
+  version: latest
+- name: routing
+  version: 0.143.0
+
+stemcells:
+- alias: trusty
+  os: ubuntu-trusty
+  version: ((stemcell-version))
+
+instance_groups:
+- name: rmq
+  instances: 3
+  jobs:
+  - name: rabbitmq-server
+    release: ((cf-rabbitmq-release-name))
+  - name: rabbitmq-statsdb-reset-cron-test
+    release: cf-rabbitmq-test
+  - name: syslog-configuration-test
+    release: cf-rabbitmq-test
+    properties:
+      syslog-configuration-test:
+        watched-log-files:
+        - "/var/vcap/sys/log/rabbitmq-server/rabbit@*.log"
+        - "/var/vcap/sys/log/rabbitmq-server/rabbit@*-sasl.log"
+        - "/var/vcap/sys/log/rabbitmq-server/startup_stderr.log"
+        - "/var/vcap/sys/log/rabbitmq-server/startup_stdout.log"
+        - "/var/vcap/sys/log/rabbitmq-server/shutdown_stdout.log"
+        - "/var/vcap/sys/log/rabbitmq-server/shutdown_stderr.log"
+        - "/var/vcap/sys/log/rabbitmq-server/management-ui/access.log*"
+        - "/var/vcap/sys/log/rabbitmq-server/upgrade.log"
+        - "/var/vcap/sys/log/rabbitmq-server/init.log"
+        - "/var/vcap/sys/log/rabbitmq-server/node-check.log"
+        - "/var/vcap/sys/log/rabbitmq-server/cluster-check.log"
+        - "/var/vcap/sys/log/rabbitmq-server/pre-start.log"
+  - name: permissions-test
+    release: cf-rabbitmq-test
+    properties:
+      permissions-test:
+        directories:
+        - "/var/vcap/jobs/rabbitmq-server"
+        - "/var/vcap/store/rabbitmq"
+        - "/var/vcap/sys/log"
+
+  vm_type: r3.large
+  stemcell: trusty
+  persistent_disk_type: 10GB
+  azs:
+  - eu-west-1a
+  - eu-west-1b
+  networks:
+  - name: services
+
+- name: rmq-broker
+  instances: 1
+  jobs:
+  - name: rabbitmq-broker
+    release: ((cf-rabbitmq-release-name))
+  - name: route_registrar
+    release: routing
+    properties:
+      nats:
+        machines:
+        - ((nats-ip-address))
+        port: 4222
+        user: nats
+        password: ((cf-admin-password))
+      route_registrar:
+        routes:
+        - name: ((rabbitmq-broker-domain))
+          port: 4567
+          registration_interval: 20s
+          uris:
+          - ((rabbitmq-broker-domain)).((bosh-hostname))
+  - name: syslog-configuration-test
+    release: cf-rabbitmq-test
+    properties:
+      syslog-configuration-test:
+        watched-log-files:
+        - "/var/vcap/sys/log/rabbitmq-broker/startup_stdout.log"
+        - "/var/vcap/sys/log/rabbitmq-broker/startup_stderr.log"
+        - "/var/vcap/sys/log/route_registrar/route_registrar.log"
+        - "/var/vcap/sys/log/route_registrar/route_registrar.err.log"
+  - name: permissions-test
+    release: cf-rabbitmq-test
+    properties:
+      permissions-test:
+        directories:
+        - "/var/vcap/jobs/rabbitmq-broker"
+        - "/var/vcap/sys/log"
+  vm_type: m3.medium
+  stemcell: trusty
+  azs:
+  - eu-west-1a
+  networks:
+  - name: services
+
+- name: haproxy
+  instances: ((haproxy-instances))
+  jobs:
+  - name: rabbitmq-haproxy
+    release: ((cf-rabbitmq-release-name))
+  - name: route_registrar
+    release: routing
+    properties:
+      nats:
+        machines:
+        - ((nats-ip-address))
+        port: 4222
+        user: nats
+        password: ((cf-admin-password))
+      route_registrar:
+        routes:
+        - name: ((rabbitmq-management-domain))
+          port: 15672
+          registration_interval: 20s
+          uris:
+          - ((rabbitmq-management-domain)).((bosh-hostname))
+  - name: syslog-configuration-test
+    release: cf-rabbitmq-test
+    properties:
+      syslog-configuration-test:
+        watched-log-files:
+        - "/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log"
+        - "/var/vcap/sys/log/route_registrar/route_registrar.err.log"
+        - "/var/vcap/sys/log/route_registrar/route_registrar.log"
+  - name: permissions-test
+    release: cf-rabbitmq-test
+    properties:
+      permissions-test:
+        directories:
+        - "/var/vcap/jobs/rabbitmq-haproxy"
+        - "/var/vcap/sys/log"
+  vm_type: m3.medium
+  stemcell: trusty
+  azs:
+  - eu-west-1a
+  - eu-west-1b
+  networks:
+  - name: services
+
+- name: broker-registrar
+  jobs:
+  - name: broker-registrar
+    release: ((cf-rabbitmq-release-name))
+  instances: 1
+  lifecycle: errand
+  vm_type: t2.micro
+  stemcell: trusty
+  azs:
+  - eu-west-1a
+  networks:
+  - name: services
+
+- name: broker-deregistrar
+  jobs:
+  - name: broker-deregistrar
+    release: ((cf-rabbitmq-release-name))
+  instances: 1
+  lifecycle: errand
+  vm_type: t2.micro
+  stemcell: trusty
+  azs:
+  - eu-west-1a
+  networks:
+  - name: services
+
+- name: smoke-tests
+  jobs:
+  - name: smoke-tests
+    release: ((cf-rabbitmq-release-name))
+  instances: 1
+  lifecycle: errand
+  vm_type: m3.medium
+  stemcell: trusty
+  azs:
+  - eu-west-1a
+  networks:
+  - name: services
+
+properties:
+  # for broker and route registrars
+  cf:
+    admin_username: ((cf-admin-username))
+    admin_password: ((cf-admin-password))
+    api_url: http://api.((bosh-hostname))
+    domain: ((bosh-hostname))
+  rabbitmq-server:
+    restart_statsdb_cron_schedule: "42 */4 * * *"
+    plugins:
+    - rabbitmq_management
+    - rabbitmq_mqtt
+    - rabbitmq_stomp
+    ports:
+    - 5672
+    - 5671
+    - 1883
+    - 8883
+    - 61613
+    - 61614
+    - 15672
+    - 15674
+    administrators:
+      management:
+        username: ((rabbitmq-management-username))
+        password: ((rabbitmq-management-password))
+      broker:
+        username: ((rabbitmq-broker-username))
+        password: ((rabbitmq-broker-password))
+    cookie: "rabbit-cluster:aws"
+    cluster_partition_handling: autoheal
+
+  rabbitmq-haproxy:
+    stats:
+      username: ((haproxy-stats-username))
+      password: ((haproxy-stats-password))
+  broker:
+    host: ((rabbitmq-broker-domain)).((bosh-hostname))
+    protocol: https
+    name: ((product-name))
+    username: ((multitenant-rabbitmq-broker-username))
+    password: ((multitenant-rabbitmq-broker-password))
+  rabbitmq-broker:
+    route: ((rabbitmq-broker-domain))
+    cc_endpoint: http://api.((bosh-hostname))
+    service:
+      username: ((multitenant-rabbitmq-broker-username))
+      password: ((multitenant-rabbitmq-broker-password))
+      name: ((product-name))
+      uuid: ((rabbitmq-broker-uuid))
+      plan_uuid: 4e816145-4e71-4e24-a402-0c686b868e2d
+    logging:
+      level: debug
+      print_stack_traces: false
+    rabbitmq:
+      operator_set_policy:
+        enabled: true
+        policy_name: "operator_set_policy"
+        policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
+        policy_priority: 50
+      management_domain: ((rabbitmq-management-domain)).((bosh-hostname))
+      ssl: |
+        -----BEGIN CERTIFICATE-----
+        MIIC+zCCAeOgAwIBAgIBAjANBgkqhkiG9w0BAQUFADAnMRUwEwYDVQQDEwxNeVRl
+        c3RSb290Q0ExDjAMBgNVBAcTBTY0MTAzMB4XDTE0MDkwNDA3MjIwOFoXDTI0MDkw
+        MTA3MjIwOFowKjEXMBUGA1UEAxMObWVyY3VyaW8ubG9jYWwxDzANBgNVBAoTBnNl
+        cnZlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANxxSzf958VIm8lp
+        qQ4BHSmz1z8yU/KEKSbuEfIqpGwpVx6TZ+ZYiXa0cMV2pE7UKR4OyJiuvtvv9kzu
+        6g+HTXmJo2cqVonGCAMp6d9TkCAMaMF76IrbLyGmvXQDcjOmWarvsGHW/w6gJpw9
+        svDP9EXyXTBUfaJq3T8+9UQBfMsL4dHwAt79YgvSQLsYiIi2rzQixK/4PHFeHf3G
+        I/UDgjG0YG9iCWp2g1Sc3Z6hYB/0pOCBxE7LCrSGS6/M/7c2569yK7NqSSNN7Lqz
+        ZoQSF1NYE6KRd2MK2A0QaKrn9v8K5/Lp0fk70bvwtLxTWtp3wq3bYQg8UdqY/6R8
+        UATS/aMCAwEAAaMvMC0wCQYDVR0TBAIwADALBgNVHQ8EBAMCBSAwEwYDVR0lBAww
+        CgYIKwYBBQUHAwEwDQYJKoZIhvcNAQEFBQADggEBAHC89mK1HJgDqwxjsGpa3V7t
+        Nuqe/XxEIUUN3Lm4gBLKq4wed4c6z4csv16f3uL9cypyHPSrQmMPV7CDgWLX4F7g
+        YN9PGaVfIp/rGNsDWJEVNU2rfIEDIUfcL+o844jE8CtmzZ4bGVrCHqKW5pAraai1
+        o5h3JaU4yDLo49rqPeRft2n/gj+5E3gi/1TsnuLuzB7kK1gaTTOrV3GASiGokCEN
+        4v1ZjaqMSGMcwA/esaLv2N6UYJgd5lyJ7PEL4ddE8QCTo2EPhYyltLxRqOjrxa+5
+        KONA94PDj14gOSSsoXkoj7gWQsuHT2RXmurYXk4/PkS+k1j0+ZCzKi/ZxF5jt50=
+        -----END CERTIFICATE-----
+      administrator:
+        username: ((rabbitmq-broker-username))
+        password: ((rabbitmq-broker-password))
+
+update:
+  canaries: 1
+  canary_watch_time: 30000-180000
+  update_watch_time: 30000-180000
+  max_in_flight: 4
+  serial: false
