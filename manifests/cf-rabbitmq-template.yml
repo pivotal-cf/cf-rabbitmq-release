@@ -235,7 +235,7 @@ properties:
       password: ((multitenant-rabbitmq-broker-password))
       name: ((product-name))
       uuid: ((rabbitmq-broker-uuid))
-      plan_uuid: 4e816145-4e71-4e24-a402-0c686b868e2d
+      plan_uuid: ((rabbitmq-broker-plan-uuid))
     logging:
       level: debug
       print_stack_traces: false
