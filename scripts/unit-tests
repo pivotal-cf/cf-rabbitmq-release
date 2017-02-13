@@ -1,12 +1,5 @@
 #!/bin/bash -ex
 
-export BOSH_USER
-BOSH_USER="${BOSH_USERNAME:?env required}"
-BOSH_TARGET="${BOSH_TARGET:?env required}"
-BOSH_MANIFEST="${BOSH_MANIFEST:?env required}"
-DEPLOYMENT_NAME="$(awk -F ': ' '/^name/ { print $2 }' < "$BOSH_MANIFEST")"
-DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?failed to find deployment name in manifest}"
-
 main() {
   install_dependencies
   run_unit_tests
@@ -19,6 +12,5 @@ install_dependencies() {
 run_unit_tests() {
   bundle exec rake spec:unit
 }
-
 
 main
