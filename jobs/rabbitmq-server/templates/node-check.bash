@@ -21,9 +21,9 @@ pid_file_contains_rabbitmq_erlang_vm_pid() {
 
 clusterer_app_is_running() {
   local clusterer_app_info
-  clusterer_app_info="$(rabbitmqctl environment | grep -A 1 "{rabbitmq_clusterer")"
+  clusterer_app_info="$(rabbitmqctl environment | grep -A 1 ",{:rabbitmq_clusterer")"
 
-  [[ "$clusterer_app_info" == *'{config,"/var/vcap/store/rabbitmq/etc/rabbitmq/cluster.config"}'* ]] ||
+  [[ "$clusterer_app_info" == *"[config: '/var/vcap/store/rabbitmq/etc/rabbitmq/cluster.config']"* ]] ||
   fail "RabbitMQ Clusterer app not running with correct configuration"
 }
 
