@@ -126,7 +126,9 @@ RSpec.describe 'Logging a Cloud Foundry service broker' do
 
             stop_connections_to_job(:hosts=>[rmq_server_z1_host, rmq_server_z2_host], :port => RMQ_SERVER_PORT) do
               expect { cf.unbind_app_from_service(pushed_app, service_instance) }.to raise_error do |e|
-                service_instance_id = get_uuid(e.message)
+                service_instance_location = e.message.index("service_instances")
+                uuid_string = e.message[service_instance_location, e.message.length]
+                service_instance_id = get_uuid(uuid_string)
                 expect(rmq_broker_stderr_log).to include "Failed to unbind a service: #{service_instance_id}"
               end
             end
