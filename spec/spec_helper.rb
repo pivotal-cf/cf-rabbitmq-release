@@ -86,9 +86,9 @@ def deregister_broker
   bosh_director.run_errand('broker-deregistrar') unless ENV.has_key?('SKIP_ERRANDS')
 end
 
-def get_uuid(content)
-  uuid_regex = /(\w{8}(-\w{4}){3}-\w{12}?)/
-  uuid_regex.match(content)[0]
+def get_service_instance_uuid(content)
+  uuid_regex = /service_instances\/(\w{8}(-\w{4}){3}-\w{12}?)\/service_bindings/
+  uuid_regex.match(content)[1]
 end
 
 def stop_connections_to_job(options = {})
