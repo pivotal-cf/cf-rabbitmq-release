@@ -55,7 +55,7 @@ RSpec.describe 'Logging a Cloud Foundry service broker' do
       it 'writes the error in stderr log', :creates_service_key do
         stop_connections_to_job(:hosts => [rmq_server_0_host, rmq_server_1_host, rmq_server_2_host], :port => RMQ_SERVER_PORT) do
           expect{ cf.provision_and_create_service_key(service) { |_,_,_| } }.to raise_error do |e|
-            service_instance_id = get_service_instance_uuid(e.message)
+            service_instance_id = get_uuid(e.message)
             expect(rmq_broker_stderr_log).to include "Failed to provision a service: #{service_instance_id}"
           end
         end
@@ -77,7 +77,7 @@ RSpec.describe 'Logging a Cloud Foundry service broker' do
         cf.provision_service(service) do |service_instance|
           stop_connections_to_job(:hosts => [rmq_server_0_host, rmq_server_1_host, rmq_server_2_host], :port => RMQ_SERVER_PORT) do
             expect { cf.delete_service_instance_and_unbind(service_instance, :allow_failure => false) }.to raise_error do |e|
-              service_instance_id = get_service_instance_uuid(e.message)
+              service_instance_id = get_uuid(e.message)
               expect(rmq_broker_stderr_log).to include "Failed to deprovision a service: #{service_instance_id}"
             end
           end
@@ -103,7 +103,7 @@ RSpec.describe 'Logging a Cloud Foundry service broker' do
 
             stop_connections_to_job(:hosts => [rmq_server_0_host, rmq_server_1_host, rmq_server_2_host], :port => RMQ_SERVER_PORT) do
               expect { cf.bind_service_and_keep_running(pushed_app.name, service_instance.name) }.to raise_error do |e|
-                service_instance_id = get_service_instance_uuid(e.message)
+                service_instance_id = get_uuid(e.message)
                 expect(rmq_broker_stderr_log).to include "Failed to bind a service: #{service_instance_id}"
               end
             end
