@@ -20,25 +20,20 @@ require File.expand_path('../../../../system_test/test_app/lib/lab_rat/aggregate
 
 
 RSpec.describe 'Logging a Cloud Foundry service broker' do
-  RMQ_BROKER_JOB = "rmq-broker"
+  RMQ_BROKER_JOB = "rabbitmq-broker"
   RMQ_BROKER_JOB_INDEX = 0
 
-  RMQ_SERVER_Z1_JOB = "rmq_z1"
+  RMQ_SERVER_JOB = "rabbitmq-server"
   RMQ_SERVER_Z1_JOB_INDEX = 0
-
-  RMQ_SERVER_Z2_JOB = "rmq_z2"
-  RMQ_SERVER_Z2_JOB_INDEX = 0
+  RMQ_SERVER_Z2_JOB_INDEX = 1
 
   RMQ_SERVER_PORT = 15672
 
-  # Temporary workaroud allowing rabbitmq-1.7 and rabbitmq-gcp-1.7 pipeline to work together
-  # More details: https://www.pivotaltracker.com/story/show/140026627
-  #let(:service_name) {environment.bosh_manifest.job('rabbitmq-broker').properties['rabbitmq-broker']['service']['name']}
-  let(:service_name) {'p-rabbitmq-v222'}
+  let(:service_name) {environment.bosh_manifest.job('rabbitmq-broker').properties['rabbitmq-broker']['service']['name']}
   let(:service) { Prof::MarketplaceService.new(name: service_name, plan: 'standard') }
   let(:rmq_broker_host)  { bosh_director.ips_for_job(RMQ_BROKER_JOB, environment.bosh_manifest.deployment_name)[RMQ_BROKER_JOB_INDEX] }
-  let(:rmq_server_z1_host)  { bosh_director.ips_for_job(RMQ_SERVER_Z1_JOB, environment.bosh_manifest.deployment_name)[RMQ_SERVER_Z1_JOB_INDEX] }
-  let(:rmq_server_z2_host)  { bosh_director.ips_for_job(RMQ_SERVER_Z2_JOB, environment.bosh_manifest.deployment_name)[RMQ_SERVER_Z2_JOB_INDEX] }
+  let(:rmq_server_z1_host)  { bosh_director.ips_for_job(RMQ_SERVER_JOB, environment.bosh_manifest.deployment_name)[RMQ_SERVER_Z1_JOB_INDEX] }
+  let(:rmq_server_z2_host)  { bosh_director.ips_for_job(RMQ_SERVER_JOB, environment.bosh_manifest.deployment_name)[RMQ_SERVER_Z2_JOB_INDEX] }
   let(:rmq_broker_stdout_log) { ssh_gateway.execute_on(rmq_broker_host, "cat /var/vcap/sys/log/rabbitmq-broker/startup_stdout.log") }
   let(:rmq_broker_stderr_log) { ssh_gateway.execute_on(rmq_broker_host, "cat /var/vcap/sys/log/rabbitmq-broker/startup_stderr.log") }
 
