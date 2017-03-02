@@ -31,7 +31,7 @@ RSpec.describe 'Logging a Cloud Foundry service broker' do
 
   RMQ_SERVER_PORT = 15672
 
-  let(:service_name) { environment.bosh_manifest.property('rabbitmq-broker.service.name') }
+  let(:service_name) {environment.bosh_manifest.job('rabbitmq-broker').properties['rabbitmq-broker']['service']['name']}
   let(:service) { Prof::MarketplaceService.new(name: service_name, plan: 'standard') }
   let(:rmq_broker_host)  { bosh_director.ips_for_job(RMQ_BROKER_JOB, environment.bosh_manifest.deployment_name)[RMQ_BROKER_JOB_INDEX] }
   let(:rmq_server_z1_host)  { bosh_director.ips_for_job(RMQ_SERVER_Z1_JOB, environment.bosh_manifest.deployment_name)[RMQ_SERVER_Z1_JOB_INDEX] }
