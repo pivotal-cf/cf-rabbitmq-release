@@ -26,7 +26,7 @@ RSpec.describe 'Broker Registrar', test_with_errands: true do
     register_broker
   end
 
-  let(:service_name) { environment.bosh_manifest.property('rabbitmq-broker.service.name') }
+  let(:service_name) { environment.bosh_manifest.job('rabbitmq-broker').properties['rabbitmq-broker']['service']['name'] }
 
   context 'when the orgs propery is not set' do
     before(:all) do

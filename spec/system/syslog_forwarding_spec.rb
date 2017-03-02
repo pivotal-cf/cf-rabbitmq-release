@@ -5,9 +5,9 @@ require 'hula/bosh_manifest'
 RSpec.describe "Syslog forwarding" do
 
   before(:all) do
-    @rmq_job_name = 'rmq_z1'
-    @broker_job_name = "rmq-broker"
-    @haproxy_job_name = "haproxy_z1"
+    @rmq_job_name = 'rabbitmq-server'
+    @broker_job_name = "rabbitmq-broker"
+    @haproxy_job_name = "rabbitmq-haproxy"
     @bosh_job_index = 0
     @rmq_host = bosh_director.ips_for_job(@rmq_job_name, environment.bosh_manifest.deployment_name)[@bosh_job_index]
     @broker_host = bosh_director.ips_for_job(@broker_job_name, environment.bosh_manifest.deployment_name)[@bosh_job_index]
@@ -17,8 +17,8 @@ RSpec.describe "Syslog forwarding" do
     @syslog_port = 12345
     @nc_command = "nc -k -l #{@syslog_address} #{@syslog_port}"
 
-    @rmq_admin_broker_username = environment.bosh_manifest.property("rabbitmq-server.administrators.broker.username")
-    @rmq_admin_broker_password = environment.bosh_manifest.property("rabbitmq-server.administrators.broker.password")
+    @rmq_admin_broker_username = environment.bosh_manifest.job('rabbitmq-server').properties['rabbitmq-server']['administrators']['broker']['username']
+    @rmq_admin_broker_username = environment.bosh_manifest.job('rabbitmq-server').properties['rabbitmq-server']['administrators']['broker']['password']
   end
 
   context "when the syslog forwarder properties are set in the BOSH manifest" do

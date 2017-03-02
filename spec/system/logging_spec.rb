@@ -11,16 +11,16 @@ require 'prof/cloud_foundry'
 require 'prof/test_app'
 
 RSpec.describe "logging configuration" do
-  RMQ_Z1_HOST = bosh_director.ips_for_job("rmq_z1", environment.bosh_manifest.deployment_name)[0]
-  RMQ_Z2_HOST = bosh_director.ips_for_job("rmq_z2", environment.bosh_manifest.deployment_name)[0]
-  HAPROXY_HOST = bosh_director.ips_for_job("haproxy_z1", environment.bosh_manifest.deployment_name)[0]
+  RMQ_Z1_HOST = bosh_director.ips_for_job("rabbitmq-server", environment.bosh_manifest.deployment_name)[0]
+  RMQ_Z2_HOST = bosh_director.ips_for_job("rabbitmq-server", environment.bosh_manifest.deployment_name)[1]
+  HAPROXY_HOST = bosh_director.ips_for_job("rabbitmq-haproxy", environment.bosh_manifest.deployment_name)[0]
 
   HAPROXY_LOG_LOCATION = "/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log"
 
   RMQ_HOST_Z1_DIGEST = Digest::MD5.hexdigest(RMQ_Z1_HOST)
   RMQ_HOST_Z2_DIGEST = Digest::MD5.hexdigest(RMQ_Z2_HOST)
 
-  SERVICE_NAME = environment.bosh_manifest.property('rabbitmq-broker.service.name')
+  SERVICE_NAME = environment.bosh_manifest.job('rabbitmq-broker').properties['rabbitmq-broker']['service']['name']
   SERVICE = Prof::MarketplaceService.new(
     name: SERVICE_NAME,
     plan: 'standard'

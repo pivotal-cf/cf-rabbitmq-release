@@ -20,7 +20,7 @@ require "stomp"
 require File.expand_path('../../../../system_test/test_app/lib/lab_rat/aggregate_health_checker.rb', __FILE__)
 
 RSpec.describe 'Using a Cloud Foundry service broker' do
-  let(:service_name) { environment.bosh_manifest.property('rabbitmq-broker.service.name') }
+  let(:service_name) {environment.bosh_manifest.job('rabbitmq-broker').properties['rabbitmq-broker']['service']['name']}
 
   let(:service) do
     Prof::MarketplaceService.new(
@@ -32,29 +32,28 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
   let(:session) { Capybara::Session.new(:poltergeist) }
 
   let(:rmq_host) do
-    bosh_director.ips_for_job("rmq_z1", environment.bosh_manifest.deployment_name)[0]
+    bosh_director.ips_for_job("rabbitmq-server", environment.bosh_manifest.deployment_name)[0]
   end
 
   let(:rmq_server_admin_broker_username) do
-    environment.bosh_manifest.property('rabbitmq-server.administrators.broker.username')
+    environment.bosh_manifest.job('rabbitmq-server').properties['rabbitmq-server']['administrators']['broker']['username']
   end
 
   let(:rmq_server_admin_broker_password) do
-    environment.bosh_manifest.property('rabbitmq-server.administrators.broker.password')
+    environment.bosh_manifest.job('rabbitmq-server').properties['rabbitmq-server']['administrators']['broker']['password']
   end
 
   let(:rmq_broker_username) do
-    environment.bosh_manifest.property('broker.username')
+    environment.bosh_manifest.job('rabbitmq-broker').properties['rabbitmq-broker']['service']['username']
   end
 
   let(:rmq_broker_password) do
-    environment.bosh_manifest.property('broker.password')
+    environment.bosh_manifest.job('rabbitmq-broker').properties['rabbitmq-broker']['service']['password']
   end
 
   let(:rmq_broker_host) do
-    protocol = environment.bosh_manifest.property('broker.protocol')
-    host = environment.bosh_manifest.property('broker.host')
-    URI.parse("#{protocol}://#{host}")
+    host = environment.bosh_manifest.job('broker-registrar').properties['broker']['host']
+    URI.parse("https://#{host}")
   end
 
   let(:broker_catalog) do
@@ -84,7 +83,7 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
   context 'when stomp plugin is disabled'  do
     before(:context) do
       modify_and_deploy_manifest do |manifest|
-        manifest['properties']['rabbitmq-server']['plugins'] = ['rabbitmq_management','rabbitmq_mqtt']
+        manifest['instance_groups'].select { |instance_group| instance_group['name'] === 'rabbitmq-server' }[0]['properties']['rabbitmq-server']['plugins'] = ['rabbitmq_management','rabbitmq_mqtt']
       end
     end
 
@@ -108,7 +107,7 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
   context 'when broker is configured with HA policy' do
     before(:context) do
       modify_and_deploy_manifest do |manifest|
-        manifest['properties']['rabbitmq-broker']['rabbitmq']['operator_set_policy'] = {
+        manifest['instance_groups'].select { |instance_group| instance_group['name'] === 'rabbitmq-broker' }[0]['properties']['rabbitmq-broker']['rabbitmq']['operator_set_policy'] = {
           'enabled' => true,
           'policy_name' => "operator_set_policy",
           'policy_definition' => "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}",
@@ -185,7 +184,7 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
 
       before(:all) do
         modify_and_deploy_manifest do |manifest|
-          service_properties = manifest['properties']['rabbitmq-broker']['service']
+          service_properties = manifest['instance_groups'].select { |instance_group| instance_group['name'] === 'rabbitmq-broker' }[0]['properties']['rabbitmq-broker']['service']
           service_properties['name'] = "service-name"
           service_properties['display_name'] = "apps-manager-test-name"
           service_properties['offering_description'] = "Some description of our service"

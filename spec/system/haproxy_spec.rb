@@ -9,7 +9,7 @@ require 'net/http'
 
 RSpec.describe "haproxy" do
 
-  let(:service_name) { environment.bosh_manifest.property('rabbitmq-broker.service.name') }
+  let(:service_name) { environment.bosh_manifest.job('rabbitmq-broker').properties['rabbitmq-broker']['service']['name'] }
 
   let(:service) do
     Prof::MarketplaceService.new(
