@@ -158,7 +158,7 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
     context 'when a dns host is configured' do
       before(:context) do
         modify_and_deploy_manifest do |manifest|
-          rabbit_manifest = manifest['properties']['rabbitmq-broker']['rabbitmq']
+          rabbit_manifest = manifest['instance_groups'].select { |instance_group| instance_group['name'] === 'rabbitmq-broker' }[0]['properties']['rabbitmq-broker']['rabbitmq']
           rabbit_manifest['dns_host'] = rabbit_manifest['hosts'].first
           rabbit_manifest['hosts'] = ['Verify that this ip is not used over the dns_host']
         end

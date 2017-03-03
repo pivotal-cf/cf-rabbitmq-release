@@ -28,7 +28,7 @@ RSpec.describe "Syslog forwarding" do
       @haproxy_listener_thread = create_listener_thread(@haproxy_host)
 
       modify_and_deploy_manifest do |manifest|
-        manifest["properties"]["syslog_aggregator"] = { "address" => @syslog_address, "port" => @syslog_port }
+        manifest['instance_groups'].select { |instance_group| instance_group['name'] === 'rabbitmq-server' }[0]['properties']['syslog_aggregator'] = { "address" => @syslog_address, "port" => @syslog_port }
       end
     end
 
