@@ -223,7 +223,7 @@ properties:
       password: ((haproxy-stats-password))
   broker:
     host: ((rabbitmq-broker-domain)).((bosh-hostname))
-    protocol: https
+    protocol: ((rabbitmq-broker-protocol))
     name: ((product-name))
     username: ((multitenant-rabbitmq-broker-username))
     password: ((multitenant-rabbitmq-broker-password))
