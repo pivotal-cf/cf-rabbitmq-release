@@ -10,7 +10,7 @@ DEPLOYMENT_NAME="${DEPLOYMENT_NAME:?failed to find deployment name in manifest}"
 main() {
   install_dependencies
   run_unit_tests
-  run_system_tests_individually_to_isolate_state
+  bundle exec rspec "spec/system/syslog_forwarding_spec.rb" --fail-fast
   delete_bosh_deployment_to_remove_state
 }
 
