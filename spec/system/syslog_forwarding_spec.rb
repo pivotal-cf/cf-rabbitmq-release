@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'hula'
 require 'hula/bosh_manifest'
 
-RSpec.xdescribe "Syslog forwarding" do
+RSpec.describe "Syslog forwarding" do
 
   before(:all) do
     @rmq_job_name = 'rabbitmq-server'
