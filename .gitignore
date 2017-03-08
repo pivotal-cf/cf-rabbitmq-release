@@ -18,3 +18,4 @@ releases/**/*.tgz
 *#
 #*
 rspec.xml
+*.iml
