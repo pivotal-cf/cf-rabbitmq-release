@@ -8,7 +8,7 @@ releases:
 - name: cf-rabbitmq-test
   version: latest
 - name: routing
-  version: 0.136.0
+  version: 0.143.0
 
 stemcells:
 - alias: trusty
