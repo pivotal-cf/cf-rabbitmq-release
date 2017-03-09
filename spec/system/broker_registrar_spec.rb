@@ -16,6 +16,10 @@ describe 'Broker Registrar' do
     @new_org = "#{@rand_str}_new"
   end
 
+  before(:each) do
+    cf.auth_token
+  end
+
   after(:all) do
     @orgs.each do |org|
       cf.delete_org(org)
