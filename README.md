@@ -11,9 +11,9 @@ for the only real use of this.
 
 ## How do I install this?
 
-`script/setup`
+`scripts/setup`
 
 ## How do I run the tests?
 
-`script/run_tests`
+`scripts/run_tests`
 
