@@ -6,8 +6,8 @@ WORKDIR=$GOPATH/src/github.com/pivotal-cf/rabbitmq-upgrade-preparation
 
 main() {
   setup_workdir
-  script/setup
-  script/run_tests
+  scripts/setup
+  scripts/run_tests
 }
 
 setup_workdir() {
