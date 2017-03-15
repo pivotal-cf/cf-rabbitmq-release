@@ -4,4 +4,4 @@ image: docker:///golang#1.6.1
 inputs:
   - name: rabbitmq-upgrade-preparation
 run:
-  path: rabbitmq-upgrade-preparation/script/ci
+  path: rabbitmq-upgrade-preparation/scripts/ci
