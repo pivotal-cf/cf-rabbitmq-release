@@ -35,10 +35,13 @@ T_recursively_chown_all_the_subtree_under_target_directory() {
   local nested_dir="$destination_dir/three/four"
   mkdir -p "$nested_dir"
   touch "$nested_dir/a-file"
+  touch "$nested_dir/an-executable-file"
+  chmod ug+x "$nested_dir/an-executable-file"
 
   sudo ./spec/bash/ensure_dir_wrapper.bash "$destination_dir" "$testuser:$testuser"
 
   check_path "$destination_dir" "drwxr-x---"
   check_path "$nested_dir" "drwxrwx---"
   check_path "$nested_dir/a-file" "-rw-rw----"
+  check_path "$nested_dir/an-executable-file" "-rwxrwx---"
 }
