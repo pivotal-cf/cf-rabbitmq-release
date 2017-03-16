@@ -12,4 +12,5 @@ function ensure_dir() {
     mkdir -p "${_dir}"
     chown -LR "$ownership" "$_dir"
     chmod 750 "${_dir}"
+    chmod -R o-rwx "${_dir}"
 }
