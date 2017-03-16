@@ -43,13 +43,14 @@ T_assign_ownership_and_permissions_for_an_existing_directory() {
   touch "$nested_dir/a-file"
   touch "$nested_dir/an-executable-file"
   chmod ug+x "$nested_dir/an-executable-file"
+  chmod -R g-w "$destination_dir"
 
   sudo ./spec/bash/ensure_dir_wrapper.bash "$destination_dir" "$testuser:$testuser"
 
   check_path "$destination_dir" "drwxr-x---"
-  check_path "$nested_dir" "drwxrwx---"
-  check_path "$nested_dir/a-file" "-rw-rw----"
-  check_path "$nested_dir/an-executable-file" "-rwxrwx---"
+  check_path "$nested_dir" "drwxr-x---"
+  check_path "$nested_dir/a-file" "-rw-r-----"
+  check_path "$nested_dir/an-executable-file" "-rwxr-x---"
 }
 
 T_does_not_follow_symbolic_links() {
