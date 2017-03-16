@@ -4,6 +4,7 @@ name: rabbitmq-haproxy
 packages:
 - haproxy
 - rabbitmq-syslog-aggregator
+- rabbitmq-common
 
 properties:
   rabbitmq-haproxy.stats.username:

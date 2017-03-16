@@ -1,0 +1,15 @@
+# ensure_dir
+#
+# @param directory name
+#
+# Creates  directory <directory name> if it doesn't exist
+# sets the ownership recursively to vcap and
+# changes the permissions to rwxr-x---
+#
+function ensure_dir() {
+    local _dir=${1:?missing directory}
+    local ownership=${2:-vcap:vcap}
+    mkdir -p "${_dir}"
+    chown -LR "$ownership" "$_dir"
+    chmod 750 "${_dir}"
+}
