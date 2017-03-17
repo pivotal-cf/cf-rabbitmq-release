@@ -71,7 +71,7 @@ instance_groups:
         - ((nats-ip-address))
         port: 4222
         user: nats
-        password: ((cf-admin-password))
+        password: ((cf-nats-password))
       route_registrar:
         routes:
         - name: ((rabbitmq-broker-domain))
@@ -115,7 +115,7 @@ instance_groups:
         - ((nats-ip-address))
         port: 4222
         user: nats
-        password: ((cf-admin-password))
+        password: ((cf-nats-password))
       route_registrar:
         routes:
         - name: ((rabbitmq-management-domain))
@@ -131,12 +131,16 @@ instance_groups:
         - "/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log"
         - "/var/vcap/sys/log/route_registrar/route_registrar.err.log"
         - "/var/vcap/sys/log/route_registrar/route_registrar.log"
-#  - name: permissions-test
-#    release: ((cf-rabbitmq-release-name))
+# - name: permissions-test
+#   release: ((cf-rabbitmq-release-name))
 #    properties:
 #      permissions-test:
 #        directories:
-#        - "/var/vcap/jobs/rabbitmq-haproxy"
+#        - "/var/vcap/jobs/rabbitmq-haproxy/bash-test-helpers"
+#        - "/var/vcap/jobs/rabbitmq-haproxy/haproxy"
+#        - "/var/vcap/jobs/rabbitmq-haproxy/rabbitmq-common"
+#        - "/var/vcap/jobs/rabbitmq-haproxy/rabbitmq-haproxy-metrics"
+#        - "/var/vcap/jobs/rabbitmq-haproxy/rabbitmq-syslog-aggregator"
 #        - "/var/vcap/sys/log"
   vm_type: m3.medium
   stemcell: trusty
