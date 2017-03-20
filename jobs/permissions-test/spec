@@ -1,0 +1,15 @@
+# vim: set filetype=yaml :
+---
+name: permissions-test
+packages:
+
+properties:
+  permissions-test.directories:
+    description: "The directories we want to ensure do not have world readable files"
+    example:
+      - "/var/vcap/jobs/rabbitmq-server"
+    default: []
+
+templates:
+  post-deploy.sh: bin/post-deploy
+  directories-to-inspect.sh.erb: bin/directories-to-inspect.sh

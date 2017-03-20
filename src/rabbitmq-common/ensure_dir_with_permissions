@@ -1,4 +1,5 @@
-# ensure_dir
+#!/usr/bin/env bash
+# ensure_dir_with_permissions
 #
 # @param directory name
 #
@@ -6,7 +7,7 @@
 # sets the ownership recursively to vcap and
 # changes the permissions to rwxr-x---
 #
-function ensure_dir() {
+function ensure_dir_with_permissions() {
     local _dir=${1:?missing directory}
     local ownership=${2:-vcap:vcap}
     mkdir -p "${_dir}"

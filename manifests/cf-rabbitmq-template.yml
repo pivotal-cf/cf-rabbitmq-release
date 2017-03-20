@@ -131,8 +131,8 @@ instance_groups:
         - "/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log"
         - "/var/vcap/sys/log/route_registrar/route_registrar.err.log"
         - "/var/vcap/sys/log/route_registrar/route_registrar.log"
-# - name: permissions-test
-#   release: ((cf-rabbitmq-release-name))
+#  - name: permissions-test
+#    release: ((cf-rabbitmq-release-name))
 #    properties:
 #      permissions-test:
 #        directories:
