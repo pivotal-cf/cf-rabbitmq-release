@@ -8,10 +8,13 @@
 # changes the permissions to rwxr-x---
 #
 function ensure_dir_with_permissions() {
-    local _dir=${1:?missing directory}
+    local target_dir=${1:?missing directory}
     local ownership=${2:-vcap:vcap}
-    mkdir -p "${_dir}"
-    chown -LR -P "$ownership" "$_dir"
-    chmod 750 "${_dir}"
-    chmod -R o-rwx "${_dir}"
+
+    mkdir -p "${target_dir}"
+    ( cd "$target_dir"
+      chown -LR -P "$ownership" .
+      chmod 750 .
+      chmod -R o-rwx .
+    )
 }

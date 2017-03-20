@@ -1,0 +1,4 @@
+# abort script on any command that exits with a non zero value
+set -e
+
+cp bash-test-helpers-two/common.bash ${BOSH_INSTALL_TARGET}

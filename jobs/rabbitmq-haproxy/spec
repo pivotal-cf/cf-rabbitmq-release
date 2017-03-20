@@ -20,6 +20,7 @@ properties:
 templates:
   rabbitmq-haproxy.init.erb:  bin/rabbitmq-haproxy.init
   haproxy.config.erb:         haproxy.config
+  known-packages.bash:        bin/known-packages.bash
   pre-start.erb:              bin/pre-start
   syslog_forwarder.conf.erb:  config/syslog_forwarder.conf
   haproxy_syslog.conf.erb:    config/haproxy_syslog.conf

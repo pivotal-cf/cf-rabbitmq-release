@@ -131,17 +131,16 @@ instance_groups:
         - "/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log"
         - "/var/vcap/sys/log/route_registrar/route_registrar.err.log"
         - "/var/vcap/sys/log/route_registrar/route_registrar.log"
-#  - name: permissions-test
-#    release: ((cf-rabbitmq-release-name))
-#    properties:
-#      permissions-test:
-#        directories:
-#        - "/var/vcap/jobs/rabbitmq-haproxy/bash-test-helpers"
-#        - "/var/vcap/jobs/rabbitmq-haproxy/haproxy"
-#        - "/var/vcap/jobs/rabbitmq-haproxy/rabbitmq-common"
-#        - "/var/vcap/jobs/rabbitmq-haproxy/rabbitmq-haproxy-metrics"
-#        - "/var/vcap/jobs/rabbitmq-haproxy/rabbitmq-syslog-aggregator"
-#        - "/var/vcap/sys/log"
+  - name: permissions-test
+    release: ((cf-rabbitmq-release-name))
+    properties:
+      permissions-test:
+        directories:
+        - "/var/vcap/jobs/rabbitmq-haproxy/packages/haproxy"
+        - "/var/vcap/jobs/rabbitmq-haproxy/packages/rabbitmq-common"
+        - "/var/vcap/jobs/rabbitmq-haproxy/packages/rabbitmq-haproxy-metrics"
+        - "/var/vcap/jobs/rabbitmq-haproxy/packages/rabbitmq-syslog-aggregator"
+        - "/var/vcap/sys/log"
   vm_type: m3.medium
   stemcell: trusty
   azs:

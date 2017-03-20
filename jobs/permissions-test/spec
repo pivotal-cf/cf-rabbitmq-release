@@ -2,6 +2,7 @@
 ---
 name: permissions-test
 packages:
+  - bash-test-helpers-two
 
 properties:
   permissions-test.directories:
