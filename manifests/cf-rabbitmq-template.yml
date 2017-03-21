@@ -40,14 +40,14 @@ instance_groups:
         - "/var/vcap/sys/log/rabbitmq-server/node-check.log"
         - "/var/vcap/sys/log/rabbitmq-server/cluster-check.log"
         - "/var/vcap/sys/log/rabbitmq-server/pre-start.log"
-#  - name: permissions-test
-#    release: cf-rabbitmq-test
-#    properties:
-#      permissions-test:
-#        directories:
-#        - "/var/vcap/jobs/rabbitmq-server"
-#        - "/var/vcap/store/rabbitmq"
-#        - "/var/vcap/sys/log"
+  - name: permissions-test
+    release: cf-rabbitmq-test
+    properties:
+      permissions-test:
+        directories:
+        - "/var/vcap/jobs/rabbitmq-server"
+        - "/var/vcap/store/rabbitmq"
+        - "/var/vcap/sys/log"
 
   vm_type: r3.large
   stemcell: trusty
@@ -88,13 +88,13 @@ instance_groups:
         - "/var/vcap/sys/log/rabbitmq-broker/startup_stderr.log"
         - "/var/vcap/sys/log/route_registrar/route_registrar.log"
         - "/var/vcap/sys/log/route_registrar/route_registrar.err.log"
-#  - name: permissions-test
-#    release: cf-rabbitmq-test
-#    properties:
-#      permissions-test:
-#        directories:
-#        - "/var/vcap/jobs/rabbitmq-broker"
-#        - "/var/vcap/sys/log"
+  - name: permissions-test
+    release: cf-rabbitmq-test
+    properties:
+      permissions-test:
+        directories:
+        - "/var/vcap/jobs/rabbitmq-broker"
+        - "/var/vcap/sys/log"
   vm_type: m3.medium
   stemcell: trusty
   azs:
