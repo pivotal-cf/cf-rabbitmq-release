@@ -41,7 +41,7 @@ instance_groups:
         - "/var/vcap/sys/log/rabbitmq-server/cluster-check.log"
         - "/var/vcap/sys/log/rabbitmq-server/pre-start.log"
   - name: permissions-test
-    release: cf-rabbitmq-test
+    release: ((cf-rabbitmq-release-name))
     properties:
       permissions-test:
         directories:
@@ -89,7 +89,7 @@ instance_groups:
         - "/var/vcap/sys/log/route_registrar/route_registrar.log"
         - "/var/vcap/sys/log/route_registrar/route_registrar.err.log"
   - name: permissions-test
-    release: cf-rabbitmq-test
+    release: ((cf-rabbitmq-release-name))
     properties:
       permissions-test:
         directories:
