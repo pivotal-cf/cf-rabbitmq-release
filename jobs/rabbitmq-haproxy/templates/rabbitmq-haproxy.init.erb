@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 
 set -e
@@ -22,18 +22,11 @@ test -f "${CONFIG}"
 
 RETVAL=0
 
-ensure_dir() {
-    DIR=$1
-    if [ ! -d "${DIR}" ] ; then
-        mkdir -p "${DIR}"
-        chown -R "${USER}":"${USER}" "${DIR}"
-        chmod 775 "${DIR}"
-    fi
-}
+source /var/vcap/packages/rabbitmq-common/ensure_dir_with_permissions
 
-ensure_dirs() {
-    ensure_dir "$(dirname "${PID_FILE}")"
-    ensure_dir "${INIT_LOG_DIR}"
+ensure_dirs_with_permissions() {
+    ensure_dir_with_permissions "$(dirname "${PID_FILE}")"
+    ensure_dir_with_permissions "${INIT_LOG_DIR}"
 }
 
 ensure_log_files() {
@@ -54,7 +47,7 @@ start_haproxy() {
     else
         RETVAL=0
 
-        ensure_dirs
+        ensure_dirs_with_permissions
         ensure_log_files
 
         echo "$("${TIMESTAMP}"): Starting RabbitMQ-HAProxy" >> "${INIT_LOG_DIR}/startup_stdout.log"
