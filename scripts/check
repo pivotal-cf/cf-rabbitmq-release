@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+read -p "Did you make sure CI is green? (yes/no):" response
+if  [ $response == "yes" ]; then
+  echo "Thanks! Continuing with bump..."
+else
+  open "https://p-concourse.sys.zumba.gcp.london.cf-app.com/teams/system-system-rabbitmq-8723/pipelines/rabbitmq"
+  exit 1
+fi
+
