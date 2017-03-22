@@ -8,3 +8,6 @@ pushd src/github.com/pivotal-cf/rabbitmq-upgrade-preparation
   scripts/run_tests
 popd
 
+pushd src/github.com/pivotal-cf/rabbitmq-cluster-migration-tool
+  scripts/run_tests
+popd
