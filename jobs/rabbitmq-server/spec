@@ -4,6 +4,7 @@ name: rabbitmq-server
 packages:
 - erlang
 - rabbitmq-server
+- rabbitmq-common
 - rabbitmq-cluster-migration-tool
 - rabbitmq-upgrade-preparation
 - rabbitmq-syslog-aggregator
