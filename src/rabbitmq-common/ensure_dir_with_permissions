@@ -13,7 +13,7 @@ function ensure_dir_with_permissions() {
 
     mkdir -p "${target_dir}"
     ( cd "$target_dir"
-      chown -LR -P "$ownership" .
+      chown -R -P "$ownership" .
       chmod 750 .
       chmod -R o-rwx .
     )
