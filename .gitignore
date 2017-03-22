@@ -3,7 +3,6 @@ config/private.yml
 releases/*.tgz
 dev_releases
 blobs
-.envrc
 .blobs
 .idea
 .dev_builds
