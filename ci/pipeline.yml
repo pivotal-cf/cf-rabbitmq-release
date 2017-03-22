@@ -3,8 +3,7 @@ resources:
 - name: rabbitmq-upgrade-preparation
   type: git
   source:
-    uri: git@github.com:pivotal-cf/rabbitmq-upgrade-preparation.git
-    private_key: {{git-private-key}}
+    uri: https://github.com/pivotal-cf/rabbitmq-upgrade-preparation
 
 jobs:
 - name: run-tests
