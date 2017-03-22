@@ -6,7 +6,7 @@ PACKAGE_DIR=${BOSH_INSTALL_TARGET}/src/${PACKAGE_NAME}
 
 mkdir -p $(dirname $PACKAGE_DIR)
 
-cp -a $(basename $PACKAGE_NAME)/ $PACKAGE_DIR
+cp -a $PACKAGE_NAME/ $PACKAGE_DIR
 
 export GOROOT=$(readlink -nf /var/vcap/packages/golang-1.7.4)
 export GOPATH=$BOSH_INSTALL_TARGET:${PACKAGE_DIR}/Godeps/_workspace
