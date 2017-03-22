@@ -20,13 +20,29 @@ type RabbitVersions struct {
 }
 
 func (v *RabbitVersions) PreparationRequired() bool {
-	toVersion := enforceSemver(v.Desired)
-	fromVersion := enforceSemver(v.Deployed)
-	breakingVersion := enforceSemver("3.6.6")
+	desiredVersion := enforceSemver(v.Desired)
+	deployedVersion := enforceSemver(v.Deployed)
 
-	patchUpgrade, _ := version.NewConstraint(fmt.Sprintf("~> %s", fromVersion))
-	breakingVersionUpgrade, _ := version.NewConstraint(fmt.Sprintf("> %s, <= %s", fromVersion, toVersion))
-	return breakingVersionUpgrade.Check(breakingVersion) || !patchUpgrade.Check(toVersion)
+	return v.checkDesiredVersions(deployedVersion, desiredVersion, "3.6.6",
+		"3.6.8") || v.checkPatchVersion(deployedVersion, desiredVersion)
+}
+
+func (v *RabbitVersions) checkPatchVersion(deployedVersion, desiredVersion *version.Version) bool {
+	patchConstraint, _ := version.NewConstraint(fmt.Sprintf("~> %s", deployedVersion))
+
+	return !patchConstraint.Check(desiredVersion)
+}
+
+func (v *RabbitVersions) checkDesiredVersions(deployedVersion, desiredVersion *version.Version, versions ...string) bool {
+	versionConstraint, _ := version.NewConstraint(fmt.Sprintf("> %s, <= %s", deployedVersion, desiredVersion))
+
+	for _, v := range versions {
+		if versionConstraint.Check(enforceSemver(v)) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (v *RabbitVersions) UpgradeMessage() string {

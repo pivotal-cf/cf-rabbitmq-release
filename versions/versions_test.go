@@ -25,6 +25,7 @@ var _ = Describe("Versions", func() {
 			Entry("3.6.5 to 3.6.7 requires upgrade preparation", "3.6.5", "3.6.7"),
 			Entry("3.6.5 to 3.7.0 requires upgrade preparation", "3.6.5", "3.7.0"),
 			Entry("3.6.6 to 3.7.0 requires upgrade preparation", "3.6.6", "3.7.0"),
+			Entry("3.6.6 to 3.6.8 requires upgrade preparation", "3.6.6", "3.6.8"),
 		)
 
 		DescribeTable("upgrade preparation not required",
