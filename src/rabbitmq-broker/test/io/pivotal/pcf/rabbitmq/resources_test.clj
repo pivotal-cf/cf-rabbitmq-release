@@ -83,28 +83,32 @@
 (deftest test-protocol-key-for
   (testing "with TLS disabled"
     (are [in out] (is (= out (rs/protocol-key-for in false)))
-         "amqp"  "amqp"
-         "AMQP"  "amqp"
-         "mqtt"  "mqtt"
-         "MQTT"  "mqtt"
-         "stomp" "stomp"
-         "STOMP" "stomp"
-         "amqps"    "amqp+ssl"
-         "amqp/ssl" "amqp+ssl"
-         "amqp+ssl" "amqp+ssl"
-         "proto"    "proto"))
+         "amqp"            "amqp"
+         "AMQP"            "amqp"
+         "mqtt"            "mqtt"
+         "MQTT"            "mqtt"
+         "stomp"           "stomp"
+         "STOMP"           "stomp"
+         "http/web-stomp"  "ws"
+         "http/web-mqtt"   "ws"
+         "amqps"           "amqp+ssl"
+         "amqp/ssl"        "amqp+ssl"
+         "amqp+ssl"        "amqp+ssl"
+         "proto"           "proto"))
   (testing "with TLS enabled"
     (are [in out] (is (= out (rs/protocol-key-for in true)))
-         "amqp"  "amqp"
-         "AMQP"  "amqp"
-         "mqtt"  "mqtt"
-         "MQTT"  "mqtt"
-         "stomp" "stomp"
-         "STOMP" "stomp"
-         "amqps"    "amqp+ssl"
-         "amqp/ssl" "amqp+ssl"
-         "amqp+ssl" "amqp+ssl"
-         "proto"    "proto+ssl")))
+         "amqp"            "amqp"
+         "AMQP"            "amqp"
+         "http/web-stomp"  "ws"
+         "http/web-mqtt"   "ws"
+         "mqtt"            "mqtt"
+         "MQTT"            "mqtt"
+         "stomp"           "stomp"
+         "STOMP"           "stomp"
+         "amqps"           "amqp+ssl"
+         "amqp/ssl"        "amqp+ssl"
+         "amqp+ssl"        "amqp+ssl"
+         "proto"           "proto+ssl")))
 
 (deftest test-username-for-protocol
   (are [in out] (is (= (rs/username-for-protocol (:proto in)
