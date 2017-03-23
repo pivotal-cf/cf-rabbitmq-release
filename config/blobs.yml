@@ -27,3 +27,7 @@ golang/go1.7.4.linux-amd64.tar.gz:
   object_id: 19cdcbd8-da53-4fe6-9d38-86dba342aad8
   sha: 2e5baf03d1590e048c84d1d5b4b6f2540efaaea1
   size: 84021919
+rabbitmq-server/rabbitmq-server-generic-unix-3.6.8.tar.xz:
+  object_id: 1f7da505-c87f-41c8-8dd7-906c66192a69
+  sha: 5679d97ba10d368775cdc0384a1385295c677866
+  size: 4665588
