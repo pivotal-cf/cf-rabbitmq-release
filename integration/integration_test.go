@@ -89,11 +89,9 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		Expect(os.RemoveAll(tmpDir)).To(Succeed())
 	})
 
-	Context("Any time the tool is run", func() {
-		It("should log the arguments it has received", func() {
-			Eventually(session.Out).Should(gbytes.Say("Checking whether upgrade preparation is necessary for node"))
-			Eventually(session.Out).Should(gbytes.Say("Safe to proceed without stopping RabbitMQ node application, exiting: RabbitMQ application already stopped"))
-		})
+	It("logs the arguments passed to the binary", func() {
+		Eventually(session.Out).Should(gbytes.Say("Checking whether upgrade preparation is necessary for node"))
+		Eventually(session.Out).Should(gbytes.Say("Safe to proceed without stopping RabbitMQ node application, exiting: RabbitMQ application already stopped"))
 	})
 
 	Context("When there is no new version of RabbitMQ or Erlang", func() {

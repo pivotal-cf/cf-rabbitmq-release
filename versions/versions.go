@@ -23,8 +23,8 @@ func (v *RabbitVersions) PreparationRequired() bool {
 	desiredVersion := enforceSemver(v.Desired)
 	deployedVersion := enforceSemver(v.Deployed)
 
-	return v.checkDesiredVersions(deployedVersion, desiredVersion, "3.6.6",
-		"3.6.8") || v.checkPatchVersion(deployedVersion, desiredVersion)
+	return v.checkDesiredVersions(deployedVersion, desiredVersion, "3.6.6") ||
+		v.checkPatchVersion(deployedVersion, desiredVersion)
 }
 
 func (v *RabbitVersions) checkPatchVersion(deployedVersion, desiredVersion *version.Version) bool {
@@ -33,13 +33,16 @@ func (v *RabbitVersions) checkPatchVersion(deployedVersion, desiredVersion *vers
 	return !patchConstraint.Check(desiredVersion)
 }
 
-func (v *RabbitVersions) checkDesiredVersions(deployedVersion, desiredVersion *version.Version, versions ...string) bool {
-	versionConstraint, _ := version.NewConstraint(fmt.Sprintf("> %s, <= %s", deployedVersion, desiredVersion))
+func (v *RabbitVersions) checkDesiredVersions(deployedVersion, desiredVersion *version.Version, boundary string) bool {
+	if deployedVersion.Equal(desiredVersion) {
+		return false
+	}
 
-	for _, v := range versions {
-		if versionConstraint.Check(enforceSemver(v)) {
-			return true
-		}
+	boundaryVersion := enforceSemver(boundary)
+
+	if (deployedVersion.LessThan(boundaryVersion) || deployedVersion.Equal(boundaryVersion)) &&
+		(desiredVersion.GreaterThan(boundaryVersion) || desiredVersion.Equal(boundaryVersion)) {
+		return true
 	}
 
 	return false
