@@ -121,17 +121,20 @@
 (defn ^String protocol-key-for
   [proto tls?]
   (case (.toLowerCase ^String (name proto))
-    "amqp"      "amqp"
-    "mqtt"      "mqtt"
-    "stomp"     "stomp"
-    "amqp/ssl"  "amqp+ssl"
-    "amqps"     "amqp+ssl"
-    "amqp+ssl"  "amqp+ssl"
-    "mqtt/ssl"  "mqtt+ssl"
-    "mqtt+ssl"  "mqtt+ssl"
-    "mqtts"     "mqtt+ssl"
-    "stomp/ssl" "stomp+ssl"
-    "stomp+ssl" "stomp+ssl"
+    "amqp"             "amqp"
+    "http"             "management"
+    "mqtt"             "mqtt"
+    "stomp"            "stomp"
+    "http/web-stomp"   "ws"
+    "http/web-mqtt"    "ws"
+    "amqp/ssl"         "amqp+ssl"
+    "amqps"            "amqp+ssl"
+    "amqp+ssl"         "amqp+ssl"
+    "mqtt/ssl"         "mqtt+ssl"
+    "mqtt+ssl"         "mqtt+ssl"
+    "mqtts"            "mqtt+ssl"
+    "stomp/ssl"        "stomp+ssl"
+    "stomp+ssl"        "stomp+ssl"
     (if tls?
       (format "%s+ssl" (name proto))
       proto)))
@@ -163,15 +166,19 @@
   [^String proto]
   (let [s (.toLowerCase proto)]
     (case s
-      "amqp"      false
-      "mqtt"      false
-      "stomp"     false
-      "amqps"     true
-      "amqp/ssl"  true
-      "mqtt+ssl"  true
-      "mqtt/ssl"  true
-      "stomp+ssl" true
-      "stomp/ssl" true)))
+      "amqp"             false
+      "http"             false
+      "mqtt"             false
+      "stomp"            false
+      "http/web-mqtt"    false
+      "http/web-stomp"   false
+      "amqps"            true
+      "amqp/ssl"         true
+      "mqtt+ssl"         true
+      "mqtt/ssl"         true
+      "stomp+ssl"        true
+      "stomp/ssl"        true)))
+
 
 (defn ^String username-for-protocol
   [^String proto ^String username ^String vhost]
