@@ -1,4 +1,4 @@
 #!/bin/bash
 
-fly -t zumba set-pipeline --pipeline rabbitmq-cluster-migration-tool \
+fly -t zumba set-pipeline --pipeline rabbitmq-upgrade-preparation \
   --config pipeline.yml \
