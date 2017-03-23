@@ -27,3 +27,7 @@ erlang/otp_src_oss_18.3.4.4.tgz:
   object_id: 0cf2f5b4-36d4-487f-b738-934c47ce7e43
   sha: 0de974b4309cb59103a1feb6912e4c90fd509f4b
   size: 35429734
+rabbitmq-server/rabbitmq-server-generic-unix-3.6.8.tar.xz:
+  object_id: d51c896d-6841-4133-b65e-b9244ffcf3a6
+  sha: 5679d97ba10d368775cdc0384a1385295c677866
+  size: 4665588
