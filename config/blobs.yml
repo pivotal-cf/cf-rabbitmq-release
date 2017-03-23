@@ -23,7 +23,7 @@ rabbitmq-server/rabbitmq_clusterer-3.6.5.ez:
   object_id: aca4b381-2afc-487c-913a-643fef65b3d1
   sha: 3469acac9d4b029cb7c8216d09a1f959a68c2e29
   size: 58675
-rabbitmq-server/rabbitmq-server-generic-unix-3.6.6.903.tar.xz:
-  object_id: 37b6e322-2836-4f95-8ae2-b819ba1decc6
-  sha: 8cd785ca75db08a3de93ba19dcb88869027fda96
-  size: 4585560
+rabbitmq-server/rabbitmq-server-generic-unix-3.7.0-alpha.74.tar.xz:
+  object_id: 71be0082-8785-4069-afe7-3205bfd8ddb3
+  sha: 25ae9274acacc09688ae302f0df16e86e9594e59
+  size: 10410312
