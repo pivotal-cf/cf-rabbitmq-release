@@ -5,8 +5,6 @@ director_uuid: ((director-uuid))
 releases:
 - name: ((cf-rabbitmq-release-name))
   version: latest
-- name: cf-rabbitmq-test
-  version: latest
 - name: routing
   version: 0.143.0
 
@@ -21,34 +19,6 @@ instance_groups:
   jobs:
   - name: rabbitmq-server
     release: ((cf-rabbitmq-release-name))
-  - name: rabbitmq-statsdb-reset-cron-test
-    release: cf-rabbitmq-test
-  - name: syslog-configuration-test
-    release: cf-rabbitmq-test
-    properties:
-      syslog-configuration-test:
-        watched-log-files:
-        - "/var/vcap/sys/log/rabbitmq-server/rabbit@*.log"
-        - "/var/vcap/sys/log/rabbitmq-server/rabbit@*-sasl.log"
-        - "/var/vcap/sys/log/rabbitmq-server/startup_stderr.log"
-        - "/var/vcap/sys/log/rabbitmq-server/startup_stdout.log"
-        - "/var/vcap/sys/log/rabbitmq-server/shutdown_stdout.log"
-        - "/var/vcap/sys/log/rabbitmq-server/shutdown_stderr.log"
-        - "/var/vcap/sys/log/rabbitmq-server/management-ui/access.log*"
-        - "/var/vcap/sys/log/rabbitmq-server/upgrade.log"
-        - "/var/vcap/sys/log/rabbitmq-server/init.log"
-        - "/var/vcap/sys/log/rabbitmq-server/node-check.log"
-        - "/var/vcap/sys/log/rabbitmq-server/cluster-check.log"
-        - "/var/vcap/sys/log/rabbitmq-server/pre-start.log"
-  - name: permissions-test
-    release: cf-rabbitmq-test
-    properties:
-      permissions-test:
-        directories:
-        - "/var/vcap/jobs/rabbitmq-server"
-        - "/var/vcap/store/rabbitmq"
-        - "/var/vcap/sys/log"
-
   vm_type: r3.large
   stemcell: trusty
   persistent_disk_type: 10GB
@@ -79,22 +49,6 @@ instance_groups:
           registration_interval: 20s
           uris:
           - ((rabbitmq-broker-domain)).((bosh-hostname))
-  - name: syslog-configuration-test
-    release: cf-rabbitmq-test
-    properties:
-      syslog-configuration-test:
-        watched-log-files:
-        - "/var/vcap/sys/log/rabbitmq-broker/startup_stdout.log"
-        - "/var/vcap/sys/log/rabbitmq-broker/startup_stderr.log"
-        - "/var/vcap/sys/log/route_registrar/route_registrar.log"
-        - "/var/vcap/sys/log/route_registrar/route_registrar.err.log"
-  - name: permissions-test
-    release: cf-rabbitmq-test
-    properties:
-      permissions-test:
-        directories:
-        - "/var/vcap/jobs/rabbitmq-broker"
-        - "/var/vcap/sys/log"
   vm_type: m3.medium
   stemcell: trusty
   azs:
@@ -123,24 +77,6 @@ instance_groups:
           registration_interval: 20s
           uris:
           - ((rabbitmq-management-domain)).((bosh-hostname))
-  - name: syslog-configuration-test
-    release: cf-rabbitmq-test
-    properties:
-      syslog-configuration-test:
-        watched-log-files:
-        - "/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log"
-        - "/var/vcap/sys/log/route_registrar/route_registrar.err.log"
-        - "/var/vcap/sys/log/route_registrar/route_registrar.log"
-  - name: permissions-test
-    release: cf-rabbitmq-test
-    properties:
-      permissions-test:
-        directories:
-        - "/var/vcap/jobs/rabbitmq-haproxy/packages/haproxy"
-        - "/var/vcap/jobs/rabbitmq-haproxy/packages/rabbitmq-common"
-        - "/var/vcap/jobs/rabbitmq-haproxy/packages/rabbitmq-haproxy-metrics"
-        - "/var/vcap/jobs/rabbitmq-haproxy/packages/rabbitmq-syslog-aggregator"
-        - "/var/vcap/sys/log"
   vm_type: m3.medium
   stemcell: trusty
   azs:
