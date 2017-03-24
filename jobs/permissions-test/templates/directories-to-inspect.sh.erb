@@ -1,7 +1,0 @@
-#!/bin/bash -ex
-
-DIRECTORIES_TO_INSPECT=(
-  <%= p("permissions-test.directories").map(&:inspect).join(" ") %>
-)
-
-DIRECTORIES_TO_INSPECT="${DIRECTORIES_TO_INSPECT:?must be an array of file paths}"
