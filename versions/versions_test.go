@@ -41,6 +41,7 @@ var _ = Describe("Versions", func() {
 			Entry("3.6.3 to 3.6.5 requires no upgrade preparation", "3.6.3", "3.6.5"),
 			Entry("3.6.5 to 3.6.5 requires no upgrade preparation", "3.6.5", "3.6.5"),
 			Entry("3.6.6 to 3.6.6 requires no upgrade preparation", "3.6.6", "3.6.6"),
+			Entry("3.6.9 to 3.6.9 requires no upgrade preparation", "3.6.9", "3.6.9"),
 			Entry("3.7.0 to 3.7.0 requires no upgrade preparation", "3.7.0", "3.7.0"),
 		)
 
