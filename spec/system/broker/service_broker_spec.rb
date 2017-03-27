@@ -16,6 +16,7 @@ require 'rabbitmq/http/client'
 
 require "mqtt"
 require "stomp"
+require 'net/https'
 
 require File.expand_path('../../../../system_test/test_app/lib/lab_rat/aggregate_health_checker.rb', __FILE__)
 
@@ -28,8 +29,6 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
       plan: 'standard'
     )
   end
-
-  let(:session) { Capybara::Session.new(:poltergeist) }
 
   let(:rmq_host) do
     bosh_director.ips_for_job("rmq", environment.bosh_manifest.deployment_name)[0]
@@ -70,13 +69,11 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
   context 'default deployment'  do
     it 'provides default connectivity', :pushes_cf_app do
       cf.push_app_and_bind_with_service(test_app, service) do |app, _|
+        provides_amqp_connectivity(app)
 
-        provides_amqp_connectivity(session, app)
+        provides_mqtt_connectivity(app)
 
-        provides_mqtt_connectivity(session, app)
-
-        provides_stomp_connectivity(session, app)
-
+        provides_stomp_connectivity(app)
       end
     end
   end
@@ -95,12 +92,11 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
     it 'provides only amqp and mqtt connectivity', :pushes_cf_app do
       cf.push_app_and_bind_with_service(test_app, service) do |app, _|
 
-        provides_amqp_connectivity(session, app)
+        provides_amqp_connectivity(app)
 
-        provides_mqtt_connectivity(session, app)
+        provides_mqtt_connectivity(app)
 
-        provides_no_stomp_connectivity(session, app)
-
+        provides_no_stomp_connectivity(app)
       end
     end
   end
@@ -215,19 +211,26 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
   end
 end
 
-def provides_amqp_connectivity(session, app)
-  session.visit "#{app.url}/services/rabbitmq/protocols/amqp091"
-
-  expect(session.status_code).to eql(200)
-  expect(session).to have_content('amq.gen')
+def get(url)
+  uri = URI.parse(url)
+  http = Net::HTTP.new(uri.host, uri.port)
+  http.use_ssl = true
+  http.verify_mode = OpenSSL::SSL::VERIFY_NONE if http.use_ssl?
+  http.get(uri)
 end
 
-def provides_mqtt_connectivity(session, app)
-  session.visit "#{app.url}/services/rabbitmq/protocols/mqtt"
+def provides_amqp_connectivity(app)
+  response = get("#{app.url}/services/rabbitmq/protocols/amqp091")
+  expect(response.code).to eql('200')
+  expect(response.body).to include('amq.gen')
+end
 
-  expect(session.status_code).to eql(200)
-  expect(session).to have_content('mqtt://')
-  expect(session).to have_content('Payload published')
+def provides_mqtt_connectivity(app)
+  response = get("#{app.url}/services/rabbitmq/protocols/mqtt")
+
+  expect(response.code).to eql('200')
+  expect(response.body).to include('mqtt://')
+  expect(response.body).to include('Payload published')
 
   queues = ssh_gateway.execute_on(rmq_host, "curl -u #{rmq_server_admin_broker_username}:#{rmq_server_admin_broker_password} http://#{rmq_host}:15672/api/queues -s")
   json = JSON.parse(queues)
@@ -236,17 +239,17 @@ def provides_mqtt_connectivity(session, app)
   expect(json[0]["arguments"]["x-expires"]).to eql(1800000)
 end
 
-def provides_stomp_connectivity(session, app)
-  session.visit "#{app.url}/services/rabbitmq/protocols/stomp"
+def provides_stomp_connectivity(app)
+  response = get("#{app.url}/services/rabbitmq/protocols/stomp")
 
-  expect(session.status_code).to eql(200)
-  expect(session).to have_content('Payload published')
+  expect(response.code).to eql('200')
+  expect(response.body).to include('Payload published')
 end
 
-def provides_no_stomp_connectivity(session, app)
-  session.visit "#{app.url}/services/rabbitmq/protocols/stomp"
+def provides_no_stomp_connectivity(app)
+  response = get("#{app.url}/services/rabbitmq/protocols/stomp")
 
-  expect(session.status_code).to eql(500)
+  expect(response.code).to eql('500')
 end
 
 
