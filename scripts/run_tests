@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -e -x
+
+bundle exec rake spec:rspec_unit

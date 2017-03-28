@@ -4,6 +4,8 @@ set -e -x
 ROOT_DIR_PATH="$(cd "$(dirname "$0")"/.. && pwd)"
 cd "$ROOT_DIR_PATH"
 
+scripts/run_tests
+
 pushd src/github.com/pivotal-cf/rabbitmq-upgrade-preparation
   scripts/run_tests
 popd
