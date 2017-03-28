@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+if [ "$(uname -s)" != "Linux" ]; then
+  echo "WARNING: This test can only be run on Linux plaftorms... skipping!"
+  exit 0
+fi
+
 # basht macro, shellcheck fix
 export T_fail
 
