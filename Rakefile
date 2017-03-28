@@ -46,8 +46,8 @@ end
 def execute_cmd(cmd)
   system("bash -c #{cmd.shellescape}")
   status = $?
-    if status != 0
-      raise "'#{cmd}' execution failed (exit code: #{status}"
+  if status != 0
+    raise "'#{cmd}' execution failed (exit code: #{status}"
   end
 end
 
