@@ -15,10 +15,6 @@ java/jre-1.8.0_102.tar.gz:
   object_id: 7ebce62f-8a15-414f-95b0-fd437b9ce5d6
   sha: 826e439a697b4506455e8fbb7aa949e774b18992
   size: 71885713
-erlang/otp_src_oss_18.3.4.4.tgz:
-  object_id: 0cf2f5b4-36d4-487f-b738-934c47ce7e43
-  sha: 0de974b4309cb59103a1feb6912e4c90fd509f4b
-  size: 35429734
 rabbitmq-server/rabbitmq-server-generic-unix-3.6.6.tar.xz:
   object_id: bc6be283-bef7-45e1-9f78-01d92ec86c71
   sha: a70bfa6307fc22674724cd66b86bf23a0baae90c
@@ -31,3 +27,7 @@ rabbitmq-server/rabbitmq-server-generic-unix-3.6.8.tar.xz:
   object_id: 1f7da505-c87f-41c8-8dd7-906c66192a69
   sha: 5679d97ba10d368775cdc0384a1385295c677866
   size: 4665588
+erlang/otp_src_oss_19.3.tgz:
+  object_id: f36563be-d36d-4fc7-b066-d462ff386c0a
+  sha: 20fdcf30bf58f8950399223c399461130c104497
+  size: 67714693
