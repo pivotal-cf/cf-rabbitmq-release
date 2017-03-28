@@ -23,7 +23,7 @@ func (v *RabbitVersions) PreparationRequired() bool {
 	desiredVersion := enforceSemver(v.Desired)
 	deployedVersion := enforceSemver(v.Deployed)
 
-	return v.checkDesiredVersions(deployedVersion, desiredVersion, "3.6.6") ||
+	return v.checkDesiredVersions(v.Deployed, v.Desired, "3.6.6") ||
 		v.checkPatchVersion(deployedVersion, desiredVersion)
 }
 
@@ -33,19 +33,27 @@ func (v *RabbitVersions) checkPatchVersion(deployedVersion, desiredVersion *vers
 	return !patchConstraint.Check(desiredVersion)
 }
 
-func (v *RabbitVersions) checkDesiredVersions(deployedVersion, desiredVersion *version.Version, boundary string) bool {
-	if deployedVersion.Equal(desiredVersion) {
+func (v *RabbitVersions) checkDesiredVersions(deployed, desired, boundary string) bool {
+	if deployed == desired {
 		return false
 	}
 
-	boundaryVersion := enforceSemver(boundary)
-
-	if (deployedVersion.LessThan(boundaryVersion) || deployedVersion.Equal(boundaryVersion)) &&
-		(desiredVersion.GreaterThan(boundaryVersion) || desiredVersion.Equal(boundaryVersion)) {
-		return true
+	boundaryVersion, err := version.NewVersion(boundary)
+	if err != nil {
+		log.Fatalln(err)
 	}
 
-	return false
+	deployedVersion, err := version.NewVersion(deployed)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	desiredVersion, err := version.NewVersion(desired)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	return !deployedVersion.GreaterThan(boundaryVersion) && !desiredVersion.LessThan(boundaryVersion)
 }
 
 func (v *RabbitVersions) UpgradeMessage() string {
