@@ -27,8 +27,8 @@ RSpec.describe "RabbitMQ server configuration" do
       expect(environment_settings).to include('{cluster_partition_handling,autoheal}')
     end
 
-    it "should have disk free limit 50MB" do
-      expect(environment_settings).to include('{disk_free_limit,50000000}')
+    it "should have disk free limit set to '{mem_relative,0.4}' as default" do
+      expect(environment_settings).to include('{disk_free_limit,{mem_relative,0.4}}')
     end
 
     it 'does not have SSL verification enabled and peer validation enabled' do
