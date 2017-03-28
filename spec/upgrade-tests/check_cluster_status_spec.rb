@@ -19,6 +19,8 @@ RSpec.describe 'RabbitMQ cluster status during upgrade' do
     server_package[/unix\-(.*)\.tar/, 1]
   end
 
+  before {skip("in bosh v2 we do not use static_ips anymore. Shall we refactor or remove this test?")}
+
   it 'should have all running RabbitMQ nodes on the same version' do
     log("Waiting for RabbitMQ cluster to be running on #{upgraded_rabbitmq_version}")
     expect(hosts).not_to be_empty, 'No rabbitmq-server hosts have found in manifests'
