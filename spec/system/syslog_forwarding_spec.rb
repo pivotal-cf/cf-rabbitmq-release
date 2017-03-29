@@ -7,9 +7,8 @@ require 'uri'
 REMOTE_LOG_DESTINATION = Papertrail::Connection.new(token: ENV.fetch("PAPERTRAIL_TOKEN"))
 PAPERTRAIL_GROUP_ID = ENV.fetch("PAPERTRAIL_GROUP_ID")
 
-def get_instances(bosh_director_url, deployment_name)
+def get_instances(bosh_director_url, bosh_director_username, bosh_director_password, deployment_name)
   bosh_director_uri = URI(bosh_director_url)
-  bosh_director_username, bosh_director_password = URI.unescape(bosh_director_uri.userinfo).split(":")
 
   JSON.parse(
     HTTParty.get(
@@ -21,8 +20,10 @@ def get_instances(bosh_director_url, deployment_name)
 end
 
 DEPLOYMENT_NAME = ENV.fetch("DEPLOYMENT_NAME")
-BOSH_DIRECTOR_URL = ENV.fetch("BOSH_DIRECTOR_URL")
-DEPLOYMENT_INSTANCES = get_instances(BOSH_DIRECTOR_URL, DEPLOYMENT_NAME)
+BOSH_TARGET = ENV.fetch("BOSH_TARGET")
+BOSH_USERNAME = ENV.fetch("BOSH_USERNAME")
+BOSH_PASSWORD = ENV.fetch("BOSH_PASSWORD")
+DEPLOYMENT_INSTANCES = get_instances(BOSH_TARGET, BOSH_USERNAME, BOSH_PASSWORD, DEPLOYMENT_NAME)
 
 def host_search_string(host)
   "[job=#{host.job} index=#{host.index} id=#{host.id}]"
