@@ -19,11 +19,11 @@ rabbitmq-server/rabbitmq_clusterer-3.6.5.ez:
   object_id: aca4b381-2afc-487c-913a-643fef65b3d1
   sha: 3469acac9d4b029cb7c8216d09a1f959a68c2e29
   size: 58675
-rabbitmq-server/rabbitmq-server-generic-unix-3.6.6.903.tar.xz:
-  object_id: 37b6e322-2836-4f95-8ae2-b819ba1decc6
-  sha: 8cd785ca75db08a3de93ba19dcb88869027fda96
-  size: 4585560
 erlang/otp_src_oss_19.3.tgz:
   object_id: 3c9cf954-250a-44fa-a408-1921202b8716
   sha: 20fdcf30bf58f8950399223c399461130c104497
   size: 67714693
+rabbitmq-server/rabbitmq-server-generic-unix-3.6.9.tar.xz:
+  object_id: a83b08b4-78ff-4a86-9039-aab22239ac43
+  sha: 19254ab3ce15ddc117dfc1bf1576f7ea9d646a5f
+  size: 4669128
