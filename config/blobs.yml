@@ -23,11 +23,11 @@ golang/go1.7.3.linux-amd64.tar.gz:
   object_id: 6f5b6f0f-5518-4414-8423-150e943b2281
   sha: ead40e884ad4d6512bcf7b3c7420dd7fa4a96140
   size: 82565628
-rabbitmq-server/rabbitmq-server-generic-unix-3.6.8.tar.xz:
-  object_id: d51c896d-6841-4133-b65e-b9244ffcf3a6
-  sha: 5679d97ba10d368775cdc0384a1385295c677866
-  size: 4665588
 erlang/otp_src_oss_19.3.tgz:
   object_id: 5ef147f6-2b9f-4f96-8560-eef6c87009c0
   sha: 20fdcf30bf58f8950399223c399461130c104497
   size: 67714693
+rabbitmq-server/rabbitmq-server-generic-unix-3.6.9.tar.xz:
+  object_id: b1e6784a-f8b9-475a-b21f-e30d9a7b3683
+  sha: 19254ab3ce15ddc117dfc1bf1576f7ea9d646a5f
+  size: 4669128
