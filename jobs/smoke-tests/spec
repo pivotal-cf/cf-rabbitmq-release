@@ -1,7 +1,7 @@
 ---
 name: smoke-tests
 packages:
-- golang-1.7.3
+- golang-1.8
 - cf-rabbitmq-smoke-tests
 - cf-cli
 templates:
