@@ -27,3 +27,7 @@ haproxy/haproxy-1.6.11.tar.gz:
   object_id: 846c966f-6be4-47bc-9faf-81c53e51c6fe
   sha: 8c1c1b2346cf18379cd798fbc6364fdab5e17d32
   size: 1574029
+golang-1.8/go1.8.linux-amd64.tar.gz:
+  object_id: bd8c1ec8-b583-479f-8e5e-f0f00630b121
+  sha: a93fe8fc245e3554f956bc823f30ef4eb23c2068
+  size: 89803580

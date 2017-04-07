@@ -1,6 +1,6 @@
 ---
 name: rabbitmq-cluster-migration-tool
 dependencies:
-- golang-1.7.3
+- golang-1.8
 files:
 - github.com/pivotal-cf/rabbitmq-cluster-migration-tool/**/*.go
