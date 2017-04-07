@@ -1,6 +1,6 @@
 ---
 name: rabbitmq-upgrade-preparation
 dependencies:
-- golang-1.7.4
+- golang-1.8
 files:
 - github.com/pivotal-cf/rabbitmq-upgrade-preparation/**/*.go
