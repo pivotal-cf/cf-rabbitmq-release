@@ -2,4 +2,4 @@
 name: golang-1.8
 
 files:
-  - golang/go1.7.3.linux-amd64.tar.gz
+  - golang/go1.8.linux-amd64.tar.gz

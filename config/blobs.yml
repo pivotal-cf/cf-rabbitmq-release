@@ -7,10 +7,6 @@ cf-cli/cf-cli_6.19.0_linux_x86-64.tgz:
   object_id: 22ad54c4-568e-4ca3-aa73-12b691e3f678
   sha: 625170654ffa4568dae97b4d3915e87557b29261
   size: 6450885
-golang/go1.7.3.linux-amd64.tar.gz:
-  object_id: d2536f7c-5e75-4bcd-a25c-33d2e2760d21
-  sha: ead40e884ad4d6512bcf7b3c7420dd7fa4a96140
-  size: 82565628
 rabbitmq-server/rabbitmq_clusterer-3.6.5.ez:
   object_id: aca4b381-2afc-487c-913a-643fef65b3d1
   sha: 3469acac9d4b029cb7c8216d09a1f959a68c2e29
@@ -27,7 +23,7 @@ haproxy/haproxy-1.6.11.tar.gz:
   object_id: 846c966f-6be4-47bc-9faf-81c53e51c6fe
   sha: 8c1c1b2346cf18379cd798fbc6364fdab5e17d32
   size: 1574029
-golang-1.8/go1.8.linux-amd64.tar.gz:
-  object_id: bd8c1ec8-b583-479f-8e5e-f0f00630b121
+golang/go1.8.linux-amd64.tar.gz:
+  object_id: 332e7a4a-32b5-4bfa-a908-466de20bc0ed
   sha: a93fe8fc245e3554f956bc823f30ef4eb23c2068
   size: 89803580
