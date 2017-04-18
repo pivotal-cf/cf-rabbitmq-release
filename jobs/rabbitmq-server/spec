@@ -45,6 +45,7 @@ properties:
 
   rabbitmq-server.config:
     description: "RabbitMQ configuration (base64 encoded)"
+    default: "W10u" # base64 encoding of '[].'
 
   rabbitmq-server.cookie:
     description: "Erlang cookie used by RabbitMQ nodes and rabbitmqctl"
