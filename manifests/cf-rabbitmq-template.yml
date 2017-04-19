@@ -38,10 +38,10 @@ instance_groups:
     properties:
       nats:
         machines:
-        - ((nats-ip-address))
+        - ((nats-ip-addresses))
         port: 4222
         user: nats
-        password: ((cf-nats-password))
+        password: ((nats-password))
       route_registrar:
         routes:
         - name: ((rabbitmq-broker-domain))
@@ -66,10 +66,10 @@ instance_groups:
     properties:
       nats:
         machines:
-        - ((nats-ip-address))
+        - ((nats-ip-addresses))
         port: 4222
         user: nats
-        password: ((cf-nats-password))
+        password: ((nats-password))
       route_registrar:
         routes:
         - name: ((rabbitmq-management-domain))
