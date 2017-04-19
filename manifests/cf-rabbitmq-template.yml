@@ -37,8 +37,7 @@ instance_groups:
     release: routing
     properties:
       nats:
-        machines:
-        - ((nats-ip-addresses))
+        machines: ((nats-ip-addresses))
         port: 4222
         user: nats
         password: ((nats-password))
@@ -65,8 +64,7 @@ instance_groups:
     release: routing
     properties:
       nats:
-        machines:
-        - ((nats-ip-addresses))
+        machines: ((nats-ip-addresses))
         port: 4222
         user: nats
         password: ((nats-password))
