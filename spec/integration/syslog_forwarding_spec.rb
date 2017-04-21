@@ -54,17 +54,6 @@ RSpec.describe "Syslog forwarding" do
     end
   end
 
-  describe "rmq_broker host" do
-    rmq_broker_hosts = DEPLOYMENT_INSTANCES.select { |i| i.job == "rmq-broker" }
-
-    rmq_broker_hosts.each do |rmq_broker_host|
-      search_string = host_search_string(rmq_broker_host)
-      it "forwards rmq_broker hosts logs (#{search_string})" do
-        expect(search_for_events(search_string).size).to be > 0
-      end
-    end
-  end
-
   describe "rmq_haproxy host" do
     rmq_haproxy_hosts = DEPLOYMENT_INSTANCES.select { |i| i.job == "haproxy" }
 
