@@ -5,10 +5,6 @@ director_uuid: ((director-uuid))
 releases:
 - name: ((cf-rabbitmq-release-name))
   version: latest
-- name: ((cf-rabbitmq-broker-release-name))
-  version: latest
-- name: routing
-  version: 0.143.0
 
 stemcells:
 - alias: trusty
@@ -21,7 +17,7 @@ instance_groups:
   jobs:
   - name: rabbitmq-server
     release: ((cf-rabbitmq-release-name))
-  vm_type: c3.large
+  vm_type: r3.large
   stemcell: trusty
   persistent_disk_type: 10GB
   networks:
@@ -35,22 +31,6 @@ instance_groups:
   jobs:
   - name: rabbitmq-haproxy
     release: ((cf-rabbitmq-release-name))
-  - name: route_registrar
-    release: routing
-    properties:
-      nats:
-        machines: ((nats-ip-addresses))
-        port: 4222
-        user: nats
-        password: ((nats-password))
-      route_registrar:
-        routes:
-        - name: ((rabbitmq-management-domain))
-          port: 15672
-          registration_interval: 20s
-          uris:
-          - ((rabbitmq-management-domain)).((bosh-hostname))
-
   vm_type: m3.medium
   stemcell: trusty
   networks:
@@ -59,73 +39,7 @@ instance_groups:
   - eu-west-1a
   - eu-west-1b
 
-- name: rmq-broker
-  instances: 1
-  jobs:
-  - name: rabbitmq-broker
-    release: ((cf-rabbitmq-broker-release-name))
-  - name: route_registrar
-    release: routing
-    properties:
-      nats:
-        machines: ((nats-ip-addresses))
-        port: 4222
-        user: nats
-        password: ((nats-password))
-      route_registrar:
-        routes:
-        - name: ((rabbitmq-broker-domain))
-          port: 4567
-          registration_interval: 20s
-          uris:
-          - ((rabbitmq-broker-domain)).((bosh-hostname))
-  vm_type: m3.medium
-  stemcell: trusty
-  azs:
-  - eu-west-1a
-  networks:
-  - name: services
-
-- name: broker-registrar
-  jobs:
-  - name: broker-registrar
-    release: ((cf-rabbitmq-broker-release-name))
-  instances: 1
-  lifecycle: errand
-  vm_type: t2.micro
-  stemcell: trusty
-  azs:
-  - eu-west-1a
-  networks:
-  - name: services
-
-- name: broker-deregistrar
-  jobs:
-  - name: broker-deregistrar
-    release: ((cf-rabbitmq-broker-release-name))
-  instances: 1
-  lifecycle: errand
-  vm_type: t2.micro
-  stemcell: trusty
-  azs:
-  - eu-west-1a
-  networks:
-  - name: services
-
 properties:
-  cf:
-    admin_username: ((cf-admin-username))
-    admin_password: ((cf-admin-password))
-    api_url: http://api.((bosh-hostname))
-    domain: ((bosh-hostname))
-
-  broker:
-    host: ((rabbitmq-broker-domain)).((bosh-hostname))
-    protocol: ((rabbitmq-broker-protocol))
-    name: ((product-name))
-    username: ((multitenant-rabbitmq-broker-username))
-    password: ((multitenant-rabbitmq-broker-password))
-
   rabbitmq-server:
     restart_statsdb_cron_schedule: "42 */4 * * *"
     plugins:
@@ -155,31 +69,6 @@ properties:
     stats:
       username: ((haproxy-stats-username))
       password: ((haproxy-stats-password))
-
-  rabbitmq-broker:
-    route: ((rabbitmq-broker-domain))
-    cc_endpoint: http://api.((bosh-hostname))
-    service:
-      username: ((multitenant-rabbitmq-broker-username))
-      password: ((multitenant-rabbitmq-broker-password))
-      name: ((product-name))
-      uuid: ((rabbitmq-broker-uuid))
-      plan_uuid: ((rabbitmq-broker-plan-uuid))
-    logging:
-      level: debug
-      print_stack_traces: false
-    rabbitmq:
-      hosts: ((rabbitmq-hosts))
-      operator_set_policy:
-        enabled: true
-        policy_name: "operator_set_policy"
-        policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
-        policy_priority: 50
-      management_domain: ((rabbitmq-management-domain)).((bosh-hostname))
-      ssl: true
-      administrator:
-        username: ((rabbitmq-broker-username))
-        password: ((rabbitmq-broker-password))
 
 update:
   canaries: 1
