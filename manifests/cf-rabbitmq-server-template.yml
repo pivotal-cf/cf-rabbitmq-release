@@ -1,0 +1,78 @@
+---
+name: ((deployment-name))
+director_uuid: ((director-uuid))
+
+releases:
+- name: ((cf-rabbitmq-release-name))
+  version: latest
+
+stemcells:
+- alias: trusty
+  os: ubuntu-trusty
+  version: ((stemcell-version))
+
+instance_groups:
+- name: rmq
+  instances: 3
+  jobs:
+  - name: rabbitmq-server
+    release: ((cf-rabbitmq-release-name))
+  vm_type: r3.large
+  stemcell: trusty
+  persistent_disk_type: 10GB
+  networks:
+  - name: services
+  azs:
+  - eu-west-1a
+  - eu-west-1b
+
+- name: haproxy
+  instances: ((haproxy-instances))
+  jobs:
+  - name: rabbitmq-haproxy
+    release: ((cf-rabbitmq-release-name))
+  vm_type: m3.medium
+  stemcell: trusty
+  networks:
+  - name: services
+  azs:
+  - eu-west-1a
+  - eu-west-1b
+
+properties:
+  rabbitmq-server:
+    restart_statsdb_cron_schedule: "42 */4 * * *"
+    plugins:
+    - rabbitmq_management
+    - rabbitmq_mqtt
+    - rabbitmq_stomp
+    ports:
+    - 5672
+    - 5671
+    - 1883
+    - 8883
+    - 61613
+    - 61614
+    - 15672
+    - 15674
+    administrators:
+      management:
+        username: ((rabbitmq-management-username))
+        password: ((rabbitmq-management-password))
+      broker:
+        username: ((rabbitmq-broker-username))
+        password: ((rabbitmq-broker-password))
+    cookie: "rabbit-cluster:aws"
+    cluster_partition_handling: autoheal
+
+  rabbitmq-haproxy:
+    stats:
+      username: ((haproxy-stats-username))
+      password: ((haproxy-stats-password))
+
+update:
+  canaries: 1
+  canary_watch_time: 30000-180000
+  update_watch_time: 30000-180000
+  max_in_flight: 4
+  serial: false
