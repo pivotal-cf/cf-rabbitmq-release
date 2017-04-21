@@ -30,35 +30,6 @@ instance_groups:
   - eu-west-1a
   - eu-west-1b
 
-- name: haproxy
-  instances: ((haproxy-instances))
-  jobs:
-  - name: rabbitmq-haproxy
-    release: ((cf-rabbitmq-release-name))
-  - name: route_registrar
-    release: routing
-    properties:
-      nats:
-        machines: ((nats-ip-addresses))
-        port: 4222
-        user: nats
-        password: ((nats-password))
-      route_registrar:
-        routes:
-        - name: ((rabbitmq-management-domain))
-          port: 15672
-          registration_interval: 20s
-          uris:
-          - ((rabbitmq-management-domain)).((bosh-hostname))
-
-  vm_type: m3.medium
-  stemcell: trusty
-  networks:
-  - name: services
-  azs:
-  - eu-west-1a
-  - eu-west-1b
-
 - name: rmq-broker
   instances: 1
   jobs:
@@ -86,6 +57,34 @@ instance_groups:
   networks:
   - name: services
 
+- name: haproxy
+  instances: ((haproxy-instances))
+  jobs:
+  - name: rabbitmq-haproxy
+    release: ((cf-rabbitmq-release-name))
+  - name: route_registrar
+    release: routing
+    properties:
+      nats:
+        machines: ((nats-ip-addresses))
+        port: 4222
+        user: nats
+        password: ((nats-password))
+      route_registrar:
+        routes:
+        - name: ((rabbitmq-management-domain))
+          port: 15672
+          registration_interval: 20s
+          uris:
+          - ((rabbitmq-management-domain)).((bosh-hostname))
+  vm_type: m3.medium
+  stemcell: trusty
+  networks:
+  - name: services
+  azs:
+  - eu-west-1a
+  - eu-west-1b
+
 - name: broker-registrar
   jobs:
   - name: broker-registrar
@@ -106,6 +105,19 @@ instance_groups:
   instances: 1
   lifecycle: errand
   vm_type: t2.micro
+  stemcell: trusty
+  azs:
+  - eu-west-1a
+  networks:
+  - name: services
+
+- name: smoke-tests
+  jobs:
+  - name: smoke-tests
+    release: ((cf-rabbitmq-release-name))
+  instances: 1
+  lifecycle: errand
+  vm_type: m3.medium
   stemcell: trusty
   azs:
   - eu-west-1a
