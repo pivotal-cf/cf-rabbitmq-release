@@ -54,7 +54,7 @@ RSpec.describe "Syslog forwarding" do
     end
   end
 
-  describe "rmq_broker host" do
+  describe "rmq_broker host", :broker do
     rmq_broker_hosts = DEPLOYMENT_INSTANCES.select { |i| i.job == "rmq-broker" }
 
     rmq_broker_hosts.each do |rmq_broker_host|
