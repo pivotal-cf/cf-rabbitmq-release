@@ -22,7 +22,7 @@ run_system_tests_individually_to_isolate_state() {
 
   for spec_file in "${spec_files[@]}"
   do
-    bundle exec rspec "$spec_file" --tag ~broker --fail-fast
+    bundle exec rspec "$spec_file" --fail-fast
   done
 }
 
