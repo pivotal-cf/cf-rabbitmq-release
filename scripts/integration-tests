@@ -1,0 +1,33 @@
+#!/bin/bash -ex
+
+main() {
+  write_keys_to_file
+  install_dependencies
+  run_system_tests_individually_to_isolate_state
+  delete_bosh_deployment_to_remove_state
+}
+
+write_keys_to_file() {
+  if [[ $BOSH_CERT ]]; then
+    echo -e $BOSH_CERT > cert.pem
+  fi
+}
+
+install_dependencies() {
+  bundle install
+}
+
+run_system_tests_individually_to_isolate_state() {
+  spec_files=($(find spec/integration/ -type f))
+
+  for spec_file in "${spec_files[@]}"
+  do
+    bundle exec rspec "$spec_file" --fail-fast
+  done
+}
+
+delete_bosh_deployment_to_remove_state() {
+  BOSH_USER="${BOSH_USERNAME:?env required}" bosh -t "${BOSH_TARGET:?env required}" -n delete deployment "${DEPLOYMENT_NAME:?env required}"
+}
+
+main
