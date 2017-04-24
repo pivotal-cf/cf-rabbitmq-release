@@ -1,0 +1,196 @@
+---
+name: ((deployment-name))
+director_uuid: ((director-uuid))
+
+releases:
+- name: ((cf-rabbitmq-release-name))
+  version: latest
+- name: routing
+  version: 0.143.0
+
+stemcells:
+- alias: trusty
+  os: ubuntu-trusty
+  version: ((stemcell-version))
+
+instance_groups:
+- name: rmq
+  instances: 3
+  jobs:
+  - name: rabbitmq-server
+    release: ((cf-rabbitmq-release-name))
+  vm_type: r3.large
+  stemcell: trusty
+  persistent_disk_type: 10GB
+  azs:
+  - eu-west-1a
+  - eu-west-1b
+  networks:
+  - name: services
+
+- name: rmq-broker
+  instances: 1
+  jobs:
+  - name: rabbitmq-broker
+    release: ((cf-rabbitmq-release-name))
+  - name: route_registrar
+    release: routing
+    properties:
+      nats:
+        machines: ((nats-ip-addresses))
+        port: 4222
+        user: nats
+        password: ((nats-password))
+      route_registrar:
+        routes:
+        - name: ((rabbitmq-broker-domain))
+          port: 4567
+          registration_interval: 20s
+          uris:
+          - ((rabbitmq-broker-domain)).((bosh-hostname))
+  vm_type: m3.medium
+  stemcell: trusty
+  azs:
+  - eu-west-1a
+  networks:
+  - name: services
+
+- name: haproxy
+  instances: ((haproxy-instances))
+  jobs:
+  - name: rabbitmq-haproxy
+    release: ((cf-rabbitmq-release-name))
+  - name: route_registrar
+    release: routing
+    properties:
+      nats:
+        machines: ((nats-ip-addresses))
+        port: 4222
+        user: nats
+        password: ((nats-password))
+      route_registrar:
+        routes:
+        - name: ((rabbitmq-management-domain))
+          port: 15672
+          registration_interval: 20s
+          uris:
+          - ((rabbitmq-management-domain)).((bosh-hostname))
+  vm_type: m3.medium
+  stemcell: trusty
+  azs:
+  - eu-west-1a
+  - eu-west-1b
+  networks:
+  - name: services
+
+- name: broker-registrar
+  jobs:
+  - name: broker-registrar
+    release: ((cf-rabbitmq-release-name))
+  instances: 1
+  lifecycle: errand
+  vm_type: t2.micro
+  stemcell: trusty
+  azs:
+  - eu-west-1a
+  networks:
+  - name: services
+
+- name: broker-deregistrar
+  jobs:
+  - name: broker-deregistrar
+    release: ((cf-rabbitmq-release-name))
+  instances: 1
+  lifecycle: errand
+  vm_type: t2.micro
+  stemcell: trusty
+  azs:
+  - eu-west-1a
+  networks:
+  - name: services
+
+- name: smoke-tests
+  jobs:
+  - name: smoke-tests
+    release: ((cf-rabbitmq-release-name))
+  instances: 1
+  lifecycle: errand
+  vm_type: m3.medium
+  stemcell: trusty
+  azs:
+  - eu-west-1a
+  networks:
+  - name: services
+
+properties:
+  # for broker and route registrars
+  cf:
+    admin_username: ((cf-admin-username))
+    admin_password: ((cf-admin-password))
+    api_url: http://api.((bosh-hostname))
+    domain: ((bosh-hostname))
+  rabbitmq-server:
+    restart_statsdb_cron_schedule: "42 */4 * * *"
+    plugins:
+    - rabbitmq_management
+    - rabbitmq_mqtt
+    - rabbitmq_stomp
+    ports:
+    - 5672
+    - 5671
+    - 1883
+    - 8883
+    - 61613
+    - 61614
+    - 15672
+    - 15674
+    administrators:
+      management:
+        username: ((rabbitmq-management-username))
+        password: ((rabbitmq-management-password))
+      broker:
+        username: ((rabbitmq-broker-username))
+        password: ((rabbitmq-broker-password))
+    cookie: "rabbit-cluster:aws"
+    cluster_partition_handling: autoheal
+
+  rabbitmq-haproxy:
+    stats:
+      username: ((haproxy-stats-username))
+      password: ((haproxy-stats-password))
+  broker:
+    host: ((rabbitmq-broker-domain)).((bosh-hostname))
+    protocol: ((rabbitmq-broker-protocol))
+    name: ((product-name))
+    username: ((multitenant-rabbitmq-broker-username))
+    password: ((multitenant-rabbitmq-broker-password))
+  rabbitmq-broker:
+    route: ((rabbitmq-broker-domain))
+    cc_endpoint: http://api.((bosh-hostname))
+    service:
+      username: ((multitenant-rabbitmq-broker-username))
+      password: ((multitenant-rabbitmq-broker-password))
+      name: ((product-name))
+      uuid: ((rabbitmq-broker-uuid))
+      plan_uuid: ((rabbitmq-broker-plan-uuid))
+    logging:
+      level: debug
+      print_stack_traces: false
+    rabbitmq:
+      operator_set_policy:
+        enabled: true
+        policy_name: "operator_set_policy"
+        policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
+        policy_priority: 50
+      management_domain: ((rabbitmq-management-domain)).((bosh-hostname))
+      ssl: true
+      administrator:
+        username: ((rabbitmq-broker-username))
+        password: ((rabbitmq-broker-password))
+
+update:
+  canaries: 1
+  canary_watch_time: 30000-180000
+  update_watch_time: 30000-180000
+  max_in_flight: 4
+  serial: false
