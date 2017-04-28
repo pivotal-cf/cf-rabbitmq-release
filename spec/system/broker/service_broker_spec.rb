@@ -17,6 +17,7 @@ require 'rabbitmq/http/client'
 require "mqtt"
 require "stomp"
 require 'net/https'
+require 'httparty'
 
 require File.expand_path('../../../../system_test/test_app/lib/lab_rat/aggregate_health_checker.rb', __FILE__)
 
@@ -70,9 +71,7 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
     it 'provides default connectivity', :pushes_cf_app do
       cf.push_app_and_bind_with_service(test_app, service) do |app, _|
         provides_amqp_connectivity(app)
-
         provides_mqtt_connectivity(app)
-
         provides_stomp_connectivity(app)
       end
     end
@@ -211,24 +210,22 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
   end
 end
 
+
+
 def get(url)
-  uri = URI.parse(url)
-  http = Net::HTTP.new(uri.host, uri.port)
-  http.use_ssl = true
-  http.verify_mode = OpenSSL::SSL::VERIFY_NONE if http.use_ssl?
-  http.get(uri)
+  HTTParty.get(url, {verify: false, timeout: 2})
 end
 
 def provides_amqp_connectivity(app)
   response = get("#{app.url}/services/rabbitmq/protocols/amqp091")
-  expect(response.code).to eql('200')
+  expect(response.code).to eql(200)
   expect(response.body).to include('amq.gen')
 end
 
 def provides_mqtt_connectivity(app)
   response = get("#{app.url}/services/rabbitmq/protocols/mqtt")
 
-  expect(response.code).to eql('200')
+  expect(response.code).to eql(200)
   expect(response.body).to include('mqtt://')
   expect(response.body).to include('Payload published')
 
@@ -242,14 +239,14 @@ end
 def provides_stomp_connectivity(app)
   response = get("#{app.url}/services/rabbitmq/protocols/stomp")
 
-  expect(response.code).to eql('200')
+  expect(response.code).to eql(200)
   expect(response.body).to include('Payload published')
 end
 
 def provides_no_stomp_connectivity(app)
   response = get("#{app.url}/services/rabbitmq/protocols/stomp")
 
-  expect(response.code).to eql('500')
+  expect(response.code).to eql(500)
 end
 
 
