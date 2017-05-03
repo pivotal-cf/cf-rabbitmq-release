@@ -114,7 +114,7 @@ instance_groups:
 - name: smoke-tests
   jobs:
   - name: smoke-tests
-    release: ((cf-rabbitmq-release-name))
+    release: ((cf-rabbitmq-broker-release-name))
   instances: 1
   lifecycle: errand
   vm_type: m3.medium
