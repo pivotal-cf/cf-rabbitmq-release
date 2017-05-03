@@ -30,7 +30,7 @@ namespace :spec do
     execute_cmd('./scripts/run-basht-tests')
   end
 
-  task :unit => [:bash_unit, :rspec_unit, :broker]
+  task :unit => [:bash_unit, :rspec_unit]
 end
 
 def execute_cmd(cmd)
