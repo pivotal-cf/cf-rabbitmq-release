@@ -1,9 +1,0 @@
----
-name: rabbitmq-broker
-dependencies: []
-files:
-- rabbitmq-broker/bin/*
-- rabbitmq-broker/config/*
-- rabbitmq-broker/src/**/*
-- rabbitmq-broker/project.clj
-- rabbitmq-broker/tools/**/*

@@ -1,7 +1,0 @@
-set -e -x
-
-cd "${BUILD_DIR}/rabbitmq-broker"
-LEIN=./tools/leiningen/lein
-
-LEIN_ROOT=true $LEIN uberjar
-cp target/broker-1.3.0-SNAPSHOT-standalone.jar ${BUILD_DIR}/rabbitmq-broker/pcf-rabbitmq-broker.jar

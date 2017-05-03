@@ -1,3 +1,0 @@
-set -e
-
-cp -a rabbitmq-broker/* ${BOSH_INSTALL_TARGET}

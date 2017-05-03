@@ -25,16 +25,6 @@ namespace :spec do
     t.pattern = FileList['spec/unit/**/*_spec.rb']
   end
 
-  desc 'runs broker tests'
-  task :broker do
-    host_os = RbConfig::CONFIG['host_os']
-    if host_os =~ /linux/
-      execute_cmd('./src/rabbitmq-broker/bin/test')
-    else
-      puts "Skipping broker tests when the host OS is #{host_os}"
-    end
-  end
-
   desc 'runs basht unit tests'
   task :bash_unit do
     execute_cmd('./scripts/run-basht-tests')

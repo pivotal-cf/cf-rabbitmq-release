@@ -1,15 +1,9 @@
-[submodule "src/rabbitmq-broker/tools/leiningen"]
-	path = src/rabbitmq-broker/tools/leiningen
-	url = git@github.com:michaelklishin/standalone-lein.git
 [submodule "system_test/test_app"]
 	path = system_test/test_app
 	url = git://github.com/pivotal-cf/rabbit-labrat.git
 [submodule "system_test/rabbit-example-app"]
 	path = system_test/rabbit-example-app
 	url = git@github.com:pivotal-cf/rabbit-example-app.git
-[submodule "src/github.com/pivotal-cf/cf-rabbitmq-smoke-tests"]
-	path = src/github.com/pivotal-cf/cf-rabbitmq-smoke-tests
-	url = git@github.com:pivotal-cf/cf-rabbitmq-smoke-tests
 [submodule "src/github.com/pivotal-cf/rabbitmq-upgrade-preparation"]
 	path = src/github.com/pivotal-cf/rabbitmq-upgrade-preparation
 	url = git@github.com:pivotal-cf/rabbitmq-upgrade-preparation

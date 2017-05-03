@@ -147,7 +147,6 @@ RSpec.configure do |config|
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
   config.filter_run_excluding :metrics => !ExcludeHelper::metrics_available?
-  config.filter_run_excluding :broker => ENV.has_key?('SKIP_BROKER')
   config.filter_run_excluding :test_with_errands => ENV.has_key?('SKIP_ERRANDS')
   config.filter_run_excluding :run_compliance_tests => (!ENV.has_key?('RUN_COMPLIANCE') && /darwin|mac os/ === RbConfig::CONFIG['host_os'] )
 
