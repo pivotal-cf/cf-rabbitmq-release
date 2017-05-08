@@ -37,12 +37,9 @@ instance_groups:
     release: ((cf-rabbitmq-broker-release-name))
   - name: route_registrar
     release: routing
+    consumes:
+      nats: {from: nats, deployment: cf}
     properties:
-      nats:
-        machines: ((nats-ip-addresses))
-        port: 4222
-        user: nats
-        password: ((nats-password))
       route_registrar:
         routes:
         - name: ((rabbitmq-broker-domain))
