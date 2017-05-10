@@ -109,6 +109,14 @@ instance_groups:
   jobs:
   - name: smoke-tests
     release: ((cf-rabbitmq-broker-release-name))
+    properties:
+      cf:
+        api_url: https://api.((bosh-hostname))
+        admin_username: ((cf-admin-username))
+        admin_password: ((cf-admin-password))
+        org: smoke-test-org
+        space: smoke-test-space
+        service_offering_name: ((product-name))
   instances: 1
   lifecycle: errand
   vm_type: m3.medium
