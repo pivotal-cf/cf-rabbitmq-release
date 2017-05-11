@@ -7,10 +7,6 @@ cf-cli/cf-cli_6.19.0_linux_x86-64.tgz:
   object_id: 22ad54c4-568e-4ca3-aa73-12b691e3f678
   sha: 625170654ffa4568dae97b4d3915e87557b29261
   size: 6450885
-rabbitmq-server/rabbitmq_clusterer-3.6.5.ez:
-  object_id: aca4b381-2afc-487c-913a-643fef65b3d1
-  sha: 3469acac9d4b029cb7c8216d09a1f959a68c2e29
-  size: 58675
 erlang/otp_src_oss_19.3.tgz:
   object_id: 3c9cf954-250a-44fa-a408-1921202b8716
   sha: 20fdcf30bf58f8950399223c399461130c104497

@@ -20,12 +20,12 @@ if_p("rabbitmq-server.ssl.key") do |key|
   end
 end
 
-ips = link('rabbitmq-server').instances.map(&:address)
-ips = [job_ip] unless ips.size > 1
+node_ips = link('rabbitmq-server').instances.map(&:address)
+node_ips = [job_ip] unless node_ips.size > 1
 
 require 'digest'
 job_ip_md5 = Digest::MD5.hexdigest(job_ip)
-cookie = p('rabbitmq-server.cookie', Digest::MD5.hexdigest(ips.join))
+cookie = p('rabbitmq-server.cookie', Digest::MD5.hexdigest(node_ips.join))
 
 # TLS versions with a '.' character should include single quotes
 supported_tls_versions = %w{'tlsv1.2' 'tlsv1.1'}
@@ -40,6 +40,8 @@ end
 ssl_verification_depth = p("rabbitmq-server.ssl.verification_depth")
 fail_if_no_peer_cert = p("rabbitmq-server.ssl.fail_if_no_peer_cert")
 disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
+
+cluster_nodes = node_ips.map {|ip| "rabbit@#{Digest::MD5.hexdigest(ip)}"}.join(',')
 
 %>
 
@@ -62,11 +64,9 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   RABBITMQ_MNESIA_BASE="${HOME_DIR}/mnesia"
   RABBITMQ_MNESIA_DIR="${RABBITMQ_MNESIA_BASE}/db"
   RABBITMQ_PLUGINS_EXPAND_DIR="$RABBITMQ_MNESIA_BASE/db-plugins-expand"
-  CLUSTER_CONFIG="${HOME_DIR}/etc/rabbitmq/cluster.config"
   SCRIPT_DIR="$(${DIRNAME} $0)"
   JOB_IP=<%= job_ip %>
   RMQ_VERSION=3.6.9
-  RMQ_CLUSTERER_VERSION=3.6.5
 
   # Unfortunate tight coupling. Beware.
   # We need this for CONF_ENV_FILE, HOME, ERL_INETRC, and for MNESIA_BASE
@@ -79,8 +79,8 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   [ -f ${ERL_INETRC} ] && ${MKDIR} -p ${MIGRATION_DIR} && ${CP} ${ERL_INETRC} ${MIGRATION_DIR}/erl_inetrc_old
 
   HOSTS=""
-  <% ips.each_index do |idx| %>
-  HOSTS="${HOSTS}{host, {<%= ips[idx].gsub('.',',') %>}, [\"<%= Digest::MD5.hexdigest(ips[idx]) %>\"]}.\n"
+  <% node_ips.each_index do |idx| %>
+  HOSTS="${HOSTS}{host, {<%= node_ips[idx].gsub('.',',') %>}, [\"<%= Digest::MD5.hexdigest(node_ips[idx]) %>\"]}.\n"
   <% end %>
 
   # 1. Write out our new erl_inetrc file. We do this to avoid modifying
@@ -130,8 +130,18 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   CONFIG="CONFIG_FILE='${SCRIPT_DIR}/../etc/rabbitmq'"
   NODENAME="NODENAME='${SELF_NODE}'"
 
-  SERVER_START_ARGS="SERVER_START_ARGS='-rabbitmq_clusterer config \"${CLUSTER_CONFIG}\" -rabbit log_levels [{connection,info}] -rabbit disk_free_limit <%= disk_alarm_threshold %> -rabbit cluster_partition_handling <%= cluster_partition_handling %> -rabbit halt_on_upgrade_failure false -rabbitmq_mqtt subscription_ttl 1800000"
-  SERVER_START_ARGS="${SERVER_START_ARGS} -rabbitmq_management http_log_dir \"${HTTP_ACCESS_LOG_DIR}\""
+  <%
+  server_start_args = [
+    "-rabbit log_levels [{connection,info}]",
+    "-rabbit cluster_nodes {[#{cluster_nodes}],disc}",
+    "-rabbit disk_free_limit #{disk_alarm_threshold}",
+    "-rabbit cluster_partition_handling #{cluster_partition_handling}",
+    "-rabbit halt_on_upgrade_failure false",
+    "-rabbitmq_mqtt subscription_ttl 1800000"
+  ].join(' ')
+  %>
+
+  SERVER_START_ARGS="SERVER_START_ARGS='<%= server_start_args %> -rabbitmq_management http_log_dir \"${HTTP_ACCESS_LOG_DIR}\""
 
 <% if ssl %>
   # if TLS is enabled, disable the non-TLS listener for AMQP 0-9-1 and make the management/HTTP API
@@ -153,10 +163,9 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
     printf '' > ${DIR}/env.backup
   fi
 
-  RABBITMQ_BOOT_MODULE="RABBITMQ_BOOT_MODULE=rabbit_clusterer"
-  RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS="RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=\"-pa /var/vcap/packages/rabbitmq-server/plugins/rabbitmq_clusterer-${RMQ_CLUSTERER_VERSION}.ez/rabbitmq_clusterer-${RMQ_CLUSTERER_VERSION}/ebin\""
+  RABBITMQ_BOOT_MODULE="RABBITMQ_BOOT_MODULE=rabbit"
   ${SED} "/${PREFIX}/,/${SUFFIX}/d" < ${DIR}/env.backup > ${DIR}/env
-  printf "${PREFIX}\n${NODENAME}\n${RABBITMQ_BOOT_MODULE}\n${RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS}\n${CONFIG}\n${SERVER_START_ARGS}\n${SUFFIX}\n" >> ${DIR}/env
+  printf "${PREFIX}\n${NODENAME}\n${RABBITMQ_BOOT_MODULE}\n${CONFIG}\n${SERVER_START_ARGS}\n${SUFFIX}\n" >> ${DIR}/env
 
   # set custom RabbitMQ db / plugin directory not specifying the node name
   printf "RABBITMQ_MNESIA_DIR=${RABBITMQ_MNESIA_DIR}\n" >> ${DIR}/env
@@ -182,24 +191,12 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   fi
 
   # 4. Write out the cluster_config
-  ${MKDIR} -p $(${DIRNAME} ${CLUSTER_CONFIG})
-  CONFIG_NODES=""
   UPGRADE_PREPARATION_NODES_FILE=/var/vcap/data/upgrade_preparation_nodes
   rm -f $UPGRADE_PREPARATION_NODES_FILE
-  <% ips.each_index do |idx| %>
-    node="rabbit@<%= Digest::MD5.hexdigest(ips[idx]) %>"
+  <% node_ips.each_index do |idx| %>
+    node="rabbit@<%= Digest::MD5.hexdigest(node_ips[idx]) %>"
     echo $node >> $UPGRADE_PREPARATION_NODES_FILE
-    CONFIG_NODES="${CONFIG_NODES},{rabbit@<%= Digest::MD5.hexdigest(ips[idx]) %>,disc}"
   <% end %>
-
-  CONFIG_NODES=$(printf "${CONFIG_NODES}" | ${SED} -e 's/^,//')
-  CONFIG_VERSION=$("${DATE}" +%s)
-  # configure the gospel (seed) node. Other nodes will discover cluster members
-  # through it.
-  CONFIG='[{gospel,{node,rabbit@<%= Digest::MD5.hexdigest(ips.first) %>}},{nodes,['"${CONFIG_NODES}"']},{version,'"${CONFIG_VERSION}"'}].'
-  printf "${CONFIG}\n" > ${DIR}/cluster
-  ${CHOWN} ${USER}:${USER} ${DIR}/cluster
-  ${CP} ${DIR}/cluster ${CLUSTER_CONFIG}
 
   # 4. Write out the cookie
   printf "${COOKIE}" > ${DIR}/.erlang.cookie

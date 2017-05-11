@@ -146,7 +146,7 @@ start_rabbitmq () {
             2>> "${STARTUP_ERR_LOG}" \
             0<&- &
 
-        RETVAL="$(wait_for_rabbitmq_clusterer_plugin_to_start_rabbitmq_app)"
+        RETVAL="$(wait_for_rabbitmq_application_to_start)"
         case "$RETVAL" in
             0)
                 if ! /var/vcap/jobs/rabbitmq-server/bin/node-check "rabbitmq-server.init"
@@ -198,7 +198,7 @@ track_rabbitmq_erlang_vm_pid_in_pid_file() {
   export RUNNING_UNDER_SYSTEMD=true
 }
 
-wait_for_rabbitmq_clusterer_plugin_to_start_rabbitmq_app() {
+wait_for_rabbitmq_application_to_start() {
   local retval
 
   set +e

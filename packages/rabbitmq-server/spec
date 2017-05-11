@@ -4,6 +4,4 @@ files:
 - rabbitmq-server/rabbitmq-server-generic-unix-3.6.9.tar.xz
 - rabbitmq-server/rabbitmq-script-wrapper
 - rabbitmq-server/rabbitmq-defaults
-- rabbitmq-server/rabbitmq_clusterer-3.6.5.ez
-- rabbitmq-server/rabbitmq-server.patch
 dependencies: []

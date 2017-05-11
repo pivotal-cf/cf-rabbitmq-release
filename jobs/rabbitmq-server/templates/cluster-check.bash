@@ -8,11 +8,13 @@
 export PATH=/var/vcap/packages/erlang/bin/:/var/vcap/packages/rabbitmq-server/privbin/:$PATH
 LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 
-RMQ_USERS=($(rabbitmqctl list_users | tail -n +2))
-RMQ_VHOSTS=($(rabbitmqctl list_vhosts | tail -n +2))
-
 main() {
   rabbitmq_application_is_running
+
+  # rabbitmqctl hangs if run before application
+  RMQ_USERS=($(rabbitmqctl list_users | tail -n +2))
+  RMQ_VHOSTS=($(rabbitmqctl list_vhosts | tail -n +2))
+
   rmq_user_does_not_exist "guest"
 
   rmq_user_exists "$RMQ_BROKER_USERNAME"

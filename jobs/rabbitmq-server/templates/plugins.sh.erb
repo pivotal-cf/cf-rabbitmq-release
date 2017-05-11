@@ -11,8 +11,6 @@
   # This is shorthand to disable all plugins
   $RABBITMQ_PLUGINS set
 
-  $RABBITMQ_PLUGINS enable rabbitmq_clusterer
-
   PLUGINS="$($RABBITMQ_PLUGINS list -m)"
 
   <% if_p("rabbitmq-server.plugins") do |plugins|
