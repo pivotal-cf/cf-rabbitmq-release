@@ -91,5 +91,6 @@ def ssl_options_with(tls_versions)
 end
 
 def cluster_partition_handling_with(policy)
-  "SERVER_START_ARGS='-rabbitmq_clusterer config " + '\"${CLUSTER_CONFIG}\" -rabbit log_levels [{connection,info}] -rabbit disk_free_limit {mem_relative,0.4} -rabbit ' + "cluster_partition_handling #{policy} -rabbit halt_on_upgrade_failure false -rabbitmq_mqtt subscription_ttl 1800000"
+  stubbed_nodes = "-rabbit cluster_nodes {[rabbit@e086aa137fa19f67d27b39d0eca18610,rabbit@5b8656aafcb40bb58caf1d17ef8506a9],disc}"
+  "SERVER_START_ARGS='" + '-rabbit log_levels [{connection,info}]' + " #{stubbed_nodes}" + ' -rabbit disk_free_limit {mem_relative,0.4} -rabbit ' + "cluster_partition_handling #{policy} -rabbit halt_on_upgrade_failure false -rabbitmq_mqtt subscription_ttl 1800000"
 end
