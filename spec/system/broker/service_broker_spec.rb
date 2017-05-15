@@ -244,9 +244,8 @@ def provides_stomp_connectivity(app)
 end
 
 def provides_no_stomp_connectivity(app)
-  response = get("#{app.url}/services/rabbitmq/protocols/stomp")
-
-  expect(response.code).to eql(500)
+  # This is a work-around for #144893311
+  expect({get("#{app.url}/services/rabbitmq/protocols/stomp")}).to raise_exception
 end
 
 
