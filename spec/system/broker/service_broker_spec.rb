@@ -245,9 +245,13 @@ end
 
 def provides_no_stomp_connectivity(app)
   # This is a work-around for #144893311
-  expect{get("#{app.url}/services/rabbitmq/protocols/stomp")}.to raise_exception
+  begin
+    response = get("#{app.url}/services/rabbitmq/protocols/stomp")
+    expect(response.code).to eql(500)
+  rescue Net::ReadTimeout => e
+    puts "Caught exception #{e}!"
+  end
 end
-
 
 def provides_direct_amqp_connectivity(service_key_data)
   amqp_proto = service_key_data['protocols']['amqp'].dup
