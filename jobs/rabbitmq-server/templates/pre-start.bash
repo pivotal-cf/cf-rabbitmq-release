@@ -31,13 +31,6 @@ main() {
 
   # shellcheck disable=SC1090
   . "${JOB_DIR}"/lib/prepare-for-upgrade.bash
-
-  # syslog forwarding
-  /var/vcap/packages/rabbitmq-syslog-aggregator/enable_syslog_config rabbitmq_syslog.conf $JOB_DIR/config
-  /var/vcap/packages/rabbitmq-syslog-aggregator/setup_syslog_forwarder $JOB_DIR/config
-
-  # restart rsyslog to use the latest configuration
-  /usr/sbin/service rsyslog restart
 }
 
 ensure_log_files() {

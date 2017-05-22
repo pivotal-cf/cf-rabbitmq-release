@@ -4,4 +4,4 @@
 # we should ensure that access to the files in these packages are local to
 # the vcap user
 
-echo "haproxy rabbitmq-common rabbitmq-haproxy-metrics rabbitmq-syslog-aggregator"
+echo "haproxy rabbitmq-common rabbitmq-haproxy-metrics"
