@@ -133,6 +133,11 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   SERVER_START_ARGS="SERVER_START_ARGS='-rabbitmq_clusterer config \"${CLUSTER_CONFIG}\" -rabbit log_levels [{connection,info}] -rabbit disk_free_limit <%= disk_alarm_threshold %> -rabbit cluster_partition_handling <%= cluster_partition_handling %> -rabbit halt_on_upgrade_failure false -rabbitmq_mqtt subscription_ttl 1800000"
   SERVER_START_ARGS="${SERVER_START_ARGS} -rabbitmq_management http_log_dir \"${HTTP_ACCESS_LOG_DIR}\""
 
+<% if_p('rabbitmq-server.load_definitions') do %>
+  LOAD_DEFINITIONS_FILE_PATH="${SCRIPT_DIR}/../etc/definitions.json"
+  SERVER_START_ARGS="${SERVER_START_ARGS} -rabbitmq_management load_definitions \"${LOAD_DEFINITIONS_FILE_PATH}\""
+<% end %>
+
 <% if ssl %>
   # if TLS is enabled, disable the non-TLS listener for AMQP 0-9-1 and make the management/HTTP API
   # listener use TLS.

@@ -69,6 +69,9 @@ properties:
   rabbitmq-server.restart_statsdb_cron_schedule:
     description: "Schedule of when to restart the RabbitMQ StatsDB."
 
+  rabbitmq-server.load_definitions:
+    description: "Definitions to be loaded by RabbitMQ at startup"
+
   syslog_aggregator.address:
     description: "Syslog drain hostname"
   syslog_aggregator.port:
@@ -76,28 +79,29 @@ properties:
 
 templates:
   add-rabbitmqctl-to-path.bash:             bin/add-rabbitmqctl-to-path
-  cacert.pem.erb:                           etc/cacert.pem
-  cert.pem.erb:                             etc/cert.pem
   cleanup-http-logs.bash:                   bin/cleanup-http-logs
   cluster-check.bash:                       bin/cluster-check
-  syslog_forwarder.conf.erb:                config/syslog_forwarder.conf
-  rabbitmq_syslog.conf:                     config/rabbitmq_syslog.conf
   delete_old_files.bash:                    lib/delete_old_files.bash
   drain.bash:                               bin/drain
-  key.pem.erb:                              etc/key.pem
+  ensure-rabbitmq-statsdb-restart-cron.erb: bin/ensure-rabbitmq-statsdb-restart-cron
+  kill-with-fire.bash:                      bin/kill-with-fire
   node-check.bash:                          bin/node-check
   node_name_migration.sh:                   bin/node_name_migration.sh
   plugins.sh.erb:                           bin/plugins.sh
   post-deploy.bash:                         bin/post-deploy
-  prepare-for-upgrade.bash:                 lib/prepare-for-upgrade.bash
   pre-start.bash:                           bin/pre-start
   rabbitmq-server.init.bash:                bin/rabbitmq-server.init
-  rabbitmq.config.erb:                      etc/rabbitmq.config
   setup.sh.erb:                             bin/setup.sh
-  users.erb:                                etc/users
+  syslog_forwarder.conf.erb:                config/syslog_forwarder.conf
+  rabbitmq_syslog.conf:                     config/rabbitmq_syslog.conf
+  cacert.pem.erb:                           etc/cacert.pem
+  cert.pem.erb:                             etc/cert.pem
   config.erb:                               etc/config
-  ensure-rabbitmq-statsdb-restart-cron.erb: bin/ensure-rabbitmq-statsdb-restart-cron
-  kill-with-fire.bash:                      bin/kill-with-fire
+  definitions.json.erb:                     etc/definitions.json
+  key.pem.erb:                              etc/key.pem
+  rabbitmq.config.erb:                      etc/rabbitmq.config
+  users.erb:                                etc/users
+  prepare-for-upgrade.bash:                 lib/prepare-for-upgrade.bash
 
 provides:
   - name: rabbitmq-server

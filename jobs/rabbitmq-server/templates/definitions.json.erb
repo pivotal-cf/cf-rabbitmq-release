@@ -1,0 +1,8 @@
+<%
+require 'json'
+
+if_p('rabbitmq-server.load_definitions') do | definitions |
+  puts JSON.dump(definitions)
+end
+
+%>
