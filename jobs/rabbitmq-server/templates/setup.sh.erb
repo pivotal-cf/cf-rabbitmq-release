@@ -143,6 +143,11 @@ cluster_nodes = node_ips.map {|ip| "rabbit@#{Digest::MD5.hexdigest(ip)}"}.join('
 
   SERVER_START_ARGS="SERVER_START_ARGS='<%= server_start_args %> -rabbitmq_management http_log_dir \"${HTTP_ACCESS_LOG_DIR}\""
 
+<% if_p('rabbitmq-server.load_definitions') do %>
+  LOAD_DEFINITIONS_FILE_PATH="${SCRIPT_DIR}/../etc/definitions.json"
+  SERVER_START_ARGS="${SERVER_START_ARGS} -rabbitmq_management load_definitions \"${LOAD_DEFINITIONS_FILE_PATH}\""
+<% end %>
+
 <% if ssl %>
   # if TLS is enabled, disable the non-TLS listener for AMQP 0-9-1 and make the management/HTTP API
   # listener use TLS.

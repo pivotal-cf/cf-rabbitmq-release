@@ -169,6 +169,23 @@ RSpec.describe "RabbitMQ server configuration" do
       end
     end
   end
+
+  describe 'load definitions', :focus do
+    vhost = "foobar"
+
+    before(:each) do
+      modify_and_deploy_manifest do |manifest|
+        manifest['properties']['rabbitmq-server']['load_definitions'] = Hash.new
+        manifest['properties']['rabbitmq-server']['load_definitions']['vhosts'] = [{"name"=> vhost}]
+      end
+    end
+
+    it 'creates a vhost when vhost definition is provided' do
+      output = ssh_gateway.execute_on(rmq_host, "curl -u #{rmq_admin_broker_username}:#{rmq_admin_broker_password} http://#{rmq_host}:15672/api/vhosts/#{vhost} -s")
+      response = JSON.parse(output)
+      expect(response["name"]).to eq(vhost)
+    end
+  end
 end
 
 def response_code(uri, credentials)
