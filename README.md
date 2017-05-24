@@ -7,7 +7,7 @@ This release is now using BOSH v2 [job links](https://bosh.io/docs/links.html) a
 
 ## Updating
 
-Clone the repository and run `./scripts/update-release`.
+Clone the repository and run `./scripts/update-release` to update submodules and install dependencies.
 
 ## Deploying
 
