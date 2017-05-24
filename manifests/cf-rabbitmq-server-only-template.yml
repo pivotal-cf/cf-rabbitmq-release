@@ -35,6 +35,8 @@ instance_groups:
   jobs:
   - name: rabbitmq-haproxy
     release: ((cf-rabbitmq-release-name))
+  - name: syslog_forwarder
+    release: syslog-migration
   vm_type: m3.medium
   stemcell: trusty
   networks:
@@ -99,6 +101,18 @@ properties:
       input(type="imfile"
             File="/var/vcap/sys/log/rabbitmq-server/pre-start.log"
             Tag="rmq_server_pre_start")
+
+      input(type="imfile"
+            File="/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log"
+            Tag="rabbitmq-haproxy_haproxy_log")
+
+      input(type="imfile"
+            File="/var/vcap/sys/log/route_registrar/route_registrar.log"
+            Tag="rabbitmq-haproxy-route_registrar_stdout")
+
+      input(type="imfile"
+            File="/var/vcap/sys/log/route_registrar/route_registrar.err.log"
+            Tag="rabbitmq-haproxy-route_registrar_stderr")
   rabbitmq-server:
     restart_statsdb_cron_schedule: "42 */4 * * *"
     plugins:
