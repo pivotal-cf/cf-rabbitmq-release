@@ -31,6 +31,11 @@ namespace :spec do
   end
 
   task :unit => [:bash_unit, :rspec_unit]
+
+  desc 'runs integration tests (require the release to be deployed)'
+  RSpec::Core::RakeTask.new(:integration) do |t|
+    t.pattern = FileList['spec/integration/**/*_spec.rb']
+  end
 end
 
 def execute_cmd(cmd)

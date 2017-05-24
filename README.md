@@ -26,6 +26,12 @@ Once you have a [BOSH Lite up and running locally](https://github.com/cloudfound
 To run the unit tests locally, just run: `bundle exec rake spec:unit`.
 
 ### Integration Tests
+Integration tests require this release to be deployed using BOSH director.
+
+To run integration tests to `bundle exec rake spec:integration`
+
+### System Tests
+System tests require this release and other releases to be deployed alongside with the same BOSH director.
 
 Ensure you have deployed the release to BOSH Lite. Set `BOSH_MANIFEST` env to `$PWD/manifests/cf-rabbitmq.yml` and run `bundle exec rake spec:system`
 
