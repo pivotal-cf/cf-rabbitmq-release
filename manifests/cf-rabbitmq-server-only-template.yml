@@ -5,6 +5,8 @@ director_uuid: ((director-uuid))
 releases:
 - name: ((cf-rabbitmq-release-name))
   version: latest
+- name: syslog-migration
+  version: 3
 
 stemcells:
 - alias: trusty
@@ -17,6 +19,8 @@ instance_groups:
   jobs:
   - name: rabbitmq-server
     release: ((cf-rabbitmq-release-name))
+  - name: syslog_forwarder
+    release: syslog-migration
   vm_type: r3.large
   stemcell: trusty
   persistent_disk_type: 10GB
@@ -40,6 +44,61 @@ instance_groups:
   - eu-west-1b
 
 properties:
+  syslog:
+    migration:
+      message_format: job_index_id
+    address: ((syslog-aggregator-address))
+    port: ((syslog-aggregator-port))
+    custom_rule: |
+      module(load="imfile")
+
+      input(type="imfile"
+            File="/var/vcap/sys/log/rabbitmq-server/rabbit@*.log"
+            Tag="rabbitmq")
+
+      input(type="imfile"
+            File="/var/vcap/sys/log/rabbitmq-server/rabbit@*-sasl.log"
+            Tag="rabbitmq_sasl")
+
+      input(type="imfile"
+            File="/var/vcap/sys/log/rabbitmq-server/startup_stderr.log"
+            Tag="rabbitmq_startup_stderr")
+
+      input(type="imfile"
+            File="/var/vcap/sys/log/rabbitmq-server/startup_stdout.log"
+            Tag="rabbitmq_startup_stdout")
+
+      input(type="imfile"
+            File="/var/vcap/sys/log/rabbitmq-server/shutdown_stdout.log"
+            Tag="rabbitmq_shutdown_stdout")
+
+      input(type="imfile"
+            File="/var/vcap/sys/log/rabbitmq-server/shutdown_stderr.log"
+            Tag="rabbitmq_shutdown_stderr")
+
+      input(type="imfile"
+            File="/var/vcap/sys/log/rabbitmq-server/management-ui/access.log*"
+            Tag="rabbitmq_http_api_access")
+
+      input(type="imfile"
+            File="/var/vcap/sys/log/rabbitmq-server/upgrade.log"
+            Tag="rabbitmq_upgrade")
+
+      input(type="imfile"
+            File="/var/vcap/sys/log/rabbitmq-server/init.log"
+            Tag="rabbitmq_init")
+
+      input(type="imfile"
+            File="/var/vcap/sys/log/rabbitmq-server/node-check.log"
+            Tag="rabbitmq_node_check")
+
+      input(type="imfile"
+            File="/var/vcap/sys/log/rabbitmq-server/cluster-check.log"
+            Tag="rabbitmq_cluster_check")
+
+      input(type="imfile"
+            File="/var/vcap/sys/log/rabbitmq-server/pre-start.log"
+            Tag="rmq_server_pre_start")
   rabbitmq-server:
     restart_statsdb_cron_schedule: "42 */4 * * *"
     plugins:
