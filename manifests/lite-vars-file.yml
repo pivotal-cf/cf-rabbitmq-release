@@ -1,6 +1,10 @@
 ---
 deployment-name: cf-rabbitmq-lite
 cf-rabbitmq-release-name: cf-rabbitmq
+
+# Some of our current tests (based on Prof) do not work with stemcell versions
+# starting from 3363.12 because they randomise vcap passwords and our tests use
+# the default ones
 stemcell-version: 3312.12
 haproxy-instances: 2
 rabbitmq-management-username: admin
