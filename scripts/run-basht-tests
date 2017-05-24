@@ -2,7 +2,11 @@
 
 run_basht_tests() {
   which basht 1>/dev/null 2>&1 || go get github.com/progrium/basht
-  basht spec/bash/*_test.bash
+
+  for test in spec/bash/*_test.bash; do
+    echo "Test $test"
+    basht "$test"
+  done
 }
 
 run_basht_tests
