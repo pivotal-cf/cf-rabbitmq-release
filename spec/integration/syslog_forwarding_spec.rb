@@ -4,9 +4,6 @@ require 'papertrail'
 require 'httparty'
 require 'uri'
 
-REMOTE_LOG_DESTINATION = Papertrail::Connection.new(token: ENV.fetch("PAPERTRAIL_TOKEN"))
-PAPERTRAIL_GROUP_ID = ENV.fetch("PAPERTRAIL_GROUP_ID")
-
 def get_instances(bosh_director_url, bosh_director_username, bosh_director_password, deployment_name)
   bosh_director_uri = URI(bosh_director_url)
 
@@ -33,7 +30,10 @@ def one_day_ago
   Time.now - (24 * 60 * 60)
 end
 
-RSpec.describe "Syslog forwarding" do
+RSpec.describe "Syslog forwarding", :skip_syslog do
+  let(:remote_log_destination) { Papertrail::Connection.new(token: ENV.fetch("PAPERTRAIL_TOKEN")) }
+  let(:papertrail_group_id) { ENV.fetch("PAPERTRAIL_GROUP_ID") }
+
   def search_for_events(search_string)
     options = { :group_id => PAPERTRAIL_GROUP_ID, :min_time => one_day_ago }
     events = []
