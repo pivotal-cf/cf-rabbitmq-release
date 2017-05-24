@@ -1,7 +1,7 @@
 ---
 deployment-name: cf-rabbitmq-lite
 cf-rabbitmq-release-name: cf-rabbitmq
-stemcell-version: latest
+stemcell-version: 3312.12
 haproxy-instances: 2
 rabbitmq-management-username: admin
 rabbitmq-management-password: admin
