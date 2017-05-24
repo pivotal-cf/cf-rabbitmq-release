@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 set -e -x
 
 ROOT_DIR_PATH="$(cd "$(dirname "$0")"/.. && pwd)"
@@ -6,4 +7,3 @@ cd "$ROOT_DIR_PATH"
 
 ./scripts/test
 ./scripts/bump
-

@@ -1,4 +1,6 @@
-#!/bin/bash -ex
+#!/usr/bin/env bash
+
+set -e
 
 main() {
   write_keys_to_file
@@ -9,7 +11,7 @@ main() {
 
 write_keys_to_file() {
   if [[ $BOSH_CERT ]]; then
-    echo -e $BOSH_CERT > cert.pem
+    echo -e "$BOSH_CERT" > cert.pem
   fi
 }
 

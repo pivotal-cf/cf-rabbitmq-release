@@ -1,8 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-ssh-add -l
-
-if [ $? -ne 0 ]; then
+if ! ssh-add -l; then
   echo "Please add your ssh key"
   exit 1
 fi
