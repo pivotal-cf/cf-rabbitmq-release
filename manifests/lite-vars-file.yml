@@ -1,0 +1,11 @@
+---
+deployment-name: cf-rabbitmq-lite
+cf-rabbitmq-release-name: cf-rabbitmq
+stemcell-version: latest
+haproxy-instances: 2
+rabbitmq-management-username: admin
+rabbitmq-management-password: admin
+rabbitmq-broker-username: broker
+rabbitmq-broker-password: broker
+haproxy-stats-username: haproxy
+haproxy-stats-password: haproxy

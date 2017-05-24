@@ -17,7 +17,12 @@ Clone the repository and run `./scripts/update-release` to update submodules and
 
 ## Deploying
 
-Once you have a [BOSH Lite up and running locally](https://github.com/cloudfoundry/bosh-lite), run `scripts/deploy-bosh-lite`
+Once you have a [BOSH Lite up and running locally](https://github.com/cloudfoundry/bosh-lite), run `scripts/deploy-bosh-lite`.
+
+To deploy the release into BOSH you will need a deployment manifest. You can generate a deployment manifest using the following command:
+```bash
+bosh interpolate --vars-file=manifests/lite-vars-file.yml --var=director-uuid=$(bosh status --uuid) manifests/cf-rabbitmq-server-only-template.yml > manifests/cf-rabbitmq.yml
+```
 
 ## Testing
 
