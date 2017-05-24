@@ -37,7 +37,6 @@ RSpec.describe "logging configuration" do
       ssh_gateway.execute_on(RMQ_Z1_HOST, "> /var/vcap/sys/log/rabbitmq-server/rabbit@#{RMQ_HOST_Z1_DIGEST}.log")
       ssh_gateway.execute_on(RMQ_Z2_HOST, "> /var/vcap/sys/log/rabbitmq-server/rabbit@#{RMQ_HOST_Z2_DIGEST}.log")
       ssh_gateway.execute_on(RMQ_Z3_HOST, "> /var/vcap/sys/log/rabbitmq-server/rabbit@#{RMQ_HOST_Z3_DIGEST}.log")
-
     end
 
     after :context do
