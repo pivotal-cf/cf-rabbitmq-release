@@ -210,8 +210,6 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
   end
 end
 
-
-
 def get(url)
   HTTParty.get(url, {verify: false, timeout: 2})
 end
