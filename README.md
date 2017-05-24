@@ -29,14 +29,16 @@ bosh interpolate \
 
 ## Testing
 
+To run all the tests do `bundle exec rake spec`.
+
 ### Unit Tests
 
-To run the unit tests locally, just run: `bundle exec rake spec:unit`.
+To run only unit tests locally, run: `bundle exec rake spec:unit`.
 
 ### Integration Tests
-Integration tests require this release to be deployed using BOSH director.
+Integration tests require this release to be deployed into a BOSH director (see [Deploying section above](#deploying)).
 
-To run integration tests to `bundle exec rake spec:integration`.
+To run integration tests do `bundle exec rake spec:integration`.
 
 Use `SKIP_SYSLOG=true bundle exec rake spec:integration` to skip syslog tests if you don't have `PAPERTAIL_TOKEN` and `PAPERTRAIL_GROUP_ID` environment variables configured.
 
