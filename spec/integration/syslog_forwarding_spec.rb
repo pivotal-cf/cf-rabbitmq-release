@@ -35,9 +35,9 @@ RSpec.describe "Syslog forwarding", :skip_syslog do
   let(:papertrail_group_id) { ENV.fetch("PAPERTRAIL_GROUP_ID") }
 
   def search_for_events(search_string)
-    options = { :group_id => PAPERTRAIL_GROUP_ID, :min_time => one_day_ago }
+    options = { :group_id => papertrail_group_id, :min_time => one_day_ago }
     events = []
-    REMOTE_LOG_DESTINATION.each_event(search_string, options) do |event|
+    remote_log_destination.each_event(search_string, options) do |event|
       events.push(event)
     end
     events

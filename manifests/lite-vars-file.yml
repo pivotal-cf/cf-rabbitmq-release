@@ -6,6 +6,7 @@ cf-rabbitmq-release-name: cf-rabbitmq
 # starting from 3363.12 because they randomise vcap passwords and our tests use
 # the default ones
 stemcell-version: 3312.12
+
 haproxy-instances: 2
 rabbitmq-management-username: admin
 rabbitmq-management-password: admin
@@ -13,3 +14,5 @@ rabbitmq-broker-username: broker
 rabbitmq-broker-password: broker
 haproxy-stats-username: haproxy
 haproxy-stats-password: haproxy
+syslog-host:
+syslog-port:

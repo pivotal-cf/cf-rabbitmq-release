@@ -20,8 +20,11 @@ Clone the repository and run `./scripts/update-release` to update submodules and
 Once you have a [BOSH Lite up and running locally](https://github.com/cloudfoundry/bosh-lite), run `scripts/deploy-bosh-lite`.
 
 To deploy the release into BOSH you will need a deployment manifest. You can generate a deployment manifest using the following command:
-```bash
-bosh interpolate --vars-file=manifests/lite-vars-file.yml --var=director-uuid=$(bosh status --uuid) manifests/cf-rabbitmq-server-only-template.yml > manifests/cf-rabbitmq.yml
+```sh
+bosh interpolate \
+  --vars-file=manifests/lite-vars-file.yml \
+  --var=director-uuid=$(bosh status --uuid) \
+  manifests/cf-rabbitmq-server-only-template.yml > manifests/cf-rabbitmq.yml
 ```
 
 ## Testing
@@ -36,6 +39,16 @@ Integration tests require this release to be deployed using BOSH director.
 To run integration tests to `bundle exec rake spec:integration`.
 
 Use `SKIP_SYSLOG=true bundle exec rake spec:integration` to skip syslog tests if you don't have `PAPERTAIL_TOKEN` and `PAPERTRAIL_GROUP_ID` environment variables configured.
+
+For testing with syslog, remove the `SYSLOG` environment variable from the command line and generate and deploy a new manifest with syslog:
+
+```sh
+bosh interpolate \
+  --ops-file=manifests/add-syslog-release.yml \
+  --vars-file=manifests/lite-vars-file.yml \
+  --var=director-uuid=$(bosh status --uuid) \
+  manifests/cf-rabbitmq-server-only-template.yml > manifests/cf-rabbitmq.yml
+```
 
 ### System Tests
 System tests require this release and other releases to be deployed alongside with the same BOSH director.
