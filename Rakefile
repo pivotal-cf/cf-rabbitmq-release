@@ -3,7 +3,7 @@ require 'rbconfig'
 RELEASE_FOLDER = "./"
 
 desc 'run all the specs'
-task spec: %w(spec:unit spec:system)
+task spec: %w(spec:unit spec:integration spec:system)
 
 desc 'Installs noaa'
 task :install_noaa do
