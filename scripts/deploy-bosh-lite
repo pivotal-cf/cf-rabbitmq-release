@@ -32,7 +32,6 @@ main() {
   deploy
 
   target_cf || cf_required
-  check_if_broker_registered || register_broker
 }
 
 target_bosh_lite() {
@@ -85,14 +84,6 @@ deploy() {
 
 target_cf() {
   cf l -a api.bosh-lite.com -u admin -p admin --skip-ssl-validation
-}
-
-check_if_broker_registered() {
-  [[ "$(cf service-brokers)" =~ p-rabbitmq ]]
-}
-
-register_broker(){
-   bosh run errand broker-registrar
 }
 
 cf_required() {
