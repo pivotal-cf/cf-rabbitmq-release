@@ -5,6 +5,12 @@ It is deployable by BOSH in the usual way.
 
 This release is now using BOSH v2 [job links](https://bosh.io/docs/links.html) and [cloud config](https://bosh.io/docs/cloud-config.html) and requires at least BOSH Director v255.5
 
+## Dependencies
+
+- [bundler](http://bundler.io/)
+
+- [phantomjs](http://phantomjs.org/): In order to run the integration tests you need to have `phantomjs` available in the `$PATH`. `phantomjs` is required by `capybara` at runtime.
+
 ## Updating
 
 Clone the repository and run `./scripts/update-release` to update submodules and install dependencies.
@@ -14,9 +20,6 @@ Clone the repository and run `./scripts/update-release` to update submodules and
 Once you have a [BOSH Lite up and running locally](https://github.com/cloudfoundry/bosh-lite), run `scripts/deploy-bosh-lite`
 
 ## Testing
-
-### Dependencies
-In order to run the integration tests you need to have `phantomjs` available in the `$PATH`. `phantomjs` is required by `capybara` at runtime.
 
 ### Unit Tests
 
