@@ -1,4 +1,5 @@
 # Cloud Foundry RabbitMQ Service
+[![Build Status](https://p-concourse.sys.zumba.gcp.london.cf-app.com/api/v1/teams/system-system-rabbitmq-8723/pipelines/rabbitmq/jobs/test-cf-rabbitmq-server-release/badge)](https://p-concourse.sys.zumba.gcp.london.cf-app.com/teams/system-system-rabbitmq-8723/pipelines/rabbitmq?groups=CF-RABBITMQ-SERVER)
 
 This repository contains the release for RabbitMQ for Cloud Foundry.
 It is deployable by BOSH in the usual way.
