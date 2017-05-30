@@ -32,6 +32,7 @@ main() {
   deploy
 
   target_cf || cf_required
+  deploy_contains_multitenant_broker && run_broker_registrar
 }
 
 target_bosh_lite() {
@@ -79,16 +80,26 @@ set_deployment() {
 }
 
 deploy() {
-  bosh -n deploy
+  bosh -n deploy --no-redact
 }
 
 target_cf() {
-  cf l -a api.bosh-lite.com -u admin -p admin --skip-ssl-validation
+  cf api https://api.bosh-lite.com --skip-ssl-validation
+  cf auth admin admin
 }
 
 cf_required() {
   echo "Cloud Foundry v238+ must be deployed on this BOSH director, http://docs.cloudfoundry.org/deploying/boshlite/index.html"
   exit 1
+}
+
+deploy_contains_multitenant_broker() {
+  bosh errands 2> /dev/null | grep broker-registrar > /dev/null
+  return $?
+}
+
+run_broker_registrar(){
+  bosh run errand broker-registrar
 }
 
 main

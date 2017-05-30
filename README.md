@@ -21,7 +21,8 @@ Once you have a [BOSH Lite up and running locally](https://github.com/cloudfound
 
 To deploy the release into BOSH you will need a deployment manifest. You can generate a deployment manifest using the following command:
 ```sh
-bosh interpolate \
+alias boshgo=bosh # This is just to make pcf-rabbitmq tile team's life simpler
+boshgo interpolate \
   --vars-file=manifests/lite-vars-file.yml \
   --var=director-uuid=$(bosh status --uuid) \
   manifests/cf-rabbitmq-server-only-template.yml > manifests/cf-rabbitmq.yml
@@ -45,7 +46,6 @@ Use `SKIP_SYSLOG=true bundle exec rake spec:integration` to skip syslog tests if
 For testing with syslog, remove the `SYSLOG` environment variable from the command line and generate and deploy a new manifest with syslog:
 
 ```sh
-alias boshgo=bosh # This is just to make pcf-rabbitmq tile team's life simpler
 boshgo interpolate \
   --ops-file=manifests/add-syslog-release.yml \
   --vars-file=manifests/lite-vars-file.yml \
@@ -60,7 +60,6 @@ Ensure you have deployed the release to BOSH Lite (see [Deploying section above]
 
 Use the bosh command below to create a manifest with cf-rabbitmq and multitenant-broker.
 ```sh
-alias boshgo=bosh # This is just to make pcf-rabbitmq tile team's life simpler
 boshgo interpolate \
   --vars-file=manifests/lite-vars-file.yml \
   --vars-file=manifests/lite-multitenant-broker-vars-file.yml \
