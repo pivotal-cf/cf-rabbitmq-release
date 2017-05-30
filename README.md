@@ -45,7 +45,8 @@ Use `SKIP_SYSLOG=true bundle exec rake spec:integration` to skip syslog tests if
 For testing with syslog, remove the `SYSLOG` environment variable from the command line and generate and deploy a new manifest with syslog:
 
 ```sh
-bosh interpolate \
+alias boshgo=bosh # This is just to make pcf-rabbitmq tile team's life simpler
+boshgo interpolate \
   --ops-file=manifests/add-syslog-release.yml \
   --vars-file=manifests/lite-vars-file.yml \
   --var=director-uuid=$(bosh status --uuid) \
@@ -53,21 +54,23 @@ bosh interpolate \
 ```
 
 ### System Tests
-System tests require this release and other releases to be deployed alongside with the same BOSH director.
+System tests require this release to be deployed colocated within the [multitenant-broker](https://github.com/pivotal-cf/cf-rabbitmq-broker-release) release.
 
-Ensure you have deployed the release to BOSH Lite. Set `BOSH_MANIFEST` env to `$PWD/manifests/cf-rabbitmq.yml` and run `bundle exec rake spec:system`
+Ensure you have deployed the release to BOSH Lite (see [Deploying section above](#deploying)).
+
+Use the bosh command below to create a manifest with cf-rabbitmq and multitenant-broker.
+```sh
+alias boshgo=bosh # This is just to make pcf-rabbitmq tile team's life simpler
+boshgo interpolate \
+  --vars-file=manifests/lite-vars-file.yml \
+  --vars-file=manifests/lite-multitenant-broker-vars-file.yml \
+  --var=director-uuid=$(bosh status --uuid) \
+  manifests/cf-rabbitmq-colocated-with-multitenant-broker-template.yml > manifests/cf-rabbitmq.yml
+```
+
+To run the system tests do `bundle exec rake spec:system`
 
 If you want to run tests on custom BOSH you need to set following environment variables:
-
-```sh
-export CF_DOMAIN='bosh-lite.com'
-export CF_USERNAME='admin'
-export CF_PASSWORD='admin'
-export CF_API='api.bosh-lite.com'
-export BOSH_TARGET='bosh-lite.com'
-export BOSH_USERNAME='admin'
-export BOSH_PASSWORD='admin'
-```
 
 ## Documentation
 
