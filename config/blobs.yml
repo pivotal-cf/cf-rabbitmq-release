@@ -1,12 +1,4 @@
 ---
-java/jre-1.8.0_121.tar.gz:
-  object_id: 8004c235-fd95-466f-94d0-03597c9c2d1f
-  sha: f62168513348184e3d18c69795ecb220456514a3
-  size: 73676107
-cf-cli/cf-cli_6.19.0_linux_x86-64.tgz:
-  object_id: 22ad54c4-568e-4ca3-aa73-12b691e3f678
-  sha: 625170654ffa4568dae97b4d3915e87557b29261
-  size: 6450885
 erlang/otp_src_oss_19.3.tgz:
   object_id: 3c9cf954-250a-44fa-a408-1921202b8716
   sha: 20fdcf30bf58f8950399223c399461130c104497
