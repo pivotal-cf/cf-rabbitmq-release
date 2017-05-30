@@ -8,7 +8,7 @@ WORKSPACE="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../" && pwd)" #taken from htt
 BOSH_LITE_URL="${1:-https://192.168.50.4:25555}"
 BOSH_LITE_STEMCELL="bosh-stemcell-3262.2-warden-boshlite-ubuntu-trusty-go_agent.tgz"
 BOSH_LITE_STEMCELL_URL="https://s3.amazonaws.com/bosh-warden-stemcells/$BOSH_LITE_STEMCELL"
-CF_ROUTING_RELEASE_VERSION="0.136.0"
+CF_ROUTING_RELEASE_VERSION="0.152.0"
 CF_ROUTING_RELEASE="cf-routing-release-${CF_ROUTING_RELEASE_VERSION}.tgz"
 CF_ROUTING_RELEASE_URL="http://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=$CF_ROUTING_RELEASE_VERSION"
 BOSH_CLOUD_CONFIG="manifests/lite-cloud-config.yml"
