@@ -17,7 +17,7 @@ Clone the repository and run `./scripts/update-release` to update submodules and
 
 ## Deploying
 
-Once you have a [BOSH Lite up and running locally](https://github.com/cloudfoundry/bosh-lite), run `scripts/deploy-bosh-lite`.
+Once you have a [BOSH Lite up and running locally](https://github.com/cloudfoundry/bosh-lite), run `scripts/deploy-to-bosh-lite`.
 
 To deploy the release into BOSH you will need a deployment manifest. You can generate a deployment manifest using the following command:
 ```sh
