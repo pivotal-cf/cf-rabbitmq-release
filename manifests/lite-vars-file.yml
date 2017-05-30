@@ -1,5 +1,5 @@
 ---
-deployment-name: cf-rabbitmq-lite
+deployment-name: cf-rabbitmq
 cf-rabbitmq-release-name: cf-rabbitmq
 
 # Some of our current tests (based on Prof) do not work with stemcell versions

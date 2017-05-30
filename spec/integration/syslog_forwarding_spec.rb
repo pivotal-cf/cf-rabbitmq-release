@@ -16,7 +16,7 @@ def get_instances(bosh_director_url, bosh_director_username, bosh_director_passw
   ).map { |instance| OpenStruct.new(instance) }
 end
 
-DEPLOYMENT_NAME = ENV.fetch("DEPLOYMENT_NAME", "cf-rabbitmq-lite")
+DEPLOYMENT_NAME = ENV.fetch("DEPLOYMENT_NAME", "cf-rabbitmq")
 BOSH_TARGET = ENV.fetch("BOSH_TARGET", "https://192.168.50.4:25555")
 BOSH_USERNAME = ENV.fetch("BOSH_USERNAME", "admin")
 BOSH_PASSWORD = ENV.fetch("BOSH_PASSWORD", "admin")
