@@ -1,5 +1,4 @@
 ---
-deployment-name: cf-rabbitmq-with-multitenant-broker
 cf-rabbitmq-broker-release-name: cf-rabbitmq-broker
 rabbitmq-broker-domain: rabbitmq-multitenant-broker
 bosh-hostname: bosh-lite.com
