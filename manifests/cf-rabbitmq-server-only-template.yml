@@ -3,7 +3,7 @@ name: ((deployment-name))
 director_uuid: ((director-uuid))
 
 releases:
-- name: ((cf-rabbitmq-release-name))
+- name: cf-rabbitmq
   version: latest
 
 stemcells:
@@ -16,7 +16,7 @@ instance_groups:
   instances: 3
   jobs:
   - name: rabbitmq-server
-    release: ((cf-rabbitmq-release-name))
+    release: cf-rabbitmq
   vm_type: r3.large
   stemcell: trusty
   persistent_disk_type: 10GB
@@ -30,7 +30,7 @@ instance_groups:
   instances: ((haproxy-instances))
   jobs:
   - name: rabbitmq-haproxy
-    release: ((cf-rabbitmq-release-name))
+    release: cf-rabbitmq
   vm_type: m3.medium
   stemcell: trusty
   networks:

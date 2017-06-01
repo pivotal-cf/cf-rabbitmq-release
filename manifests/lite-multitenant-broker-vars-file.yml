@@ -1,5 +1,4 @@
 ---
-cf-rabbitmq-broker-release-name: cf-rabbitmq-broker
 rabbitmq-broker-domain: rabbitmq-multitenant-broker
 bosh-hostname: bosh-lite.com
 cf-admin-password: admin

@@ -1,6 +1,5 @@
 ---
 deployment-name: cf-rabbitmq
-cf-rabbitmq-release-name: cf-rabbitmq
 
 # Some of our current tests (based on Prof) do not work with stemcell versions
 # starting from 3363.12 because they randomise vcap passwords and our tests use

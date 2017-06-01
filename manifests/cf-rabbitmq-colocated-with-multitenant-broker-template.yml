@@ -3,9 +3,9 @@ name: ((deployment-name))
 director_uuid: ((director-uuid))
 
 releases:
-- name: ((cf-rabbitmq-release-name))
+- name: cf-rabbitmq
   version: latest
-- name: ((cf-rabbitmq-broker-release-name))
+- name: cf-rabbitmq-multitenant-broker
   version: latest
 - name: routing
   version: 0.152.0
@@ -20,7 +20,7 @@ instance_groups:
   instances: 3
   jobs:
   - name: rabbitmq-server
-    release: ((cf-rabbitmq-release-name))
+    release: cf-rabbitmq
   vm_type: c3.large
   stemcell: trusty
   persistent_disk_type: 10GB
@@ -34,7 +34,7 @@ instance_groups:
   instances: 1
   jobs:
   - name: rabbitmq-broker
-    release: ((cf-rabbitmq-broker-release-name))
+    release: cf-rabbitmq-multitenant-broker
   - name: route_registrar
     release: routing
     consumes:
@@ -58,7 +58,7 @@ instance_groups:
   instances: ((haproxy-instances))
   jobs:
   - name: rabbitmq-haproxy
-    release: ((cf-rabbitmq-release-name))
+    release: cf-rabbitmq
   - name: route_registrar
     release: routing
     consumes:
@@ -82,7 +82,7 @@ instance_groups:
 - name: broker-registrar
   jobs:
   - name: broker-registrar
-    release: ((cf-rabbitmq-broker-release-name))
+    release: cf-rabbitmq-multitenant-broker
   instances: 1
   lifecycle: errand
   vm_type: t2.micro
@@ -95,7 +95,7 @@ instance_groups:
 - name: broker-deregistrar
   jobs:
   - name: broker-deregistrar
-    release: ((cf-rabbitmq-broker-release-name))
+    release: cf-rabbitmq-multitenant-broker
   instances: 1
   lifecycle: errand
   vm_type: t2.micro
@@ -108,7 +108,7 @@ instance_groups:
 - name: smoke-tests
   jobs:
   - name: smoke-tests
-    release: ((cf-rabbitmq-broker-release-name))
+    release: cf-rabbitmq-multitenant-broker
   instances: 1
   lifecycle: errand
   vm_type: m3.medium
