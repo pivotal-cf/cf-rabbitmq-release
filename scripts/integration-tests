@@ -5,7 +5,7 @@ set -e
 main() {
   write_keys_to_file
   install_dependencies
-  run_system_tests_individually_to_isolate_state
+  run_integration_tests_individually_to_isolate_state
   delete_bosh_deployment_to_remove_state
 }
 
