@@ -4,13 +4,13 @@ set -e
 
 [ -z "$DEBUG" ] || set -x
 
-WORKSPACE="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../" && pwd)" #taken from https://github.com/cloudfoundry/bosh-lite/blob/master/bin/provision_cf#L7
 BOSH_LITE_URL="${1:-https://192.168.50.4:25555}"
-BOSH_LITE_STEMCELL="bosh-stemcell-3262.2-warden-boshlite-ubuntu-trusty-go_agent.tgz"
-BOSH_LITE_STEMCELL_URL="https://s3.amazonaws.com/bosh-warden-stemcells/$BOSH_LITE_STEMCELL"
+BOSH_LITE_STEMCELL_NAME="bosh-warden-boshlite-ubuntu-trusty-go_agent"
+BOSH_LITE_STEMCELL_VERSION="3262.2"
+BOSH_LITE_STEMCELL_URL="https://bosh.io/d/stemcells/$BOSH_LITE_STEMCELL_NAME?v=$BOSH_LITE_STEMCELL_VERSION"
 CF_ROUTING_RELEASE_VERSION="0.152.0"
-CF_ROUTING_RELEASE="cf-routing-release-${CF_ROUTING_RELEASE_VERSION}.tgz"
-CF_ROUTING_RELEASE_URL="http://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=$CF_ROUTING_RELEASE_VERSION"
+CF_ROUTING_RELEASE_NAME="routing"
+CF_ROUTING_RELEASE_URL="http://bosh.io/d/github.com/cloudfoundry-incubator/cf-$CF_ROUTING_RELEASE_NAME-release?v=$CF_ROUTING_RELEASE_VERSION"
 BOSH_CLOUD_CONFIG="manifests/lite-cloud-config.yml"
 
 read -rep "BOSH manifest for the cf-rabbitmq deployment (default: $PWD/manifests/cf-rabbitmq.yml): " BOSH_MANIFEST
@@ -40,11 +40,7 @@ target_bosh_lite() {
 }
 
 upload_stemcell() {
-  (
-    cd "$WORKSPACE"
-    [ -f "$BOSH_LITE_STEMCELL" ] || curl -LO "$BOSH_LITE_STEMCELL_URL"
-    bosh upload stemcell --skip-if-exists "$BOSH_LITE_STEMCELL"
-  )
+  bosh upload stemcell --skip-if-exists --name "$BOSH_LITE_STEMCELL_NAME" --version "$BOSH_LITE_STEMCELL_VERSION" "$BOSH_LITE_STEMCELL_URL"
 }
 
 download_blobs() {
@@ -64,11 +60,7 @@ upload_dev_release() {
 }
 
 upload_routing_release() {
-  (
-    cd "$WORKSPACE"
-    [ -f "$CF_ROUTING_RELEASE" ] || curl -L -o "$CF_ROUTING_RELEASE" "$CF_ROUTING_RELEASE_URL"
-    bosh upload release "$CF_ROUTING_RELEASE"
-  )
+  bosh upload release --skip-if-exists --name "$CF_ROUTING_RELEASE_NAME" --version "$CF_ROUTING_RELEASE_VERSION" "$CF_ROUTING_RELEASE_URL"
 }
 
 update_cloud_config() {
@@ -80,7 +72,7 @@ set_deployment() {
 }
 
 deploy() {
-  bosh -n deploy --no-redact
+  bosh deploy --no-redact
 }
 
 target_cf() {
