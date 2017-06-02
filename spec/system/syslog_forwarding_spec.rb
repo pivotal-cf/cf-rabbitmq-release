@@ -26,30 +26,30 @@ def host_search_string(host)
   "[job=#{host.job} index=#{host.index} id=#{host.id}]"
 end
 
-def one_day_ago
-  Time.now - (24 * 60 * 60)
+def one_hour_ago
+  Time.now - (60 * 60)
 end
 
 RSpec.describe "Syslog forwarding", :skip_syslog do
   let(:remote_log_destination) { Papertrail::Connection.new(token: ENV.fetch("PAPERTRAIL_TOKEN")) }
   let(:papertrail_group_id) { ENV.fetch("PAPERTRAIL_GROUP_ID") }
 
-  def search_for_events(search_string)
-    options = { :group_id => papertrail_group_id, :min_time => one_day_ago }
+  def has_event_for?(log_entry)
     events = []
-    remote_log_destination.each_event(search_string, options) do |event|
-      events.push(event)
+    options = { :group_id => papertrail_group_id, :min_time => one_hour_ago }
+    remote_log_destination.each_event(log_entry, options) do |event|
+      events << event
     end
-    events
+    events.any?
   end
 
   describe "rmq_server hosts" do
     rmq_server_hosts = DEPLOYMENT_INSTANCES.select { |i| i.job == "rmq" }
 
     rmq_server_hosts.each do |rmq_server_host|
-      search_string = host_search_string(rmq_server_host)
-      it "forwards rmq_server hosts logs (#{search_string})" do
-        expect(search_for_events(search_string).size).to be > 0
+      job_host_log_entry = host_search_string(rmq_server_host)
+      it "forwards rmq_server hosts logs (#{job_host_log_entry})" do
+        expect(has_event_for?(job_host_log_entry)).to be_truthy
       end
     end
   end
@@ -58,9 +58,20 @@ RSpec.describe "Syslog forwarding", :skip_syslog do
     rmq_haproxy_hosts = DEPLOYMENT_INSTANCES.select { |i| i.job == "haproxy" }
 
     rmq_haproxy_hosts.each do |rmq_haproxy_host|
-      search_string = host_search_string(rmq_haproxy_host)
-      it "forwards rmq_haproxy hosts logs (#{search_string})" do
-        expect(search_for_events(search_string).size).to be > 0
+      job_host_log_entry = host_search_string(rmq_haproxy_host)
+      it "forwards rmq_haproxy hosts logs (#{job_host_log_entry})" do
+        expect(has_event_for?(job_host_log_entry)).to be_truthy
+      end
+    end
+  end
+
+  describe "rmq_broker host" do
+    rmq_broker_hosts = DEPLOYMENT_INSTANCES.select { |i| i.job == "rmq-broker" }
+
+    rmq_broker_hosts.each do |rmq_broker_host|
+      job_host_log_entry = host_search_string(rmq_broker_host)
+      it "forwards rmq_broker hosts logs (#{job_host_log_entry})" do
+        expect(has_event_for?(job_host_log_entry)).to be_truthy
       end
     end
   end
