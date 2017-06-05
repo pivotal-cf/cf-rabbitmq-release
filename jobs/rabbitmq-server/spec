@@ -71,11 +71,6 @@ properties:
   rabbitmq-server.load_definitions:
     description: "Definitions to be loaded by RabbitMQ at startup"
 
-  syslog_aggregator.address:
-    description: "Syslog drain hostname"
-  syslog_aggregator.port:
-    description: "Syslog drain port"
-
 templates:
   add-rabbitmqctl-to-path.bash:             bin/add-rabbitmqctl-to-path
   cleanup-http-logs.bash:                   bin/cleanup-http-logs
@@ -91,8 +86,6 @@ templates:
   pre-start.bash:                           bin/pre-start
   rabbitmq-server.init.bash:                bin/rabbitmq-server.init
   setup.sh.erb:                             bin/setup.sh
-  syslog_forwarder.conf.erb:                config/syslog_forwarder.conf
-  rabbitmq_syslog.conf:                     config/rabbitmq_syslog.conf
   cacert.pem.erb:                           etc/cacert.pem
   cert.pem.erb:                             etc/cert.pem
   config.erb:                               etc/config
