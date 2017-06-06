@@ -5,6 +5,9 @@
 <%
 
 cluster_partition_handling = p("rabbitmq-server.cluster_partition_handling")
+# WIP: right now we only support native clustering (144893525)
+# use_native_clustering_formation = p("rabbitmq-server.use_native_clustering_formation")
+use_native_clustering_formation = true
 networks = spec.networks.marshal_dump.values
 network = networks.find do |network_spec|
   network_spec.default
@@ -41,7 +44,9 @@ ssl_verification_depth = p("rabbitmq-server.ssl.verification_depth")
 fail_if_no_peer_cert = p("rabbitmq-server.ssl.fail_if_no_peer_cert")
 disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
 
-cluster_nodes = node_ips.map {|ip| "rabbit@#{Digest::MD5.hexdigest(ip)}"}.join(',')
+if use_native_clustering_formation
+  cluster_nodes = node_ips.map {|ip| "rabbit@#{Digest::MD5.hexdigest(ip)}"}.join(',')
+end
 
 %>
 
@@ -131,17 +136,21 @@ cluster_nodes = node_ips.map {|ip| "rabbit@#{Digest::MD5.hexdigest(ip)}"}.join('
   NODENAME="NODENAME='${SELF_NODE}'"
 
   <%
-  server_start_args = [
-    "-rabbit log_levels [{connection,info}]",
-    "-rabbit cluster_nodes {[#{cluster_nodes}],disc}",
-    "-rabbit disk_free_limit #{disk_alarm_threshold}",
-    "-rabbit cluster_partition_handling #{cluster_partition_handling}",
-    "-rabbit halt_on_upgrade_failure false",
-    "-rabbitmq_mqtt subscription_ttl 1800000"
-  ].join(' ')
+  if use_native_clustering_formation
+    server_start_args = [
+      "-rabbit log_levels [{connection,info}]",
+      "-rabbit cluster_nodes {[#{cluster_nodes}],disc}",
+      "-rabbit disk_free_limit #{disk_alarm_threshold}",
+      "-rabbit cluster_partition_handling #{cluster_partition_handling}",
+      "-rabbit halt_on_upgrade_failure false",
+      "-rabbitmq_mqtt subscription_ttl 1800000"
+    ].join(' ')
+  end
   %>
 
+<% if use_native_clustering_formation %>
   SERVER_START_ARGS="SERVER_START_ARGS='<%= server_start_args %> -rabbitmq_management http_log_dir \"${HTTP_ACCESS_LOG_DIR}\""
+<% end %>
 
 <% if_p('rabbitmq-server.load_definitions') do %>
   LOAD_DEFINITIONS_FILE_PATH="${SCRIPT_DIR}/../etc/definitions.json"
@@ -168,9 +177,13 @@ cluster_nodes = node_ips.map {|ip| "rabbit@#{Digest::MD5.hexdigest(ip)}"}.join('
     printf '' > ${DIR}/env.backup
   fi
 
+<% if use_native_clustering_formation %>
   RABBITMQ_BOOT_MODULE="RABBITMQ_BOOT_MODULE=rabbit"
+<% end %>
   ${SED} "/${PREFIX}/,/${SUFFIX}/d" < ${DIR}/env.backup > ${DIR}/env
+<% if use_native_clustering_formation %>
   printf "${PREFIX}\n${NODENAME}\n${RABBITMQ_BOOT_MODULE}\n${CONFIG}\n${SERVER_START_ARGS}\n${SUFFIX}\n" >> ${DIR}/env
+<% end %>
 
   # set custom RabbitMQ db / plugin directory not specifying the node name
   printf "RABBITMQ_MNESIA_DIR=${RABBITMQ_MNESIA_DIR}\n" >> ${DIR}/env
