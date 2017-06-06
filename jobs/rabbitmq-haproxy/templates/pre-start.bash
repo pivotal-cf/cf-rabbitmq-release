@@ -12,7 +12,7 @@ source /var/vcap/packages/rabbitmq-common/ensure_dir_with_permissions
 KNOWN_PACKAGES="$("$(dirname "$0")/known-packages.bash")"
 
 symlink_haproxy_syslog_configuration() {
-    ln -s $JOB_DIR/config/haproxy_syslog.conf /etc/rsyslog.d/haproxy_syslog.conf
+    ln -sfv $JOB_DIR/config/haproxy_syslog.conf /etc/rsyslog.d/haproxy_syslog.conf
 }
 
 restart_rsyslog() {
