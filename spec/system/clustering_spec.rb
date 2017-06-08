@@ -37,7 +37,7 @@ RSpec.describe "RabbitMQ cluster configuration" do
   describe "uses clusterer plugin" do
     before(:all) do
       modify_and_deploy_manifest do |manifest|
-        manifest['properties']['rabbitmq-server']['use_native_clustering_formation'] = false
+        manifest['properties']['rabbitmq-server'].delete('use_native_clustering_formation')
       end
     end
 
