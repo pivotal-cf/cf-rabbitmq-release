@@ -43,16 +43,19 @@ RSpec.describe 'Configuration', template: true do
     end
   end
 
-  describe "cluster_partition_handling" do
-    it "should have pause_minority" do
-      expect(rendered_template).to include(cluster_partition_handling_with "pause_minority")
-    end
+  [true, false].each do |native_clusters|
+    describe "cluster_partition_handling with native clustering set to #{native_clusters}" do
+      let(:manifest_properties) { { 'rabbitmq-server' => { 'use_native_clustering_formation' => native_clusters} }}
+      it "should have pause_minority" do
+        expect(rendered_template).to include(cluster_partition_handling_with "pause_minority", native_clusters)
+      end
 
-    context "when is set to autoheal" do
-      let(:manifest_properties) { { 'rabbitmq-server' => { 'cluster_partition_handling' => 'autoheal'} }}
+      context "when is set to autoheal" do
+        let(:manifest_properties) { { 'rabbitmq-server' => { 'use_native_clustering_formation' => native_clusters, 'cluster_partition_handling' => 'autoheal'} }}
 
-      it "should have autoheal" do
-        expect(rendered_template).to include(cluster_partition_handling_with "autoheal")
+        it "should have autoheal" do
+          expect(rendered_template).to include(cluster_partition_handling_with "autoheal", native_clusters)
+        end
       end
     end
   end
@@ -67,7 +70,7 @@ RSpec.describe 'Configuration', template: true do
 
       it "should enable tls 1" do
         expect(rendered_template).to include(ssl_options_with "['tlsv1.2','tlsv1.1',tlsv1]")
-      end
+        end
     end
   end
 
@@ -90,7 +93,19 @@ def ssl_options_with(tls_versions)
   'SSL_OPTIONS=" -rabbit ssl_options [{cacertfile,\\\\\"${SCRIPT_DIR}/../etc/cacert.pem\\\\\"},{certfile,\\\\\"${SCRIPT_DIR}/../etc/cert.pem\\\\\"},{keyfile,\\\\\"${SCRIPT_DIR}/../etc/key.pem\\\\\"},{verify,verify_none},{depth,5},{fail_if_no_peer_cert,false},{versions,' + tls_versions + '}]"'
 end
 
-def cluster_partition_handling_with(policy)
-  stubbed_nodes = "-rabbit cluster_nodes {[rabbit@e086aa137fa19f67d27b39d0eca18610,rabbit@5b8656aafcb40bb58caf1d17ef8506a9],disc}"
-  "SERVER_START_ARGS='" + '-rabbit log_levels [{connection,info}]' + " #{stubbed_nodes}" + ' -rabbit disk_free_limit {mem_relative,0.4} -rabbit ' + "cluster_partition_handling #{policy} -rabbit halt_on_upgrade_failure false -rabbitmq_mqtt subscription_ttl 1800000"
+def cluster_partition_handling_with(policy, native_clusters)
+  server_start_args = "SERVER_START_ARGS='"
+
+  if ! native_clusters
+    server_start_args += "-rabbitmq_clusterer config " + '\"${CLUSTER_CONFIG}\"'
+  else
+    stubbed_nodes = "-rabbit cluster_nodes {[rabbit@e086aa137fa19f67d27b39d0eca18610,rabbit@5b8656aafcb40bb58caf1d17ef8506a9],disc}"
+    server_start_args += "#{stubbed_nodes}"
+  end
+
+  server_start_args + ' -rabbit log_levels [{connection,info}]' +
+    ' -rabbit disk_free_limit {mem_relative,0.4}' +
+    ' -rabbit ' + "cluster_partition_handling #{policy}" +
+    ' -rabbit halt_on_upgrade_failure false' +
+    " -rabbitmq_mqtt subscription_ttl 1800000"
 end

@@ -136,23 +136,22 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   <%
   if use_native_clustering_formation
     cluster_nodes = node_ips.map {|ip| "rabbit@#{Digest::MD5.hexdigest(ip)}"}.join(',')
-    server_start_args = [
-      "-rabbit log_levels [{connection,info}]",
-      "-rabbit cluster_nodes {[#{cluster_nodes}],disc}",
+    server_start_args = [ "-rabbit cluster_nodes {[#{cluster_nodes}],disc}" ]
+  else
+    server_start_args = [ '-rabbitmq_clusterer config \"${CLUSTER_CONFIG}\"' ]
+  end
+
+  server_start_args += [
+      '-rabbit log_levels [{connection,info}]',
       "-rabbit disk_free_limit #{disk_alarm_threshold}",
       "-rabbit cluster_partition_handling #{cluster_partition_handling}",
-      "-rabbit halt_on_upgrade_failure false",
-      "-rabbitmq_mqtt subscription_ttl 1800000"
-    ].join(' ')
-  end
+      '-rabbit halt_on_upgrade_failure false',
+      '-rabbitmq_mqtt subscription_ttl 1800000',
+      '-rabbitmq_management http_log_dir \"${HTTP_ACCESS_LOG_DIR}\"'
+  ]
   %>
 
-<% if use_native_clustering_formation %>
-  SERVER_START_ARGS="SERVER_START_ARGS='<%= server_start_args %> -rabbitmq_management http_log_dir \"${HTTP_ACCESS_LOG_DIR}\""
-<% else %>
-  SERVER_START_ARGS="SERVER_START_ARGS='-rabbitmq_clusterer config \"${CLUSTER_CONFIG}\" -rabbit log_levels [{connection,info}] -rabbit disk_free_limit <%= disk_alarm_threshold %> -rabbit cluster_partition_handling <%= cluster_partition_handling %> -rabbit halt_on_upgrade_failure false -rabbitmq_mqtt subscription_ttl 1800000"
-  SERVER_START_ARGS="${SERVER_START_ARGS} -rabbitmq_management http_log_dir \"${HTTP_ACCESS_LOG_DIR}\""
-<% end %>
+  SERVER_START_ARGS="SERVER_START_ARGS='<%= server_start_args.join(' ') %>"
 
 <% if_p('rabbitmq-server.load_definitions') do %>
   LOAD_DEFINITIONS_FILE_PATH="${SCRIPT_DIR}/../etc/definitions.json"
