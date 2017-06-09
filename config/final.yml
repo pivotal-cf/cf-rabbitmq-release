@@ -6,4 +6,3 @@ blobstore:
   options:
     bucket_name: rabbitmq-bosh-release-blobs
     region: us-east-1
-    endpoint: s3.amazonaws.com
