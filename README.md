@@ -72,7 +72,7 @@ To run integration tests do `bundle exec rake spec:integration`.
 
 Use `SKIP_SYSLOG=true bundle exec rake spec:integration` to skip syslog tests if you don't have `PAPERTRAIL_TOKEN` and `PAPERTRAIL_GROUP_ID` environment variables configured.
 
-For testing with syslog, remove the `SYSLOG` environment variable from the command line and generate and deploy a new manifest with syslog:
+For testing with syslog, remove the `SKIP_SYSLOG` environment variable from the command line and generate and deploy a new manifest with syslog:
 
 ```sh
 boshgo interpolate \
