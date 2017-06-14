@@ -13,5 +13,8 @@ rabbitmq-broker-username: broker
 rabbitmq-broker-password: broker
 haproxy-stats-username: haproxy
 haproxy-stats-password: haproxy
+
+use-native-clustering-formation: false
+
 syslog-host:
 syslog-port:

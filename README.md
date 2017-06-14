@@ -36,6 +36,35 @@ To run all the tests do `bundle exec rake spec`.
 
 To run only unit tests locally, run: `bundle exec rake spec:unit`.
 
+### Embedded Release Tests
+
+Sometimes testing BOSH releases can lead to writing many tests at the top of
+the test pyramid, which can increase the feedback loop. Also when tests fail the
+analysis can become complicated since there are many components working together.
+Embedded release tests are jobs that we deploy in a colocated way so that we can
+execute tests within a deployment, inside a VM. The goal is to pull tests down
+the test pyramid trying to shorten the feedback loop and bring the tests closer
+to the code.
+
+To execute embedded release tests you need to colocate the tests within the
+release being tested and deploy. The deployment should fail if the tests fail.
+
+```sh
+boshgo interpolate \
+  --ops-file=manifests/add-rmq-server-tests.yml \
+  --vars-file=manifests/lite-vars-file.yml \
+  --var=director-uuid=$(bosh status --uuid) \
+  manifests/cf-rabbitmq-server-only-template.yml > manifests/cf-rabbitmq.yml
+```
+
+```sh
+bosh deployment manifests/cf-rabbitmq.yml
+```
+
+```sh
+bosh deploy
+```
+
 ### Integration Tests
 Integration tests require this release to be deployed into a BOSH director (see [Deploying section above](#deploying)).
 
