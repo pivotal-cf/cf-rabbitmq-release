@@ -6,6 +6,7 @@
 # This file is required to make `bosh upload blobs` work.
 ---
 blobstore:
-  s3:
+  provider: s3
+  options:
     access_key_id: <aws-blobstore-access-key-id>
     secret_access_key: <aws-blobstore-secret-access-key>
