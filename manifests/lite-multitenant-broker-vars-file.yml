@@ -1,0 +1,13 @@
+---
+rabbitmq-broker-domain: rabbitmq-multitenant-broker
+bosh-hostname: bosh-lite.com
+cf-admin-password: admin
+cf-admin-username: admin
+multitenant-rabbitmq-broker-password: broker
+multitenant-rabbitmq-broker-username: broker
+product-name: p-rabbitmq
+rabbitmq-broker-plan-uuid: DDC1DB78-C240-4664-88B5-B44298FE8C01
+rabbitmq-broker-protocol: http
+rabbitmq-broker-uuid: 3F817631-63AF-4CAB-B59C-EF41C9CE45CA
+rabbitmq-management-domain: pivotal-rabbitmq
+rabbitmq-hosts: USING BOSH LINKS
