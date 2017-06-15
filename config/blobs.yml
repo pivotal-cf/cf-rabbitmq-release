@@ -19,10 +19,6 @@ rabbitmq-server/rabbitmq_clusterer-3.6.5.ez:
   object_id: aca4b381-2afc-487c-913a-643fef65b3d1
   sha: 3469acac9d4b029cb7c8216d09a1f959a68c2e29
   size: 58675
-erlang/otp_src_oss_19.3.tgz:
-  object_id: 5ef147f6-2b9f-4f96-8560-eef6c87009c0
-  sha: 20fdcf30bf58f8950399223c399461130c104497
-  size: 67714693
 rabbitmq-server/rabbitmq-server-generic-unix-3.6.9.tar.xz:
   object_id: b1e6784a-f8b9-475a-b21f-e30d9a7b3683
   sha: 19254ab3ce15ddc117dfc1bf1576f7ea9d646a5f
@@ -31,3 +27,7 @@ golang/go1.8.linux-amd64.tar.gz:
   object_id: f4921573-799f-429b-b575-4cc7d5c477d0
   sha: a93fe8fc245e3554f956bc823f30ef4eb23c2068
   size: 89803580
+erlang/otp_src_oss_19.3.6.tgz:
+  object_id: 0590adb7-96e6-4857-9abd-dac4cda4a0c6
+  sha: 6f5e63bd1896b8ced382fe65bd08d2ad3a5b04dd
+  size: 35745871
