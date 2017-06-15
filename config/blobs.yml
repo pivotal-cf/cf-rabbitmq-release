@@ -19,10 +19,6 @@ rabbitmq-server/rabbitmq-server-generic-unix-3.6.6.tar.xz:
   object_id: bc6be283-bef7-45e1-9f78-01d92ec86c71
   sha: a70bfa6307fc22674724cd66b86bf23a0baae90c
   size: 5280260
-erlang/otp_src_oss_19.3.tgz:
-  object_id: f36563be-d36d-4fc7-b066-d462ff386c0a
-  sha: 20fdcf30bf58f8950399223c399461130c104497
-  size: 67714693
 rabbitmq-server/rabbitmq-server-generic-unix-3.6.9.tar.xz:
   object_id: b28645a3-755e-431a-a8f6-03971f26fa20
   sha: 19254ab3ce15ddc117dfc1bf1576f7ea9d646a5f
@@ -31,3 +27,7 @@ golang/go1.8.linux-amd64.tar.gz:
   object_id: 0ccbeb06-500e-499e-bdce-5396fce84b6d
   sha: a93fe8fc245e3554f956bc823f30ef4eb23c2068
   size: 89803580
+erlang/otp_src_oss_19.3.6.tgz:
+  object_id: 0590adb7-96e6-4857-9abd-dac4cda4a0c6
+  sha: 6f5e63bd1896b8ced382fe65bd08d2ad3a5b04dd
+  size: 35745871
