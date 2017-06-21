@@ -109,6 +109,8 @@ instance_groups:
   jobs:
   - name: smoke-tests
     release: cf-rabbitmq-multitenant-broker
+    consumes:
+      cloud_controller: {from: cloud_controller, deployment: cf}
   instances: 1
   lifecycle: errand
   vm_type: m3.medium
@@ -123,7 +125,6 @@ properties:
     admin_username: ((cf-admin-username))
     admin_password: ((cf-admin-password))
     api_url: http://api.((bosh-hostname))
-    domain: ((bosh-hostname))
 
   broker:
     host: ((rabbitmq-broker-domain)).((bosh-hostname))
