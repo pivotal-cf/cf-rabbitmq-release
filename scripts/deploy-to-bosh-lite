@@ -27,7 +27,7 @@ main() {
   upload_dev_release
   upload_routing_release
 
-  update_cloud_config
+  check_cloud_config
   set_deployment
   deploy
 
@@ -63,8 +63,8 @@ upload_routing_release() {
   bosh upload release --skip-if-exists --name "$CF_ROUTING_RELEASE_NAME" --version "$CF_ROUTING_RELEASE_VERSION" "$CF_ROUTING_RELEASE_URL"
 }
 
-update_cloud_config() {
-  bosh update cloud-config "$BOSH_CLOUD_CONFIG"
+check_cloud_config() {
+  bosh cloud-config | grep -q "name: services" || fail "Rabbit requires a services network to be defined in your cloud-config. See $BOSH_CLOUD_CONFIG for example."
 }
 
 set_deployment() {
@@ -81,8 +81,7 @@ target_cf() {
 }
 
 cf_required() {
-  echo "Cloud Foundry v238+ must be deployed on this BOSH director, http://docs.cloudfoundry.org/deploying/boshlite/index.html"
-  exit 1
+  fail "Cloud Foundry v238+ must be deployed on this BOSH director, http://docs.cloudfoundry.org/deploying/boshlite/index.html"
 }
 
 deploy_contains_multitenant_broker() {
@@ -92,6 +91,11 @@ deploy_contains_multitenant_broker() {
 
 run_broker_registrar(){
   bosh run errand broker-registrar
+}
+
+fail() {
+  echo "$1"
+  exit 1
 }
 
 main
