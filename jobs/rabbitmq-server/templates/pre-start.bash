@@ -18,6 +18,8 @@ USER=vcap
 source /var/vcap/packages/rabbitmq-common/ensure_dir_with_permissions
 
 main() {
+  remove_old_syslog_config
+
   ensure_dir_with_permissions "${ROOT_LOG_DIR}"
   ensure_dir_with_permissions "${INIT_LOG_DIR}"
   ensure_dir_with_permissions "${HTTP_ACCESS_LOG_DIR}"
@@ -31,6 +33,11 @@ main() {
 
   # shellcheck disable=SC1090
   . "${JOB_DIR}"/lib/prepare-for-upgrade.bash
+}
+
+remove_old_syslog_config() {
+  rm -f /etc/rsyslog.d/00-syslog_forwarder.conf
+  rm -f /etc/rsyslog.d/rabbitmq_syslog.conf
 }
 
 ensure_log_files() {

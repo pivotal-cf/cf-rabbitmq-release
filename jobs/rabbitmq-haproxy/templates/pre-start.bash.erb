@@ -23,7 +23,14 @@ restart_rsyslog() {
     /usr/sbin/service rsyslog restart
 }
 
+remove_old_syslog_config() {
+  rm -f /etc/rsyslog.d/00-syslog_forwarder.conf
+  rm -f /etc/rsyslog.d/haproxy_syslog.conf
+}
+
 main() {
+    remove_old_syslog_config
+
     ensure_dir_with_permissions "${ROOT_LOG_DIR}"
     ensure_dir_with_permissions "${INIT_LOG_DIR}"
     ensure_dir_with_permissions "${SERVICE_METRICS_DIR}"
