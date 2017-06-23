@@ -184,7 +184,7 @@ properties:
         policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
         policy_priority: 50
       management_domain: ((rabbitmq-management-domain)).((bosh-hostname))
-      ssl: true
+      ssl: false
       administrator:
         username: ((rabbitmq-broker-username))
         password: ((rabbitmq-broker-password))
