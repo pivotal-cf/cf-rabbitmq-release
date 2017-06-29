@@ -11,10 +11,10 @@ rabbitmq-server/rabbitmq_clusterer-3.6.5.ez:
   object_id: aca4b381-2afc-487c-913a-643fef65b3d1
   sha: 3469acac9d4b029cb7c8216d09a1f959a68c2e29
   size: 58675
-rabbitmq-server/rabbitmq-server-generic-unix-3.6.9.tar.xz:
-  object_id: a83b08b4-78ff-4a86-9039-aab22239ac43
-  sha: 19254ab3ce15ddc117dfc1bf1576f7ea9d646a5f
-  size: 4669128
+rabbitmq-server/rabbitmq-server-generic-unix-3.6.10.tar.xz:
+  object_id: 57d89bab-091f-4558-9061-5bfdfff7fecb
+  sha: ce3b4ada4ccbe5206d21855910dc999a4d6a8aaa
+  size: 4688432
 haproxy/haproxy-1.6.11.tar.gz:
   object_id: 846c966f-6be4-47bc-9faf-81c53e51c6fe
   sha: 8c1c1b2346cf18379cd798fbc6364fdab5e17d32
