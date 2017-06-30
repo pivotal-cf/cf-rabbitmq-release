@@ -16,5 +16,7 @@ haproxy-stats-password: haproxy
 
 use-native-clustering-formation: false
 
+cluster-partition-handling-strategy: autoheal
+
 syslog-host:
 syslog-port:

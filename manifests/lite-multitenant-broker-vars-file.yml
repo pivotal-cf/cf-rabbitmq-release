@@ -11,3 +11,4 @@ rabbitmq-broker-protocol: http
 rabbitmq-broker-uuid: 3F817631-63AF-4CAB-B59C-EF41C9CE45CA
 rabbitmq-management-domain: pivotal-rabbitmq
 rabbitmq-hosts: USING BOSH LINKS
+cluster-partition-handling-strategy: autoheal
