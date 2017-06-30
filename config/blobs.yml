@@ -15,14 +15,6 @@ java/jre-1.8.0_102.tar.gz:
   object_id: 7ebce62f-8a15-414f-95b0-fd437b9ce5d6
   sha: 826e439a697b4506455e8fbb7aa949e774b18992
   size: 71885713
-rabbitmq-server/rabbitmq-server-generic-unix-3.6.6.tar.xz:
-  object_id: bc6be283-bef7-45e1-9f78-01d92ec86c71
-  sha: a70bfa6307fc22674724cd66b86bf23a0baae90c
-  size: 5280260
-rabbitmq-server/rabbitmq-server-generic-unix-3.6.9.tar.xz:
-  object_id: b28645a3-755e-431a-a8f6-03971f26fa20
-  sha: 19254ab3ce15ddc117dfc1bf1576f7ea9d646a5f
-  size: 4669128
 golang/go1.8.linux-amd64.tar.gz:
   object_id: 0ccbeb06-500e-499e-bdce-5396fce84b6d
   sha: a93fe8fc245e3554f956bc823f30ef4eb23c2068
@@ -31,3 +23,7 @@ erlang/otp_src_oss_19.3.6.tgz:
   object_id: 0590adb7-96e6-4857-9abd-dac4cda4a0c6
   sha: 6f5e63bd1896b8ced382fe65bd08d2ad3a5b04dd
   size: 35745871
+rabbitmq-server/rabbitmq-server-generic-unix-3.6.10.tar.xz:
+  object_id: 57d89bab-091f-4558-9061-5bfdfff7fecb
+  sha: ce3b4ada4ccbe5206d21855910dc999a4d6a8aaa
+  size: 4688432
