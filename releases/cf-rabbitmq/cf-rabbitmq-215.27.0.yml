@@ -1,0 +1,103 @@
+---
+packages:
+- name: cf-cli
+  version: 68cbd378bc91c97fd0847075d71528c3eb1f7928
+  fingerprint: 68cbd378bc91c97fd0847075d71528c3eb1f7928
+  sha1: 177fc6f210805023866d29e25425c15b2d798d1c
+  dependencies: []
+- name: cf-rabbitmq-smoke-tests
+  version: b674b591adfffa72e6ddbe9eaa202f3dfae45b80
+  fingerprint: b674b591adfffa72e6ddbe9eaa202f3dfae45b80
+  sha1: fad9b5b98371be7e0513f8c972642ac262e2f6e4
+  dependencies: []
+- name: erlang
+  version: 2a43a26dc6db9939f9dcbd96684f7ae08924b6d6
+  fingerprint: 2a43a26dc6db9939f9dcbd96684f7ae08924b6d6
+  sha1: 45f8cbb744cb7e3aa3fb8b77f630636bcd4a1c2c
+  dependencies: []
+- name: golang-1.8
+  version: 63a243be32451af083a062ba2c929c3f2b34f132
+  fingerprint: 63a243be32451af083a062ba2c929c3f2b34f132
+  sha1: 94a258b5b71a6fb89b217fa8bfcf042f4f1829b7
+  dependencies: []
+- name: haproxy
+  version: 4c7e0f16fc8e2a1fa20cff2882336a5cfa98c75e
+  fingerprint: 4c7e0f16fc8e2a1fa20cff2882336a5cfa98c75e
+  sha1: 684fca330d038929d61d8f9a8eaa7b8c3f2401b5
+  dependencies: []
+- name: java
+  version: e57138e06a8ccb7bafc1b9d2bb14085d4c2b8434
+  fingerprint: e57138e06a8ccb7bafc1b9d2bb14085d4c2b8434
+  sha1: 17776877424710c15d795069afcd30147eb92441
+  dependencies: []
+- name: rabbitmq-broker
+  version: 00a24c514dbb10b9fb815d8afac3849ed1164dd7
+  fingerprint: 00a24c514dbb10b9fb815d8afac3849ed1164dd7
+  sha1: 8e5284ea1964b8c20718337e556182753d31ba65
+  dependencies: []
+- name: rabbitmq-cluster-migration-tool
+  version: c4513cd7a38aa6962aa363daf8113c432bbc9e52
+  fingerprint: c4513cd7a38aa6962aa363daf8113c432bbc9e52
+  sha1: ddf2327cb50d56f675f3e69ac7e89f15c30ddfc9
+  dependencies:
+  - golang-1.8
+- name: rabbitmq-common
+  version: a1ceb4166602035b5e8783f2d90a2048a654875f
+  fingerprint: a1ceb4166602035b5e8783f2d90a2048a654875f
+  sha1: 8d1b3638e58d93796534325d1bfd0649e250a839
+  dependencies: []
+- name: rabbitmq-server
+  version: 2850f576163d02605dba11143f2ba8d038115ce2
+  fingerprint: 2850f576163d02605dba11143f2ba8d038115ce2
+  sha1: 443630ea06ecd008645e1b584939af7c77527eec
+  dependencies: []
+- name: rabbitmq-upgrade-preparation
+  version: 7fbe7177dac0d477feae501efd9b7760df1f7785
+  fingerprint: 7fbe7177dac0d477feae501efd9b7760df1f7785
+  sha1: f93520749284909528bc0152c4d0ea6fc913b2a9
+  dependencies:
+  - golang-1.8
+- name: route-registrar
+  version: 9dc9b2523910ad0a5b676fe8c10bd7a3561579f4
+  fingerprint: 9dc9b2523910ad0a5b676fe8c10bd7a3561579f4
+  sha1: 9e03fc70fb804a40845a14721a093dfc39dd31e9
+  dependencies:
+  - golang-1.8
+- name: syslog_aggregator
+  version: f5f41827f10190520d60460b84e7e956c04fb7a8
+  fingerprint: f5f41827f10190520d60460b84e7e956c04fb7a8
+  sha1: a77ab9e50006e148c488705ffd5ccd5dd9f7b84c
+  dependencies: []
+jobs:
+- name: broker-deregistrar
+  version: da670f4b4220387c768a26c02c567d85eb93e1ce
+  fingerprint: da670f4b4220387c768a26c02c567d85eb93e1ce
+  sha1: 2dab5975bde74551af40c0798c4ad109e98d7587
+- name: broker-registrar
+  version: e354968e46093de4e61d825a875bb33bffef79e3
+  fingerprint: e354968e46093de4e61d825a875bb33bffef79e3
+  sha1: 7ebb83309c3286d4221ee82aafec15d20af0504c
+- name: rabbitmq-broker
+  version: cf4c9f5ac3eab367bef6c6ddd4115e8e13eea4b5
+  fingerprint: cf4c9f5ac3eab367bef6c6ddd4115e8e13eea4b5
+  sha1: bf96b6e4ea04f7f9692ba88702b68c16ee4cbb15
+- name: rabbitmq-haproxy
+  version: 38b0faa2e863af361a20bc5f5fbfe3baf120a7cb
+  fingerprint: 38b0faa2e863af361a20bc5f5fbfe3baf120a7cb
+  sha1: 133425bcfd45532c07cef625ccfdf1fd6c1f0214
+- name: rabbitmq-server
+  version: c03fe04b41861b98b727262d294417580f52e4d5
+  fingerprint: c03fe04b41861b98b727262d294417580f52e4d5
+  sha1: 642d9e2484c7453ce95104046aa92837ee3a0b36
+- name: smoke-tests
+  version: 09ac9ef40b603a6076c02e52b1bd5afe4159bbf3
+  fingerprint: 09ac9ef40b603a6076c02e52b1bd5afe4159bbf3
+  sha1: 1deb82e4b409e70a85d959c78646a76a077cec2b
+license:
+  version: fdea9992e19b5bf282ce4a968dfad12d91cec47f
+  fingerprint: fdea9992e19b5bf282ce4a968dfad12d91cec47f
+  sha1: 6b2451960a395e0d4d7d1ecb791c2998ed3c815b
+commit_hash: 73bef629
+uncommitted_changes: true
+name: cf-rabbitmq
+version: 215.27.0
