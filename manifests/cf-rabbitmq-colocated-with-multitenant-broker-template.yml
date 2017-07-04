@@ -132,6 +132,8 @@ properties:
     name: ((product-name))
     username: ((multitenant-rabbitmq-broker-username))
     password: ((multitenant-rabbitmq-broker-password))
+    service:
+      name: ((product-name))
 
   rabbitmq-server:
     restart_statsdb_cron_schedule: "42 */4 * * *"
