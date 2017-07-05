@@ -23,7 +23,7 @@ instance_groups:
     release: cf-rabbitmq
   vm_type: r3.xlarge
   stemcell: trusty
-  persistent_disk_type: 10GB
+  persistent_disk_type: 50GB
   networks:
   - name: services
   azs:
