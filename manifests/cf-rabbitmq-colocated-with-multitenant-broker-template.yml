@@ -21,7 +21,7 @@ instance_groups:
   jobs:
   - name: rabbitmq-server
     release: cf-rabbitmq
-  vm_type: c3.large
+  vm_type: r3.xlarge
   stemcell: trusty
   persistent_disk_type: 10GB
   networks:
