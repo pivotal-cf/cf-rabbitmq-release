@@ -2,9 +2,11 @@ package rabbitmqctl_test
 
 import (
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	. "github.com/pivotal-cf/rabbitmq-upgrade-preparation/rabbitmqctl"
 
@@ -46,6 +48,49 @@ var _ = Describe("Rabbitmqctl", func() {
 			err := New(path).StopApp("some-node")
 
 			Expect(err).To(MatchError(errors.New("Failed to stop RabbitMQ app: exit status 3")))
+		})
+	})
+
+	Describe("Shutdown", func() {
+		var tmpFile string
+
+		BeforeEach(func() {
+			tmpDir, _ := ioutil.TempDir("", "rabbitmq-upgrade-tests")
+			tmpFile = filepath.Join(tmpDir, "shutdown-cluster-file")
+
+			os.Setenv("TEST_OUTPUT_FILE", tmpFile)
+		})
+
+		AfterEach(func() {
+			os.Remove(tmpFile)
+			os.Unsetenv("TEST_OUTPUT_FILE")
+		})
+
+		callStopOnNode := func(tmpFile, node string) {
+			contents, err := ioutil.ReadFile(tmpFile)
+
+			fmt.Printf(string(contents))
+			Expect(err).NotTo(HaveOccurred())
+			Expect(strings.Count(string(contents), fmt.Sprintf("shutdown -n %s\n", node))).To(Equal(1))
+		}
+
+		It("passes the node to the stop command", func() {
+			cwd, err := os.Getwd()
+			Expect(err).NotTo(HaveOccurred())
+			path := filepath.Join(cwd, "test-assets", "rabbitmqctl-echo")
+
+			err = New(path).Shutdown("some-node")
+			Expect(err).NotTo(HaveOccurred())
+
+			callStopOnNode(tmpFile, "some-node")
+		})
+
+		It("returns an error when stopfails", func() {
+			cwd, _ := os.Getwd()
+			path := filepath.Join(cwd, "test-assets", "rabbitmqctl-echo-with-fails")
+			err := New(path).Shutdown("some-node")
+
+			Expect(err).To(MatchError(errors.New("Failed to shutdown RabbitMQ: exit status 1")))
 		})
 	})
 

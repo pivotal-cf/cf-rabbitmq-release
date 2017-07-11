@@ -15,8 +15,11 @@ import (
 )
 
 var _ = Describe("Upgrading RabbitMQ", func() {
-	execBin := func(args ...string) *gexec.Session {
-		args = append(args, "-timeout=1s")
+	execBin := func(timeout string, args ...string) *gexec.Session {
+		if timeout != "" {
+			args = append(args, "-timeout="+timeout)
+		}
+
 		cmd := exec.Command(binPath, args...)
 		session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
 		Expect(err).ToNot(HaveOccurred())
@@ -66,7 +69,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 	}
 
 	JustBeforeEach(func() {
-		session = execBin(args...)
+		session = execBin("1s", args...)
 	})
 
 	BeforeEach(func() {
@@ -342,6 +345,60 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 		It("provides a meaningful error", func() {
 			Eventually(session.Err).Should(gbytes.Say("Missing -new-erlang-version flag"))
+		})
+	})
+
+	Describe("shutdown-cluster subcommand", func() {
+
+		It("does not shutdown the nodes", func() {
+			var session *gexec.Session
+			args = []string{
+				"-rabbitmqctl-path", "/bin/echo",
+				"shutdown-cluster",
+				"-new-cookie", "same-cookie",
+				"-old-cookie", "same-cookie",
+				"-nodes", "rabbitmq@node1,rabbitmq@node2",
+			}
+
+			session = execBin("", args...)
+			Eventually(session).Should(gexec.Exit(0))
+			Eventually(session.Out).Should(gbytes.Say("Cookies match, cluster will not be shutdown"))
+		})
+
+		Context("when all the nodes in the cluster if the cookies don't match", func() {
+			var session *gexec.Session
+			It("shutdowns the node", func() {
+				args = []string{
+					"-rabbitmqctl-path", "/bin/echo",
+					"shutdown-cluster",
+					"-new-cookie", "new-cookie",
+					"-old-cookie", "old-cookie",
+					"-nodes", "rabbitmq@node1,rabbitmq@node2",
+				}
+
+				session = execBin("", args...)
+				Eventually(session).Should(gexec.Exit(0))
+
+				Eventually(session.Out).Should(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node1"))
+				Eventually(session.Out).Should(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node2"))
+			})
+		})
+
+		Context("when fails to shutdown one node", func() {
+			It("returns an error", func() {
+				args = []string{
+					"-rabbitmqctl-path", "../rabbitmqctl/test-assets/rabbitmqctl-echo-with-fails",
+					"shutdown-cluster",
+					"-new-cookie", "new-cookie",
+					"-old-cookie", "old-cookie",
+					"-nodes", "rabbitmq@node1,rabbitmq@node2",
+				}
+
+				session = execBin("", args...)
+				Eventually(session).Should(gexec.Exit(1))
+				Eventually(session.Out).Should(gbytes.Say("Failed to shutdown node rabbitmq@node1. Bailing out."))
+				Eventually(session.Out).ShouldNot(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node2"))
+			})
 		})
 	})
 })

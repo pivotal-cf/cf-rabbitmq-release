@@ -84,3 +84,11 @@ func (r *RabbitMQCtl) StopApp(node string) error {
 	}
 	return nil
 }
+
+func (r *RabbitMQCtl) Shutdown(node string) error {
+	err := exec.Command(r.path, "shutdown", "-n", node).Run()
+	if err != nil {
+		return errors.New(fmt.Sprintf("Failed to shutdown RabbitMQ: %s", err))
+	}
+	return nil
+}
