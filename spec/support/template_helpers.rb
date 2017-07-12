@@ -18,7 +18,6 @@ module TemplateHelpers
     default_property_values = {}
     spec_properties.each_pair do |name, definition|
       default_value = definition['default']
-      default_value = '' if default_value.nil?
       copy_property(default_property_values, {}, name, default_value)
     end
 

@@ -49,8 +49,10 @@ listen stats
     #Authentication realm. This can be set to anything. Escape space characters with a backslash.
     stats realm HAProxy\ Statistics
 
+<% if_p('rabbitmq-haproxy.stats.username', 'rabbitmq-haproxy.stats.password') do |user, pass| %>
     #The user/pass you want to use.
-    stats auth <%= p('rabbitmq-haproxy.stats.username') %>:<%= p('rabbitmq-haproxy.stats.password') %>
+    stats auth <%= user %>:<%= pass %>
+<% end %>
 
     #This allows you to take down and bring up back end servers.
     #This will produce an error on older versions of HAProxy.

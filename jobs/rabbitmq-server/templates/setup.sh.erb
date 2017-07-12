@@ -16,9 +16,7 @@ job_ip = network.ip
 
 ssl = false
 if_p("rabbitmq-server.ssl.key") do |key|
-  if key
-    ssl = true
-  end
+  ssl = true
 end
 
 node_ips = link('rabbitmq-server').instances.map(&:address)
@@ -168,12 +166,13 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
 <% end %>
   # enclosing single quote, see the concatenation comment above
   SERVER_START_ARGS="${SERVER_START_ARGS}'"
-  <% if ssl %>
+<% if ssl %>
   # concatenate options encoded in double quotes, see the concatenation comment above.
   # {versions,['tlsv1.2','tlsv1.1',tlsv1]} disables SSLv3 to mitigate the POODLE attack.
   SSL_OPTIONS=" -rabbit ssl_options [{cacertfile,\\\"${SCRIPT_DIR}/../etc/cacert.pem\\\"},{certfile,\\\"${SCRIPT_DIR}/../etc/cert.pem\\\"},{keyfile,\\\"${SCRIPT_DIR}/../etc/key.pem\\\"},{verify,<%= "#{ssl_verification}" %>},{depth,<%= "#{ssl_verification_depth}" %>},{fail_if_no_peer_cert,<%= "#{fail_if_no_peer_cert}" %>},{versions,<%= "[#{supported_tls_versions.join(',')}]" %>}]"
   SERVER_START_ARGS="${SERVER_START_ARGS}\"${SSL_OPTIONS}\""
-  <% end %>
+<% end %>
+
   if [ -f ${CONF_ENV_FILE} ]
   then \
     ${CP} ${CONF_ENV_FILE} ${DIR}/env.backup

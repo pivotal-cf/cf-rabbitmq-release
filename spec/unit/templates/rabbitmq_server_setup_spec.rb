@@ -79,12 +79,13 @@ RSpec.describe 'Configuration', template: true do
   end
 
   describe 'SSL' do
+    let(:manifest_properties) { { 'rabbitmq-server' => { 'ssl' => { 'key' => 'rabbitmq-ssl-key' } } } }
     it "should have tls 1 disabled by default" do
       expect(rendered_template).to include(ssl_options_with "['tlsv1.2','tlsv1.1']")
     end
 
     context 'when tlsv1 is enabled' do
-      let(:manifest_properties) { { 'rabbitmq-server' => { 'ssl' => { 'security_options' => ['enable_tls1_0'] } } } }
+      let(:manifest_properties) { { 'rabbitmq-server' => { 'ssl' => { 'key' => 'rabbitmq-ssl-key', 'security_options' => ['enable_tls1_0'] } } } }
 
       it "should enable tls 1" do
         expect(rendered_template).to include(ssl_options_with "['tlsv1.2','tlsv1.1',tlsv1]")
