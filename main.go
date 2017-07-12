@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -129,21 +130,33 @@ func parseShutdownClusterArgs() (string, nodeList, string, string) {
 
 	shutdownClusterFlags := flag.NewFlagSet("shutdown-cluster", flag.PanicOnError)
 	newCookie := shutdownClusterFlags.String("new-cookie", "", "cookie for the new deployment")
-	oldCookie := shutdownClusterFlags.String("old-cookie", "", "cookie for the old deployment")
+	oldCookiePath := shutdownClusterFlags.String("old-cookie-path", "", "path for cookie file")
 	shutdownClusterFlags.Var(&nodes, "nodes", "list of rabbit nodes")
 
 	shutdownClusterFlags.Parse(flag.Args()[1:])
 
 	assertFlag(*rabbitmqctlPath, "rabbitmqctl-path")
 	assertFlag(*newCookie, "new-cookie")
-	assertFlag(*oldCookie, "old-cookie")
+	assertFlag(*oldCookiePath, "old-cookie-path")
 
-	return *rabbitmqctlPath, nodes, *oldCookie, *newCookie
+	return *rabbitmqctlPath, nodes, *oldCookiePath, *newCookie
 }
 
 func shutdownCluster(logger *log.Logger) {
-	rabbitmqCtlPath, nodes, oldCookie, newCookie := parseShutdownClusterArgs()
-	if oldCookie == newCookie {
+	rabbitmqCtlPath, nodes, oldCookiePath, newCookie := parseShutdownClusterArgs()
+
+	if _, err := os.Stat(oldCookiePath); os.IsNotExist(err) {
+		fmt.Print("New deployment, cluster will not be shutdown")
+		return
+	}
+
+	oldCookie, err := ioutil.ReadFile(oldCookiePath)
+
+	if err != nil {
+		logger.Fatalf("Cannot read the cookie: %s", err)
+	}
+
+	if string(oldCookie) == newCookie {
 		fmt.Print("Cookies match, cluster will not be shutdown")
 		return
 	}

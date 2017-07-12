@@ -350,54 +350,112 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 	Describe("shutdown-cluster subcommand", func() {
 
-		It("does not shutdown the nodes", func() {
-			var session *gexec.Session
-			args = []string{
-				"-rabbitmqctl-path", "/bin/echo",
-				"shutdown-cluster",
-				"-new-cookie", "same-cookie",
-				"-old-cookie", "same-cookie",
-				"-nodes", "rabbitmq@node1,rabbitmq@node2",
-			}
-
-			session = execBin("", args...)
-			Eventually(session).Should(gexec.Exit(0))
-			Eventually(session.Out).Should(gbytes.Say("Cookies match, cluster will not be shutdown"))
-		})
-
-		Context("when all the nodes in the cluster if the cookies don't match", func() {
-			var session *gexec.Session
-			It("shutdowns the node", func() {
+		Context("for a new deployment", func() {
+			It("does not shut down the cluster", func() {
+				var session *gexec.Session
 				args = []string{
 					"-rabbitmqctl-path", "/bin/echo",
 					"shutdown-cluster",
-					"-new-cookie", "new-cookie",
-					"-old-cookie", "old-cookie",
+					"-new-cookie", "same-cookie",
+					"-old-cookie-path", "/tmp/idbetternotexist",
 					"-nodes", "rabbitmq@node1,rabbitmq@node2",
 				}
 
 				session = execBin("", args...)
 				Eventually(session).Should(gexec.Exit(0))
-
-				Eventually(session.Out).Should(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node1"))
-				Eventually(session.Out).Should(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node2"))
+				Eventually(session.Out).Should(gbytes.Say("New deployment, cluster will not be shutdown"))
 			})
 		})
 
-		Context("when fails to shutdown one node", func() {
-			It("returns an error", func() {
-				args = []string{
-					"-rabbitmqctl-path", "../rabbitmqctl/test-assets/rabbitmqctl-echo-with-fails",
-					"shutdown-cluster",
-					"-new-cookie", "new-cookie",
-					"-old-cookie", "old-cookie",
-					"-nodes", "rabbitmq@node1,rabbitmq@node2",
-				}
+		Context("for an existing deployment", func() {
+			var tmpFile string
 
-				session = execBin("", args...)
-				Eventually(session).Should(gexec.Exit(1))
-				Eventually(session.Out).Should(gbytes.Say("Failed to shutdown node rabbitmq@node1. Bailing out."))
-				Eventually(session.Out).ShouldNot(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node2"))
+			BeforeEach(func() {
+				tmpDir, _ := ioutil.TempDir("", "old-deployment")
+				tmpFile = filepath.Join(tmpDir, "erlang.cookie")
+			})
+
+			AfterEach(func() {
+				os.Remove(tmpFile)
+			})
+
+			Context("when the cookies match", func() {
+				It("does not shutdown the nodes", func() {
+					var session *gexec.Session
+					args = []string{
+						"-rabbitmqctl-path", "/bin/echo",
+						"shutdown-cluster",
+						"-new-cookie", "same-cookie",
+						"-old-cookie-path", tmpFile,
+						"-nodes", "rabbitmq@node1,rabbitmq@node2",
+					}
+
+					ioutil.WriteFile(tmpFile, []byte("same-cookie"), 0600)
+
+					session = execBin("", args...)
+					Eventually(session).Should(gexec.Exit(0))
+					Eventually(session.Out).Should(gbytes.Say("Cookies match, cluster will not be shutdown"))
+				})
+			})
+
+			Context("when the cookies don't match", func() {
+				var session *gexec.Session
+				It("shuts down all the nodes in the cluster", func() {
+					args = []string{
+						"-rabbitmqctl-path", "/bin/echo",
+						"shutdown-cluster",
+						"-new-cookie", "new-cookie",
+						"-old-cookie-path", tmpFile,
+						"-nodes", "rabbitmq@node1,rabbitmq@node2",
+					}
+
+					ioutil.WriteFile(tmpFile, []byte("old-cookie"), 0600)
+
+					session = execBin("", args...)
+					Eventually(session).Should(gexec.Exit(0))
+
+					Eventually(session.Out).Should(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node1"))
+					Eventually(session.Out).Should(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node2"))
+				})
+			})
+
+			Context("when fails to shutdown one node", func() {
+				It("returns an error", func() {
+					args = []string{
+						"-rabbitmqctl-path", "../rabbitmqctl/test-assets/rabbitmqctl-echo-with-fails",
+						"shutdown-cluster",
+						"-new-cookie", "new-cookie",
+						"-old-cookie-path", tmpFile,
+						"-nodes", "rabbitmq@node1,rabbitmq@node2",
+					}
+
+					ioutil.WriteFile(tmpFile, []byte("old-cookie"), 0600)
+
+					session = execBin("", args...)
+					Eventually(session).Should(gexec.Exit(1))
+					Eventually(session.Out).Should(gbytes.Say("Failed to shutdown node rabbitmq@node1. Bailing out."))
+					Eventually(session.Out).ShouldNot(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node2"))
+				})
+			})
+
+			Context("when it cannot read the cookie file", func() {
+				It("returns an error", func() {
+					args = []string{
+						"-rabbitmqctl-path", "../rabbitmqctl/test-assets/rabbitmqctl-echo-with-fails",
+						"shutdown-cluster",
+						"-new-cookie", "new-cookie",
+						"-old-cookie-path", tmpFile,
+						"-nodes", "rabbitmq@node1,rabbitmq@node2",
+					}
+
+					ioutil.WriteFile(tmpFile, []byte("old-cookie"), 0200)
+
+					session = execBin("", args...)
+					Eventually(session).Should(gexec.Exit(1))
+					Eventually(session.Out).Should(gbytes.Say("Cannot read the cookie"))
+					Eventually(session.Out).ShouldNot(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node1"))
+					Eventually(session.Out).ShouldNot(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node2"))
+				})
 			})
 		})
 	})
