@@ -44,7 +44,7 @@ RETVAL=0
 . /var/vcap/jobs/rabbitmq-server/lib/prepare-for-upgrade.bash
 
 add_policy() {
-  /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl set_policy HA '^(?!amq\.).*' '{"ha-mode": "all"}'
+  . /var/vcap/jobs/rabbitmq-server/bin/policies.sh
 }
 
 remove_pid() {

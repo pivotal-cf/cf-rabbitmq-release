@@ -1,0 +1,11 @@
+#!/bin/sh -e
+
+[ -z "$DEBUG" ] || set -x
+
+(
+  <% if_p("rabbitmq-server.policies") do |policies|
+    policies.each do |key, policy| %>
+        /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl set_policy <%= key %> <%= policy %>
+    <% end %>
+  <% end %>
+)

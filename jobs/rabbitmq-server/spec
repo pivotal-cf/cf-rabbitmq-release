@@ -36,6 +36,8 @@ properties:
     description: "List of RabbitMQ plugins"
   rabbitmq-server.ports:
     description: "List of ports on which the RabbitMQ cluster accepts connections"
+  rabbitmq-server.policies:
+    description: "List of policies to apply"
 
   rabbitmq-server.administrators.broker.username:
     description: "RabbitMQ admin username for broker"
@@ -86,6 +88,7 @@ templates:
   node-check.bash.erb:                      bin/node-check
   node_name_migration.sh:                   bin/node_name_migration.sh
   plugins.sh.erb:                           bin/plugins.sh
+  policies.sh.erb:                          bin/policies.sh
   post-deploy.bash:                         bin/post-deploy
   pre-start.bash:                           bin/pre-start
   rabbitmq-server.init.bash:                bin/rabbitmq-server.init
