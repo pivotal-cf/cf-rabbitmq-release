@@ -1,12 +1,13 @@
 ---
 name: ((deployment-name))
+director_uuid: ((director-uuid))
 
 releases:
 - name: cf-rabbitmq
   version: latest
 
 stemcells:
-- alias: default
+- alias: trusty
   os: ubuntu-trusty
   version: ((stemcell-version))
 
@@ -17,13 +18,13 @@ instance_groups:
   - name: rabbitmq-server
     release: cf-rabbitmq
   vm_type: r3.large
-  stemcell: default
+  stemcell: trusty
   persistent_disk_type: 10GB
   networks:
   - name: services
   azs:
-  - z1
-  - z2
+  - eu-west-1a
+  - eu-west-1b
 
 - name: haproxy
   instances: ((haproxy-instances))
@@ -31,12 +32,12 @@ instance_groups:
   - name: rabbitmq-haproxy
     release: cf-rabbitmq
   vm_type: m3.medium
-  stemcell: default
+  stemcell: trusty
   networks:
   - name: services
   azs:
-  - z1
-  - z2
+  - eu-west-1a
+  - eu-west-1b
 
 properties:
   rabbitmq-server:
@@ -45,6 +46,8 @@ properties:
     - rabbitmq_management
     - rabbitmq_mqtt
     - rabbitmq_stomp
+    policies:
+      HA: '''^(?!amq\.).*'' ''{"ha-mode": "all"}'''
     ports:
     - 5672
     - 5671
