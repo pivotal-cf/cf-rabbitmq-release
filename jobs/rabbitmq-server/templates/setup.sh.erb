@@ -24,6 +24,15 @@ end
 node_ips = link('rabbitmq-server').instances.map(&:address)
 node_ips = [job_ip] unless node_ips.size > 1
 
+# Why do we need to resolve the DNS names to IPs?
+# In erl_netrc we cannot alias an DNS name to our md5-hashed hostnames and BOSH
+# does not guarantee that it returns an IP for a link's address. Thus, to be
+# safe we just convert all DNS names to IPs.
+# Note: When calling Resolv.getaddress with an IP, it just returns that IP,
+# so it is safe to do the Resolv.getaddress in any case.
+require 'resolv'
+node_ips = node_ips.map { |ip| Resolv.getaddress(ip) }
+
 require 'digest'
 job_ip_md5 = Digest::MD5.hexdigest(job_ip)
 cookie = p('rabbitmq-server.cookie', Digest::MD5.hexdigest(node_ips.join))

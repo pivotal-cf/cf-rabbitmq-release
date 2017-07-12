@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'bosh/template/renderer'
+require 'resolv'
 
 RSpec.describe 'Configuration', template: true do
   let(:rendered_template) {
@@ -37,6 +38,26 @@ RSpec.describe 'Configuration', template: true do
 
     context 'when there are multiple rabbitmq-server instances' do
       it "should contain all nodes in cluster" do
+        expect(rendered_template).to include('HOSTS="${HOSTS}{host, {1,1,1,1}, [\"e086aa137fa19f67d27b39d0eca18610\"]}.\n"')
+        expect(rendered_template).to include('HOSTS="${HOSTS}{host, {2,2,2,2}, [\"5b8656aafcb40bb58caf1d17ef8506a9\"]}.\n"')
+      end
+    end
+
+    context 'when using DNS names instead of IPs' do
+      let(:links) do
+        {
+          'rabbitmq-server' => {
+            'instances' => [
+              { 'address' => 'this.is.a.host.name.com' },
+              { 'address' => 'this.is.another.host.name.com' }
+            ]
+          }
+        }
+      end
+      it "should resolve IP addresses" do
+        expect(Resolv).to receive('getaddress').with('this.is.a.host.name.com').and_return('1.1.1.1')
+        expect(Resolv).to receive('getaddress').with('this.is.another.host.name.com').and_return('2.2.2.2')
+
         expect(rendered_template).to include('HOSTS="${HOSTS}{host, {1,1,1,1}, [\"e086aa137fa19f67d27b39d0eca18610\"]}.\n"')
         expect(rendered_template).to include('HOSTS="${HOSTS}{host, {2,2,2,2}, [\"5b8656aafcb40bb58caf1d17ef8506a9\"]}.\n"')
       end
