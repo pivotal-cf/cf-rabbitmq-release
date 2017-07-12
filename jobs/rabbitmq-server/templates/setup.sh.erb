@@ -21,7 +21,7 @@ end
 
 node_ips = link('rabbitmq-server').instances.map(&:address)
 if_p('rabbitmq-server.ips') do |ips|
-  node_ips = ips if !ips.empty?
+  node_ips = ips
 end
 
 node_ips = [job_ip] unless node_ips.size > 1
