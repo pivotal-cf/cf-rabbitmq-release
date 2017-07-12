@@ -34,6 +34,8 @@ properties:
 
   rabbitmq-server.plugins:
     description: "List of RabbitMQ plugins"
+  rabbitmq-server.ips:
+    description: "List of IPs of all RabbitMQ nodes. Attention! This overrides the ips provided by the bosh links."
   rabbitmq-server.ports:
     description: "List of ports on which the RabbitMQ cluster accepts connections"
 

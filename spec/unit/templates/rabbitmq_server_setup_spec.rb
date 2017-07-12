@@ -41,6 +41,24 @@ RSpec.describe 'Configuration', template: true do
         expect(rendered_template).to include('HOSTS="${HOSTS}{host, {2,2,2,2}, [\"5b8656aafcb40bb58caf1d17ef8506a9\"]}.\n"')
       end
     end
+
+    context 'when rabbitmq-server.ips is provided' do
+      let(:links) do
+        {
+          'rabbitmq-server' => {
+            'instances' => [
+              { 'address' => '9.9.9.9' },
+              { 'address' => '8.8.8.8' }
+            ]
+          }
+        }
+      end
+      let(:manifest_properties) { { 'rabbitmq-server' => { 'ips' => ['1.1.1.1', '2.2.2.2'] } } }
+      it "should override the ips provided by bosh links" do
+        expect(rendered_template).to include('HOSTS="${HOSTS}{host, {1,1,1,1}, [\"e086aa137fa19f67d27b39d0eca18610\"]}.\n"')
+        expect(rendered_template).to include('HOSTS="${HOSTS}{host, {2,2,2,2}, [\"5b8656aafcb40bb58caf1d17ef8506a9\"]}.\n"')
+      end
+    end
   end
 
   [true, false].each do |native_clusters|
