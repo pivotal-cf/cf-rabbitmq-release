@@ -100,6 +100,7 @@ templates:
   rabbitmq.config.erb:                      etc/rabbitmq.config
   users.erb:                                etc/users
   prepare-for-upgrade.bash:                 lib/prepare-for-upgrade.bash
+  rabbitmq-config-vars.bash.erb:            lib/rabbitmq-config-vars.bash
 
 provides:
   - name: rabbitmq-server

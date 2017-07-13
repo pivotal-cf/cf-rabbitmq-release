@@ -33,6 +33,9 @@ main() {
 
   # shellcheck disable=SC1090
   . "${JOB_DIR}"/lib/prepare-for-upgrade.bash
+  . "${JOB_DIR}"/lib/rabbitmq-config-vars.bash
+
+  run_rabbitmq_upgrade_preparation_shutdown_cluster "$ERLANG_COOKIE" "${HOME_DIR}/.erlang.cookie" "$RABBITMQ_NODES_STRING"
 }
 
 remove_old_syslog_config() {
