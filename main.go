@@ -167,8 +167,9 @@ func shutdownCluster(logger *log.Logger) {
 		err := rabbitMQCtl.Shutdown(node)
 		if err != nil {
 			fmt.Printf("Failed to shutdown node %s. Moving on.\n", node)
+		} else {
+			fmt.Printf("Shutdown RabbitMQ on %s\n", node)
 		}
-		fmt.Printf("Shutdown RabbitMQ on %s\n", node)
 	}
 }
 

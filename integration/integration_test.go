@@ -435,6 +435,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 					Eventually(session).Should(gexec.Exit(0))
 					Eventually(session.Out).Should(gbytes.Say("Failed to shutdown node rabbitmq@node1. Moving on."))
 					Eventually(session.Out).Should(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node2"))
+					Eventually(session.Out).ShouldNot(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node1"))
 				})
 			})
 
