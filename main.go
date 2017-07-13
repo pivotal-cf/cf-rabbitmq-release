@@ -146,18 +146,18 @@ func shutdownCluster(logger *log.Logger) {
 	rabbitmqCtlPath, nodes, oldCookiePath, newCookie := parseShutdownClusterArgs()
 
 	if _, err := os.Stat(oldCookiePath); os.IsNotExist(err) {
-		fmt.Print("New deployment, cluster will not be shutdown")
+		fmt.Println("New deployment, cluster will not be shutdown")
 		return
 	}
 
 	oldCookie, err := ioutil.ReadFile(oldCookiePath)
 
 	if err != nil {
-		logger.Fatalf("Cannot read the cookie: %s", err)
+		logger.Fatalf("Cannot read the cookie: %s\n", err)
 	}
 
 	if string(oldCookie) == newCookie {
-		fmt.Print("Cookies match, cluster will not be shutdown")
+		fmt.Println("Cookies match, cluster will not be shutdown")
 		return
 	}
 
@@ -166,7 +166,7 @@ func shutdownCluster(logger *log.Logger) {
 	for _, node := range nodes {
 		err := rabbitMQCtl.Shutdown(node)
 		if err != nil {
-			logger.Fatalf("Failed to shutdown node %s. Bailing out.", node)
+			fmt.Printf("Failed to shutdown node %s. Moving on.\n", node)
 		}
 		fmt.Printf("Shutdown RabbitMQ on %s\n", node)
 	}

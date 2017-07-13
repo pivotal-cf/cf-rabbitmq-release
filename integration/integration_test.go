@@ -420,7 +420,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 			})
 
 			Context("when fails to shutdown one node", func() {
-				It("returns an error", func() {
+				It("logs a message and moves on", func() {
 					args = []string{
 						"-rabbitmqctl-path", "../rabbitmqctl/test-assets/rabbitmqctl-echo-with-fails",
 						"shutdown-cluster",
@@ -432,16 +432,16 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 					ioutil.WriteFile(tmpFile, []byte("old-cookie"), 0600)
 
 					session = execBin("", args...)
-					Eventually(session).Should(gexec.Exit(1))
-					Eventually(session.Out).Should(gbytes.Say("Failed to shutdown node rabbitmq@node1. Bailing out."))
-					Eventually(session.Out).ShouldNot(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node2"))
+					Eventually(session).Should(gexec.Exit(0))
+					Eventually(session.Out).Should(gbytes.Say("Failed to shutdown node rabbitmq@node1. Moving on."))
+					Eventually(session.Out).Should(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node2"))
 				})
 			})
 
 			Context("when it cannot read the cookie file", func() {
 				It("returns an error", func() {
 					args = []string{
-						"-rabbitmqctl-path", "../rabbitmqctl/test-assets/rabbitmqctl-echo-with-fails",
+						"-rabbitmqctl-path", "/bin/echo",
 						"shutdown-cluster",
 						"-new-cookie", "new-cookie",
 						"-old-cookie-path", tmpFile,
