@@ -46,6 +46,8 @@ properties:
     - rabbitmq_management
     - rabbitmq_mqtt
     - rabbitmq_stomp
+#    policies:
+#      HA: '''^(?!amq\.).*'' ''{"ha-mode": "exactly", "ha-params":2}'''
     ports:
     - 5672
     - 5671

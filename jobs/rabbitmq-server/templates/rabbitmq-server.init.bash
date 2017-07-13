@@ -43,6 +43,10 @@ RETVAL=0
 # shellcheck disable=SC1091
 . /var/vcap/jobs/rabbitmq-server/lib/prepare-for-upgrade.bash
 
+add_policy() {
+  . /var/vcap/jobs/rabbitmq-server/bin/policies.sh
+}
+
 remove_pid() {
     rm -f "${PID_FILE}"
 }
@@ -156,6 +160,7 @@ start_rabbitmq () {
                 fi
 
                 configure_users
+                add_policy
 
                 if ! /var/vcap/jobs/rabbitmq-server/bin/cluster-check "rabbitmq-server.init"
                 then
