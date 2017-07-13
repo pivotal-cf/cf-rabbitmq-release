@@ -88,7 +88,7 @@ var _ = Describe("Rabbitmqctl", func() {
 		It("returns an error when stopfails", func() {
 			cwd, _ := os.Getwd()
 			path := filepath.Join(cwd, "test-assets", "rabbitmqctl-echo-with-fails")
-			err := New(path).Shutdown("some-node")
+			err := New(path).Shutdown("rabbitmq@node1")
 
 			Expect(err).To(MatchError(errors.New("Failed to shutdown RabbitMQ: exit status 1")))
 		})
