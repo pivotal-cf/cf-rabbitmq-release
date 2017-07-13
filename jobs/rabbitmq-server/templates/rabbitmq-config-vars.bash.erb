@@ -1,0 +1,24 @@
+<%
+  networks = spec.networks.marshal_dump.values
+  network = networks.find do |network_spec|
+    network_spec.default
+  end
+
+  network ||= networks.first
+  job_ip = network.ip
+
+  ips = link('rabbitmq-server').instances.map(&:address)
+  if ips.size <= 1 then
+    ips = [job_ip]
+  end
+
+  require 'digest'
+  cookie = p('rabbitmq-server.cookie', Digest::MD5.hexdigest(ips.join))
+
+  nodes = ips.map do |ip|
+    "rabbit@#{Digest::MD5.hexdigest(ip)}"
+  end.join(",")
+%>
+
+export RABBITMQ_NODES_STRING="<%= nodes %>"
+export ERLANG_COOKIE="<%= cookie %>"

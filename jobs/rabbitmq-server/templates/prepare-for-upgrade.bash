@@ -34,6 +34,16 @@ prepare_for_upgrade () {
   fi
 }
 
+run_rabbitmq_upgrade_preparation_shutdown_cluster () {
+    /var/vcap/packages/rabbitmq-upgrade-preparation/bin/rabbitmq-upgrade-preparation \
+      -rabbitmqctl-path "$CONTROL" \
+      shutdown-cluster \
+      -new-cookie "$1" \
+      -old-cookie-path "$2" \
+      -nodes "$3" \
+      1> >(tee -a "${LOG_DIR}/upgrade.log") 2>&1
+}
+
 run_prepare_for_upgrade_when_first_deploy() {
   local mnesia_dir
   mnesia_dir="${1:?mnesia_dir must be provided as first argument}"
