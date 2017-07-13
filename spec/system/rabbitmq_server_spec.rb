@@ -170,7 +170,7 @@ RSpec.describe "RabbitMQ server configuration" do
     end
   end
 
-  describe 'load definitions', :focus do
+  describe 'load definitions' do
     vhost = "foobar"
 
     before(:each) do
