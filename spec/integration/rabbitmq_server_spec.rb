@@ -186,6 +186,20 @@ RSpec.describe "RabbitMQ server configuration" do
       expect(response["name"]).to eq(vhost)
     end
   end
+
+  describe 'when changing the cookie' do
+    before(:each) do
+      modify_and_deploy_manifest do |manifest|
+        manifest['properties']['rabbitmq-server']['cookie'] = 'change-the-cookie'
+      end
+    end
+
+    it 'all the nodes come back' do
+      output = ssh_gateway.execute_on(rmq_host, "curl -u #{rmq_admin_broker_username}:#{rmq_admin_broker_password} http://#{rmq_host}:15672/api/nodes -s")
+      node_count = JSON.parse(output).size
+      expect(node_count).to eq(3)
+    end
+  end
 end
 
 def response_code(uri, credentials)
