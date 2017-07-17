@@ -18,49 +18,6 @@ RSpec.describe 'Configuration', template: true do
   end
   let(:network_properties) { { blah: { ip: '127.0.0.1', default: true }}}
 
-  describe "nodes" do
-    context "when there is only one rabbitmq-server instance" do
-      let(:links) do
-        {
-          'rabbitmq-server' => {
-            'instances' => [
-              { 'address' => '1.1.1.1' }
-            ]
-          }
-        }
-      end
-
-      it "should contain only localhost in cluster" do
-        expect(rendered_template).to include('HOSTS="${HOSTS}{host, {127,0,0,1}, [\"f528764d624db129b32c21fbca0cb8d6\"]}.\n"')
-      end
-    end
-
-    context 'when there are multiple rabbitmq-server instances' do
-      it "should contain all nodes in cluster" do
-        expect(rendered_template).to include('HOSTS="${HOSTS}{host, {1,1,1,1}, [\"e086aa137fa19f67d27b39d0eca18610\"]}.\n"')
-        expect(rendered_template).to include('HOSTS="${HOSTS}{host, {2,2,2,2}, [\"5b8656aafcb40bb58caf1d17ef8506a9\"]}.\n"')
-      end
-    end
-
-    context 'when rabbitmq-server.ips is provided' do
-      let(:links) do
-        {
-          'rabbitmq-server' => {
-            'instances' => [
-              { 'address' => '9.9.9.9' },
-              { 'address' => '8.8.8.8' }
-            ]
-          }
-        }
-      end
-      let(:manifest_properties) { { 'rabbitmq-server' => { 'ips' => ['1.1.1.1', '2.2.2.2'] } } }
-      it "should override the ips provided by bosh links" do
-        expect(rendered_template).to include('HOSTS="${HOSTS}{host, {1,1,1,1}, [\"e086aa137fa19f67d27b39d0eca18610\"]}.\n"')
-        expect(rendered_template).to include('HOSTS="${HOSTS}{host, {2,2,2,2}, [\"5b8656aafcb40bb58caf1d17ef8506a9\"]}.\n"')
-      end
-    end
-  end
-
   [true, false].each do |native_clusters|
     describe "cluster_partition_handling with native clustering set to #{native_clusters}" do
       let(:manifest_properties) { { 'rabbitmq-server' => { 'use_native_clustering_formation' => native_clusters} }}
@@ -113,18 +70,22 @@ def ssl_options_with(tls_versions)
 end
 
 def cluster_partition_handling_with(policy, native_clusters)
-  server_start_args = "SERVER_START_ARGS='"
-
+  server_start_args="    cluster_args=\""
   if ! native_clusters
     server_start_args += "-rabbitmq_clusterer config " + '\"${CLUSTER_CONFIG}\"'
   else
-    stubbed_nodes = "-rabbit cluster_nodes {[rabbit@e086aa137fa19f67d27b39d0eca18610,rabbit@5b8656aafcb40bb58caf1d17ef8506a9],disc}"
+    stubbed_nodes = "-rabbit cluster_nodes {[$RABBITMQ_NODES_STRING],disc}"
     server_start_args += "#{stubbed_nodes}"
   end
+  return server_start_args + "\"
+  
 
-  server_start_args + ' -rabbit log_levels [{connection,info}]' +
-    ' -rabbit disk_free_limit {mem_relative,0.4}' +
-    ' -rabbit ' + "cluster_partition_handling #{policy}" +
-    ' -rabbit halt_on_upgrade_failure false' +
-    " -rabbitmq_mqtt subscription_ttl 1800000"
+  cluster_args=\"$cluster_args -rabbit log_levels [{connection,info}]\"
+  cluster_args=\"$cluster_args -rabbit disk_free_limit {mem_relative,0.4}\"
+  cluster_args=\"$cluster_args -rabbit cluster_partition_handling #{policy}\"
+  cluster_args=\"$cluster_args -rabbit halt_on_upgrade_failure false\"
+  cluster_args=\"$cluster_args -rabbitmq_mqtt subscription_ttl 1800000\"
+  cluster_args=\"$cluster_args -rabbitmq_management http_log_dir \\\"${HTTP_ACCESS_LOG_DIR}\\\"\"
+
+  SERVER_START_ARGS=\"SERVER_START_ARGS='$cluster_args\""
 end
