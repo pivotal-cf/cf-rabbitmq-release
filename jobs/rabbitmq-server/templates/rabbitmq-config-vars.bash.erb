@@ -8,8 +8,8 @@
   job_ip = network.ip
 
   ips = link('rabbitmq-server').instances.map(&:address)
-  if_p('rabbitmq-server.ips') do |ips|
-    ips = ips if !ips.empty?
+  if_p('rabbitmq-server.ips') do |manifest_ips|
+    ips = manifest_ips if !manifest_ips.empty?
   end
 
   if ips.size <= 1 then
