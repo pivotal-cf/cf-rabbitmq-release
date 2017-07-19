@@ -152,7 +152,9 @@
   (if-let [^String id (:id params)]
     (try
       (if (rs/vhost-exists? id)
-        (do (rs/delete-vhost id)
+        (do (rs/delete-management-user id)
+            (log/infof "Deleted user %s" id)
+            (rs/delete-vhost id)
             (log/infof "Deleted vhost %s" id)
             (ok))
         (do (log/warnf "Vhost %s does not exist" id)
