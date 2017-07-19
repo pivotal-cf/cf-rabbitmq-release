@@ -253,3 +253,19 @@
              :http_api_uris ["https://user:password@pivotal-rabbitmq.127.0.0.1/api/"]
              :protocols     "fake-protocol-info"
              :dashboard_url "https://pivotal-rabbitmq.127.0.0.1/#/login/user/password"}))))))
+
+
+(deftest test-delete-management-user
+  (testing "delete mu-* user of a vhost"
+    (let [vhost "this-is-a-test-vhost"
+          mu "mu-this-is-a-test-vhost-random-string"]
+      (rs/add-vhost vhost)
+      (rs/add-user mu "pwd" "administrator")
+      (rs/grant-permissions mu vhost)
+      (is (rs/vhost-exists? vhost))
+      (is (rs/user-exists? mu))
+
+      (rs/delete-management-user vhost)
+      (is (not(rs/user-exists? mu)))
+
+      (rs/delete-vhost vhost))))
