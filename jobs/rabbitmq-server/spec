@@ -30,7 +30,7 @@ properties:
 
   rabbitmq-server.use_native_clustering_formation:
     description: "Should RabbitMQ server use the native clustering intead of clusterer plugin"
-    default: false
+    default: true
 
   rabbitmq-server.plugins:
     description: "List of RabbitMQ plugins"
