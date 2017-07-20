@@ -4,8 +4,3 @@
   value:
     name: rabbitmq-server-test
     release: cf-rabbitmq
-
-- type: replace
-  path: /properties/rabbitmq-server-test?
-  value:
-    use_native_clustering_formation: ((use-native-clustering-formation))

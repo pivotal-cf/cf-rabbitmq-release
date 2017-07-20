@@ -16,4 +16,4 @@ templates:
 properties:
   rabbitmq-server-test.use_native_clustering_formation:
     description: "Verify that the current deployment is using native cluster formation"
-    default: false
+    default: true

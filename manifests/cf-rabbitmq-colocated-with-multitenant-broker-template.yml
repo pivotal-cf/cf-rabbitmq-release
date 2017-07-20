@@ -159,7 +159,6 @@ properties:
         password: ((rabbitmq-broker-password))
     cookie: "rabbit-cluster:aws"
     cluster_partition_handling: ((cluster-partition-handling-strategy))
-    use_native_clustering_formation: ((use-native-clustering-formation))
 
   rabbitmq-haproxy:
     stats:
