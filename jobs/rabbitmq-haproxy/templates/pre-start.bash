@@ -25,9 +25,16 @@ main() {
 
 main
 
+# stop syslog
+/usr/sbin/service rsyslog stop
+
+# Helps with not messing up ipsec (and maybe other things)
+# This fix should be temporary
+sleep 3
+
 # syslog forwarding
 /var/vcap/packages/rabbitmq-syslog-aggregator/enable_syslog_config haproxy_syslog.conf $JOB_DIR/config
 /var/vcap/packages/rabbitmq-syslog-aggregator/setup_syslog_forwarder $JOB_DIR/config
 
-# restart rsyslog to use the latest configuration
-/usr/sbin/service rsyslog restart
+# start rsyslog to use the latest configuration
+/usr/sbin/service rsyslog start
