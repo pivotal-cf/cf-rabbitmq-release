@@ -28,7 +28,15 @@ main
 # stop syslog
 /usr/sbin/service rsyslog stop
 
-# Helps with not messing up ipsec (and maybe other things)
+# We think that the issue (#149389903) is caused by flooding syslog
+# with events related to chown-ing and chmod-ing files. Because syslog restarts
+# during this time, syslog falls into a bad state.
+# Adding a sleep seems to allow rsyslog to settle down and does not
+# trigger symptoms that the customers have seen (vm does not accept
+# new connection). We are adding the sleep only in the 1.8 line (226 release)
+# and only in the haproxy job because it happened only here and we don't want to
+# hide issue in other jobs/lines.
+#
 # This fix should be temporary
 sleep 3
 
