@@ -1,6 +1,6 @@
 ---
 name: route-registrar
 dependencies:
-- golang-1.8
+- golang
 files:
 - route-registrar/**/*
