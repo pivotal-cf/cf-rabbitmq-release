@@ -194,10 +194,19 @@ RSpec.describe "RabbitMQ server configuration" do
       end
     end
 
+    after(:each) do
+      bosh_director.deploy(environment.bosh_manifest.path)
+    end
+
     it 'all the nodes come back' do
       output = ssh_gateway.execute_on(rmq_host, "curl -u #{rmq_admin_broker_username}:#{rmq_admin_broker_password} http://#{rmq_host}:15672/api/nodes -s")
-      node_count = JSON.parse(output).size
-      expect(node_count).to eq(3)
+      nodes = JSON.parse(output)
+      expect(nodes.size).to eq(3)
+      nodes.each do |node|
+        expect(node["running"]).to eq(true)
+        expect(node["applications"].map{|app| app["name"]}).to include("rabbit")
+        expect(node["applications"].map{|app| app["name"]}).to include("rabbitmq_management")
+      end
     end
   end
 end
