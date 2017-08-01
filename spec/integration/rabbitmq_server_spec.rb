@@ -204,8 +204,10 @@ RSpec.describe "RabbitMQ server configuration" do
       expect(nodes.size).to eq(3)
       nodes.each do |node|
         expect(node["running"]).to eq(true)
-        expect(node["applications"].map{|app| app["name"]}).to include("rabbit")
-        expect(node["applications"].map{|app| app["name"]}).to include("rabbitmq_management")
+
+        applications = (node["applications"] || []).map{|app| app["name"]}
+        expect(applications).to include("rabbit")
+        expect(applications).to include("rabbitmq_management")
       end
     end
   end
