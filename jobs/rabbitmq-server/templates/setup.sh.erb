@@ -21,12 +21,12 @@ if_p("rabbitmq-server.ssl.key") do |key|
   end
 end
 
-ips = link('rabbitmq-server').instances.map(&:address)
-ips = [job_ip] unless ips.size > 1
+node_ips = link('rabbitmq-server').instances.map(&:address)
+node_ips = [job_ip] unless node_ips.size > 1
 
 require 'digest'
 job_ip_md5 = Digest::MD5.hexdigest(job_ip)
-cookie = p('rabbitmq-server.cookie', Digest::MD5.hexdigest(ips.join))
+cookie = p('rabbitmq-server.cookie', Digest::MD5.hexdigest(node_ips.join))
 
 # TLS versions with a '.' character should include single quotes
 supported_tls_versions = %w{'tlsv1.2' 'tlsv1.1'}
@@ -82,8 +82,8 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   [ -f ${ERL_INETRC} ] && ${MKDIR} -p ${MIGRATION_DIR} && ${CP} ${ERL_INETRC} ${MIGRATION_DIR}/erl_inetrc_old
 
   HOSTS=""
-  <% ips.each_index do |idx| %>
-  HOSTS="${HOSTS}{host, {<%= ips[idx].gsub('.',',') %>}, [\"<%= Digest::MD5.hexdigest(ips[idx]) %>\"]}.\n"
+  <% node_ips.each_index do |idx| %>
+  HOSTS="${HOSTS}{host, {<%= node_ips[idx].gsub('.',',') %>}, [\"<%= Digest::MD5.hexdigest(node_ips[idx]) %>\"]}.\n"
   <% end %>
 
   # 1. Write out our new erl_inetrc file. We do this to avoid modifying
