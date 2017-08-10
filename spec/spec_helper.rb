@@ -54,10 +54,6 @@ def ssh_gateway
   @ssh_gateway ||= environment.ssh_gateway
 end
 
-def test_app
-  @test_app ||= Prof::TestApp.new(path: File.expand_path('../../system_test/test_app', __FILE__))
-end
-
 def modify_and_deploy_manifest
   manifest = YAML.load_file(environment.bosh_manifest.path)
 
