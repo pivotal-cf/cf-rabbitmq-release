@@ -28,6 +28,8 @@ boshgo interpolate \
   manifests/cf-rabbitmq-server-only-template.yml > manifests/cf-rabbitmq.yml
 ```
 
+Conveniently, there is a script called `interpolate-manifest-for-bosh-lite` inside `scripts/` folder that does that.
+
 ## Testing
 
 To run all the tests do `bundle exec rake spec`.

@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+set -o pipefail
+
+: "${WORKSPACE:="$HOME/workspace"}"
+: "${RELEASE_REPO:="$WORKSPACE/cf-rabbitmq-release"}"
+
+[[ -z "${DEBUG:-""}" ]] || set -x
+
+main() {
+  local bosh_uuid
+  bosh_uuid=$(get_local_bosh_lite_uuid)
+
+  do_interpolate "$bosh_uuid"
+}
+
+get_local_bosh_lite_uuid() {
+  boshgo --environment=https://192.168.50.4:25555 \
+    --ca-cert="$WORKSPACE/bosh-lite/ca/certs/ca.crt" \
+    environment --json | jq  -r .Tables[].Rows[].uuid
+}
+
+do_interpolate() {
+  local bosh_uuid=${1:?"Expexted bosh uuid"}
+  local new_manifest="$RELEASE_REPO/manifests/cf-rabbitmq.yml"
+
+  boshgo interpolate \
+    --var-errs \
+    --vars-file="$RELEASE_REPO/manifests/lite-vars-file.yml" \
+    --ops-file="$RELEASE_REPO/manifests/change-vcap-password.yml" \
+    --var=director-uuid="$bosh_uuid" \
+  "$RELEASE_REPO/manifests/cf-rabbitmq-server-only-template.yml" \
+  > "$new_manifest"
+
+  echo "New manifest generated in $new_manifest"
+}
+
+main "$@"

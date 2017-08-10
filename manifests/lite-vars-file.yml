@@ -4,10 +4,13 @@ deployment-name: cf-rabbitmq
 stemcell-version: 3363.29
 
 haproxy-instances: 2
+
 rabbitmq-management-username: admin
 rabbitmq-management-password: admin
+
 rabbitmq-broker-username: broker
 rabbitmq-broker-password: broker
+
 haproxy-stats-username: haproxy
 haproxy-stats-password: haproxy
 
@@ -17,3 +20,6 @@ cluster-partition-handling-strategy: autoheal
 
 syslog-host:
 syslog-port:
+
+cf-admin-password: admin
+cf-admin-username: admin
