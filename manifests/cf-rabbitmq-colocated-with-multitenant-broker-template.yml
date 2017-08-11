@@ -87,7 +87,7 @@ instance_groups:
     release: cf-rabbitmq-multitenant-broker
   instances: 1
   lifecycle: errand
-  vm_type: t2.micro
+  vm_type: f1-micro
   stemcell: trusty
   azs:
   - eu-west-1a
@@ -100,7 +100,7 @@ instance_groups:
     release: cf-rabbitmq-multitenant-broker
   instances: 1
   lifecycle: errand
-  vm_type: t2.micro
+  vm_type: f1-micro
   stemcell: trusty
   azs:
   - eu-west-1a
