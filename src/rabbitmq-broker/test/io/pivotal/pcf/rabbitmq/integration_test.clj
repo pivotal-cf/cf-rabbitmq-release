@@ -180,7 +180,7 @@
     (let [id (.toLowerCase ^String (str (UUID/randomUUID)))]
       (with-server-running
         (let [res (th/put (format "v2/service_instances/%s" id))
-              mu (nth (re-matches #".*(mu-.*?)/.*" (:dashboard_url res)) 1)]
+              mu (second (re-matches #".*(mu-.*?)/.*" (:dashboard_url res)))]
           (th/delete (format "v2/service_instances/%s" id))
           (is (not (rs/vhost-exists? id)))
           (is (not (rs/user-exists? mu)))))))
