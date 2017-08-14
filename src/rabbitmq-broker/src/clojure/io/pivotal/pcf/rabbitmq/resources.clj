@@ -48,7 +48,7 @@
   [^String vhost]
   (let [vhost-permissions (hc/list-permissions vhost)
         user-prefix (format "mu-%s-" vhost)
-        users (map #(get % :user) vhost-permissions)
+        users (map :user vhost-permissions)
         mu (first (filter #(.startsWith % user-prefix) users))]
     (delete-user mu)))
 

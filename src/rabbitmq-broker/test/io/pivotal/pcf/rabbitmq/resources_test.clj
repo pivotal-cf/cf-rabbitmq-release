@@ -266,6 +266,6 @@
       (is (rs/user-exists? mu))
 
       (rs/delete-management-user vhost)
-      (is (not(rs/user-exists? mu)))
+      (is (not (rs/user-exists? mu)))
 
       (rs/delete-vhost vhost))))
