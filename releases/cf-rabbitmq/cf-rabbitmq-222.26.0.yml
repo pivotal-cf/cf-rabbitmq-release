@@ -1,0 +1,103 @@
+---
+packages:
+- name: rabbitmq-broker
+  version: ddce1647bf8517d71559fc075267860518a45a4a
+  fingerprint: ddce1647bf8517d71559fc075267860518a45a4a
+  sha1: ea8e783d31f1601bff125032c16defe637c98a67
+  dependencies: []
+- name: rabbitmq-server
+  version: 2850f576163d02605dba11143f2ba8d038115ce2
+  fingerprint: 2850f576163d02605dba11143f2ba8d038115ce2
+  sha1: 52e804a8a1d15bbe896727385ef9812e29747738
+  dependencies: []
+- name: java
+  version: 4cc1119c49707a07d69b3863914b6f1307e611b5
+  fingerprint: 4cc1119c49707a07d69b3863914b6f1307e611b5
+  sha1: 3a9380d3362e3b144638667b33615cdf8bad2bdc
+  dependencies: []
+- name: route-registrar
+  version: 784fbfee3a4945fedc34d4de9fb048d0d3132dac
+  fingerprint: 784fbfee3a4945fedc34d4de9fb048d0d3132dac
+  sha1: da9e41bad01c892e84b553f88f63f6d87f5c1ac5
+  dependencies:
+  - golang
+- name: rabbitmq-cluster-migration-tool
+  version: 8906895371016378ed5bdd6f4458997936d8e478
+  fingerprint: 8906895371016378ed5bdd6f4458997936d8e478
+  sha1: 41426d48c76de00fda89d91c0fcc0634e19a98cc
+  dependencies:
+  - golang
+- name: cf-cli
+  version: 68cbd378bc91c97fd0847075d71528c3eb1f7928
+  fingerprint: 68cbd378bc91c97fd0847075d71528c3eb1f7928
+  sha1: 8be3d68e19b7dc8ec2f3db7fcedd46dd1d12800d
+  dependencies: []
+- name: rabbitmq-common
+  version: a1ceb4166602035b5e8783f2d90a2048a654875f
+  fingerprint: a1ceb4166602035b5e8783f2d90a2048a654875f
+  sha1: 8d1b3638e58d93796534325d1bfd0649e250a839
+  dependencies: []
+- name: haproxy
+  version: 8126faf1a35c76ead590a018658234d88c5be603
+  fingerprint: 8126faf1a35c76ead590a018658234d88c5be603
+  sha1: 363c8d375eaf07dff734f2c8df84cad846045799
+  dependencies: []
+- name: erlang
+  version: 2a43a26dc6db9939f9dcbd96684f7ae08924b6d6
+  fingerprint: 2a43a26dc6db9939f9dcbd96684f7ae08924b6d6
+  sha1: 4290cc758335c4f1826162b29fff0296d13f1367
+  dependencies: []
+- name: rabbitmq-upgrade-preparation
+  version: 2be1c4b6f60a7847a9e63828bba3163b23411c85
+  fingerprint: 2be1c4b6f60a7847a9e63828bba3163b23411c85
+  sha1: 7f3b271f8284d8dcedf48826e85d6bea19c14b51
+  dependencies:
+  - golang
+- name: syslog_aggregator
+  version: f5f41827f10190520d60460b84e7e956c04fb7a8
+  fingerprint: f5f41827f10190520d60460b84e7e956c04fb7a8
+  sha1: a77ab9e50006e148c488705ffd5ccd5dd9f7b84c
+  dependencies: []
+- name: cf-rabbitmq-smoke-tests
+  version: b674b591adfffa72e6ddbe9eaa202f3dfae45b80
+  fingerprint: b674b591adfffa72e6ddbe9eaa202f3dfae45b80
+  sha1: 3ae0bb93c33fb1450da0be4adec7582544f8f254
+  dependencies: []
+- name: golang
+  version: 6b1bfba0bc0455c57678161490ce4fa4fd5f70f4
+  fingerprint: 6b1bfba0bc0455c57678161490ce4fa4fd5f70f4
+  sha1: 567242f8b68166873dbeb244c5fb948e258e4604
+  dependencies: []
+jobs:
+- name: rabbitmq-broker
+  version: bb197b09314e30e48265a8c8b4df209cb6000a08
+  fingerprint: bb197b09314e30e48265a8c8b4df209cb6000a08
+  sha1: 6e773b3e6717f16172ee657ded80020f0c48dd77
+- name: rabbitmq-server
+  version: fe995587c96858a0e877ded0c0bf9a89b872390c
+  fingerprint: fe995587c96858a0e877ded0c0bf9a89b872390c
+  sha1: c4cc2b4fae455896e41793fd68a94e70e8aa6d64
+- name: broker-registrar
+  version: e354968e46093de4e61d825a875bb33bffef79e3
+  fingerprint: e354968e46093de4e61d825a875bb33bffef79e3
+  sha1: 7ebb83309c3286d4221ee82aafec15d20af0504c
+- name: broker-deregistrar
+  version: da670f4b4220387c768a26c02c567d85eb93e1ce
+  fingerprint: da670f4b4220387c768a26c02c567d85eb93e1ce
+  sha1: 2dab5975bde74551af40c0798c4ad109e98d7587
+- name: smoke-tests
+  version: 794846235c400da649952810789d9400ae1fc8f5
+  fingerprint: 794846235c400da649952810789d9400ae1fc8f5
+  sha1: 930c5e526a53422b4a4f0250403e6d972d83954e
+- name: rabbitmq-haproxy
+  version: e699ebe54572e3bd9221cbb991b5e6afe03bc6d4
+  fingerprint: e699ebe54572e3bd9221cbb991b5e6afe03bc6d4
+  sha1: aa92cb0055aec0e646397714bf92a558bb8ca92f
+license:
+  version: c3a4ca7589687d67435c0c8061b5052f8e5e8103
+  fingerprint: c3a4ca7589687d67435c0c8061b5052f8e5e8103
+  sha1: f0d5b261b4a0ed5e07c7ca498cd778c125be31cc
+commit_hash: 59cae64b
+uncommitted_changes: true
+name: cf-rabbitmq
+version: 222.26.0
