@@ -90,6 +90,8 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   #    /etc/hosts.
   #    See http://erlang.org/doc/apps/erts/inet_cfg.html for more info.
   DIR=$(${MKTEMP} -d)
+  trap "${RM} -rf ${DIR}" EXIT
+
   printf "${HOSTS}{lookup, [file, native]}.\n" >> ${DIR}/erl_inetrc
   ${CP} ${DIR}/erl_inetrc ${ERL_INETRC}
 
@@ -187,19 +189,26 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
 
   ${SED} "/${PREFIX}/,/${SUFFIX}/d" < ${DIR}/env.backup > ${DIR}/env
 
-<% if use_native_clustering_formation %>
-  printf "${PREFIX}\n${NODENAME}\n${RABBITMQ_BOOT_MODULE}\n${CONFIG}\n${SERVER_START_ARGS}\n${SUFFIX}\n" >> ${DIR}/env
-<% else %>
-  printf "${PREFIX}\n${NODENAME}\n${RABBITMQ_BOOT_MODULE}\n${RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS}\n${CONFIG}\n${SERVER_START_ARGS}\n${SUFFIX}\n" >> ${DIR}/env
+  printf "${PREFIX}\n" >> ${DIR}/env
+  printf "${NODENAME}\n" >> ${DIR}/env
+  printf "${RABBITMQ_BOOT_MODULE}\n" >> ${DIR}/env
+
+<% if !use_native_clustering_formation %>
+  printf "${RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS}\n" >> ${DIR}/env
 <% end %>
+
+  printf "${CONFIG}\n" >> ${DIR}/env
+  printf "${SERVER_START_ARGS}\n" >> ${DIR}/env
 
   # set custom RabbitMQ db / plugin directory not specifying the node name
   printf "RABBITMQ_MNESIA_DIR=${RABBITMQ_MNESIA_DIR}\n" >> ${DIR}/env
   printf "RABBITMQ_PLUGINS_EXPAND_DIR=${RABBITMQ_PLUGINS_EXPAND_DIR}\n" >> ${DIR}/env
+
+  printf "${SUFFIX}\n" >> ${DIR}/env
+
   ${CP} ${DIR}/env ${CONF_ENV_FILE}
 
   # migrate any old db / config / plugin folders to the node agnostic structure
-
   [ -f ${HOME_DIR}/mnesia/rabbit@node*.config ] && cp ${HOME_DIR}/mnesia/rabbit@node*.config ${HOME_DIR}/rabbitmq-node-cluster.config.backup
 
   [ -d ${HOME_DIR}/mnesia/rabbit@node*-plugins-expand ] && mv ${HOME_DIR}/mnesia/rabbit@node*-plugins-expand $RABBITMQ_PLUGINS_EXPAND_DIR
@@ -253,5 +262,4 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   ${CHMOD} 0400 ${DIR}/.erlang.cookie
   ${CP} -a ${DIR}/.erlang.cookie ${HOME}
 
-  ${RM} -rf ${DIR}
 )
