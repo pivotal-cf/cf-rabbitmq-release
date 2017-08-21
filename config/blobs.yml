@@ -11,10 +11,6 @@ rabbitmq-server/rabbitmq_clusterer-3.6.5.ez:
   object_id: aca4b381-2afc-487c-913a-643fef65b3d1
   sha: 3469acac9d4b029cb7c8216d09a1f959a68c2e29
   size: 58675
-erlang/otp_src_oss_19.3.6.tgz:
-  object_id: 0590adb7-96e6-4857-9abd-dac4cda4a0c6
-  sha: 6f5e63bd1896b8ced382fe65bd08d2ad3a5b04dd
-  size: 35745871
 rabbitmq-server/rabbitmq-server-generic-unix-3.6.10.tar.xz:
   object_id: 57d89bab-091f-4558-9061-5bfdfff7fecb
   sha: ce3b4ada4ccbe5206d21855910dc999a4d6a8aaa
@@ -27,3 +23,7 @@ haproxy/haproxy-1.6.13.tar.gz:
   object_id: 84b3dd36-e9f7-4917-aa31-67798f94975a
   sha: ae0cabea33c718b08d463016248facd31a3618b8
   size: 1580214
+erlang/otp_src_oss_19.3.6.2.tgz:
+  object_id: 8a68024e-f1a3-44f7-96e5-7080bc0d8428
+  sha: ddcc37007c21d5882207f0fe9fba276f23a0bf02
+  size: 35747840
