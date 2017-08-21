@@ -19,10 +19,10 @@ rabbitmq-server/rabbitmq-server-generic-unix-3.6.10.tar.xz:
   object_id: 57d89bab-091f-4558-9061-5bfdfff7fecb
   sha: ce3b4ada4ccbe5206d21855910dc999a4d6a8aaa
   size: 4688432
-erlang/otp_src_oss_19.3.6.tgz:
-  object_id: 0590adb7-96e6-4857-9abd-dac4cda4a0c6
-  sha: 6f5e63bd1896b8ced382fe65bd08d2ad3a5b04dd
-  size: 35745871
+erlang/otp_src_oss_19.3.6.2.tgz:
+  object_id: 74de2b1f-03ff-47f6-86da-89e4c91a62a9
+  sha: ddcc37007c21d5882207f0fe9fba276f23a0bf02
+  size: 35747840
 haproxy/haproxy-1.6.13.tar.gz:
   object_id: 84b3dd36-e9f7-4917-aa31-67798f94975a
   sha: ae0cabea33c718b08d463016248facd31a3618b8
