@@ -1,0 +1,105 @@
+name: cf-rabbitmq
+version: 226.16.0
+commit_hash: 83b17b2
+uncommitted_changes: false
+jobs:
+- name: broker-deregistrar
+  version: 62b4712167946623df761b7b63c8c773c814d655
+  fingerprint: 62b4712167946623df761b7b63c8c773c814d655
+  sha1: 2bfc78f87cdd704e5919ee08e27a31f58756bf95
+- name: broker-registrar
+  version: cc01465bdf1ebd42c6d15a5b761a1350bc6809f8
+  fingerprint: cc01465bdf1ebd42c6d15a5b761a1350bc6809f8
+  sha1: 19f14661c4786b21e69bd52aeaa01ef86a2d8b58
+- name: rabbitmq-broker
+  version: 3ed18f39a4495e9e6b32aa4818a9eab6294982d5
+  fingerprint: 3ed18f39a4495e9e6b32aa4818a9eab6294982d5
+  sha1: 44034a51a1c3ef6d755a07dd0f22c869a4ad80c9
+- name: rabbitmq-haproxy
+  version: ac711ee03c23f36d731f48f90e177cd29dcc8790
+  fingerprint: ac711ee03c23f36d731f48f90e177cd29dcc8790
+  sha1: 2155399e8352ea5c1b1049bab8d8d000da7e55da
+- name: rabbitmq-server
+  version: b0d68066c0bf90cd8b3ac2d23445353826f70b55
+  fingerprint: b0d68066c0bf90cd8b3ac2d23445353826f70b55
+  sha1: af8076c844af672a3e0dcb46663ed5bb658b4de2
+- name: rabbitmq-server-test
+  version: 2afc8e4f7049a1c7ec5cb91b0b61160bd9c4c2c8
+  fingerprint: 2afc8e4f7049a1c7ec5cb91b0b61160bd9c4c2c8
+  sha1: d44363bfccacaee1fe4cf51059965e5ffd900216
+- name: smoke-tests
+  version: 40a7a18ea83c61e18aadc8ae0edc5a0079d02e35
+  fingerprint: 40a7a18ea83c61e18aadc8ae0edc5a0079d02e35
+  sha1: aa90d746068dd855c967aeb48a733d1c542fab3d
+packages:
+- name: basht
+  version: 62e85529c8f185f01414fead3c9cee64cafd5473
+  fingerprint: 62e85529c8f185f01414fead3c9cee64cafd5473
+  sha1: 016db9c21f394b07bc8851fef138aac600511f9e
+  dependencies: []
+- name: cf-cli
+  version: 68cbd378bc91c97fd0847075d71528c3eb1f7928
+  fingerprint: 68cbd378bc91c97fd0847075d71528c3eb1f7928
+  sha1: 8be3d68e19b7dc8ec2f3db7fcedd46dd1d12800d
+  dependencies: []
+- name: cf-rabbitmq-smoke-tests
+  version: ebfe5e882bf10a7c65932de7164a597922bcdf52
+  fingerprint: ebfe5e882bf10a7c65932de7164a597922bcdf52
+  sha1: 12d25f82de2a0eb94c22346aa98498272cdac8f8
+  dependencies: []
+- name: erlang
+  version: 2a43a26dc6db9939f9dcbd96684f7ae08924b6d6
+  fingerprint: 2a43a26dc6db9939f9dcbd96684f7ae08924b6d6
+  sha1: fbd09add32b9b6694af958cb1042bcb10c38b723
+  dependencies: []
+- name: golang
+  version: 6b1bfba0bc0455c57678161490ce4fa4fd5f70f4
+  fingerprint: 6b1bfba0bc0455c57678161490ce4fa4fd5f70f4
+  sha1: 4fa595248b4ad66488b7ca370c5c2141e18bb283
+  dependencies: []
+- name: haproxy
+  version: 8126faf1a35c76ead590a018658234d88c5be603
+  fingerprint: 8126faf1a35c76ead590a018658234d88c5be603
+  sha1: 0c69fce7b938b9c89fac0e4f562dd465d44d4397
+  dependencies: []
+- name: java
+  version: 1580b7418b0dfbacac1a198fb8e854f474735d43
+  fingerprint: 1580b7418b0dfbacac1a198fb8e854f474735d43
+  sha1: 41d75df4de4e8b8db4a6321f415a256e99d5e5b9
+  dependencies: []
+- name: rabbitmq-broker
+  version: 0798906636a59bbccf260119258ecc86beda743b
+  fingerprint: 0798906636a59bbccf260119258ecc86beda743b
+  sha1: e61d65e25ffc0d0503b7e29a63516ec98b1716b0
+  dependencies: []
+- name: rabbitmq-cluster-migration-tool
+  version: 8906895371016378ed5bdd6f4458997936d8e478
+  fingerprint: 8906895371016378ed5bdd6f4458997936d8e478
+  sha1: b1944c921a1f1e0a194febad20429dc8dc4f97d7
+  dependencies:
+  - golang
+- name: rabbitmq-common
+  version: da10ce16346cf36941451f309c524686d15b6d9e
+  fingerprint: da10ce16346cf36941451f309c524686d15b6d9e
+  sha1: 0a3a04fce03ada9665ea751012f15d9e9994c246
+  dependencies: []
+- name: rabbitmq-server
+  version: f39b4ff8baedbc2fc9fd0be09de4ab61e6893d99
+  fingerprint: f39b4ff8baedbc2fc9fd0be09de4ab61e6893d99
+  sha1: e823142aad0f303d932c9250e5c02f41c325966a
+  dependencies: []
+- name: rabbitmq-syslog-aggregator
+  version: e528307bd81aa5f39e8cadfe9c29e4e8f81bbfa5
+  fingerprint: e528307bd81aa5f39e8cadfe9c29e4e8f81bbfa5
+  sha1: f898db5aa9e61f92aacb605daaf4f9e1b817bcfd
+  dependencies: []
+- name: rabbitmq-upgrade-preparation
+  version: 19dc26033e76f04fdfba74cbee26cf808f868947
+  fingerprint: 19dc26033e76f04fdfba74cbee26cf808f868947
+  sha1: f852be65971316549d9b1ce1b9a997ca9dbfc15d
+  dependencies:
+  - golang
+license:
+  version: c3a4ca7589687d67435c0c8061b5052f8e5e8103
+  fingerprint: c3a4ca7589687d67435c0c8061b5052f8e5e8103
+  sha1: f0d5b261b4a0ed5e07c7ca498cd778c125be31cc
