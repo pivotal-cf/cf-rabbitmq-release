@@ -1,5 +1,7 @@
 ---
 name: rabbitmq-server
+metadata:
+  version: 3.6.11
 files:
 - rabbitmq-server/rabbitmq-server-generic-unix-3.6.11.tar.xz
 - rabbitmq-server/rabbitmq-script-wrapper
