@@ -60,18 +60,6 @@ RSpec.describe 'RabbitMQ server configuration' do
       expect(environment_settings).to include('{cluster_partition_handling,pause_minority}')
     end
 
-    it 'should have a file descriptor limit reflecting that' do
-      output = ssh_gateway.execute_on(rmq_host, "curl -u #{@new_username}:#{@new_password} http://#{rmq_host}:15672/api/nodes -s")
-      nodes = JSON.parse(output)
-
-      nodes.each do |node|
-        # pause_minority causes one of the nodes to be down
-        if node['running']
-          expect(node['fd_total']).to eq 350000
-        end
-      end
-    end
-
     it 'it can only access the management HTTP API with the new credentials' do
       ssh_gateway.with_port_forwarded_to(@ha_host, 15_672) do |port|
 
