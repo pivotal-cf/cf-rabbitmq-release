@@ -7,27 +7,19 @@ require 'tempfile'
 require 'hula'
 require 'hula/bosh_manifest'
 
-RSpec.describe "RabbitMQ server configuration" do
-  let(:rmq_host) { bosh_director.ips_for_job("rmq", environment.bosh_manifest.deployment_name)[0] }
+RSpec.describe 'RabbitMQ server configuration' do
+  let(:rmq_host) { bosh_director.ips_for_job('rmq', environment.bosh_manifest.deployment_name)[0] }
   let(:rmq_admin_broker_username) { environment.bosh_manifest.property('rabbitmq-server.administrators.broker.username') }
   let(:rmq_admin_broker_password) { environment.bosh_manifest.property('rabbitmq-server.administrators.broker.password') }
-  let(:environment_settings) {  ssh_gateway.execute_on(rmq_host, "ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl environment", :root => true) }
+  let(:environment_settings) {  ssh_gateway.execute_on(rmq_host, 'ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl environment', :root => true) }
   let(:ssl_options) {  ssh_gateway.execute_on(rmq_host, "ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl eval 'application:get_env(rabbit, ssl_options).'", :root => true) }
 
-  describe "Defaults" do
-    it "should have a file descriptor limit set by default in BOSH spec" do
-      output = ssh_gateway.execute_on(rmq_host, "curl -u #{rmq_admin_broker_username}:#{rmq_admin_broker_password} http://#{rmq_host}:15672/api/nodes -s")
-      nodes = JSON.parse(output)
-      nodes.each do |node|
-        expect(node["fd_total"]).to eq 300000
-      end
-    end
-
-    it "should be use autoheal partition handling policy" do
+  describe 'Defaults' do
+    it 'should be use autoheal partition handling policy' do
       expect(environment_settings).to include('{cluster_partition_handling,autoheal}')
     end
 
-    it "should have disk free limit set to '{mem_relative,0.4}' as default" do
+    it 'should have disk free limit set to "{mem_relative,0.4}" as default' do
       expect(environment_settings).to include('{disk_free_limit,{mem_relative,0.4}}')
     end
 
@@ -39,8 +31,8 @@ RSpec.describe "RabbitMQ server configuration" do
   context 'when properties are set' do
     before(:all) do
       @ha_host = bosh_director.ips_for_job('haproxy', environment.bosh_manifest.deployment_name)[0]
-      @old_username = environment.bosh_manifest.property("rabbitmq-server.administrators.management.username")
-      @old_password = environment.bosh_manifest.property("rabbitmq-server.administrators.management.password")
+      @old_username = environment.bosh_manifest.property('rabbitmq-server.administrators.management.username')
+      @old_password = environment.bosh_manifest.property('rabbitmq-server.administrators.management.password')
 
       @new_username = 'newusername'
       @new_password = 'newpassword'
@@ -48,7 +40,7 @@ RSpec.describe "RabbitMQ server configuration" do
       modify_and_deploy_manifest do |manifest|
         manifest['properties']['rabbitmq-server']['disk_alarm_threshold'] = '20000000'
         manifest['properties']['rabbitmq-server']['cluster_partition_handling'] = 'pause_minority'
-        manifest["properties"]["rabbitmq-server"]["fd_limit"] = 350000
+        manifest['properties']['rabbitmq-server']['fd_limit'] = 350000
 
         management_credentials = manifest['properties']['rabbitmq-server']['administrators']['management']
         management_credentials['username'] = @new_username
@@ -60,22 +52,22 @@ RSpec.describe "RabbitMQ server configuration" do
       bosh_director.deploy(environment.bosh_manifest.path)
     end
 
-    it "should have hard disk alarm threshold of 20 MB" do
+    it 'should have hard disk alarm threshold of 20 MB' do
       expect(environment_settings).to include('{disk_free_limit,20000000}')
     end
 
-    it "should be use pause_minority" do
+    it 'should be use pause_minority' do
       expect(environment_settings).to include('{cluster_partition_handling,pause_minority}')
     end
 
-    it "should have a file descriptor limit reflecting that" do
+    it 'should have a file descriptor limit reflecting that' do
       output = ssh_gateway.execute_on(rmq_host, "curl -u #{@new_username}:#{@new_password} http://#{rmq_host}:15672/api/nodes -s")
       nodes = JSON.parse(output)
 
       nodes.each do |node|
         # pause_minority causes one of the nodes to be down
-        if node["running"]
-          expect(node["fd_total"]).to eq 350000
+        if node['running']
+          expect(node['fd_total']).to eq 350000
         end
       end
     end
@@ -88,13 +80,13 @@ RSpec.describe "RabbitMQ server configuration" do
           :username => @new_username,
           :password => @new_password
         })
-        expect(code).to eq "200"
+        expect(code).to eq '200'
 
         code = response_code(uri, {
           :username => @old_username,
           :password => @old_password
         })
-        expect(code).to eq "401"
+        expect(code).to eq '401'
       end
     end
   end
@@ -171,19 +163,19 @@ RSpec.describe "RabbitMQ server configuration" do
   end
 
   describe 'load definitions' do
-    vhost = "foobar"
+    vhost = 'foobar'
 
     before(:each) do
       modify_and_deploy_manifest do |manifest|
         manifest['properties']['rabbitmq-server']['load_definitions'] = Hash.new
-        manifest['properties']['rabbitmq-server']['load_definitions']['vhosts'] = [{"name"=> vhost}]
+        manifest['properties']['rabbitmq-server']['load_definitions']['vhosts'] = [{'name'=> vhost}]
       end
     end
 
     it 'creates a vhost when vhost definition is provided' do
       output = ssh_gateway.execute_on(rmq_host, "curl -u #{rmq_admin_broker_username}:#{rmq_admin_broker_password} http://#{rmq_host}:15672/api/vhosts/#{vhost} -s")
       response = JSON.parse(output)
-      expect(response["name"]).to eq(vhost)
+      expect(response['name']).to eq(vhost)
     end
   end
 
@@ -203,11 +195,11 @@ RSpec.describe "RabbitMQ server configuration" do
       nodes = JSON.parse(output)
       expect(nodes.size).to eq(3)
       nodes.each do |node|
-        expect(node["running"]).to eq(true)
+        expect(node['running']).to eq(true)
 
-        applications = (node["applications"] || []).map{|app| app["name"]}
-        expect(applications).to include("rabbit")
-        expect(applications).to include("rabbitmq_management")
+        applications = (node['applications'] || []).map{|app| app['name']}
+        expect(applications).to include('rabbit')
+        expect(applications).to include('rabbitmq_management')
       end
     end
   end
