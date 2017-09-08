@@ -61,28 +61,9 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   # Load the shared variables for the node name migration
   . /var/vcap/jobs/rabbitmq-server/bin/node_name_migration.sh
 
-  # If we are running on the old node naming strategy eg rabbit@node* then copy the current erl_inetrc for use later in the node name migration
-  [ -f ${ERL_INETRC} ] && ${MKDIR} -p ${MIGRATION_DIR} && ${CP} ${ERL_INETRC} ${MIGRATION_DIR}/erl_inetrc_old
-
-  HOSTS="$ERL_INETRC_HOSTS"
-
-  # 1. Write out our new erl_inetrc file. We do this to avoid modifying
-  #    /etc/hosts.
-  #    See http://erlang.org/doc/apps/erts/inet_cfg.html for more info.
-  DIR=$(${MKTEMP} -d)
-  trap "${RM} -rf ${DIR}" EXIT
-
-  printf "${HOSTS}{lookup, [file, native]}.\n" >> ${DIR}/erl_inetrc
-  ${CP} ${DIR}/erl_inetrc ${ERL_INETRC}
-
-  # If we are running on the old node naming strategy eg rabbit@node* then copy the new erl_inetrc for use later in the node name migration
-  if [ -d ${MIGRATION_DIR} ]
-  then
-    ${CP} ${ERL_INETRC} ${MIGRATION_DIR}/erl_inetrc_new
-    echo $JOB_IP > ${MIGRATION_DIR}/self_ip
-  fi
-
   ${MKDIR} -p $(${DIRNAME} ${CONF_ENV_FILE})
+
+  printf "{file, hosts, \"/etc/hosts\"}.\n{lookup, [file, dns]}.\n" > ${ERL_INETRC}
 
   # 3. Modify the rabbitmq-env.conf to include the right NODENAME and SERVER_START_ARGS.
   #    SERVER_START_ARGS is appended to the Erlang VM command line, like so (shortened and formatted
@@ -114,40 +95,16 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   CONFIG="CONFIG_FILE='${SCRIPT_DIR}/../etc/rabbitmq'"
   NODENAME="NODENAME='${SELF_NODE}'"
 
-  cluster_args=""
-  <% if use_native_clustering_formation %>
-    cluster_args="-rabbit cluster_nodes {[$RABBITMQ_NODES_STRING],disc}"
-  <% else %>
-    cluster_args="-rabbitmq_clusterer config \"${CLUSTER_CONFIG}\""
-  <% end %>
+  cluster_args="-rabbit cluster_nodes {[$RABBITMQ_NODES_STRING],disc}"
 
   cluster_args="$cluster_args -rabbit log_levels [{connection,info}]"
   cluster_args="$cluster_args -rabbit disk_free_limit <%= disk_alarm_threshold %>"
   cluster_args="$cluster_args -rabbit cluster_partition_handling <%= cluster_partition_handling %>"
   cluster_args="$cluster_args -rabbit halt_on_upgrade_failure false"
   cluster_args="$cluster_args -rabbitmq_mqtt subscription_ttl 1800000"
-  cluster_args="$cluster_args -rabbitmq_management http_log_dir \"${HTTP_ACCESS_LOG_DIR}\""
+  cluster_args="$cluster_args -rabbitmq_management http_log_dir \\\"${HTTP_ACCESS_LOG_DIR}\\\""
 
-  SERVER_START_ARGS="SERVER_START_ARGS='$cluster_args"
-
-<% if_p('rabbitmq-server.load_definitions') do %>
-  LOAD_DEFINITIONS_FILE_PATH="${SCRIPT_DIR}/../etc/definitions.json"
-  SERVER_START_ARGS="${SERVER_START_ARGS} -rabbitmq_management load_definitions \"${LOAD_DEFINITIONS_FILE_PATH}\""
-<% end %>
-
-<% if ssl %>
-  # if TLS is enabled, disable the non-TLS listener for AMQP 0-9-1 and make the management/HTTP API
-  # listener use TLS.
-  SERVER_START_ARGS="${SERVER_START_ARGS} -rabbit tcp_listeners [] -rabbit ssl_listeners [5671] -rabbitmq_management listener [{port,15672},{ssl,false}] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614]"
-<% end %>
-  # enclosing single quote, see the concatenation comment above
-  SERVER_START_ARGS="${SERVER_START_ARGS}'"
-<% if ssl %>
-  # concatenate options encoded in double quotes, see the concatenation comment above.
-  # {versions,['tlsv1.2','tlsv1.1',tlsv1]} disables SSLv3 to mitigate the POODLE attack.
-  SSL_OPTIONS=" -rabbit ssl_options [{cacertfile,\\\"${SCRIPT_DIR}/../etc/cacert.pem\\\"},{certfile,\\\"${SCRIPT_DIR}/../etc/cert.pem\\\"},{keyfile,\\\"${SCRIPT_DIR}/../etc/key.pem\\\"},{verify,<%= "#{ssl_verification}" %>},{depth,<%= "#{ssl_verification_depth}" %>},{fail_if_no_peer_cert,<%= "#{fail_if_no_peer_cert}" %>},{versions,<%= "[#{supported_tls_versions.join(',')}]" %>}]"
-  SERVER_START_ARGS="${SERVER_START_ARGS}\"${SSL_OPTIONS}\""
-<% end %>
+  SERVER_START_ARGS="SERVER_START_ARGS=\"$cluster_args\""
 
   if [ -f ${CONF_ENV_FILE} ]
   then \
@@ -156,22 +113,13 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
     printf '' > ${DIR}/env.backup
   fi
 
-<% if use_native_clustering_formation %>
-  RABBITMQ_BOOT_MODULE="RABBITMQ_BOOT_MODULE=rabbit"
-<% else %>
-  RABBITMQ_BOOT_MODULE="RABBITMQ_BOOT_MODULE=rabbit_clusterer"
-  RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS="RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=\"-pa /var/vcap/packages/rabbitmq-server/plugins/rabbitmq_clusterer-${RMQ_CLUSTERER_VERSION}.ez/rabbitmq_clusterer-${RMQ_CLUSTERER_VERSION}/ebin\""
-<% end %>
+  RABBITMQ_BOOT_MODULE="RABBITMQ_BOOT_MODULE=rabbit\nRABBITMQ_USE_LONGNAME=true"
 
   ${SED} "/${PREFIX}/,/${SUFFIX}/d" < ${DIR}/env.backup > ${DIR}/env
 
   printf "${PREFIX}\n" >> ${DIR}/env
   printf "${NODENAME}\n" >> ${DIR}/env
   printf "${RABBITMQ_BOOT_MODULE}\n" >> ${DIR}/env
-
-<% if !use_native_clustering_formation %>
-  printf "${RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS}\n" >> ${DIR}/env
-<% end %>
 
   printf "${CONFIG}\n" >> ${DIR}/env
   printf "${SERVER_START_ARGS}\n" >> ${DIR}/env
@@ -184,29 +132,11 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
 
   ${CP} ${DIR}/env ${CONF_ENV_FILE}
 
-  # migrate any old db / config / plugin folders to the node agnostic structure
-  [ -f ${HOME_DIR}/mnesia/rabbit@node*.config ] && cp ${HOME_DIR}/mnesia/rabbit@node*.config ${HOME_DIR}/rabbitmq-node-cluster.config.backup
-
-  [ -d ${HOME_DIR}/mnesia/rabbit@node*-plugins-expand ] && mv ${HOME_DIR}/mnesia/rabbit@node*-plugins-expand $RABBITMQ_PLUGINS_EXPAND_DIR
-  [ -f ${HOME_DIR}/mnesia/rabbit@node*.config ] && mv ${HOME_DIR}/mnesia/rabbit@node*.config $RABBITMQ_MNESIA_DIR-cluster.config
-  [ -d ${HOME_DIR}/mnesia/rabbit@node* ] && mv ${HOME_DIR}/mnesia/rabbit@node* $RABBITMQ_MNESIA_DIR
-
-
-  # 3. Run the node name migration
-  if [ -d $MIGRATION_DIR ]
-  then
-      #run the migration tool passing in the migration directory
-      $MIGRATION_TOOL $MIGRATION_DIR $RABBITMQ_MNESIA_DIR-cluster.config
-      #cleanup migration directory - rm
-      rm -rf $MIGRATION_DIR
-  fi
-
   # 4. Write out the cluster_config
 
   UPGRADE_PREPARATION_NODES_FILE=/var/vcap/data/upgrade_preparation_nodes
   rm -f $UPGRADE_PREPARATION_NODES_FILE
 
-<% if use_native_clustering_formation %>
   OLD_IFS="$IFS"
   IFS=","
   for node in $RABBITMQ_NODES_STRING
@@ -214,30 +144,6 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
     echo $node >> $UPGRADE_PREPARATION_NODES_FILE
   done
   IFS="$OLD_IFS"
-<% else %>
-  ${MKDIR} -p $(${DIRNAME} ${CLUSTER_CONFIG})
-
-  CONFIG_NODES=""
-  OLD_IFS="$IFS"
-  IFS=","
-  for node in $RABBITMQ_NODES_STRING
-  do
-    echo "${node}" >> $UPGRADE_PREPARATION_NODES_FILE
-    CONFIG_NODES="${CONFIG_NODES},{${node},disc}"
-  done
-  IFS="$OLD_IFS"
-
-  CONFIG_NODES=$(printf "${CONFIG_NODES}" | ${SED} -e 's/^,//')
-  CONFIG_VERSION=$("${DATE}" +%s)
-  # configure the gospel (seed) node. Other nodes will discover cluster members
-  # through it.
-  GOSPEL_NODE="$(echo "$RABBITMQ_NODES_STRING" | cut -d , -f 1)"
-  CONFIG='[{gospel,{node,'"$GOSPEL_NODE"'}},{nodes,['"${CONFIG_NODES}"']},{version,'"${CONFIG_VERSION}"'}].'
-  printf "${CONFIG}\n" > ${DIR}/cluster
-  ${CHOWN} ${USER}:${USER} ${DIR}/cluster
-  ${CP} ${DIR}/cluster ${CLUSTER_CONFIG}
-<% end %>
-
 
   # 5. Write out the cookie
   printf "${COOKIE}" > ${DIR}/.erlang.cookie

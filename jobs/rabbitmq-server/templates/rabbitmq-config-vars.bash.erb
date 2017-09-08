@@ -5,29 +5,23 @@
   end
 
   network ||= networks.first
-  job_ip = network.ip
+  job_address = network.address
 
   ips = link('rabbitmq-server').instances.map(&:address)
 
   if ips.size <= 1 then
-    ips = [job_ip]
+    ips = [job_address]
   end
 
   require 'digest'
-  job_ip_md5 = Digest::MD5.hexdigest(job_ip)
   cookie = p('rabbitmq-server.cookie', Digest::MD5.hexdigest(ips.join))
 
   nodes = ips.map do |ip|
-    "rabbit@#{Digest::MD5.hexdigest(ip)}"
+    "'rabbit@#{ip}'"
   end.join(",")
-  inetrc_hosts=""
-  ips.each_index do |idx|
-    inetrc_hosts += "{host, {#{ips[idx].gsub('.',',')}}, [\"#{Digest::MD5.hexdigest(ips[idx])}\"]}.\n"
-  end
 %>
 
-export JOB_IP=<%= job_ip %>
-export SELF_NODE="rabbit@<%= job_ip_md5 %>"
+
+export SELF_NODE="rabbit@<%= ips[0] %>"
 export RABBITMQ_NODES_STRING="<%= nodes %>"
 export ERLANG_COOKIE="<%= cookie %>"
-export ERL_INETRC_HOSTS='<%= inetrc_hosts %>'

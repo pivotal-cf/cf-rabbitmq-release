@@ -1,10 +1,12 @@
 ---
 name: ((deployment-name))
-director_uuid: ((director-uuid))
 
 releases:
 - name: cf-rabbitmq
   version: latest
+
+features:
+  use_dns_addresses: true
 
 stemcells:
 - alias: trusty
@@ -17,27 +19,27 @@ instance_groups:
   jobs:
   - name: rabbitmq-server
     release: cf-rabbitmq
-  vm_type: r3.large
+  vm_type: n1-standard-1
   stemcell: trusty
   persistent_disk_type: 10GB
   networks:
-  - name: services
+  - name: default
   azs:
-  - eu-west-1a
-  - eu-west-1b
+  - z1
+  - z2
 
 - name: haproxy
   instances: ((haproxy-instances))
   jobs:
   - name: rabbitmq-haproxy
     release: cf-rabbitmq
-  vm_type: m3.medium
+  vm_type: n1-standard-1
   stemcell: trusty
   networks:
-  - name: services
+  - name: default
   azs:
-  - eu-west-1a
-  - eu-west-1b
+  - z1
+  - z2
 
 properties:
   rabbitmq-server:

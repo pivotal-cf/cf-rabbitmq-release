@@ -1,7 +1,7 @@
 ---
 deployment-name: cf-rabbitmq
 
-stemcell-version: 3363.29
+stemcell-version: '3421.20'
 
 haproxy-instances: 2
 
@@ -14,7 +14,7 @@ rabbitmq-broker-password: broker
 haproxy-stats-username: haproxy
 haproxy-stats-password: haproxy
 
-use-native-clustering-formation: false
+use-native-clustering-formation: true
 
 cluster-partition-handling-strategy: autoheal
 

@@ -1,0 +1,8 @@
+NODENAME='rabbit@edc12d1d-eacd-4496-9460-cfc4adae8a3e.rmq.default.cf-rabbitmq.bosh'
+RABBITMQ_BOOT_MODULE=rabbit
+RABBITMQ_USE_LONGNAME=true
+CONFIG_FILE='/var/vcap/jobs/rabbitmq-server/bin/../etc/rabbitmq'
+SERVER_START_ARGS="-rabbit cluster_nodes {['rabbit@edc12d1d-eacd-4496-9460-cfc4adae8a3e.rmq.default.cf-rabbitmq.bosh','rabbit@e8c8a171-cd2f-41e9-bd99-0c0501137739.rmq.default.cf-rabbitmq.bosh','rabbit@04aa00d7-b873-46de-a6ad-f65a20fb2fc1.rmq.default.cf-rabbitmq.bosh'],disc} -rabbit log_levels [{connection,info}] -r
+abbit disk_free_limit {mem_relative,0.4} -rabbit cluster_partition_handling autoheal -rabbit halt_on_upgrade_failure false -rabbitmq_mqtt subscription_ttl 1800000 -rabbitmq_management http_log_dir \"/var/vcap/sys/log/rabbitmq-server/management-ui\""
+RABBITMQ_MNESIA_DIR=/var/vcap/store/rabbitmq/mnesia/db
+RABBITMQ_PLUGINS_EXPAND_DIR=/var/vcap/store/rabbitmq/mnesia/db-plugins-expand
