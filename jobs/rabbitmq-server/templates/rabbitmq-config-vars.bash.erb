@@ -22,6 +22,6 @@
 %>
 
 
-export SELF_NODE="rabbit@<%= ips[0] %>"
+export SELF_NODE="rabbit@<%= spec.address %>"
 export RABBITMQ_NODES_STRING="<%= nodes %>"
 export ERLANG_COOKIE="<%= cookie %>"
