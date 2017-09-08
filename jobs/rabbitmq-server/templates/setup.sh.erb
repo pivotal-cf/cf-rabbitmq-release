@@ -58,12 +58,6 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   # We need this for CONF_ENV_FILE, HOME, ERL_INETRC, and for MNESIA_BASE
   . /var/vcap/packages/rabbitmq-server/privbin/rabbitmq-defaults
 
-  # Load the shared variables for the node name migration
-  . /var/vcap/jobs/rabbitmq-server/bin/node_name_migration.sh
-
-  # If we are running on the old node naming strategy eg rabbit@node* then copy the current erl_inetrc for use later in the node name migration
-  [ -f ${ERL_INETRC} ] && ${MKDIR} -p ${MIGRATION_DIR} && ${CP} ${ERL_INETRC} ${MIGRATION_DIR}/erl_inetrc_old
-
   HOSTS="$ERL_INETRC_HOSTS"
 
   # 1. Write out our new erl_inetrc file. We do this to avoid modifying
@@ -74,13 +68,6 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
 
   printf "${HOSTS}{lookup, [file, native]}.\n" >> ${DIR}/erl_inetrc
   ${CP} ${DIR}/erl_inetrc ${ERL_INETRC}
-
-  # If we are running on the old node naming strategy eg rabbit@node* then copy the new erl_inetrc for use later in the node name migration
-  if [ -d ${MIGRATION_DIR} ]
-  then
-    ${CP} ${ERL_INETRC} ${MIGRATION_DIR}/erl_inetrc_new
-    echo $JOB_IP > ${MIGRATION_DIR}/self_ip
-  fi
 
   ${MKDIR} -p $(${DIRNAME} ${CONF_ENV_FILE})
 
@@ -183,23 +170,6 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   printf "${SUFFIX}\n" >> ${DIR}/env
 
   ${CP} ${DIR}/env ${CONF_ENV_FILE}
-
-  # migrate any old db / config / plugin folders to the node agnostic structure
-  [ -f ${HOME_DIR}/mnesia/rabbit@node*.config ] && cp ${HOME_DIR}/mnesia/rabbit@node*.config ${HOME_DIR}/rabbitmq-node-cluster.config.backup
-
-  [ -d ${HOME_DIR}/mnesia/rabbit@node*-plugins-expand ] && mv ${HOME_DIR}/mnesia/rabbit@node*-plugins-expand $RABBITMQ_PLUGINS_EXPAND_DIR
-  [ -f ${HOME_DIR}/mnesia/rabbit@node*.config ] && mv ${HOME_DIR}/mnesia/rabbit@node*.config $RABBITMQ_MNESIA_DIR-cluster.config
-  [ -d ${HOME_DIR}/mnesia/rabbit@node* ] && mv ${HOME_DIR}/mnesia/rabbit@node* $RABBITMQ_MNESIA_DIR
-
-
-  # 3. Run the node name migration
-  if [ -d $MIGRATION_DIR ]
-  then
-      #run the migration tool passing in the migration directory
-      $MIGRATION_TOOL $MIGRATION_DIR $RABBITMQ_MNESIA_DIR-cluster.config
-      #cleanup migration directory - rm
-      rm -rf $MIGRATION_DIR
-  fi
 
   # 4. Write out the cluster_config
 

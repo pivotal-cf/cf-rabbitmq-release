@@ -5,7 +5,6 @@ packages:
 - erlang
 - rabbitmq-server
 - rabbitmq-common
-- rabbitmq-cluster-migration-tool
 - rabbitmq-upgrade-preparation
 
 properties:
@@ -84,7 +83,6 @@ templates:
   ensure-rabbitmq-statsdb-restart-cron.erb: bin/ensure-rabbitmq-statsdb-restart-cron
   kill-with-fire.bash:                      bin/kill-with-fire
   node-check.bash.erb:                      bin/node-check
-  node_name_migration.sh:                   bin/node_name_migration.sh
   plugins.sh.erb:                           bin/plugins.sh
   post-deploy.bash:                         bin/post-deploy
   pre-start.bash:                           bin/pre-start
