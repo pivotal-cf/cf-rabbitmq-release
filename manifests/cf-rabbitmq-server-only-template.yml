@@ -41,7 +41,6 @@ instance_groups:
 
 properties:
   rabbitmq-server:
-    restart_statsdb_cron_schedule: "42 */4 * * *"
     plugins:
     - rabbitmq_management
     - rabbitmq_mqtt

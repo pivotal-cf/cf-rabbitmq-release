@@ -68,9 +68,6 @@ properties:
     description: "This property is for support cases only. Leave as false unless you are prepared to get your cluster in an unrecoverable state, including complete data loss."
     default: false
 
-  rabbitmq-server.restart_statsdb_cron_schedule:
-    description: "Schedule of when to restart the RabbitMQ StatsDB."
-
   rabbitmq-server.load_definitions:
     description: "Definitions to be loaded by RabbitMQ at startup"
 
@@ -80,7 +77,6 @@ templates:
   cluster-check.bash:                       bin/cluster-check
   delete_old_files.bash:                    lib/delete_old_files.bash
   drain.bash:                               bin/drain
-  ensure-rabbitmq-statsdb-restart-cron.erb: bin/ensure-rabbitmq-statsdb-restart-cron
   kill-with-fire.bash:                      bin/kill-with-fire
   node-check.bash.erb:                      bin/node-check
   plugins.sh.erb:                           bin/plugins.sh

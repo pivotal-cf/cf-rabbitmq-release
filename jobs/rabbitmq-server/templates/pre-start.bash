@@ -29,7 +29,6 @@ main() {
   ensure_dir_with_permissions "${SERVICE_METRICS_DIR}"
   ensure_log_files
   ensure_http_log_cleanup_cron_job
-  ${JOB_DIR}/bin/ensure-rabbitmq-statsdb-restart-cron
 
   # shellcheck disable=SC1090
   . "${JOB_DIR}"/lib/prepare-for-upgrade.bash
