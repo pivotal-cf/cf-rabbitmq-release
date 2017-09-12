@@ -48,7 +48,7 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   RABBITMQ_MNESIA_DIR="${RABBITMQ_MNESIA_BASE}/db"
   RABBITMQ_PLUGINS_EXPAND_DIR="$RABBITMQ_MNESIA_BASE/db-plugins-expand"
   SCRIPT_DIR="$(${DIRNAME} $0)"
-  RMQ_VERSION=3.6.11
+  RMQ_VERSION=3.6.12
 <% if ! use_native_clustering_formation %>
   RMQ_CLUSTERER_VERSION=3.6.5
   CLUSTER_CONFIG="${HOME_DIR}/etc/rabbitmq/cluster.config"
