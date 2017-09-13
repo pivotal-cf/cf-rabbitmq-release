@@ -42,16 +42,36 @@ rmq_user_does_not_exist() {
   local rmq_user
   rmq_user="$1"
 
-  [[ ! "${RMQ_USERS[*]}" =~ $rmq_user ]] ||
-  fail "User '$rmq_user' exists"
+  for user_spec in "${RMQ_USERS[@]}"
+  do
+    if [ "$user_spec" = "$rmq_user" ]
+    then
+      fail "User '$rmq_user' exists"
+      return 1
+    fi
+  done
 }
 
 rmq_user_exists() {
+  local absent=1
   local rmq_user
   rmq_user="$1"
 
-  [[ "${RMQ_USERS[*]}" =~ $rmq_user ]] ||
-  fail "User '$rmq_user' does not exist"
+  for user_spec in "${RMQ_USERS[@]}"
+  do
+    if [ "$user_spec" = "$rmq_user" ]
+    then
+      absent=0
+      break
+    fi
+  done
+
+  if [ "$absent" -eq 1 ]
+  then
+    fail "User '$rmq_user' does not exist"
+  fi
+
+  return $absent
 }
 
 rmq_user_is_admin() {
