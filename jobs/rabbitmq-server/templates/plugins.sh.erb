@@ -11,10 +11,6 @@
   # This is shorthand to disable all plugins
   $RABBITMQ_PLUGINS set
 
-<% if ! p("rabbitmq-server.use_native_clustering_formation") %>
-  $RABBITMQ_PLUGINS enable rabbitmq_clusterer
-<% end %>
-
   PLUGINS="$($RABBITMQ_PLUGINS list -m)"
 
   <% if_p("rabbitmq-server.plugins") do |plugins|

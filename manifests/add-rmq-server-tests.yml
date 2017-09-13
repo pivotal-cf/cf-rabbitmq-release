@@ -1,6 +1,0 @@
----
-- type: replace
-  path: /instance_groups/name=rmq/jobs/-
-  value:
-    name: rabbitmq-server-test
-    release: cf-rabbitmq

@@ -5,7 +5,6 @@
 <%
 
 cluster_partition_handling = p("rabbitmq-server.cluster_partition_handling")
-use_native_clustering_formation = p("rabbitmq-server.use_native_clustering_formation")
 
 ssl = false
 if_p("rabbitmq-server.ssl.key") do |key|
@@ -49,10 +48,6 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   RABBITMQ_PLUGINS_EXPAND_DIR="$RABBITMQ_MNESIA_BASE/db-plugins-expand"
   SCRIPT_DIR="$(${DIRNAME} $0)"
   RMQ_VERSION=3.6.12
-<% if ! use_native_clustering_formation %>
-  RMQ_CLUSTERER_VERSION=3.6.5
-  CLUSTER_CONFIG="${HOME_DIR}/etc/rabbitmq/cluster.config"
-<% end %>
 
   # Unfortunate tight coupling. Beware.
   # We need this for CONF_ENV_FILE, HOME, ERL_INETRC, and for MNESIA_BASE
@@ -101,12 +96,7 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   CONFIG="CONFIG_FILE='${SCRIPT_DIR}/../etc/rabbitmq'"
   NODENAME="NODENAME='${SELF_NODE}'"
 
-  cluster_args=""
-  <% if use_native_clustering_formation %>
-    cluster_args="-rabbit cluster_nodes {[$RABBITMQ_NODES_STRING],disc}"
-  <% else %>
-    cluster_args="-rabbitmq_clusterer config \"${CLUSTER_CONFIG}\""
-  <% end %>
+  cluster_args="-rabbit cluster_nodes {[$RABBITMQ_NODES_STRING],disc}"
 
   cluster_args="$cluster_args -rabbit log_levels [{connection,info}]"
   cluster_args="$cluster_args -rabbit disk_free_limit <%= disk_alarm_threshold %>"
@@ -143,22 +133,13 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
     printf '' > ${DIR}/env.backup
   fi
 
-<% if use_native_clustering_formation %>
   RABBITMQ_BOOT_MODULE="RABBITMQ_BOOT_MODULE=rabbit"
-<% else %>
-  RABBITMQ_BOOT_MODULE="RABBITMQ_BOOT_MODULE=rabbit_clusterer"
-  RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS="RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=\"-pa /var/vcap/packages/rabbitmq-server/plugins/rabbitmq_clusterer-${RMQ_CLUSTERER_VERSION}.ez/rabbitmq_clusterer-${RMQ_CLUSTERER_VERSION}/ebin\""
-<% end %>
 
   ${SED} "/${PREFIX}/,/${SUFFIX}/d" < ${DIR}/env.backup > ${DIR}/env
 
   printf "${PREFIX}\n" >> ${DIR}/env
   printf "${NODENAME}\n" >> ${DIR}/env
   printf "${RABBITMQ_BOOT_MODULE}\n" >> ${DIR}/env
-
-<% if !use_native_clustering_formation %>
-  printf "${RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS}\n" >> ${DIR}/env
-<% end %>
 
   printf "${CONFIG}\n" >> ${DIR}/env
   printf "${SERVER_START_ARGS}\n" >> ${DIR}/env
@@ -172,11 +153,9 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   ${CP} ${DIR}/env ${CONF_ENV_FILE}
 
   # 4. Write out the cluster_config
-
   UPGRADE_PREPARATION_NODES_FILE=/var/vcap/data/upgrade_preparation_nodes
   rm -f $UPGRADE_PREPARATION_NODES_FILE
 
-<% if use_native_clustering_formation %>
   OLD_IFS="$IFS"
   IFS=","
   for node in $RABBITMQ_NODES_STRING
@@ -184,30 +163,6 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
     echo $node >> $UPGRADE_PREPARATION_NODES_FILE
   done
   IFS="$OLD_IFS"
-<% else %>
-  ${MKDIR} -p $(${DIRNAME} ${CLUSTER_CONFIG})
-
-  CONFIG_NODES=""
-  OLD_IFS="$IFS"
-  IFS=","
-  for node in $RABBITMQ_NODES_STRING
-  do
-    echo "${node}" >> $UPGRADE_PREPARATION_NODES_FILE
-    CONFIG_NODES="${CONFIG_NODES},{${node},disc}"
-  done
-  IFS="$OLD_IFS"
-
-  CONFIG_NODES=$(printf "${CONFIG_NODES}" | ${SED} -e 's/^,//')
-  CONFIG_VERSION=$("${DATE}" +%s)
-  # configure the gospel (seed) node. Other nodes will discover cluster members
-  # through it.
-  GOSPEL_NODE="$(echo "$RABBITMQ_NODES_STRING" | cut -d , -f 1)"
-  CONFIG='[{gospel,{node,'"$GOSPEL_NODE"'}},{nodes,['"${CONFIG_NODES}"']},{version,'"${CONFIG_VERSION}"'}].'
-  printf "${CONFIG}\n" > ${DIR}/cluster
-  ${CHOWN} ${USER}:${USER} ${DIR}/cluster
-  ${CP} ${DIR}/cluster ${CLUSTER_CONFIG}
-<% end %>
-
 
   # 5. Write out the cookie
   printf "${COOKIE}" > ${DIR}/.erlang.cookie

@@ -18,22 +18,17 @@ RSpec.describe 'Configuration', template: true do
   end
   let(:network_properties) { { blah: { ip: '127.0.0.1', default: true }}}
 
-  [true, false].each do |native_clusters|
-    describe "cluster_partition_handling with native clustering set to #{native_clusters}" do
-      let(:manifest_properties) { { 'rabbitmq-server' => { 'use_native_clustering_formation' => native_clusters} }}
       it "should have pause_minority" do
-        expect(rendered_template).to include(cluster_partition_handling_with "pause_minority", native_clusters)
+        expect(rendered_template).to include("cluster_args=\"$cluster_args -rabbit cluster_partition_handling pause_minority\"")
       end
 
       context "when is set to autoheal" do
-        let(:manifest_properties) { { 'rabbitmq-server' => { 'use_native_clustering_formation' => native_clusters, 'cluster_partition_handling' => 'autoheal'} }}
+        let(:manifest_properties) { { 'rabbitmq-server' => { 'cluster_partition_handling' => 'autoheal'} }}
 
         it "should have autoheal" do
-          expect(rendered_template).to include(cluster_partition_handling_with "autoheal", native_clusters)
+          expect(rendered_template).to include("cluster_args=\"$cluster_args -rabbit cluster_partition_handling autoheal\"")
         end
       end
-    end
-  end
 
   describe 'SSL' do
     let(:manifest_properties) { { 'rabbitmq-server' => { 'ssl' => { 'key' => 'rabbitmq-ssl-key' } } } }
@@ -67,25 +62,4 @@ end
 
 def ssl_options_with(tls_versions)
   'SSL_OPTIONS=" -rabbit ssl_options [{cacertfile,\\\\\"${SCRIPT_DIR}/../etc/cacert.pem\\\\\"},{certfile,\\\\\"${SCRIPT_DIR}/../etc/cert.pem\\\\\"},{keyfile,\\\\\"${SCRIPT_DIR}/../etc/key.pem\\\\\"},{verify,verify_none},{depth,5},{fail_if_no_peer_cert,false},{versions,' + tls_versions + '}]"'
-end
-
-def cluster_partition_handling_with(policy, native_clusters)
-  server_start_args="    cluster_args=\""
-  if ! native_clusters
-    server_start_args += "-rabbitmq_clusterer config " + '\"${CLUSTER_CONFIG}\"'
-  else
-    stubbed_nodes = "-rabbit cluster_nodes {[$RABBITMQ_NODES_STRING],disc}"
-    server_start_args += "#{stubbed_nodes}"
-  end
-  return server_start_args + "\"
-  
-
-  cluster_args=\"$cluster_args -rabbit log_levels [{connection,info}]\"
-  cluster_args=\"$cluster_args -rabbit disk_free_limit {mem_relative,0.4}\"
-  cluster_args=\"$cluster_args -rabbit cluster_partition_handling #{policy}\"
-  cluster_args=\"$cluster_args -rabbit halt_on_upgrade_failure false\"
-  cluster_args=\"$cluster_args -rabbitmq_mqtt subscription_ttl 1800000\"
-  cluster_args=\"$cluster_args -rabbitmq_management http_log_dir \\\"${HTTP_ACCESS_LOG_DIR}\\\"\"
-
-  SERVER_START_ARGS=\"SERVER_START_ARGS='$cluster_args\""
 end
