@@ -35,6 +35,7 @@ main() {
   . "${JOB_DIR}"/lib/rabbitmq-config-vars.bash
 
   run_rabbitmq_upgrade_preparation_shutdown_cluster "$ERLANG_COOKIE" "${HOME_DIR}/.erlang.cookie" "$RABBITMQ_NODES_STRING"
+  sh ${JOB_DIR}/bin/plugins.sh
 }
 
 remove_old_syslog_config() {

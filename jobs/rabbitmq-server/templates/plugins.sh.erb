@@ -9,18 +9,11 @@
   PATH=$RABBITMQ_HOME/bin:$ERLANG_HOME/bin:/var/vcap/packages/ruby/bin:$PATH
 
   # This is shorthand to disable all plugins
-  $RABBITMQ_PLUGINS set
-
-  PLUGINS="$($RABBITMQ_PLUGINS list -m)"
+  $RABBITMQ_PLUGINS set --offline
 
   <% if_p("rabbitmq-server.plugins") do |plugins|
-    plugins.each do |plugin| %>
-      REMAINING_PLUGINS=$(echo "${PLUGINS}" | grep -v '^<%= plugin %>$')
-      if [ "${REMAINING_PLUGINS}" = "${PLUGINS}" ]; then
-        echo "Ignoring unrecognised plugin: <%= plugin %>"
-      else
-        $RABBITMQ_PLUGINS enable <%= plugin %>
-      fi
-    <% end %>
+    plugins_list = plugins.join(" ")
+  %>
+    $RABBITMQ_PLUGINS --offline enable <%= plugins_list %>
   <% end %>
 )
