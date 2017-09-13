@@ -57,7 +57,7 @@ get_rmq_user() {
 ensure_rmq_user_does_not_exist() {
   local rmq_user="$1"
 
-  if get_rmq_user "$rmq_user" 2>/dev/null
+  if get_rmq_user "$rmq_user" >/dev/null
   then
     fail "User '$rmq_user' exists"
     return 1
@@ -67,7 +67,7 @@ ensure_rmq_user_does_not_exist() {
 ensure_rmq_user_exists() {
   local rmq_user="$1"
 
-  if ! get_rmq_user "$rmq_user" 2>/dev/null
+  if ! get_rmq_user "$rmq_user" >/dev/null
   then
     fail "User '$rmq_user' does not exist"
     return 1

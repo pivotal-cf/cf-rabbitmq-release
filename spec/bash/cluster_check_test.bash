@@ -36,6 +36,13 @@ readonly RMQ_USERS_WITH_GUEST=(
 'administrator   [no_admin]'
 )
 
+T_ensure_rmq_user_is_admin_when_user_is_unknown() {
+  (
+    RMQ_USERS=( "${RMQ_USERS_WITH_GUEST[@]}" )
+    ensure_rmq_user_is_admin 'no_user' && return 1 || return 0
+  ) || $T_fail 'Expected user guest to not be an admin'
+}
+
 T_ensure_rmq_user_is_admin_when_guest_is_not_admin() {
   (
     RMQ_USERS=( "${RMQ_USERS_WITH_GUEST[@]}" )
