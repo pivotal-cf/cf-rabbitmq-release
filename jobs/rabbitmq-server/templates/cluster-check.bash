@@ -9,24 +9,24 @@ main() {
   rabbitmq_application_is_running
 
   # rabbitmqctl hangs if run before application
-  RMQ_USERS=($(rabbitmqctl list_users | tail -n +2))
-  RMQ_VHOSTS=($(rabbitmqctl list_vhosts | tail -n +2))
+  mapfile -s1 -t RMQ_USERS  < <( rabbitmqctl list_users )
+  mapfile -s1 -t RMQ_VHOSTS < <( rabbitmqctl list_vhosts )
 
-  rmq_user_does_not_exist "guest"
+  ensure_rmq_user_does_not_exist "guest"
 
-  rmq_user_exists "$RMQ_BROKER_USERNAME"
-  rmq_user_is_admin "$RMQ_BROKER_USERNAME"
-  rmq_user_can_authenticate "$RMQ_BROKER_USERNAME" "$RMQ_BROKER_PASSWORD"
-  rmq_user_has_correct_permissions_on_all_vhosts "$RMQ_BROKER_USERNAME"
+  ensure_rmq_user_exists "$RMQ_BROKER_USERNAME"
+  ensure_rmq_user_is_admin "$RMQ_BROKER_USERNAME"
+  ensure_rmq_user_can_authenticate "$RMQ_BROKER_USERNAME" "$RMQ_BROKER_PASSWORD"
+  ensure_rmq_user_has_correct_permissions_on_all_vhosts "$RMQ_BROKER_USERNAME"
 
   if operator_user_configured
   then
-    rmq_user_exists "$RMQ_OPERATOR_USERNAME"
-    rmq_user_is_admin "$RMQ_OPERATOR_USERNAME"
-    rmq_user_can_authenticate "$RMQ_OPERATOR_USERNAME" "$RMQ_OPERATOR_PASSWORD"
+    ensure_rmq_user_exists "$RMQ_OPERATOR_USERNAME"
+    ensure_rmq_user_is_admin "$RMQ_OPERATOR_USERNAME"
+    ensure_rmq_user_can_authenticate "$RMQ_OPERATOR_USERNAME" "$RMQ_OPERATOR_PASSWORD"
     # Known bug causes the administrator not to has correct credentials
     # For reference read story #121737885
-    # rmq_user_has_correct_permissions_on_all_vhosts "$RMQ_OPERATOR_USERNAME"
+    # ensure_rmq_user_has_correct_permissions_on_all_vhosts "$RMQ_OPERATOR_USERNAME"
   fi
 }
 
@@ -38,51 +38,54 @@ rabbitmq_application_is_running() {
   fail "RabbitMQ application is not running"
 }
 
-rmq_user_does_not_exist() {
-  local rmq_user
-  rmq_user="$1"
+get_rmq_user() {
+  local misper="$1"
+  local user
 
   for user_spec in "${RMQ_USERS[@]}"
   do
-    if [ "$user_spec" = "$rmq_user" ]
+    user="$( echo "$user_spec" | awk '{ print $1 }' )"
+    if [ "$user" = "$misper" ]
     then
-      fail "User '$rmq_user' exists"
-      return 1
+      echo "$user_spec"
+      return 0
     fi
   done
+  return 1
 }
 
-rmq_user_exists() {
-  local absent=1
-  local rmq_user
-  rmq_user="$1"
+ensure_rmq_user_does_not_exist() {
+  local rmq_user="$1"
 
-  for user_spec in "${RMQ_USERS[@]}"
-  do
-    if [ "$user_spec" = "$rmq_user" ]
-    then
-      absent=0
-      break
-    fi
-  done
+  if get_rmq_user "$rmq_user" 2>/dev/null
+  then
+    fail "User '$rmq_user' exists"
+    return 1
+  fi
+}
 
-  if [ "$absent" -eq 1 ]
+ensure_rmq_user_exists() {
+  local rmq_user="$1"
+
+  if ! get_rmq_user "$rmq_user" 2>/dev/null
   then
     fail "User '$rmq_user' does not exist"
+    return 1
   fi
-
-  return $absent
 }
 
-rmq_user_is_admin() {
-  local rmq_user
+ensure_rmq_user_is_admin() {
+  local rmq_user user_spec
   rmq_user="$1"
+  user_spec="$( get_rmq_user "$rmq_user" )"
 
-  [[ "${RMQ_USERS[*]}" =~ ${rmq_user}.*administrator ]] ||
-  fail "User '$rmq_user' is not an administrator"
+  if ! [[ "$user_spec" =~ \[.*administrator.*\] ]]
+  then
+    fail "User '$rmq_user' is not an administrator"
+  fi
 }
 
-rmq_user_can_authenticate() {
+ensure_rmq_user_can_authenticate() {
   local rmq_user rmq_user_pass
   rmq_user="$1"
   rmq_user_pass="$2"
@@ -91,14 +94,14 @@ rmq_user_can_authenticate() {
   fail "User '$rmq_user' cannot authenticate"
 }
 
-rmq_user_has_correct_permissions_on_all_vhosts() {
+ensure_rmq_user_has_correct_permissions_on_all_vhosts() {
   local rmq_user rmq_user_permissions
   rmq_user="$1"
   rmq_user_permissions="$(rabbitmqctl list_user_permissions "$rmq_user")"
 
   for vhost in "${RMQ_VHOSTS[@]}"
   do
-    echo "$rmq_user_permissions" | egrep "$vhost\s+\.\*\s+\.\*\s+\.\*" ||
+    echo "$rmq_user_permissions" | grep -E "${vhost}\s+\.\*\s+\.\*\s+\.\*" ||
     fail "User '$rmq_user' does not have the correct permissions for vhost '$vhost'"
   done
 }
