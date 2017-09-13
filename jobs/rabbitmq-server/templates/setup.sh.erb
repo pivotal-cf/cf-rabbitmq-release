@@ -65,7 +65,7 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   CLUSTER_CONFIG="${HOME_DIR}/etc/rabbitmq/cluster.config"
   SCRIPT_DIR="$(${DIRNAME} $0)"
   JOB_IP=<%= job_ip %>
-  RMQ_VERSION=3.6.9
+  RMQ_VERSION=3.6.12
 <% if ! use_native_clustering_formation %>
   RMQ_CLUSTERER_VERSION=3.6.5
   CLUSTER_CONFIG="${HOME_DIR}/etc/rabbitmq/cluster.config"

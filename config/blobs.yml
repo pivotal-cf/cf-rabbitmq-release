@@ -1,12 +1,11 @@
----
 basht/basht_0.1.0_Linux_x86_64.tgz:
   size: 757703
   object_id: bbc2200b-670b-4562-72db-27ce98bc3161
   sha: 5dee8d242fc333672e14d9e1d70162b77eab5924
 cf-cli/cf-cli_6.29.2_linux_x86-64.tgz:
+  size: 5856021
   object_id: 74a092a6-1240-48c1-8aea-017c7dd6d9f5
   sha: 40a333a0a7133dd355b1ab324b1a6176d61de7e7
-  size: 5856021
 erlang/otp_src_oss_19.3.6.2.tgz:
   size: 35747840
   object_id: 74de2b1f-03ff-47f6-86da-89e4c91a62a9
@@ -23,10 +22,10 @@ java/jre-1.8.0_121.tar.gz:
   size: 73676107
   object_id: 8004c235-fd95-466f-94d0-03597c9c2d1f
   sha: f62168513348184e3d18c69795ecb220456514a3
-rabbitmq-server/rabbitmq-server-generic-unix-3.6.10.tar.xz:
-  size: 4688432
-  object_id: 57d89bab-091f-4558-9061-5bfdfff7fecb
-  sha: ce3b4ada4ccbe5206d21855910dc999a4d6a8aaa
+rabbitmq-server/rabbitmq-server-generic-unix-3.6.12.tar.xz:
+  size: 4695132
+  object_id: d988e28f-c30d-4d1c-4a98-228b3aa9e97f
+  sha: 1545cffee57ec5b15a80a357e6d4c05dca0b78bb
 rabbitmq-server/rabbitmq_clusterer-3.6.5.ez:
   size: 58675
   object_id: aca4b381-2afc-487c-913a-643fef65b3d1
