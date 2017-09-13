@@ -2,9 +2,6 @@
 
 [ -z "$DEBUG" ] || set -x
 
-# shellcheck disable=SC1091
-. /var/vcap/jobs/rabbitmq-server/etc/users
-
 export PATH=/var/vcap/packages/erlang/bin/:/var/vcap/packages/rabbitmq-server/privbin/:$PATH
 LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 
@@ -100,8 +97,17 @@ send_all_output_to_logfile() {
   exec 2> >(tee -a "${LOG_DIR}/cluster-check.log")
 }
 
-send_all_output_to_logfile
-SCRIPT_CALLER="${1:-cluster-check}"
-echo "Running cluster checks at $(date) from $SCRIPT_CALLER..."
-main
-echo "Cluster check running from $SCRIPT_CALLER passed"
+# shellcheck disable=SC2128
+if [[ "$0" = "$BASH_SOURCE" ]]
+then
+  # only run, when called and not sourced
+
+  # shellcheck disable=SC1091
+  . /var/vcap/jobs/rabbitmq-server/etc/users
+
+  send_all_output_to_logfile
+  SCRIPT_CALLER="${1:-cluster-check}"
+  echo "Running cluster checks at $(date) from $SCRIPT_CALLER..."
+  main
+  echo "Cluster check running from $SCRIPT_CALLER passed"
+fi
