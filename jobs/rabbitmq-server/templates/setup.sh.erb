@@ -53,19 +53,6 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
   # We need this for CONF_ENV_FILE, HOME, ERL_INETRC, and for MNESIA_BASE
   . /var/vcap/packages/rabbitmq-server/privbin/rabbitmq-defaults
 
-  HOSTS="$ERL_INETRC_HOSTS"
-
-  # 1. Write out our new erl_inetrc file. We do this to avoid modifying
-  #    /etc/hosts.
-  #    See http://erlang.org/doc/apps/erts/inet_cfg.html for more info.
-  DIR=$(${MKTEMP} -d)
-  trap "${RM} -rf ${DIR}" EXIT
-
-  printf "${HOSTS}{lookup, [file, native]}.\n" >> ${DIR}/erl_inetrc
-  ${CP} ${DIR}/erl_inetrc ${ERL_INETRC}
-
-  ${MKDIR} -p $(${DIRNAME} ${CONF_ENV_FILE})
-
   # 3. Modify the rabbitmq-env.conf to include the right NODENAME and SERVER_START_ARGS.
   #    SERVER_START_ARGS is appended to the Erlang VM command line, like so (shortened and formatted
   #    for readability):

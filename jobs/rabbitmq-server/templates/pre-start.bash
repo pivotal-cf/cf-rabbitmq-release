@@ -35,7 +35,8 @@ main() {
   . "${JOB_DIR}"/lib/rabbitmq-config-vars.bash
 
   run_rabbitmq_upgrade_preparation_shutdown_cluster "$ERLANG_COOKIE" "${HOME_DIR}/.erlang.cookie" "$RABBITMQ_NODES_STRING"
-  sh ${JOB_DIR}/bin/plugins.sh
+  setup_erl_inetrc
+  ${JOB_DIR}/bin/plugins.sh
 }
 
 remove_old_syslog_config() {
@@ -54,6 +55,25 @@ ensure_log_files() {
 
 ensure_http_log_cleanup_cron_job() {
   cp "${JOB_DIR}/bin/cleanup-http-logs" /etc/cron.daily
+}
+
+setup_erl_inetrc() {
+  . /var/vcap/jobs/rabbitmq-server/lib/rabbitmq-config-vars.bash
+
+  # Unfortunate tight coupling. Beware.
+  # We need this for CONF_ENV_FILE, HOME, ERL_INETRC, and for MNESIA_BASE
+  . /var/vcap/packages/rabbitmq-server/privbin/rabbitmq-defaults
+
+  # 1. Write out our new erl_inetrc file. We do this to avoid modifying
+  #    /etc/hosts.
+  #    See http://erlang.org/doc/apps/erts/inet_cfg.html for more info.
+  DIR=$(mktemp -d)
+  trap "rm -rf ${DIR}" EXIT
+
+  printf "${ERL_INETRC_HOSTS}{lookup, [file, native]}.\n" >> ${DIR}/erl_inetrc
+  cp ${DIR}/erl_inetrc ${ERL_INETRC}
+
+  mkdir -p $(dirname ${CONF_ENV_FILE})
 }
 
 main
