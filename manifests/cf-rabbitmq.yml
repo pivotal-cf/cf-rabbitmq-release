@@ -35,11 +35,22 @@ instance_groups:
   jobs:
   - name: rabbitmq-haproxy
     release: cf-rabbitmq
+  - name: route_registrar
+    release: routing
+    consumes:
+      nats: {from: nats, deployment: cf}
+    properties:
+      route_registrar:
+        routes:
+        - name: ((rabbitmq-management-domain))
+          port: 15672
+          registration_interval: 20s
+          uris:
+          - ((rabbitmq-management-domain)).((bosh-hostname))
   vm_type: m3.medium
   stemcell: trusty
   networks:
   - name: services
-    static_ips: ((haproxy-ips))
   azs:
   - eu-west-1a
   - eu-west-1b

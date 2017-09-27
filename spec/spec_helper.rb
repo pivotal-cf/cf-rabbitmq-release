@@ -54,9 +54,11 @@ def ssh_gateway
   @ssh_gateway ||= environment.ssh_gateway
 end
 
-def modify_and_deploy_manifest
-  manifest = YAML.load_file(environment.bosh_manifest.path)
+def manifest
+  @manifest = YAML.load_file(environment.bosh_manifest.path)
+end
 
+def modify_and_deploy_manifest
   yield manifest
 
   deploy_manifest(manifest)

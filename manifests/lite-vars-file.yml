@@ -4,10 +4,10 @@ deployment-name: cf-rabbitmq
 stemcell-version: 3421.24
 
 haproxy-instances: 1
-haproxy-ips: [10.244.16.3]
 
 rabbitmq-management-username: admin
 rabbitmq-management-password: admin
+rabbitmq-management-domain: rabbitmq
 
 rabbitmq-broker-username: broker
 rabbitmq-broker-password: broker
@@ -24,3 +24,5 @@ syslog-port:
 
 cf-admin-password: admin
 cf-admin-username: admin
+
+bosh-hostname: bosh-lite.com
