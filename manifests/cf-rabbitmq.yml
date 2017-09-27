@@ -17,7 +17,7 @@ stemcells:
 
 instance_groups:
 - name: rmq
-  instances: 2
+  instances: 3
   jobs:
   - name: rabbitmq-server
     release: cf-rabbitmq
