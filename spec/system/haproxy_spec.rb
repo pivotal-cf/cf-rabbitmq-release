@@ -4,7 +4,7 @@ require 'httparty'
 
 RSpec.describe "haproxy" do
 
-  let(:management_uri) { 'http://10.244.16.3:15672' }
+  let(:management_uri) { "http://#{environment.bosh_manifest.job('haproxy').static_ips.first}:15672" }
 
   [0, 1].each do |job_index|
     context "when the job rmq/#{job_index} is down" do
