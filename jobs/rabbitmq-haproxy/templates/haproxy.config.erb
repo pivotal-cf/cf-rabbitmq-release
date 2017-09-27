@@ -35,25 +35,3 @@ backend output-<%= port %>
 <% end %>
 <% end %>
 
-listen stats
-    bind 0.0.0.0:80
-    mode http
-    balance
-    timeout client 5000
-    timeout connect 4000
-    timeout server 30000
-
-    #This is the virtual URL to access the stats page
-    stats uri /
-
-    #Authentication realm. This can be set to anything. Escape space characters with a backslash.
-    stats realm HAProxy\ Statistics
-
-<% if_p('rabbitmq-haproxy.stats.username', 'rabbitmq-haproxy.stats.password') do |user, pass| %>
-    #The user/pass you want to use.
-    stats auth <%= user %>:<%= pass %>
-<% end %>
-
-    #This allows you to take down and bring up back end servers.
-    #This will produce an error on older versions of HAProxy.
-    stats admin if TRUE
