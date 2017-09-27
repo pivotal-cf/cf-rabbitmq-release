@@ -14,7 +14,7 @@ def environment
   @environment ||= begin
                      options = {
                        bosh_manifest_path: ENV.fetch('BOSH_MANIFEST') { File.expand_path('../../manifests/cf-rabbitmq.yml', __FILE__) },
-                       bosh_service_broker_job_name: 'cf-rabbitmq-broker'
+                       bosh_service_broker_job_name: 'cf-rabbitmq'
                      }
 
                      options[:cloud_foundry_domain]   = ENV.fetch('CF_DOMAIN', 'bosh-lite.com')
@@ -22,7 +22,7 @@ def environment
                      options[:cloud_foundry_password] = ENV.fetch('CF_PASSWORD', 'admin')
                      options[:cloud_foundry_api_url]  = ENV.fetch('CF_API', 'api.bosh-lite.com')
 
-                     options[:bosh_target]          = ENV['BOSH_TARGET']
+                     options[:bosh_target]          = ENV.fetch('BOSH_TARGET', '192.168.50.6')
                      options[:bosh_username]        = ENV['BOSH_USERNAME']
                      options[:bosh_password]        = ENV['BOSH_PASSWORD']
                      options[:ssh_gateway_host]     = URI.parse(ENV['BOSH_TARGET']).host if ENV.key?('BOSH_TARGET')

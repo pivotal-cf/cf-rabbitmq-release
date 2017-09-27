@@ -5,6 +5,10 @@ director_uuid: ((director-uuid))
 releases:
 - name: cf-rabbitmq
   version: latest
+- name: routing
+  version: 0.152.0
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.152.0
+  sha1: ea67ad087880fc0e492b6cce27fa2a25f977b691
 
 stemcells:
 - alias: trusty
@@ -13,7 +17,7 @@ stemcells:
 
 instance_groups:
 - name: rmq
-  instances: 3
+  instances: 2
   jobs:
   - name: rabbitmq-server
     release: cf-rabbitmq
@@ -35,6 +39,7 @@ instance_groups:
   stemcell: trusty
   networks:
   - name: services
+    static_ips: ((haproxy-ips))
   azs:
   - eu-west-1a
   - eu-west-1b

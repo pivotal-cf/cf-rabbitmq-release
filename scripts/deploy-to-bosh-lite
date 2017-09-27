@@ -4,99 +4,49 @@ set -e
 
 [ -z "$DEBUG" ] || set -x
 
-BOSH_LITE_URL="${1:-https://192.168.50.4:25555}"
-CF_ROUTING_RELEASE_VERSION="0.152.0"
-CF_ROUTING_RELEASE_NAME="routing"
-CF_ROUTING_RELEASE_URL="http://bosh.io/d/github.com/cloudfoundry-incubator/cf-$CF_ROUTING_RELEASE_NAME-release?v=$CF_ROUTING_RELEASE_VERSION"
-BOSH_CLOUD_CONFIG="manifests/lite-cloud-config.yml"
-
-read -rep "BOSH manifest for the cf-rabbitmq deployment (default: $PWD/manifests/cf-rabbitmq.yml): " BOSH_MANIFEST
-BOSH_MANIFEST="${BOSH_MANIFEST:-$PWD/manifests/cf-rabbitmq.yml}"
-
-BOSH_LITE_STEMCELL_NAME="bosh-warden-boshlite-ubuntu-trusty-go_agent"
-BOSH_LITE_STEMCELL_VERSION="$(yq .stemcells[0].version $BOSH_MANIFEST)"
-BOSH_LITE_STEMCELL_URL="https://bosh.io/d/stemcells/$BOSH_LITE_STEMCELL_NAME?v=$BOSH_LITE_STEMCELL_VERSION"
+export BOSH_ENVIRONMENT="${1:-https://192.168.50.6:25555}"
+export BOSH_NON_INTERACTIVE=false
+export BOSH_CLIENT=admin
+export BOSH_CLIENT_SECRET=admin
+export BOSH_DEPLOYMENT=cf-rabbitmq
+export BOSH_CA_CERT
+BOSH_CA_CERT="$(boshgo int ~/deployments/vbox/creds.yml --path /director_ssl/ca)"
 
 main() {
-  target_bosh_lite
-  upload_stemcell
+  local manifest
+  manifest=$(./scripts/interpolate-manifest-for-bosh-lite)
 
+  upload_stemcell "$manifest"
   download_blobs
-  update_src_dependencies
-
-  create_dev_release
-  upload_dev_release
-  upload_routing_release
-
-  check_cloud_config
-  set_deployment
-  deploy
-
-  target_cf || cf_required
-  deploy_contains_multitenant_broker && run_broker_registrar
-}
-
-target_bosh_lite() {
-  bosh target "$BOSH_LITE_URL" lite
+  create_dev_release && upload_dev_release
+  deploy "$manifest"
 }
 
 upload_stemcell() {
-  bosh upload stemcell --skip-if-exists --name "$BOSH_LITE_STEMCELL_NAME" --version "$BOSH_LITE_STEMCELL_VERSION" "$BOSH_LITE_STEMCELL_URL"
+  local manifest="$1"
+  BOSH_LITE_STEMCELL_NAME="bosh-warden-boshlite-ubuntu-trusty-go_agent"
+  BOSH_LITE_STEMCELL_VERSION="$(yq .stemcells[0].version "$manifest")"
+  BOSH_LITE_STEMCELL_URL="https://bosh.io/d/stemcells/$BOSH_LITE_STEMCELL_NAME?v=$BOSH_LITE_STEMCELL_VERSION"
+
+  bosh upload-stemcell "$BOSH_LITE_STEMCELL_URL" --name "$BOSH_LITE_STEMCELL_NAME" --version "$BOSH_LITE_STEMCELL_VERSION"
 }
+
 
 download_blobs() {
-  bosh sync blobs
-}
-
-update_src_dependencies() {
-  git submodule update --init --recursive
+  bosh sync-blobs
 }
 
 create_dev_release() {
-  bosh create release --force
+  bosh create-release --force
 }
 
 upload_dev_release() {
-  bosh upload release
-}
-
-upload_routing_release() {
-  bosh upload release --skip-if-exists --name "$CF_ROUTING_RELEASE_NAME" --version "$CF_ROUTING_RELEASE_VERSION" "$CF_ROUTING_RELEASE_URL"
-}
-
-check_cloud_config() {
-  bosh cloud-config | grep -q "name: services" || fail "Rabbit requires a services network to be defined in your cloud-config. See $BOSH_CLOUD_CONFIG for example."
-}
-
-set_deployment() {
-  bosh deployment "${BOSH_MANIFEST/#\~/$HOME}"
+  bosh upload-release
 }
 
 deploy() {
-  bosh deploy --no-redact
-}
-
-target_cf() {
-  cf api https://api.bosh-lite.com --skip-ssl-validation
-  cf auth admin admin
-}
-
-cf_required() {
-  fail "Cloud Foundry v238+ must be deployed on this BOSH director, http://docs.cloudfoundry.org/deploying/boshlite/index.html"
-}
-
-deploy_contains_multitenant_broker() {
-  bosh errands 2> /dev/null | grep broker-registrar > /dev/null
-  return $?
-}
-
-run_broker_registrar(){
-  bosh run errand broker-registrar
-}
-
-fail() {
-  echo "$1"
-  exit 1
+  local manifest="$1"
+  bosh deploy --no-redact "$manifest"
 }
 
 main

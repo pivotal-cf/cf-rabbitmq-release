@@ -2,7 +2,11 @@
 
 set -e
 
+[ -z "$DEBUG" ] || set -x
+
 main() {
+  export BOSH_MANIFEST
+  BOSH_MANIFEST=$(./scripts/interpolate-manifest-for-bosh-lite)
   write_keys_to_file
   install_dependencies
   run_system_tests_individually_to_isolate_state
