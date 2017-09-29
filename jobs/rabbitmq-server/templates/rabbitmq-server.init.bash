@@ -154,7 +154,9 @@ start_rabbitmq () {
                   return
                 fi
 
-                <%= 'configure_users' if spec.bootstrap %>
+                <% if spec.bootstrap %>
+                  configure_users
+                <% end %>
 
                 if ! /var/vcap/jobs/rabbitmq-server/bin/cluster-check "rabbitmq-server.init"
                 then
