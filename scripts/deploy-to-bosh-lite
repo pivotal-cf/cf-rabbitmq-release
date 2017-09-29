@@ -33,7 +33,6 @@ upload_stemcell() {
 
 
 download_blobs() {
-  bosh reset-release
   bosh sync-blobs
 }
 
