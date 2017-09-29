@@ -6,10 +6,6 @@ packages:
 - rabbitmq-common
 
 properties:
-  rabbitmq-haproxy.stats.username:
-    description: "Admin username to access HaProxy stats dashboard"
-  rabbitmq-haproxy.stats.password:
-    description: "Admin password to access HaProxy stats dashboard"
   rabbitmq-haproxy.do-not-configure-syslog:
     default: false
     description: "The haproxy_syslog.conf file will not be configured (can be used if you configure syslog-release)"

@@ -81,11 +81,6 @@ properties:
     cluster_partition_handling: autoheal
     use_native_clustering_formation: ((use-native-clustering-formation))
 
-  rabbitmq-haproxy:
-    stats:
-      username: ((haproxy-stats-username))
-      password: ((haproxy-stats-password))
-
 update:
   canaries: 1
   canary_watch_time: 30000-180000
