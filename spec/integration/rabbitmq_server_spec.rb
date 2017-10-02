@@ -15,8 +15,8 @@ RSpec.describe 'RabbitMQ server configuration' do
   let(:ssl_options) {  ssh_gateway.execute_on(rmq_host, "ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl eval 'application:get_env(rabbit, ssl_options).'", :root => true) }
 
   describe 'Defaults' do
-    it 'should be use autoheal partition handling policy' do
-      expect(environment_settings).to include('{cluster_partition_handling,autoheal}')
+    it 'should be use pause_minority partition handling policy' do
+      expect(environment_settings).to include('{cluster_partition_handling,pause_minority}')
     end
 
     it 'should have disk free limit set to "{mem_relative,0.4}" as default' do
