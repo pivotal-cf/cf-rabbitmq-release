@@ -39,7 +39,7 @@ do_interpolate() {
     --vars-file="$RELEASE_REPO/manifests/lite-vars-file.yml" \
     --ops-file="$RELEASE_REPO/manifests/change-vcap-password.yml" \
     --var=director-uuid="$bosh_uuid" \
-  "$RELEASE_REPO/manifests/cf-rabbitmq.yml" \
+  "$RELEASE_REPO/manifests/cf-rabbitmq-template.yml" \
   > "$new_manifest"
 
   echo "$new_manifest"
