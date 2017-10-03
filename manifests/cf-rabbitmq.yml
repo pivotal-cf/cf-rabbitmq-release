@@ -21,6 +21,31 @@ instance_groups:
   jobs:
   - name: rabbitmq-server
     release: cf-rabbitmq
+    properties:
+      rabbitmq-server:
+        plugins:
+        - rabbitmq_management
+        - rabbitmq_mqtt
+        - rabbitmq_stomp
+        ports:
+        - 5672
+        - 5671
+        - 1883
+        - 8883
+        - 61613
+        - 61614
+        - 15672
+        - 15674
+        administrators:
+          management:
+            username: ((rabbitmq-management-username))
+            password: ((rabbitmq-management-password))
+          broker:
+            username: ((rabbitmq-broker-username))
+            password: ((rabbitmq-broker-password))
+        cookie: "rabbit-cluster:aws"
+        cluster_partition_handling: autoheal
+        use_native_clustering_formation: ((use-native-clustering-formation))
   vm_type: r3.large
   stemcell: trusty
   persistent_disk_type: 10GB
@@ -54,31 +79,6 @@ instance_groups:
   azs:
   - eu-west-1a
   - eu-west-1b
-
-properties:
-  rabbitmq-server:
-    plugins:
-    - rabbitmq_management
-    - rabbitmq_mqtt
-    - rabbitmq_stomp
-    ports:
-    - 5672
-    - 5671
-    - 1883
-    - 8883
-    - 61613
-    - 61614
-    - 15672
-    - 15674
-    administrators:
-      management:
-        username: ((rabbitmq-management-username))
-        password: ((rabbitmq-management-password))
-      broker:
-        username: ((rabbitmq-broker-username))
-        password: ((rabbitmq-broker-password))
-    cookie: "rabbit-cluster:aws"
-    use_native_clustering_formation: ((use-native-clustering-formation))
 
 update:
   canaries: 1
