@@ -44,7 +44,7 @@ instance_groups:
             username: ((rabbitmq-broker-username))
             password: ((rabbitmq-broker-password))
         cookie: "rabbit-cluster:aws"
-        cluster_partition_handling: autoheal
+        cluster_partition_handling: ((cluster-partition-handling-strategy))
         use_native_clustering_formation: ((use-native-clustering-formation))
   vm_type: r3.large
   stemcell: trusty
