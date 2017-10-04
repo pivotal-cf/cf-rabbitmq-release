@@ -1,0 +1,50 @@
+---
+- type: replace
+  path: /releases/name=loggregator?
+  value:
+    name: loggregator
+    version: 90.1
+    url: https://bosh.io/d/github.com/cloudfoundry/loggregator?v=90.1
+    sha1: c6d8f4269cdca3b4a68f59cb85ffde816940d4ec
+
+- type: replace
+  path: /releases/name=consul?
+  value:
+    name: consul
+    version: 170
+    url: https://bosh.io/d/github.com/cloudfoundry-incubator/consul-release?v=170
+    sha1: 9a3d8138e785088f586bcedcc32fb82abdab120b
+
+- type: replace
+  path: /instance_groups/name=rmq/jobs/-
+  value: &metron_agent_config
+    name: metron_agent
+    release: loggregator
+    properties:
+      loggregator:
+        tls:
+          ca_cert: ((loggregator-ca-cert))
+          metron:
+            cert: ((loggregator-metron-cert))
+            key: ((loggregator-metron-key))
+
+- type: replace
+  path: /instance_groups/name=rmq/jobs/-
+  value: &consul_config
+    name: consul_agent
+    release: consul
+    consumes:
+      consul_common: {from: consul_common_link, deployment: cf}
+      consul_client: {from: consul_client_link, deployment: cf}
+      consul_server: nil
+      consul: nil
+    provides: {}
+
+- type: replace
+  path: /instance_groups/name=haproxy/jobs/-
+  value: *metron_agent_config
+
+- type: replace
+  path: /instance_groups/name=haproxy/jobs/-
+  value: *consul_config
+
