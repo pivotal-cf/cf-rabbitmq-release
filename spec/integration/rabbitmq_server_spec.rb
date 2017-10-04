@@ -16,16 +16,32 @@ RSpec.describe 'RabbitMQ server configuration' do
   let(:ssl_options) {  ssh_gateway.execute_on(rmq_host, "ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl eval 'application:get_env(rabbit, ssl_options).'", :root => true) }
 
   describe 'Defaults' do
-    it 'should be use pause_minority partition handling policy' do
-      expect(environment_settings).to include('{cluster_partition_handling,pause_minority}')
-    end
+    context 'set defaults' do
+      before(:all) do
+        modify_and_deploy_manifest do |manifest|
+          rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
+          rmq_properties.delete('cluster_partition_handling')
+          rmq_properties.delete('use_native_clustering_formation')
+          rmq_properties.delete('disk_alarm_threshold')
+          rmq_properties.delete('ssl')
+        end
+      end
 
-    it 'should have disk free limit set to "{mem_relative,0.4}" as default' do
-      expect(environment_settings).to include('{disk_free_limit,{mem_relative,0.4}}')
-    end
+      after(:all) do
+        bosh_director.deploy(environment.bosh_manifest.path)
+      end
 
-    it 'does not have SSL verification enabled and peer validation enabled' do
-      expect(ssl_options).to include('{ok,[]}')
+      it 'should be use pause_minority partition handling policy' do
+        expect(environment_settings).to include('{cluster_partition_handling,pause_minority}')
+      end
+
+      it 'should have disk free limit set to "{mem_relative,0.4}" as default' do
+        expect(environment_settings).to include('{disk_free_limit,{mem_relative,0.4}}')
+      end
+
+      it 'does not have SSL verification enabled and peer validation enabled' do
+        expect(ssl_options).to include('{ok,[]}')
+      end
     end
   end
 
