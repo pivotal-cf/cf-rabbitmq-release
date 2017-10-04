@@ -7,10 +7,8 @@
     sha1: 59f49b55b36223f458a8c437b0931d511ad748a7
 
 - type: replace
-  path: /instance_groups/name=haproxy/jobs/name=rabbitmq-haproxy/properties?/rabbitmq-haproxy
-  value:
-    rabbitmq-haproxy:
-      do-not-configure-syslog: true
+  path: /instance_groups/name=haproxy/jobs/name=rabbitmq-haproxy/properties?/rabbitmq-haproxy/do-not-configure-syslog
+  value: true
 
 - type: replace
   path: /instance_groups/name=haproxy/jobs/-
