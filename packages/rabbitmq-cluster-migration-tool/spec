@@ -1,6 +1,0 @@
----
-name: rabbitmq-cluster-migration-tool
-dependencies:
-- golang
-files:
-- github.com/pivotal-cf/rabbitmq-cluster-migration-tool/**/*.go

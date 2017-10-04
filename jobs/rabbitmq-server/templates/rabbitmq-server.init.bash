@@ -136,7 +136,6 @@ start_rabbitmq () {
     else
         RETVAL=0
         run_script "${JOB_DIR}/bin/setup.sh"
-        run_script "${JOB_DIR}/bin/plugins.sh"
         run_prepare_for_upgrade_when_first_deploy "/var/vcap/store/rabbitmq/mnesia"
 
         echo "Starting RabbitMQ"
@@ -155,7 +154,9 @@ start_rabbitmq () {
                   return
                 fi
 
-                configure_users
+                <% if spec.bootstrap %>
+                  configure_users
+                <% end %>
 
                 if ! /var/vcap/jobs/rabbitmq-server/bin/cluster-check "rabbitmq-server.init"
                 then

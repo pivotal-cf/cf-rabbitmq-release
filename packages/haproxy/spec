@@ -1,5 +1,7 @@
 ---
 name: haproxy
+metadata:
+  version: 1.6.13
 files:
 - haproxy/haproxy-1.6.13.tar.gz
 dependencies: []

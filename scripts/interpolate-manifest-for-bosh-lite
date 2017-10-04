@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+set -o pipefail
+
+: "${WORKSPACE:="$HOME/workspace"}"
+: "${RELEASE_REPO:="$WORKSPACE/cf-rabbitmq-release"}"
+
+[[ -z "${DEBUG:-""}" ]] || set -x
+
+export BOSH_ENVIRONMENT="${BOSH_ENVIRONMENT:-https://192.168.50.6:25555}"
+export BOSH_NON_INTERACTIVE="${BOSH_NON_INTERACTIVE:-false}"
+export BOSH_CLIENT="${BOSH_CLIENT:-admin}"
+export BOSH_CLIENT_SECRET="${BOSH_CLIENT_SECRET:-admin}"
+export BOSH_CA_CERT="${BOSH_CA_CERT:-"$(boshgo int ~/deployments/vbox/creds.yml --path /director_ssl/ca)"}"
+export BOSH_DEPLOYMENT="${BOSH_DEPLOYMENT:-cf-rabbitmq}"
+
+BOSH_MANIFEST="${1:-$(mktemp)}"
+
+main() {
+  local bosh_uuid
+  bosh_uuid=$(get_local_bosh_lite_uuid)
+
+  do_interpolate "$bosh_uuid"
+}
+
+get_local_bosh_lite_uuid() {
+  bosh \
+    environment --json | jq  -r .Tables[].Rows[].uuid
+}
+
+do_interpolate() {
+  local bosh_uuid=${1:?"Expexted bosh uuid"}
+  local new_manifest="$BOSH_MANIFEST"
+
+  boshgo interpolate \
+    --var-errs \
+    --vars-file="$RELEASE_REPO/manifests/lite-vars-file.yml" \
+    --ops-file="$RELEASE_REPO/manifests/change-vcap-password.yml" \
+    --var=director-uuid="$bosh_uuid" \
+  "$RELEASE_REPO/manifests/cf-rabbitmq-template.yml" \
+  > "$new_manifest"
+
+  echo "$new_manifest"
+}
+
+main "$@"

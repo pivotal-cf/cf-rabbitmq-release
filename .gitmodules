@@ -1,12 +1,6 @@
-[submodule "system_test/test_app"]
-	path = system_test/test_app
-	url = git://github.com/pivotal-cf/rabbit-labrat.git
 [submodule "system_test/rabbit-example-app"]
 	path = system_test/rabbit-example-app
 	url = git@github.com:pivotal-cf/rabbit-example-app.git
 [submodule "src/github.com/pivotal-cf/rabbitmq-upgrade-preparation"]
 	path = src/github.com/pivotal-cf/rabbitmq-upgrade-preparation
 	url = git@github.com:pivotal-cf/rabbitmq-upgrade-preparation
-[submodule "src/github.com/pivotal-cf/rabbitmq-cluster-migration-tool"]
-	path = src/github.com/pivotal-cf/rabbitmq-cluster-migration-tool
-	url = git@github.com:pivotal-cf/rabbitmq-cluster-migration-tool

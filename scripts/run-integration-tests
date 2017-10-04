@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+set -e
+
+export BOSH_MANIFEST=${BOSH_MANIFEST:-$("$HOME/workspace/cf-rabbitmq-release/scripts/interpolate-manifest-for-bosh-lite")}
+
+main() {
+  eval "$(ssh-agent)"
+  trap 'kill $SSH_AGENT_PID' EXIT
+
+  add_bosh_ssh_key
+  write_keys_to_file
+  install_dependencies
+  run_integration_tests_individually_to_isolate_state
+}
+
+add_bosh_ssh_key() {
+  if [ -n "$BOSH_SSH_KEY" ]
+  then
+    ssh-add "$BOSH_SSH_KEY"
+    return
+  fi
+
+  local tmp_key_file
+  tmp_key_file="$(mktemp)"
+  bosh int --path /jumpbox_ssh/private_key ~/deployments/vbox/creds.yml > "$tmp_key_file"
+  chmod 0600 "$tmp_key_file"
+  ssh-add "$tmp_key_file"
+  rm "$tmp_key_file"
+}
+
+write_keys_to_file() {
+  if [[ $BOSH_CERT ]]; then
+    echo -e "$BOSH_CERT" > cert.pem
+  fi
+}
+
+install_dependencies() {
+  bundle install
+}
+
+run_integration_tests_individually_to_isolate_state() {
+  spec_files=($(find spec/integration/ -type f))
+
+  for spec_file in "${spec_files[@]}"
+  do
+    bundle exec rspec "$spec_file" --fail-fast
+  done
+}
+
+main

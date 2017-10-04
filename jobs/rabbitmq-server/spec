@@ -5,7 +5,6 @@ packages:
 - erlang
 - rabbitmq-server
 - rabbitmq-common
-- rabbitmq-cluster-migration-tool
 - rabbitmq-upgrade-preparation
 
 properties:
@@ -28,14 +27,8 @@ properties:
     description: "Should RabbitMQ server reject connection if there is no peer cert"
     default: false
 
-  rabbitmq-server.use_native_clustering_formation:
-    description: "Should RabbitMQ server use the native clustering intead of clusterer plugin"
-    default: true
-
   rabbitmq-server.plugins:
     description: "List of RabbitMQ plugins"
-  rabbitmq-server.ips:
-    description: "List of IPs of all RabbitMQ nodes. Attention! This overrides the ips provided by the bosh links."
   rabbitmq-server.ports:
     description: "List of ports on which the RabbitMQ cluster accepts connections"
 
@@ -71,9 +64,6 @@ properties:
     description: "This property is for support cases only. Leave as false unless you are prepared to get your cluster in an unrecoverable state, including complete data loss."
     default: false
 
-  rabbitmq-server.restart_statsdb_cron_schedule:
-    description: "Schedule of when to restart the RabbitMQ StatsDB."
-
   rabbitmq-server.load_definitions:
     description: "Definitions to be loaded by RabbitMQ at startup"
 
@@ -83,10 +73,8 @@ templates:
   cluster-check.bash:                       bin/cluster-check
   delete_old_files.bash:                    lib/delete_old_files.bash
   drain.bash:                               bin/drain
-  ensure-rabbitmq-statsdb-restart-cron.erb: bin/ensure-rabbitmq-statsdb-restart-cron
   kill-with-fire.bash:                      bin/kill-with-fire
   node-check.bash.erb:                      bin/node-check
-  node_name_migration.sh:                   bin/node_name_migration.sh
   plugins.sh.erb:                           bin/plugins.sh
   post-deploy.bash:                         bin/post-deploy
   pre-start.bash:                           bin/pre-start

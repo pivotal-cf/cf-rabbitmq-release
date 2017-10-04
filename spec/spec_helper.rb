@@ -13,8 +13,8 @@ end
 def environment
   @environment ||= begin
                      options = {
-                       bosh_manifest_path: ENV.fetch('BOSH_MANIFEST') { File.expand_path('../../manifests/cf-rabbitmq.yml', __FILE__) },
-                       bosh_service_broker_job_name: 'cf-rabbitmq-broker'
+                       bosh_manifest_path: ENV.fetch('BOSH_MANIFEST'),
+                       bosh_service_broker_job_name: 'cf-rabbitmq'
                      }
 
                      options[:cloud_foundry_domain]   = ENV.fetch('CF_DOMAIN', 'bosh-lite.com')
@@ -22,12 +22,12 @@ def environment
                      options[:cloud_foundry_password] = ENV.fetch('CF_PASSWORD', 'admin')
                      options[:cloud_foundry_api_url]  = ENV.fetch('CF_API', 'api.bosh-lite.com')
 
-                     options[:bosh_target]          = ENV['BOSH_TARGET']
-                     options[:bosh_username]        = ENV['BOSH_USERNAME']
-                     options[:bosh_password]        = ENV['BOSH_PASSWORD']
-                     options[:ssh_gateway_host]     = URI.parse(ENV['BOSH_TARGET']).host if ENV.key?('BOSH_TARGET')
+                     options[:bosh_target]          = ENV.fetch('BOSH_TARGET', 'https://192.168.50.6:25555')
+                     options[:bosh_username]        = ENV.fetch( 'BOSH_USERNAME', 'admin' )
+                     options[:bosh_password]        = ENV.fetch( 'BOSH_PASSWORD', 'admin')
+                     options[:ssh_gateway_host]     = URI.parse(options[:bosh_target]).host
 
-                     options[:ssh_gateway_username] = ENV.fetch('BOSH_SSH_USERNAME', 'vcap') if ENV.key?('BOSH_TARGET')
+                     options[:ssh_gateway_username] = ENV.fetch('BOSH_SSH_USERNAME', 'jumpbox')
 
                      options.keep_if do |key, value|
                        not value.nil?
@@ -54,16 +54,16 @@ def ssh_gateway
   @ssh_gateway ||= environment.ssh_gateway
 end
 
-def test_app
-  @test_app ||= Prof::TestApp.new(path: File.expand_path('../../system_test/test_app', __FILE__))
+def manifest
+  @manifest ||= YAML.load_file(environment.bosh_manifest.path)
 end
 
 def modify_and_deploy_manifest
-  manifest = YAML.load_file(environment.bosh_manifest.path)
+  current_manifest = manifest
 
-  yield manifest
+  yield current_manifest
 
-  deploy_manifest(manifest)
+  deploy_manifest(current_manifest)
 end
 
 def deploy_manifest(manifest)

@@ -1,0 +1,141 @@
+- type: replace
+  path: /releases/name=syslog-migration?
+  value:
+    name: syslog-migration
+    version: 8 # changed by the pipeline
+    url: https://github.com/pivotal-cf/syslog-migration-release/releases/download/v8/syslog-migration-8.tgz
+    sha1: 59f49b55b36223f458a8c437b0931d511ad748a7
+
+- type: replace
+  path: /instance_groups/name=haproxy/jobs/name=rabbitmq-haproxy/properties?/rabbitmq-haproxy/do-not-configure-syslog
+  value: true
+
+- type: replace
+  path: /instance_groups/name=haproxy/jobs/-
+  value:
+    name: syslog_forwarder
+    release: syslog-migration
+    properties:
+      syslog:
+        forward_files: false
+        migration:
+          message_format: job_index_id
+        address: ((syslog-host))
+        port: ((syslog-port))
+        transport: tcp
+        custom_rule: |
+          local2.*                        -/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log
+
+          module(load="imfile")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-haproxy/haproxy.log"
+                Tag="rabbitmq_haproxy")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-haproxy/pre-start.stderr.log"
+                Tag="rabbitmq_haproxy_pre_start_stderr")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-haproxy/pre-start.stdout.log"
+                Tag="rabbitmq_haproxy_pre_start_stdout")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-haproxy/startup_stderr.log"
+                Tag="rabbitmq_haproxy_pre_startup_stderr")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-haproxy/startup_stdout.log"
+                Tag="rabbitmq_haproxy_pre_startup_stdout")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/route_registrar/route_registrar.log"
+                Tag="rabbitmq_route_registrar_stdout")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/route_registrar/route_registrar.err.log"
+                Tag="rabbitmq_route_registrar_stderr")
+
+- type: replace
+  path: /instance_groups/name=rmq/jobs/-
+  value:
+    name: syslog_forwarder
+    release: syslog-migration
+    properties:
+      syslog:
+        forward_files: false
+        migration:
+          message_format: job_index_id
+        address: ((syslog-host))
+        port: ((syslog-port))
+        transport: tcp
+        custom_rule: |
+          module(load="imfile")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-server/rabbit@*-sasl.log"
+                Tag="rabbitmq_server_sasl")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-server/rabbit@*.log"
+                Tag="rabbitmq_server")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-server/startup_stderr.log"
+                Tag="rabbitmq_server_startup_stderr")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-server/startup_stdout.log"
+                Tag="rabbitmq_server_startup_stdout")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-server/shutdown_stdout.log"
+                Tag="rabbitmq_server_shutdown_stdout")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-server/shutdown_stderr.log"
+                Tag="rabbitmq_server_shutdown_stderr")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-server/management-ui/access.log*"
+                Tag="rabbitmq_server_http_api_access")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-server/upgrade.log"
+                Tag="rabbitmq_server_upgrade")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-server/init.log"
+                Tag="rabbitmq_server_init")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-server/node-check.log"
+                Tag="rabbit_server_node_check")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-server/cluster-check.log"
+                Tag="rabbit_server_cluster_check")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-server/post-deploy.stderr.log"
+                Tag="rabbitmq_server_post_deploy_stderr")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-server/post-deploy.stdout.log"
+                Tag="rabbitmq_server_post_deploy_stdout")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-server/drain.log"
+                Tag="rabbitmq_server_drain")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-server/pre-start.log"
+                Tag="rabbitmq_server_pre_start")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/route_registrar/route_registrar.log"
+                Tag="rabbitmq_route_registrar_stdout")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/route_registrar/route_registrar.err.log"
+                Tag="rabbitmq_route_registrar_stderr")

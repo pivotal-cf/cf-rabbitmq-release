@@ -2,9 +2,8 @@
 
 set -e
 
-RMQ_VERSION="3.6.10"
-RMQ_VERSION_SEMVER="3.6.10"
-RMQ_CLUSTERER_VERSION="3.6.5"
+RMQ_VERSION="3.6.12"
+RMQ_VERSION_SEMVER="3.6.12"
 ERLANG_VERSION="19.3"
 
 echo "$RMQ_VERSION_SEMVER" > "$BOSH_INSTALL_TARGET/rmq_version"
@@ -24,5 +23,3 @@ do
 done
 
 cp -a "rabbitmq-server/rabbitmq-defaults" "$BOSH_INSTALL_TARGET/privbin/"
-
-cp -a "rabbitmq-server/rabbitmq_clusterer-${RMQ_CLUSTERER_VERSION}.ez" "${BOSH_INSTALL_TARGET}/plugins/"

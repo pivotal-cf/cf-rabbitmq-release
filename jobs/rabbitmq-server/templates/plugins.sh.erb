@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
 [ -z "$DEBUG" ] || set -x
 
@@ -9,22 +9,17 @@
   PATH=$RABBITMQ_HOME/bin:$ERLANG_HOME/bin:/var/vcap/packages/ruby/bin:$PATH
 
   # This is shorthand to disable all plugins
-  $RABBITMQ_PLUGINS set
+  $RABBITMQ_PLUGINS set --offline
 
-<% if ! p("rabbitmq-server.use_native_clustering_formation") %>
-  $RABBITMQ_PLUGINS enable rabbitmq_clusterer
-<% end %>
+  <% if_p("rabbitmq-server.plugins") do |plugins| %>
+    # This gets a list of plugins from RabbitMQ and removes any invalid ones from the plugins_list
+    plugin_list="$(comm -1 -2 <($RABBITMQ_PLUGINS list -m) <(echo -e "<%= plugins.sort.join("\\n") %>"))"
+    $RABBITMQ_PLUGINS --offline enable $plugin_list
 
-  PLUGINS="$($RABBITMQ_PLUGINS list -m)"
-
-  <% if_p("rabbitmq-server.plugins") do |plugins|
-    plugins.each do |plugin| %>
-      REMAINING_PLUGINS=$(echo "${PLUGINS}" | grep -v '^<%= plugin %>$')
-      if [ "${REMAINING_PLUGINS}" = "${PLUGINS}" ]; then
-        echo "Ignoring unrecognised plugin: <%= plugin %>"
-      else
-        $RABBITMQ_PLUGINS enable <%= plugin %>
-      fi
-    <% end %>
+    bad_plugin_list="$(comm -1 -3 <($RABBITMQ_PLUGINS list -m) <(echo -e "<%= plugins.sort.join("\\n") %>"))"
+    for bad_plugin in $bad_plugin_list; do
+      echo "Ignoring unrecognised plugin: ${bad_plugin}"
+    done
   <% end %>
+
 )

@@ -1,18 +1,16 @@
 ---
 deployment-name: cf-rabbitmq
 
-# Some of our current tests (based on Prof) do not work with stemcell versions
-# starting from 3363.12 because they randomise vcap passwords and our tests use
-# the default ones
-stemcell-version: 3262.2
+stemcell-version: 3421.24
 
-haproxy-instances: 2
+haproxy-instances: 1
+
 rabbitmq-management-username: admin
 rabbitmq-management-password: admin
+rabbitmq-management-domain: rabbitmq
+
 rabbitmq-broker-username: broker
 rabbitmq-broker-password: broker
-haproxy-stats-username: haproxy
-haproxy-stats-password: haproxy
 
 use-native-clustering-formation: false
 
@@ -20,3 +18,8 @@ cluster-partition-handling-strategy: autoheal
 
 syslog-host:
 syslog-port:
+
+cf-admin-password: admin
+cf-admin-username: admin
+
+bosh-hostname: bosh-lite.com

@@ -1,45 +1,30 @@
 require 'spec_helper'
 
-require 'prof/test_app'
-require 'prof/marketplace_service'
-require 'prof/service_instance'
-require 'prof/cloud_foundry'
-
-require 'net/http'
+require 'httparty'
 
 RSpec.describe "haproxy" do
 
-  let(:service_name) { environment.bosh_manifest.property('rabbitmq-broker.service.name') }
-
-  let(:service) do
-    Prof::MarketplaceService.new(
-      name: service_name,
-      plan: 'standard'
-    )
-  end
+  let(:management_uri) {
+    instance_group = manifest['instance_groups'].select{ |instance_group| instance_group['name'] == 'haproxy' }.first
+    route_registrar_job =  instance_group['jobs'].select{ |job| job['name'] == 'route_registrar'}.first
+    route_registrar_job['properties']['route_registrar']['routes'].first['uris'].first
+  }
 
   [0, 1].each do |job_index|
-    context "when the job rmq/#{job_index} is down", :pushes_cf_app do
+    context "when the job rmq/#{job_index} is down" do
       before(:all) do
-        `bosh -n stop rmq #{job_index} --force`
+        bosh_director.stop('rmq', job_index)
       end
 
       after(:all) do
-        `bosh -n start rmq #{job_index} --force`
+        bosh_director.start('rmq', job_index)
       end
 
-      it "is still possible to read and write to a queue" do
-        cf.push_app_and_bind_with_service(test_app, service) do |app, _|
-          uri = URI("#{app.url}/services/rabbitmq/protocols/amqp091")
+      it 'I can still access the managment UI' do
+        res = HTTParty.get("http://#{management_uri}")
 
-          http = Net::HTTP.new(uri.host, uri.port)
-          http.use_ssl = true
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-          res = http.request_get(uri.request_uri)
-
-          expect(res.code).to eql("200")
-          expect(res.body).to include("amq.gen")
-        end
+        expect(res.code).to eql(200)
+        expect(res.body).to include('RabbitMQ Management')
       end
     end
   end

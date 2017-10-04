@@ -3,10 +3,13 @@
 run_basht_tests() {
   which basht 1>/dev/null 2>&1 || go get github.com/progrium/basht
 
+  local ret=0
   for test in spec/bash/*_test.bash; do
     echo "Test $test"
-    basht "$test"
+    basht "$test" || ret=1
   done
+
+  return $ret
 }
 
 run_basht_tests

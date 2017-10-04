@@ -1,0 +1,88 @@
+---
+name: ((deployment-name))
+director_uuid: ((director-uuid))
+
+releases:
+- name: cf-rabbitmq
+  version: latest
+- name: routing
+  version: 0.152.0
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.152.0
+  sha1: ea67ad087880fc0e492b6cce27fa2a25f977b691
+
+stemcells:
+- alias: trusty
+  os: ubuntu-trusty
+  version: ((stemcell-version))
+
+instance_groups:
+- name: rmq
+  instances: 3
+  jobs:
+  - name: rabbitmq-server
+    release: cf-rabbitmq
+    properties:
+      rabbitmq-server:
+        plugins:
+        - rabbitmq_management
+        - rabbitmq_mqtt
+        - rabbitmq_stomp
+        ports:
+        - 5672
+        - 5671
+        - 1883
+        - 8883
+        - 61613
+        - 61614
+        - 15672
+        - 15674
+        administrators:
+          management:
+            username: ((rabbitmq-management-username))
+            password: ((rabbitmq-management-password))
+          broker:
+            username: ((rabbitmq-broker-username))
+            password: ((rabbitmq-broker-password))
+        cookie: "rabbit-cluster:aws"
+        cluster_partition_handling: ((cluster-partition-handling-strategy))
+        use_native_clustering_formation: ((use-native-clustering-formation))
+  vm_type: r3.large
+  stemcell: trusty
+  persistent_disk_type: 10GB
+  networks:
+  - name: services
+  azs:
+  - eu-west-1a
+  - eu-west-1b
+
+- name: haproxy
+  instances: ((haproxy-instances))
+  jobs:
+  - name: rabbitmq-haproxy
+    release: cf-rabbitmq
+  - name: route_registrar
+    release: routing
+    consumes:
+      nats: {from: nats, deployment: cf}
+    properties:
+      route_registrar:
+        routes:
+        - name: ((rabbitmq-management-domain))
+          port: 15672
+          registration_interval: 20s
+          uris:
+          - ((rabbitmq-management-domain)).((bosh-hostname))
+  vm_type: m3.medium
+  stemcell: trusty
+  networks:
+  - name: services
+  azs:
+  - eu-west-1a
+  - eu-west-1b
+
+update:
+  canaries: 1
+  canary_watch_time: 30000-180000
+  update_watch_time: 30000-180000
+  max_in_flight: 1
+  serial: false
