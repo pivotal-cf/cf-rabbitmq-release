@@ -46,14 +46,14 @@ instance_groups:
         cookie: "rabbit-cluster:aws"
         cluster_partition_handling: ((cluster-partition-handling-strategy))
         use_native_clustering_formation: ((use-native-clustering-formation))
-  vm_type: r3.large
+  vm_type: n1-highmem-4
   stemcell: trusty
   persistent_disk_type: 10GB
   networks:
-  - name: services
+  - name: default
   azs:
-  - eu-west-1a
-  - eu-west-1b
+  - z1
+  - z2
 
 - name: haproxy
   instances: ((haproxy-instances))
@@ -72,13 +72,13 @@ instance_groups:
           registration_interval: 20s
           uris:
           - ((rabbitmq-management-domain)).((bosh-hostname))
-  vm_type: m3.medium
+  vm_type: n1-standard-1
   stemcell: trusty
   networks:
-  - name: services
+  - name: default
   azs:
-  - eu-west-1a
-  - eu-west-1b
+  - z1
+  - z2
 
 update:
   canaries: 1
