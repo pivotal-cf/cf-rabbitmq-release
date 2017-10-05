@@ -4,21 +4,23 @@ require 'json'
 require 'ostruct'
 require 'tempfile'
 
-require 'hula'
-require 'hula/bosh_manifest'
+require 'httparty'
 
 RSpec.describe 'RabbitMQ server configuration' do
-  let(:rmq_host) { bosh_director.ips_for_job('rmq', environment.bosh_manifest.deployment_name)[0] }
-  let(:rmq_admin_broker_username) { get_properties(manifest(), 'rmq', 'rabbitmq-server')['rabbitmq-server']['administrators']['broker']['username'] }
-  let(:rmq_admin_broker_password) { get_properties(manifest(), 'rmq', 'rabbitmq-server')['rabbitmq-server']['administrators']['broker']['password'] }
+  let(:rmq_host) { 'rmq/0' }
 
-  let(:environment_settings) {  ssh_gateway.execute_on(rmq_host, 'ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl environment', :root => true) }
-  let(:ssl_options) {  ssh_gateway.execute_on(rmq_host, "ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl eval 'application:get_env(rabbit, ssl_options).'", :root => true) }
+  let(:environment_settings) do
+    stdout(bosh.ssh(rmq_host, 'sudo ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl environment'))
+  end
+
+  let(:ssl_options) do
+    stdout(bosh.ssh(rmq_host, "sudo ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl eval 'application:get_env(rabbit, ssl_options).'"))
+  end
 
   describe 'Defaults' do
     context 'set defaults' do
       before(:all) do
-        modify_and_deploy_manifest do |manifest|
+        bosh.redeploy do |manifest|
           rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
           rmq_properties.delete('cluster_partition_handling')
           rmq_properties.delete('use_native_clustering_formation')
@@ -28,7 +30,7 @@ RSpec.describe 'RabbitMQ server configuration' do
       end
 
       after(:all) do
-        bosh_director.deploy(environment.bosh_manifest.path)
+        bosh.deploy(test_manifest)
       end
 
       it 'should be use pause_minority partition handling policy' do
@@ -47,18 +49,18 @@ RSpec.describe 'RabbitMQ server configuration' do
 
   context 'when properties are set' do
     before(:all) do
-      @ha_host = bosh_director.ips_for_job('haproxy', environment.bosh_manifest.deployment_name)[0]
-      @old_username = get_properties(manifest(), 'rmq', 'rabbitmq-server')['rabbitmq-server']['administrators']['management']['username']
-      @old_password = get_properties(manifest(), 'rmq', 'rabbitmq-server')['rabbitmq-server']['administrators']['management']['password']
+      manifest = bosh.manifest
+      @old_username = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']['administrators']['management']['username']
+      @old_password = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']['administrators']['management']['password']
 
       @new_username = 'newusername'
       @new_password = 'newpassword'
 
-      modify_and_deploy_manifest do |manifest|
+      bosh.redeploy do |manifest|
         rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
         rmq_properties['disk_alarm_threshold'] = '20000000'
         rmq_properties['cluster_partition_handling'] = 'pause_minority'
-        rmq_properties['fd_limit'] = 350000
+        rmq_properties['fd_limit'] = 350_000
 
         management_credentials = rmq_properties['administrators']['management']
         management_credentials['username'] = @new_username
@@ -67,7 +69,7 @@ RSpec.describe 'RabbitMQ server configuration' do
     end
 
     after(:all) do
-      bosh_director.deploy(environment.bosh_manifest.path)
+      bosh.deploy(test_manifest)
     end
 
     it 'should have hard disk alarm threshold of 20 MB' do
@@ -79,21 +81,14 @@ RSpec.describe 'RabbitMQ server configuration' do
     end
 
     it 'it can only access the management HTTP API with the new credentials' do
-      ssh_gateway.with_port_forwarded_to(@ha_host, 15_672) do |port|
+      manifest = bosh.manifest
+      rabbitmq_api = get_properties(manifest, 'haproxy', 'route_registrar')['route_registrar']['routes'].first['uris'].first
 
-        uri = URI("http://localhost:#{port}/api/whoami")
-        code = response_code(uri, {
-          :username => @new_username,
-          :password => @new_password
-        })
-        expect(code).to eq '200'
+      response = HTTParty.get("http://#{rabbitmq_api}/api/whoami", {:basic_auth => {:username => @new_username, :password => @new_password}})
+      expect(response.code).to eq 200
 
-        code = response_code(uri, {
-          :username => @old_username,
-          :password => @old_password
-        })
-        expect(code).to eq '401'
-      end
+      response = HTTParty.get("http://#{rabbitmq_api}/api/whoami", {:basic_auth => {:username => @old_username, :password => @old_password}})
+      expect(response.code).to eq 401
     end
   end
 
@@ -104,9 +99,7 @@ RSpec.describe 'RabbitMQ server configuration' do
         server_cert = File.read(File.join(__dir__, '../..', '/spec/assets/server_certificate.pem'))
         ca_cert = File.read(File.join(__dir__, '../..', '/spec/assets/ca_certificate.pem'))
 
-        modify_and_deploy_manifest do |manifest|
-          @current_manifest = manifest
-
+        bosh.redeploy do |manifest|
           rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
           rmq_properties['ssl'] = Hash.new
           rmq_properties['ssl']['key'] = server_key
@@ -117,29 +110,7 @@ RSpec.describe 'RabbitMQ server configuration' do
       end
 
       after(:all) do
-        bosh_director.deploy(environment.bosh_manifest.path)
-      end
-
-      context 'when verification and validation is enabled' do
-        before(:all) do
-          rmq_ssl_properties = get_properties(@current_manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']['ssl']
-          rmq_ssl_properties['verify'] = true
-          rmq_ssl_properties['verification_depth'] = 10
-          rmq_ssl_properties['fail_if_no_peer_cert'] = true
-          deploy_manifest(@current_manifest)
-        end
-
-        it 'has the right SSL verification options' do
-          expect(ssl_options).to include('{verify,verify_peer}')
-        end
-
-        it 'has the right SSL verification depth option' do
-          expect(ssl_options).to include('{depth,10}')
-        end
-
-        it 'has the right SSL peer options' do
-          expect(ssl_options).to include('{fail_if_no_peer_cert,true}')
-        end
+        bosh.deploy(test_manifest)
       end
 
       it 'does not have SSL verification enabled' do
@@ -156,53 +127,93 @@ RSpec.describe 'RabbitMQ server configuration' do
 
       describe "TLS" do
         it 'should have TLS 1.0 enabled' do
-          expect(tls_version_enabled?(rmq_host, 'tls1')).to be_truthy
+          output = bosh.ssh(rmq_host, connect_using('tls1'))
+
+          expect(stdout(output)).to include('BEGIN CERTIFICATE')
+          expect(stdout(output)).to include('END CERTIFICATE')
         end
 
         it 'should have TLS 1.1 enabled' do
-          expect(tls_version_enabled?(rmq_host, 'tls1_1')).to be_truthy
+          output = bosh.ssh(rmq_host, connect_using('tls1_1'))
+
+          expect(stdout(output)).to include('BEGIN CERTIFICATE')
+          expect(stdout(output)).to include('END CERTIFICATE')
         end
 
         it 'should have TLS 1.2 enabled' do
-          expect(tls_version_enabled?(rmq_host, 'tls1_2')).to be_truthy
+          output = bosh.ssh(rmq_host, connect_using('tls1_2'))
+
+          expect(stdout(output)).to include('BEGIN CERTIFICATE')
+          expect(stdout(output)).to include('END CERTIFICATE')
+        end
+
+        def connect_using(tls_version)
+          "openssl s_client -#{tls_version} -connect 127.0.0.1:5671"
+        end
+      end
+
+      context 'when verification and validation is enabled' do
+        before(:all) do
+          bosh.redeploy do |manifest|
+            rmq_ssl_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']['ssl']
+            rmq_ssl_properties['verify'] = true
+            rmq_ssl_properties['verification_depth'] = 10
+            rmq_ssl_properties['fail_if_no_peer_cert'] = true
+          end
+        end
+
+        it 'has the right SSL verification options' do
+          expect(ssl_options).to include('{verify,verify_peer}')
+        end
+
+        it 'has the right SSL verification depth option' do
+          expect(ssl_options).to include('{depth,10}')
+        end
+
+        it 'has the right SSL peer options' do
+          expect(ssl_options).to include('{fail_if_no_peer_cert,true}')
         end
       end
     end
   end
 
   describe 'load definitions' do
-    vhost = 'foobar'
+    let(:vhost) { 'foobar' }
 
     before(:each) do
-      modify_and_deploy_manifest do |manifest|
+      bosh.redeploy do |manifest|
         rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
         rmq_properties['load_definitions'] = Hash.new
         rmq_properties['load_definitions']['vhosts'] = [{'name'=> vhost}]
       end
     end
 
+    after(:each) do
+      bosh.deploy(test_manifest)
+    end
+
     it 'creates a vhost when vhost definition is provided' do
-      output = ssh_gateway.execute_on(rmq_host, "curl -u #{rmq_admin_broker_username}:#{rmq_admin_broker_password} http://#{rmq_host}:15672/api/vhosts/#{vhost} -s")
-      response = JSON.parse(output)
+      response = get("#{rabbitmq_api_url}/vhosts/#{vhost}", 'admin', 'admin')
+
       expect(response['name']).to eq(vhost)
     end
   end
 
   describe 'when changing the cookie' do
     before(:each) do
-      modify_and_deploy_manifest do |manifest|
+      bosh.redeploy do |manifest|
         rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
         rmq_properties['cookie'] = 'change-the-cookie'
       end
     end
 
     after(:each) do
-      bosh_director.deploy(environment.bosh_manifest.path)
+      bosh.deploy(test_manifest)
     end
 
     it 'all the nodes come back' do
-      output = ssh_gateway.execute_on(rmq_host, "curl -u #{rmq_admin_broker_username}:#{rmq_admin_broker_password} http://#{rmq_host}:15672/api/nodes -s")
-      nodes = JSON.parse(output)
+      nodes = get("#{rabbitmq_api_url}/nodes", 'admin', 'admin')
+
       expect(nodes.size).to eq(3)
       nodes.each do |node|
         expect(node['running']).to eq(true)
@@ -215,22 +226,19 @@ RSpec.describe 'RabbitMQ server configuration' do
   end
 end
 
-def response_code(uri, credentials)
-  req = Net::HTTP::Get.new(uri)
-  req.basic_auth credentials[:username], credentials[:password]
-
-  res = Net::HTTP.start(uri.hostname, uri.port) do |http|
-    http.request(req)
-  end
-
-  return res.code
+def get(endpoint, username, password)
+  response = HTTParty.get(endpoint, {:basic_auth => {:username => username, :password => password}})
+  JSON.parse(response.body)
 end
 
-def tls_version_enabled?(host, version)
-  cmd = "openssl s_client -#{version} -connect 127.0.0.1:5671"
+def rabbitmq_api_url
+  manifest = bosh.manifest
+  rabbitmq_api = get_properties(manifest, 'haproxy', 'route_registrar')['route_registrar']['routes'].first['uris'].first
+  "http://#{rabbitmq_api}/api"
+end
 
-  output = ssh_gateway.execute_on(host, cmd)
-  (output =~ /BEGIN CERTIFICATE/ && output =~ /END CERTIFICATE/) != nil
+def stdout(output)
+  output['Tables'].first['Rows'].first['stdout']
 end
 
 def get_properties(manifest, instance_group_name, job_name)
