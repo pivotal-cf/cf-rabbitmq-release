@@ -8,10 +8,19 @@ Dir[File.expand_path('support/**/*.rb', __dir__)].each do |file|
   require file
 end
 
+BOSH_CLI = ENV.fetch("BOSH_CLI", 'bosh')
+
 class Bosh2
+  def initialize(bosh_cli = 'bosh')
+    @bosh_cli = bosh_cli
+
+    version = `#{@bosh_cli} --version`
+    raise 'BOSH CLI >= v2 required' unless version.start_with?('version 2.')
+  end
+
   def ssh(instance, command)
     command_escaped = Shellwords.escape(command)
-    output = `boshgo -n ssh #{instance} -r --json -c #{command_escaped}`
+    output = `#{@bosh_cli} -n ssh #{instance} -r --json -c #{command_escaped}`
     JSON.parse(output)
   end
 
@@ -19,7 +28,7 @@ class Bosh2
     Tempfile.open('manifest.yml') do |manifest_file|
       manifest_file.write(manifest.to_yaml)
       manifest_file.flush
-      `boshgo -n deploy #{manifest_file.path}`
+      `#{@bosh_cli} -n deploy #{manifest_file.path}`
     end
   end
 
@@ -30,21 +39,21 @@ class Bosh2
   end
 
   def manifest
-    manifest = `boshgo -n manifest`
+    manifest = `#{@bosh_cli} -n manifest`
     YAML.load(manifest)
   end
 
   def start(instance)
-    `boshgo -n start #{instance}`
+    `#{@bosh_cli} -n start #{instance}`
   end
 
   def stop(instance)
-    `boshgo -n stop #{instance}`
+    `#{@bosh_cli} -n stop #{instance}`
   end
 end
 
 def bosh
-  @bosh ||= Bosh2.new
+  @bosh ||= Bosh2.new(BOSH_CLI)
 end
 
 def test_manifest
