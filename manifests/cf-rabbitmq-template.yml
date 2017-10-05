@@ -48,7 +48,7 @@ instance_groups:
         use_native_clustering_formation: ((use-native-clustering-formation))
   vm_type: n1-highmem-4
   stemcell: trusty
-  persistent_disk_type: 10GB
+  persistent_disk_type: 100GB
   networks:
   - name: default
   azs:
