@@ -1,6 +1,3 @@
-[submodule "system_test/rabbit-example-app"]
-	path = system_test/rabbit-example-app
-	url = git@github.com:pivotal-cf/rabbit-example-app.git
 [submodule "src/github.com/pivotal-cf/rabbitmq-upgrade-preparation"]
 	path = src/github.com/pivotal-cf/rabbitmq-upgrade-preparation
 	url = git@github.com:pivotal-cf/rabbitmq-upgrade-preparation
