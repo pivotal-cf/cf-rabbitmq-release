@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
-set -e -x
+set -e
 
-bundle exec rake spec:rspec_unit
+export BOSH_MANIFEST=${BOSH_MANIFEST:-$(./scripts/generate-manifest)}
+
+bundle install
+bundle exec rake spec
