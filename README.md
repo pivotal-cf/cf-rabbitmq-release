@@ -55,13 +55,8 @@ tests closer to the code.
 
 To execute embedded release tests you need to co-locate the tests within the
 release being tested and deploy. The deployment should fail if the tests fail.
+The tests we use can be found in the [test release repo](https://github.com/pivotal-cf/cf-rabbitmq-test-release).
 
-```sh
-bosh interpolate \
-  --ops-file=manifests/add-rmq-server-tests.yml \
-  --vars-file=manifests/lite-vars-file.yml \
-  manifests/cf-rabbitmq-template.yml > manifests/cf-rabbitmq.yml
-```
 
 ### Integration Tests
 Integration tests require this release to be deployed into a BOSH director (see [Deploying section above](#deploying)).
