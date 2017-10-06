@@ -232,28 +232,8 @@ def get_admin_creds
   get_properties(bosh.manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']['administrators']['management']
 end
 
-def get(endpoint, username, password)
-  response = HTTParty.get(endpoint, {:basic_auth => {:username => username, :password => password}})
-  JSON.parse(response.body)
-end
-
-def rabbitmq_api_url
-  manifest = bosh.manifest
-  rabbitmq_api = get_properties(manifest, 'haproxy', 'route_registrar')['route_registrar']['routes'].first['uris'].first
-  "http://#{rabbitmq_api}/api"
-end
 
 def stdout(output)
   output['Tables'].first['Rows'].first['stdout']
 end
 
-def get_properties(manifest, instance_group_name, job_name)
-  instance_group = manifest['instance_groups'].select{ |instance_group| instance_group['name'] == instance_group_name }.first
-  raise "No instance group named #{instance_group_name} found in manifest:\n#{manifest}" if instance_group.nil?
-
-  job = instance_group['jobs'].select{ |job| job['name'] == job_name }.first
-  raise "No job named #{job_name} found in instance group named #{instance_group_name} in manifest:\n#{manifest}" if job.nil?
-
-  raise "No properties found for job #{job_name} in instance group #{instance_group_name} in manifest\n#{manifest}" if not job.key?('properties')
-  job['properties']
-end
