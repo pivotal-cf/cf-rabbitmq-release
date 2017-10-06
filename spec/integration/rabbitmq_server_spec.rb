@@ -193,7 +193,8 @@ RSpec.describe 'RabbitMQ server configuration' do
     end
 
     it 'creates a vhost when vhost definition is provided' do
-      response = get("#{rabbitmq_api_url}/vhosts/#{vhost}", 'admin', 'admin')
+      creds = get_admin_creds
+      response = get("#{rabbitmq_api_url}/vhosts/#{vhost}", creds['username'], creds['password'])
 
       expect(response['name']).to eq(vhost)
     end
@@ -212,7 +213,8 @@ RSpec.describe 'RabbitMQ server configuration' do
     end
 
     it 'all the nodes come back' do
-      nodes = get("#{rabbitmq_api_url}/nodes", 'admin', 'admin')
+      creds = get_admin_creds
+      nodes = get("#{rabbitmq_api_url}/nodes", creds['username'], creds['password'])
 
       expect(nodes.size).to eq(3)
       nodes.each do |node|
@@ -224,6 +226,10 @@ RSpec.describe 'RabbitMQ server configuration' do
       end
     end
   end
+end
+
+def get_admin_creds
+  get_properties(bosh.manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']['administrators']['management']
 end
 
 def get(endpoint, username, password)
