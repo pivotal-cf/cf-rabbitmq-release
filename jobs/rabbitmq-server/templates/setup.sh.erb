@@ -12,11 +12,7 @@ if_p("rabbitmq-server.ssl.key") do |key|
 end
 
 # TLS versions with a '.' character should include single quotes
-supported_tls_versions = %w{'tlsv1.2' 'tlsv1.1'}
-security_options = p('rabbitmq-server.ssl.security_options')
-if security_options.include?('enable_tls1_0')
-  supported_tls_versions << "tlsv1"
-end
+supported_tls_versions = p('rabbitmq-server.ssl.versions')
 ssl_verification = 'verify_none'
 if p("rabbitmq-server.ssl.verify")
   ssl_verification = 'verify_peer'
@@ -109,7 +105,7 @@ disk_alarm_threshold = p("rabbitmq-server.disk_alarm_threshold")
 <% if ssl %>
   # concatenate options encoded in double quotes, see the concatenation comment above.
   # {versions,['tlsv1.2','tlsv1.1',tlsv1]} disables SSLv3 to mitigate the POODLE attack.
-  SSL_OPTIONS=" -rabbit ssl_options [{cacertfile,\\\"${SCRIPT_DIR}/../etc/cacert.pem\\\"},{certfile,\\\"${SCRIPT_DIR}/../etc/cert.pem\\\"},{keyfile,\\\"${SCRIPT_DIR}/../etc/key.pem\\\"},{verify,<%= "#{ssl_verification}" %>},{depth,<%= "#{ssl_verification_depth}" %>},{fail_if_no_peer_cert,<%= "#{fail_if_no_peer_cert}" %>},{versions,<%= "[#{supported_tls_versions.join(',')}]" %>}]"
+  SSL_OPTIONS=" -rabbit ssl_options [{cacertfile,\\\"${SCRIPT_DIR}/../etc/cacert.pem\\\"},{certfile,\\\"${SCRIPT_DIR}/../etc/cert.pem\\\"},{keyfile,\\\"${SCRIPT_DIR}/../etc/key.pem\\\"},{verify,<%= "#{ssl_verification}" %>},{depth,<%= "#{ssl_verification_depth}" %>},{fail_if_no_peer_cert,<%= "#{fail_if_no_peer_cert}" %>},{versions,<%= "['#{supported_tls_versions.join('\',\'')}']" %>}]"
   SERVER_START_ARGS="${SERVER_START_ARGS}\"${SSL_OPTIONS}\""
 <% end %>
 

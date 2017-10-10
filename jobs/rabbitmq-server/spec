@@ -14,9 +14,9 @@ properties:
     description: "RabbitMQ server certificate"
   rabbitmq-server.ssl.key:
     description: "RabbitMQ server private key"
-  rabbitmq-server.ssl.security_options:
-    description: "SSL security options (currently only 'enable_tls1_0')"
-    default: []
+  rabbitmq-server.ssl.versions:
+    description: "TLS protocol versions to support"
+    default: ['tlsv1.2','tlsv1.1']
   rabbitmq-server.ssl.verify:
     description: "Peer verification method used by RabbitMQ server"
     default: false

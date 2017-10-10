@@ -105,7 +105,7 @@ RSpec.describe 'RabbitMQ server configuration' do
           rmq_properties['ssl']['key'] = server_key
           rmq_properties['ssl']['cert'] = server_cert
           rmq_properties['ssl']['cacert'] = ca_cert
-          rmq_properties['ssl']['security_options'] = ['enable_tls1_0']
+          rmq_properties['ssl']['versions'] = ['tlsv1.2','tlsv1.1', 'tlsv1']
         end
       end
 
