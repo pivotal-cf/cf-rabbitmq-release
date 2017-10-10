@@ -7,7 +7,7 @@ haproxy-instances: 1
 
 rabbitmq-management-username: admin
 rabbitmq-management-password: admin
-rabbitmq-management-domain: rabbitmq
+rabbitmq-management-hostname: rabbitmq
 
 rabbitmq-broker-username: broker
 rabbitmq-broker-password: broker
@@ -22,4 +22,4 @@ syslog-port:
 cf-admin-password: admin
 cf-admin-username: admin
 
-bosh-hostname: bosh-lite.com
+bosh-domain: bosh-lite.com

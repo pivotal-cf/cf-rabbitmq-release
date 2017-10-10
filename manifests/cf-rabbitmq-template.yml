@@ -67,11 +67,11 @@ instance_groups:
     properties:
       route_registrar:
         routes:
-        - name: ((rabbitmq-management-domain))
+        - name: ((rabbitmq-management-hostname))
           port: 15672
           registration_interval: 20s
           uris:
-          - ((rabbitmq-management-domain)).((bosh-hostname))
+          - ((rabbitmq-management-hostname)).((bosh-domain))
   vm_type: n1-standard-1
   stemcell: trusty
   networks:
