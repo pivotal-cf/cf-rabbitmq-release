@@ -45,7 +45,6 @@ instance_groups:
             password: ((rabbitmq-broker-password))
         cookie: "rabbit-cluster:aws"
         cluster_partition_handling: ((cluster-partition-handling-strategy))
-        use_native_clustering_formation: ((use-native-clustering-formation))
   vm_type: n1-highmem-4
   stemcell: trusty
   persistent_disk_type: 100GB
