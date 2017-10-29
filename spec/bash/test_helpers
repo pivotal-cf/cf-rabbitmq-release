@@ -40,6 +40,21 @@ expect_to_contain() {
   fi
 }
 
+expect_file_to_exist() {
+  local filepath="$1"
+
+  stat $filepath &> /dev/null
+  expect_to_equal $? 0
+}
+
+expect_file_not_to_exist() {
+  local filepath="$1"
+
+  stat $filepath &> /dev/null
+  expect_to_equal $? 1
+}
+
+
 expect_to_not_contain() {
   local haystack="$1"
   local needle="$2"
