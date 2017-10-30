@@ -79,7 +79,7 @@ templates:
   post-deploy.bash:                         bin/post-deploy
   pre-start.bash:                           bin/pre-start
   rabbitmq-server.init.bash:                bin/rabbitmq-server.init
-  setup.bash:                               bin/setup.sh
+  setup.sh.erb:                             bin/setup.sh
   cacert.pem.erb:                           etc/cacert.pem
   cert.pem.erb:                             etc/cert.pem
   config.erb:                               etc/config
@@ -89,7 +89,6 @@ templates:
   users.erb:                                etc/users
   prepare-for-upgrade.bash:                 lib/prepare-for-upgrade.bash
   rabbitmq-config-vars.bash.erb:            lib/rabbitmq-config-vars.bash
-  setup-vars.bash.erb:                      lib/setup-vars.bash
 
 provides:
   - name: rabbitmq-server
