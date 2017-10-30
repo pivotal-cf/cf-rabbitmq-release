@@ -34,6 +34,9 @@ T_setup_environment() {
     ERLANG_COOKIE="my-awesome-cookie"
     ERLANG_COOKIE_OWNER="${USER}"
 
+    UPGRADE_PREPARATION_NODES_FILE="$(mktemp)"
+    trap "rm -rf ${UPGRADE_PREPARATION_NODES_FILE}" EXIT
+
     main
 
     env="$(<$DIR/env)"
@@ -169,6 +172,33 @@ T_create_config_file() {
   ) || $T_fail "Failed to create conf_env file"
 }
 
+T_creates_a_file_with_all_the_nodes_to_be_used_during_upgrades() {
+  (
+    local nodes_file
+    nodes_file="$(mktemp)"
+    trap 'rm -rf ${nodes_file}' EXIT
+
+    prepare_for_upgrade "node1,node2" "$nodes_file"
+
+    expect_to_equal "$(<$nodes_file)" "$(echo -e node1\\nnode2)"
+
+  ) || $T_fail "Failed to create file with nodes"
+}
+
+ T_if_a_file_with_all_the_nodes_exist_should_ignore_its_content() {
+  (
+    local nodes_file
+    nodes_file="$(mktemp)"
+    trap 'rm -rf ${nodes_file}' EXIT
+    echo "some existing nodes from previous deployments" > $nodes_file
+
+    prepare_for_upgrade "node1,node2" "$nodes_file"
+
+    expect_to_equal "$(<$nodes_file)" "$(echo -e node1\\nnode2)"
+
+  ) || $T_fail "Failed to check nodes file"
+}
+
 T_create_erlang_cookie() {
   (
     #before we need to create vcap user
@@ -183,5 +213,6 @@ T_create_erlang_cookie() {
     create_erlang_cookie "$dir" "$erlang_cookie" "vcap"
     expect_file_to_exist "${dir}/.erlang.cookie"
     expect_to_equal "$(<$dir/.erlang.cookie)" "$erlang_cookie"
-  )
+
+  ) || $T_fail "Failed to create erlang cookie"
 }

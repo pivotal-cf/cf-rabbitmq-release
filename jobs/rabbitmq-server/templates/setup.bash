@@ -12,6 +12,7 @@ RABBITMQ_MNESIA_DIR="${RABBITMQ_MNESIA_BASE}/db"
 RABBITMQ_PLUGINS_EXPAND_DIR="$RABBITMQ_MNESIA_BASE/db-plugins-expand"
 RABBITMQ_BOOT_MODULE="RABBITMQ_BOOT_MODULE=rabbit"
 RMQ_VERSION="3.6.12"
+UPGRADE_PREPARATION_NODES_FILE="/var/vcap/data/upgrade_preparation_nodes"
 
 main(){
   local script_dir cluster_args load_definitions server_start_args
@@ -29,7 +30,7 @@ main(){
 
   create_config_file "${CONF_ENV_FILE}" "${SELF_NODE}" "${DIR}" "${script_dir}" "${server_start_args}"
 
-  prepare_for_upgrade "${RABBITMQ_NODES_STRING}"
+  prepare_for_upgrade "${RABBITMQ_NODES_STRING}" "${UPGRADE_PREPARATION_NODES_FILE}"
 
   create_erlang_cookie "${DIR}" "${ERLANG_COOKIE}" "${HOME}"
 }
@@ -154,17 +155,17 @@ create_config_file() {
 }
 
 prepare_for_upgrade() {
-  local nodes_file rabbitmq_nodes
+  local rabbitmq_nodes nodes_file
 
-  nodes_file="/var/vcap/data/upgrade_preparation_nodes"
   rabbitmq_nodes="$1"
+  nodes_file="${2:-/var/vcap/data/upgrade_preparation_nodes}"
 
-  rm -f nodes_file
+  rm -f $nodes_file
 
   OLD_IFS="$IFS"
   IFS=","
   for node in $rabbitmq_nodes; do
-    echo $node >> nodes_file
+    echo $node >> $nodes_file
   done
   IFS="$OLD_IFS"
 }
