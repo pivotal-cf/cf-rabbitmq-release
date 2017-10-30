@@ -25,8 +25,7 @@ main(){
 
   tls_options=$(configure_tls_options "${SSL_KEY}" "${SSL_VERIFY}" "${SSL_VERIFICATION_DEPTH}" "${SSL_FAIL_IF_NO_PEER_CERT}" "${SSL_SUPPORTED_TLS_VERSIONS}" "${script_dir}")
 
-  server_start_args="${cluster_args} ${load_definitions} ${tls_listeners} ${tls_options}"
-  server_start_args="$(format_server_start_args "${server_start_args}")"
+  server_start_args="SERVER_START_ARGS='${cluster_args} ${load_definitions} ${tls_listeners}' ${tls_options}"
 
   create_config_file "${CONF_ENV_FILE}" "${SELF_NODE}" "${DIR}" "${script_dir}" "${server_start_args}"
 
@@ -67,13 +66,6 @@ create_cluster_args() {
   echo "$cluster_args"
 }
 
-format_server_start_args() {
-  local cluster_args
-
-  cluster_args="$1"
-
-  echo "SERVER_START_ARGS='$cluster_args'"
-}
 
 configure_load_definitions() {
   local load_definitions script_dir load_definitions_file_path

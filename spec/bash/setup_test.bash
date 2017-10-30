@@ -22,6 +22,7 @@ T_setup_environment() {
     CLUSTER_PARTITION_HANDLING="autoheal"
     DISK_ALARM_THRESHOLD="{mem_relative,0.4}"
     SELF_NODE="my-node-name"
+    RABBITMQ_NODES_STRING="node-1,node-2"
     LOAD_DEFINITIONS="my-definitions"
 
     SSL_KEY="ssk-key"
@@ -39,6 +40,7 @@ T_setup_environment() {
     expect_file_to_exist "${DIR}/env"
     expect_to_equal "$(<$DIR/env.backup)" ""
 
+    expect_to_contain "$env" "'-rabbit cluster_nodes {[node-1,node-2],disc}"
     expect_to_contain "$env" " -rabbit cluster_partition_handling autoheal"
     expect_to_contain "$env" " -rabbit log_levels [{connection,info}]"
     expect_to_contain "$env" " -rabbit disk_free_limit {mem_relative,0.4}"
@@ -58,7 +60,7 @@ T_setup_environment() {
     # SSL
     expect_to_contain "$env" " -rabbitmq_management listener [{port,15672},{ssl,false}]"
     expect_to_contain "$env" " -rabbitmq_mqtt ssl_listeners [8883]"
-    expect_to_contain "$env" " -rabbitmq_stomp ssl_listeners [61614]"
+    expect_to_contain "$env" " -rabbitmq_stomp ssl_listeners [61614]'"
     expect_to_contain "$env" " -rabbit ssl_options [{cacertfile,"
     expect_to_contain "$env" "{certfile,"
     expect_to_contain "$env" "{keyfile,"
@@ -97,18 +99,6 @@ T_create_cluster_args() {
     expect_to_contain "$cluster_args" " -rabbitmq_management http_log_dir \"/path/to/http-access.log\""
 
   ) || $T_fail "Failed to create cluster args to pass to SERVER_START_ARGS"
-}
-
-T_format_server_start_args() {
-  (
-    local cluster_args server_start_args
-
-    cluster_args="my-cluster-args"
-
-    server_start_args="$(format_server_start_args $cluster_args)"
-    expect_to_equal "$server_start_args" "SERVER_START_ARGS='my-cluster-args'"
-
-  ) || $T_fail "Failed to formart SERVER_START_ARGS"
 }
 
 T_configure_load_definitions() {
