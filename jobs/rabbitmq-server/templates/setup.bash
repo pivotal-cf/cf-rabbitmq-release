@@ -32,11 +32,12 @@ main(){
 
   prepare_for_upgrade "${RABBITMQ_NODES_STRING}"
 
-  create_erlang_cookie "${ERLANG_COOKIE}"
+  create_erlang_cookie "${DIR}" "${ERLANG_COOKIE}" "${HOME}"
 }
 
 create_cluster_args() {
   local cluster_args rabbitmq_nodes disk_alarm_threshold cluster_partition_handling http_access_log_dir
+
   rabbitmq_nodes="$1"
   disk_alarm_threshold="$2"
   cluster_partition_handling="$3"
@@ -68,6 +69,7 @@ create_cluster_args() {
 
 format_server_start_args() {
   local cluster_args
+
   cluster_args="$1"
 
   echo "SERVER_START_ARGS='$cluster_args'"
@@ -75,6 +77,7 @@ format_server_start_args() {
 
 configure_load_definitions() {
   local load_definitions script_dir load_definitions_file_path
+
   load_definitions="$1"
   script_dir="$2"
 
@@ -86,6 +89,7 @@ configure_load_definitions() {
 
 configure_tls_listeners() {
   local ssl_key
+
   ssl_key="$1"
 
   if [[ ! -z "${ssl_key}" ]]; then
@@ -97,13 +101,13 @@ configure_tls_listeners() {
 
 configure_tls_options() {
   local ssl_key ssl_verify ssl_verification_mode ssl_verification_depth script_dir ssl_fail_if_no_peer_cert ssl_supported_tls_versions ssl_options
+
   ssl_key="$1"
   ssl_verify="$2"
   ssl_verification_depth="$3"
   ssl_fail_if_no_peer_cert="$4"
   ssl_supported_tls_versions="$5"
   script_dir="$6"
-
 
   if [[ ! -z "${ssl_key}" ]]; then
     ssl_verification_mode='verify_none'
@@ -120,6 +124,7 @@ configure_tls_options() {
 
 create_config_file() {
   local conf_env_file self_node dir nodename config script_dir prefix suffix server_start_args
+
   conf_env_file="$1"
   self_node="$2"
   dir="$3"
@@ -158,6 +163,7 @@ create_config_file() {
 
 prepare_for_upgrade() {
   local nodes_file rabbitmq_nodes
+
   nodes_file="/var/vcap/data/upgrade_preparation_nodes"
   rabbitmq_nodes="$1"
 
@@ -172,14 +178,17 @@ prepare_for_upgrade() {
 }
 
 create_erlang_cookie() {
-  local erlang_cookie user
-  erlang_cookie="$1"
+  local dir erlang_cookie home user
+
+  dir="$1"
+  erlang_cookie="$2"
+  home="$3"
   user="vcap"
 
-  printf "${erlang_cookie}" > "${DIR}/.erlang.cookie"
-  # chown ${user}:${user} ${DIR}/.erlang.cookie
-  # chmod 0400 ${DIR}/.erlang.cookie
-  # cp -a "${DIR}/.erlang.cookie" ${HOME}
+  printf "${erlang_cookie}" > "${dir}/.erlang.cookie"
+  chown ${user}:${user} ${dir}/.erlang.cookie
+  chmod 0400 ${dir}/.erlang.cookie
+  cp -a "${dir}/.erlang.cookie" ${home}
 }
 
 # shellcheck disable=SC2128
