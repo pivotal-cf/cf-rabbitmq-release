@@ -181,13 +181,16 @@ T_create_config_file() {
 
 T_create_erlang_cookie() {
   (
+    #before we need to create vcap user
+    sudo adduser --disabled-password --gecos "" vcap
+
     local erlang_cookie dir
 
     erlang_cookie="this-is-my-cookie"
     dir="$(mktemp -d)"
     trap "rm -rf ${dir}" EXIT
 
-    create_erlang_cookie "$dir" "$erlang_cookie"
+    create_erlang_cookie "$dir" "$erlang_cookie" "vcap"
     expect_file_to_exist "${dir}/.erlang.cookie"
     expect_to_equal "$(<$dir/.erlang.cookie)" "$erlang_cookie"
   )
