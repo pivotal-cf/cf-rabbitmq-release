@@ -14,10 +14,13 @@ export T_fail
 
 T_setup_environment() {
   (
+
     local env
 
     DIR="$(mktemp -d)"
+    VCAP_HOME="$(mktemp -d)"
     trap "rm -rf ${DIR}" EXIT
+    trap "rm -rf ${VCAP_HOME}" EXIT
 
     CLUSTER_PARTITION_HANDLING="autoheal"
     DISK_ALARM_THRESHOLD="{mem_relative,0.4}"
@@ -32,7 +35,8 @@ T_setup_environment() {
     SSL_SUPPORTED_TLS_VERSIONS="['tlsv1.2','tlsv1.1']"
 
     ERLANG_COOKIE="my-awesome-cookie"
-    ERLANG_COOKIE_OWNER="${USER}"
+    VCAP_USER="$(id -u)"
+    VCAP_GROUP="$(id -g)"
 
     UPGRADE_PREPARATION_NODES_FILE="$(mktemp)"
     trap "rm -rf ${UPGRADE_PREPARATION_NODES_FILE}" EXIT
@@ -141,7 +145,7 @@ T_configure_tls_options() {
     script_dir="/path/to/script/dir"
 
     options="$(configure_tls_options "${ssl_key}" "${ssl_verify}" "${ssl_verification_depth}" "${ssl_fail_if_no_peer_cert}" "${ssl_supported_tls_versions}" "${script_dir}")"
-    expect_to_equal "$options" "\" -rabbit ssl_options [{cacertfile,\\\"${script_dir}/../etc/cacert.pem\\\"},{certfile,\\\"${script_dir}/../etc/cert.pem\\\"},{keyfile,\\\"${script_dir}/../etc/key.pem\\\"},{verify,verify_peer},{depth,$ssl_verification_depth},{fail_if_no_peer_cert,$ssl_fail_if_no_peer_cert},{versions,$ssl_supported_tls_versions}]\""
+    expect_to_equal "$options" "\" -rabbit ssl_options [{cacertfile,\"${script_dir}/../etc/cacert.pem\"},{certfile,\"${script_dir}/../etc/cert.pem\"},{keyfile,\"${script_dir}/../etc/key.pem\"},{verify,verify_peer},{depth,$ssl_verification_depth},{fail_if_no_peer_cert,$ssl_fail_if_no_peer_cert},{versions,$ssl_supported_tls_versions}]\""
 
   ) || $T_fail "Failed to configure TLS options"
 }
@@ -201,6 +205,11 @@ T_creates_a_file_with_all_the_nodes_to_be_used_during_upgrades() {
 
 T_create_erlang_cookie() {
   (
+    if [ "$(uname -s)" != "Linux" ]; then
+      echo "WARNING: This test can only be run on Linux plaftorms... skipping!"
+      exit 0
+    fi
+
     #before we need to create vcap user
     sudo adduser --disabled-password --gecos "" vcap
 

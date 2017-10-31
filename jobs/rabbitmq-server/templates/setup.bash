@@ -13,6 +13,9 @@ RABBITMQ_PLUGINS_EXPAND_DIR="$RABBITMQ_MNESIA_BASE/db-plugins-expand"
 RABBITMQ_BOOT_MODULE="RABBITMQ_BOOT_MODULE=rabbit"
 RMQ_VERSION="3.6.12"
 UPGRADE_PREPARATION_NODES_FILE="/var/vcap/data/upgrade_preparation_nodes"
+VCAP_HOME=${VCAP_HOME:-${HOME}}
+VCAP_USER=${VCAP_USER:-vcap}
+VCAP_GROUP=${VCAP_GROUP:-vcap}
 
 main(){
   local script_dir cluster_args load_definitions server_start_args
@@ -32,7 +35,7 @@ main(){
 
   prepare_for_upgrade "${RABBITMQ_NODES_STRING}" "${UPGRADE_PREPARATION_NODES_FILE}"
 
-  create_erlang_cookie "${DIR}" "${ERLANG_COOKIE}" "${HOME}"
+  create_erlang_cookie "${DIR}" "${ERLANG_COOKIE}" "${VCAP_HOME}" "${VCAP_USER}" "${VCAP_GROUP}"
 }
 
 create_cluster_args() {
@@ -110,7 +113,7 @@ configure_tls_options() {
 
     # concatenate options encoded in double quotes, see the concatenation comment above.
     # {versions,['tlsv1.2','tlsv1.1',tlsv1]} disables SSLv3 to mitigate the POODLE attack.
-    ssl_options=" -rabbit ssl_options [{cacertfile,\\\"${script_dir}/../etc/cacert.pem\\\"},{certfile,\\\"${script_dir}/../etc/cert.pem\\\"},{keyfile,\\\"${script_dir}/../etc/key.pem\\\"},{verify,"$ssl_verification_mode"},{depth,$ssl_verification_depth},{fail_if_no_peer_cert,$ssl_fail_if_no_peer_cert},{versions,$ssl_supported_tls_versions}]"
+    ssl_options=" -rabbit ssl_options [{cacertfile,\"${script_dir}/../etc/cacert.pem\"},{certfile,\"${script_dir}/../etc/cert.pem\"},{keyfile,\"${script_dir}/../etc/key.pem\"},{verify,"$ssl_verification_mode"},{depth,$ssl_verification_depth},{fail_if_no_peer_cert,$ssl_fail_if_no_peer_cert},{versions,$ssl_supported_tls_versions}]"
     echo "\"${ssl_options}\""
   fi
 }
@@ -171,15 +174,16 @@ prepare_for_upgrade() {
 }
 
 create_erlang_cookie() {
-  local dir erlang_cookie home user
+  local dir erlang_cookie home user group
 
   dir="$1"
   erlang_cookie="$2"
   home="$3"
-  user="vcap"
+  user="$4"
+  group="$5"
 
   printf "${erlang_cookie}" > "${dir}/.erlang.cookie"
-  chown ${user}:${user} ${dir}/.erlang.cookie
+  chown ${user}:${group} ${dir}/.erlang.cookie
   chmod 0400 ${dir}/.erlang.cookie
   cp -a "${dir}/.erlang.cookie" ${home}
 }
