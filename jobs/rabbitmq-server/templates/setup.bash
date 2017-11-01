@@ -5,6 +5,18 @@ set -o pipefail # fail if any component of any pipe fails
 
 [[ -z "${DEBUG:-""}" ]] || set -x
 
+# shellcheck disable=SC2128
+if [[ "$0" = "$BASH_SOURCE" ]]; then
+  # only run, when called and not sourced
+  . /var/vcap/jobs/rabbitmq-server/lib/setup-vars.bash
+
+  . /var/vcap/jobs/rabbitmq-server/lib/rabbitmq-config-vars.bash
+
+  # Unfortunate tight coupling. Beware.
+  # We need this for CONF_ENV_FILE, HOME, ERL_INETRC, and for MNESIA_BASE
+  . /var/vcap/packages/rabbitmq-server/privbin/rabbitmq-defaults
+fi
+
 HOME_DIR="/var/vcap/store/rabbitmq"
 HTTP_ACCESS_LOG_DIR="/var/vcap/sys/log/rabbitmq-server/management-ui"
 RABBITMQ_MNESIA_BASE="${HOME_DIR}/mnesia"
@@ -190,15 +202,5 @@ create_erlang_cookie() {
 
 # shellcheck disable=SC2128
 if [[ "$0" = "$BASH_SOURCE" ]]; then
-  # only run, when called and not sourced
-  . /var/vcap/jobs/rabbitmq-server/lib/setup-vars.bash
-
-  . /var/vcap/jobs/rabbitmq-server/lib/rabbitmq-config-vars.bash
-
-  # Unfortunate tight coupling. Beware.
-  # We need this for CONF_ENV_FILE, HOME, ERL_INETRC, and for MNESIA_BASE
-  . /var/vcap/packages/rabbitmq-server/privbin/rabbitmq-defaults
-
   main
 fi
-
