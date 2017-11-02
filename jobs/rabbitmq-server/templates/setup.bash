@@ -31,19 +31,28 @@ VCAP_GROUP=${VCAP_GROUP:-vcap}
 
 main(){
   local script_dir cluster_args load_definitions server_start_args
-  script_dir="$(dirname $0)"
+  script_dir="$(dirname "$0")"
 
   cluster_args=$(create_cluster_args "${RABBITMQ_NODES_STRING}" "${DISK_ALARM_THRESHOLD}" "${CLUSTER_PARTITION_HANDLING}" "${HTTP_ACCESS_LOG_DIR}")
-
   load_definitions=$(configure_load_definitions "${LOAD_DEFINITIONS}" "${script_dir}")
-
   tls_listeners=$(configure_tls_listeners "${SSL_KEY}")
-
   tls_options=$(configure_tls_options "${SSL_KEY}" "${SSL_VERIFY}" "${SSL_VERIFICATION_DEPTH}" "${SSL_FAIL_IF_NO_PEER_CERT}" "${SSL_SUPPORTED_TLS_VERSIONS}" "${script_dir}")
 
-  server_start_args="SERVER_START_ARGS='${cluster_args} ${load_definitions} ${tls_listeners}' ${tls_options}"
+  server_start_args="$(
+    echo \
+      ${cluster_args} \
+      ${load_definitions} \
+      ${tls_listeners} \
+      ${tls_options} \
+    | escape_for_singlequoted_string
+  )"
 
-  create_config_file "${CONF_ENV_FILE}" "${SELF_NODE}" "${DIR}" "${script_dir}" "${server_start_args}"
+  create_config_file \
+    "${CONF_ENV_FILE}" \
+    "${SELF_NODE}" \
+    "${DIR}" \
+    "${script_dir}" \
+    "SERVER_START_ARGS='${server_start_args}'"
 
   prepare_for_upgrade "${RABBITMQ_NODES_STRING}" "${UPGRADE_PREPARATION_NODES_FILE}"
 
@@ -126,8 +135,13 @@ configure_tls_options() {
     # concatenate options encoded in double quotes, see the concatenation comment above.
     # {versions,['tlsv1.2','tlsv1.1',tlsv1]} disables SSLv3 to mitigate the POODLE attack.
     ssl_options=" -rabbit ssl_options [{cacertfile,\"${script_dir}/../etc/cacert.pem\"},{certfile,\"${script_dir}/../etc/cert.pem\"},{keyfile,\"${script_dir}/../etc/key.pem\"},{verify,"$ssl_verification_mode"},{depth,$ssl_verification_depth},{fail_if_no_peer_cert,$ssl_fail_if_no_peer_cert},{versions,$ssl_supported_tls_versions}]"
-    echo "\"${ssl_options}\""
+    echo "${ssl_options}"
   fi
+}
+
+escape_for_singlequoted_string() {
+  # https://stackoverflow.com/a/1250279
+  sed "s/'/'\"'\"'/g"
 }
 
 create_config_file() {

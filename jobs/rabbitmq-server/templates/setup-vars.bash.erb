@@ -1,7 +1,26 @@
 export SSL_KEY=""
 export LOAD_DEFINITIONS=""
 
-export SSL_SUPPORTED_TLS_VERSIONS="<%= p('rabbitmq-server.ssl.versions') %>"
+<%
+  supported_tls_versions = ['tlsv1', 'tlsv1.1', 'tlsv1.2']
+
+  tls_versions = p('rabbitmq-server.ssl.versions')
+
+  tls_versions.respond_to?('map') or
+    raise "Expected rabbitmq-server.ssl.versions to be a collection"
+
+  tls_versions = tls_versions.map do |v|
+    supported_tls_versions.include?(v) or
+      raise "#{v} is a not supported tls version"
+
+    # make sure the erlang atom is quoted by one and
+    # only one single quote
+    "'#{v}'".gsub(/^'+|'+$/, "'")
+  end
+  tls_versions = '[' + tls_versions.join(',') + ']'
+%>
+
+export SSL_SUPPORTED_TLS_VERSIONS="<%= tls_versions %>"
 export SSL_VERIFY="<%= p("rabbitmq-server.ssl.verify") %>"
 export SSL_VERIFICATION_DEPTH="<%= p("rabbitmq-server.ssl.verification_depth") %>"
 export SSL_FAIL_IF_NO_PEER_CERT="<%= p("rabbitmq-server.ssl.fail_if_no_peer_cert") %>"
