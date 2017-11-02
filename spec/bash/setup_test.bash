@@ -67,14 +67,14 @@ T_setup_environment() {
     # SSL
     expect_to_contain "$env" " -rabbitmq_management listener [{port,15672},{ssl,false}]"
     expect_to_contain "$env" " -rabbitmq_mqtt ssl_listeners [8883]"
-    expect_to_contain "$env" " -rabbitmq_stomp ssl_listeners [61614]'"
+    expect_to_contain "$env" " -rabbitmq_stomp ssl_listeners [61614]"
     expect_to_contain "$env" " -rabbit ssl_options [{cacertfile,"
     expect_to_contain "$env" "{certfile,"
     expect_to_contain "$env" "{keyfile,"
     expect_to_contain "$env" "{verify,verify_none},"
     expect_to_contain "$env" "{depth,5},"
     expect_to_contain "$env" "{fail_if_no_peer_cert,true},"
-    expect_to_contain "$env" "{versions,['tlsv1.2','tlsv1.1']}]"
+    expect_to_contain "$env" "{versions,['\"'\"'tlsv1.2'\"'\"','\"'\"'tlsv1.1'\"'\"']}"
 
     # ERLANG COOKIE
     erlang_cookie_path="${DIR}/.erlang.cookie"
@@ -145,7 +145,7 @@ T_configure_tls_options() {
     script_dir="/path/to/script/dir"
 
     options="$(configure_tls_options "${ssl_key}" "${ssl_verify}" "${ssl_verification_depth}" "${ssl_fail_if_no_peer_cert}" "${ssl_supported_tls_versions}" "${script_dir}")"
-    expect_to_equal "$options" "\" -rabbit ssl_options [{cacertfile,\"${script_dir}/../etc/cacert.pem\"},{certfile,\"${script_dir}/../etc/cert.pem\"},{keyfile,\"${script_dir}/../etc/key.pem\"},{verify,verify_peer},{depth,$ssl_verification_depth},{fail_if_no_peer_cert,$ssl_fail_if_no_peer_cert},{versions,$ssl_supported_tls_versions}]\""
+    expect_to_equal "$options" " -rabbit ssl_options [{cacertfile,\"${script_dir}/../etc/cacert.pem\"},{certfile,\"${script_dir}/../etc/cert.pem\"},{keyfile,\"${script_dir}/../etc/key.pem\"},{verify,verify_peer},{depth,$ssl_verification_depth},{fail_if_no_peer_cert,$ssl_fail_if_no_peer_cert},{versions,$ssl_supported_tls_versions}]"
 
   ) || $T_fail "Failed to configure TLS options"
 }
