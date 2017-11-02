@@ -10,6 +10,13 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
     } }
   end
 
+  context 'when tls versions are missing' do
+    let(:manifest_properties) { {} }
+
+    it 'uses provided tls versions' do
+      expect(output).to include "SSL_SUPPORTED_TLS_VERSIONS=\"['tlsv1.2','tlsv1.1']\""
+    end
+  end
   context 'when tls versions are configured' do
     let(:tls_versions) { ['tlsv1.2'] }
 
