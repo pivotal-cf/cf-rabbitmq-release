@@ -33,6 +33,7 @@ T_setup_environment() {
     SSL_VERIFICATION_DEPTH="5"
     SSL_FAIL_IF_NO_PEER_CERT=true
     SSL_SUPPORTED_TLS_VERSIONS="['tlsv1.2','tlsv1.1']"
+    SSL_SUPPORTED_TLS_CIPHERS=",{ciphers, ['cipher1','cipher2']}"
 
     ERLANG_COOKIE="my-awesome-cookie"
     VCAP_USER="$(id -u)"
@@ -75,6 +76,8 @@ T_setup_environment() {
     expect_to_contain "$env" "{depth,5},"
     expect_to_contain "$env" "{fail_if_no_peer_cert,true},"
     expect_to_contain "$env" "{versions,['\"'\"'tlsv1.2'\"'\"','\"'\"'tlsv1.1'\"'\"']}"
+    expect_to_contain "$env" "{ciphers, ['\"'\"'cipher1'\"'\"','\"'\"'cipher2'\"'\"']}"
+
 
     # ERLANG COOKIE
     erlang_cookie_path="${DIR}/.erlang.cookie"
@@ -143,9 +146,10 @@ T_configure_tls_options() {
     ssl_fail_if_no_peer_cert=true
     ssl_supported_tls_versions="['tlsv1.2','tlsv1.1']"
     script_dir="/path/to/script/dir"
+    ssl_supported_tls_ciphers=",{ciphers, ['DHE_AES128_GCM_SHA256','DHE_AES256_GCM_SHA256']}"
 
-    options="$(configure_tls_options "${ssl_key}" "${ssl_verify}" "${ssl_verification_depth}" "${ssl_fail_if_no_peer_cert}" "${ssl_supported_tls_versions}" "${script_dir}")"
-    expect_to_equal "$options" " -rabbit ssl_options [{cacertfile,\"${script_dir}/../etc/cacert.pem\"},{certfile,\"${script_dir}/../etc/cert.pem\"},{keyfile,\"${script_dir}/../etc/key.pem\"},{verify,verify_peer},{depth,$ssl_verification_depth},{fail_if_no_peer_cert,$ssl_fail_if_no_peer_cert},{versions,$ssl_supported_tls_versions}]"
+    options="$(configure_tls_options "${ssl_key}" "${ssl_verify}" "${ssl_verification_depth}" "${ssl_fail_if_no_peer_cert}" "${ssl_supported_tls_versions}" "${ssl_supported_tls_ciphers}" "${script_dir}")"
+    expect_to_equal "$options" " -rabbit ssl_options [{cacertfile,\"${script_dir}/../etc/cacert.pem\"},{certfile,\"${script_dir}/../etc/cert.pem\"},{keyfile,\"${script_dir}/../etc/key.pem\"},{verify,verify_peer},{depth,$ssl_verification_depth},{fail_if_no_peer_cert,$ssl_fail_if_no_peer_cert},{versions,$ssl_supported_tls_versions}$ssl_supported_tls_ciphers]"
 
   ) || $T_fail "Failed to configure TLS options"
 }

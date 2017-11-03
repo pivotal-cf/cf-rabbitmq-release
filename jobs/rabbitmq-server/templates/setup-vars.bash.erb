@@ -18,9 +18,23 @@ export LOAD_DEFINITIONS=""
     "'#{v}'".gsub(/^'+|'+$/, "'")
   end
   tls_versions = '[' + tls_versions.join(',') + ']'
+
+  tls_ciphers = ''
+  if_p('rabbitmq-server.ssl.ciphers') do |ciphers|
+    ciphers.respond_to?('map') or
+      raise "Expected rabbitmq-server.ssl.ciphers to be a collection"
+
+    tls_ciphers = ciphers.map do |c|
+      /^[a-zA-Z0-9_]+$/.match(c) or raise "#{c} is not a valid cipher suite"
+      "'#{c}'".gsub(/^'+|'+$/, "'")
+    end.join(',')
+    tls_ciphers = ",{ciphers, [#{tls_ciphers}]}"
+  end
+
 %>
 
 export SSL_SUPPORTED_TLS_VERSIONS="<%= tls_versions %>"
+export SSL_SUPPORTED_TLS_CIPHERS="<%= tls_ciphers %>"
 export SSL_VERIFY="<%= p("rabbitmq-server.ssl.verify") %>"
 export SSL_VERIFICATION_DEPTH="<%= p("rabbitmq-server.ssl.verification_depth") %>"
 export SSL_FAIL_IF_NO_PEER_CERT="<%= p("rabbitmq-server.ssl.fail_if_no_peer_cert") %>"
