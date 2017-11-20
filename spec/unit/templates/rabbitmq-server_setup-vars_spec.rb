@@ -55,18 +55,18 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
   end
 
   context 'when tls ciphers are specified' do
-    let(:tls_ciphers) { %w[SOME_valid_cipher_12323 something] }
+    let(:tls_ciphers) { %w[SOME-valid-cipher-12323 something] }
 
-    it 'uses provided ciphers' do
-      expect(output).to include "SSL_SUPPORTED_TLS_CIPHERS=\",{ciphers, ['SOME_valid_cipher_12323','something']}\""
+    it 'uses provided ciphers and wraps each of them with \" so they are interpretted by bash correctly' do
+      expect(output).to include "SSL_SUPPORTED_TLS_CIPHERS=\",{ciphers,[\\\"SOME-valid-cipher-12323\\\",\\\"something\\\"]}\""
     end
   end
 
   context 'when invalid tls ciphers are specified' do
-    let(:tls_ciphers) { %w[SOME_valid_cipher_12323 an-invalid-!@#$] }
+    let(:tls_ciphers) { %w[SOME-valid-cipher-12323 an_invalid_!@#$] }
 
     it 'raise an error' do
-      expect { output }.to raise_error 'an-invalid-!@#$ is not a valid cipher suite'
+      expect { output }.to raise_error 'an_invalid_!@#$ is not a valid cipher suite'
     end
   end
 end
