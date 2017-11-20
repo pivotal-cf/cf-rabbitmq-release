@@ -36,7 +36,14 @@ main(){
   cluster_args=$(create_cluster_args "${RABBITMQ_NODES_STRING}" "${DISK_ALARM_THRESHOLD}" "${CLUSTER_PARTITION_HANDLING}" "${HTTP_ACCESS_LOG_DIR}")
   load_definitions=$(configure_load_definitions "${LOAD_DEFINITIONS}" "${script_dir}")
   tls_listeners=$(configure_tls_listeners "${SSL_KEY}")
-  tls_options=$(configure_tls_options "${SSL_KEY}" "${SSL_VERIFY}" "${SSL_VERIFICATION_DEPTH}" "${SSL_FAIL_IF_NO_PEER_CERT}" "${SSL_SUPPORTED_TLS_VERSIONS}" "${SSL_SUPPORTED_TLS_CIPHERS}" "${script_dir}")
+  tls_options=$(configure_tls_options "${SSL_KEY}" \
+    "${SSL_VERIFY}" \
+    "${SSL_VERIFICATION_DEPTH}" \
+    "${SSL_FAIL_IF_NO_PEER_CERT}" \
+    "${SSL_SUPPORTED_TLS_VERSIONS}" \
+    "${SSL_SUPPORTED_TLS_CIPHERS}" \
+    "${script_dir}" \
+  )
 
   server_start_args="$(
     echo \
@@ -117,7 +124,15 @@ configure_tls_listeners() {
 }
 
 configure_tls_options() {
-  local ssl_key ssl_verify ssl_verification_mode ssl_verification_depth script_dir ssl_fail_if_no_peer_cert ssl_supported_tls_versions ssl_supported_tls_ciphers ssl_options
+  local ssl_key
+  local ssl_verify
+  local ssl_verification_mode
+  local ssl_verification_depth
+  local script_dir
+  local ssl_fail_if_no_peer_cert
+  local ssl_supported_tls_versions
+  local ssl_supported_tls_ciphers
+  local ssl_options
 
   ssl_key="$1"
   ssl_verify="$2"
