@@ -3,6 +3,7 @@ require 'pry'
 require 'json'
 require 'rspec/retry'
 require 'shellwords'
+require 'open3'
 
 Dir[File.expand_path('support/**/*.rb', __dir__)].each do |file|
   require file
@@ -28,7 +29,12 @@ class Bosh2
     Tempfile.open('manifest.yml') do |manifest_file|
       manifest_file.write(manifest.to_yaml)
       manifest_file.flush
-      `#{@bosh_cli} -n deploy #{manifest_file.path}`
+      output = ""
+      exit_code = ::Open3.popen3("#{@bosh_cli} -n deploy #{manifest_file.path}") do |stdin, stdout, stderr, wait_thr|
+        output << stdout.read
+        wait_thr.value
+      end
+      abort "Deployment failed\n#{output}" unless exit_code == 0
     end
   end
 
