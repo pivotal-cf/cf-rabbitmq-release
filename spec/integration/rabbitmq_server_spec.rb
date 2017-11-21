@@ -106,6 +106,10 @@ RSpec.describe 'RabbitMQ server configuration' do
           rmq_properties['ssl']['cert'] = server_cert
           rmq_properties['ssl']['cacert'] = ca_cert
           rmq_properties['ssl']['versions'] = ['tlsv1.2','tlsv1.1', 'tlsv1']
+
+          tlsv1_compatible_cipher = 'ECDHE-RSA-AES256-SHA'
+          tlsv1_2_compatible_cipher = 'ECDHE-RSA-AES256-GCM-SHA384'
+          rmq_properties['ssl']['ciphers'] = [tlsv1_compatible_cipher, tlsv1_2_compatible_cipher]
         end
       end
 
@@ -125,7 +129,7 @@ RSpec.describe 'RabbitMQ server configuration' do
         expect(ssl_options).to include('{depth,5}')
       end
 
-      describe "TLS" do
+      context "when tlsv1, tlsv1.1, and tlsv1.2 are enabled" do
         it 'should have TLS 1.0 enabled' do
           output = bosh.ssh(rmq_host, connect_using('tls1'))
 
@@ -149,6 +153,13 @@ RSpec.describe 'RabbitMQ server configuration' do
 
         def connect_using(tls_version)
           "openssl s_client -#{tls_version} -connect 127.0.0.1:5671"
+        end
+
+        context 'when client connects with a cipher not configured on the server' do
+          it 'should not be able to connect' do
+            output = bosh.ssh(rmq_host, "openssl s_client -cipher AES256-SHA256 -connect 127.0.0.1:5671")
+            expect(stdout(output)).to include('insufficient security')
+          end
         end
       end
 
