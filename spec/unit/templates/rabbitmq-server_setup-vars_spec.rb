@@ -1,7 +1,7 @@
 RSpec.describe 'setup-vars.bash file generation', template: true do
-  let(:output) do
-    compiled_template('rabbitmq-server', 'setup-vars.bash', manifest_properties).strip
-  end
+  let(:tls_versions) { [] }
+  let(:tls_ciphers) { [] }
+
   let(:manifest_properties) do
     { 'rabbitmq-server' => {
       'ssl' => {
@@ -10,8 +10,10 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
       }
     } }
   end
-  let(:tls_versions) { [] }
-  let(:tls_ciphers) { [] }
+
+  let(:output) do
+    compiled_template('rabbitmq-server', 'setup-vars.bash', manifest_properties).strip
+  end
 
   context 'when tls versions are missing' do
     let(:manifest_properties) { {} }
@@ -20,6 +22,7 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
       expect(output).to include "SSL_SUPPORTED_TLS_VERSIONS=\"['tlsv1.2','tlsv1.1']\""
     end
   end
+
   context 'when tls versions are configured' do
     let(:tls_versions) { ['tlsv1.2'] }
 
@@ -67,6 +70,25 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
 
     it 'raise an error' do
       expect { output }.to raise_error 'an_invalid_!@#$ is not a valid cipher suite'
+    end
+  end
+
+  describe 'cluster partition handling' do
+    it 'exports a variable with pause_minority by default when none is given' do
+      expect(output).to include 'export CLUSTER_PARTITION_HANDLING="pause_minority"'
+    end
+
+    context 'when a different cluster partition handling is given' do
+      let(:manifest_properties) do
+        { 'rabbitmq-server' => {
+          'cluster_partition_handling' => 'autoheal'
+          }
+        }
+      end
+
+      it 'exports a variable with provided cluster partition' do
+        expect(output).to include 'export CLUSTER_PARTITION_HANDLING="autoheal"'
+      end
     end
   end
 end
