@@ -28,7 +28,6 @@ RSpec.describe 'RabbitMQ server configuration' do
 
       bosh.redeploy do |manifest|
         rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
-        rmq_properties['disk_alarm_threshold'] = '20000000'
         rmq_properties['fd_limit'] = 350_000
 
         management_credentials = rmq_properties['administrators']['management']
@@ -39,10 +38,6 @@ RSpec.describe 'RabbitMQ server configuration' do
 
     after(:all) do
       bosh.deploy(test_manifest)
-    end
-
-    it 'should have hard disk alarm threshold of 20 MB' do
-      expect(environment_settings).to include('{disk_free_limit,20000000}')
     end
 
     it 'it can only access the management HTTP API with the new credentials' do

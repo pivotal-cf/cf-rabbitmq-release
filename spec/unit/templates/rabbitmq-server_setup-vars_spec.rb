@@ -91,4 +91,23 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
       end
     end
   end
+
+  describe 'disk alarm threshold' do
+    it 'exports a variable with default threshold when none is given' do
+      expect(output).to include 'export DISK_ALARM_THRESHOLD="{mem_relative,0.4}"'
+    end
+
+    context 'when a different disk alarm threshold is given' do
+      let(:manifest_properties) do
+        { 'rabbitmq-server' => {
+          'disk_alarm_threshold' => '{mem_relative,1.5}'
+          }
+        }
+      end
+
+      it 'exports a variable with provided disk alarm threshold' do
+        expect(output).to include 'export DISK_ALARM_THRESHOLD="{mem_relative,1.5}"'
+      end
+    end
+  end
 end
