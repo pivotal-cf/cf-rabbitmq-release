@@ -77,18 +77,6 @@ RSpec.describe 'RabbitMQ server configuration' do
         bosh.deploy(test_manifest)
       end
 
-      it 'does not have SSL verification enabled' do
-        expect(ssl_options).to include('{verify,verify_none}')
-      end
-
-      it 'does not have SSL peer validation enabled' do
-        expect(ssl_options).to include('{fail_if_no_peer_cert,false}')
-      end
-
-      it 'has the right SSL verification depth option' do
-        expect(ssl_options).to include('{depth,5}')
-      end
-
       context "when tlsv1, tlsv1.1, and tlsv1.2 are enabled" do
         it 'should have TLS 1.0 enabled' do
           output = bosh.ssh(rmq_host, connect_using('tls1'))

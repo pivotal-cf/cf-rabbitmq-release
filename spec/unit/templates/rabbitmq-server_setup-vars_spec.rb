@@ -1,76 +1,127 @@
 RSpec.describe 'setup-vars.bash file generation', template: true do
-  let(:tls_versions) { [] }
-  let(:tls_ciphers) { [] }
 
   let(:manifest_properties) do
-    { 'rabbitmq-server' => {
-      'ssl' => {
-        'versions' => tls_versions,
-        'ciphers' => tls_ciphers
+    {
+      'rabbitmq-server' => {
+        'ssl' => { }
       }
-    } }
+    }
   end
+
 
   let(:output) do
     compiled_template('rabbitmq-server', 'setup-vars.bash', manifest_properties).strip
   end
 
-  context 'when tls versions are missing' do
-    let(:manifest_properties) { {} }
+  describe 'TLS configuration' do
+    context 'when properties are not configured' do
+      let(:manifest_properties) { {} }
 
-    it 'uses provided tls versions' do
-      expect(output).to include "SSL_SUPPORTED_TLS_VERSIONS=\"['tlsv1.2','tlsv1.1']\""
+      it 'uses default tls versions' do
+        expect(output).to include "export SSL_SUPPORTED_TLS_VERSIONS=\"['tlsv1.2','tlsv1.1']\""
+      end
+
+      it 'should do not configure ciphers and fallback to openssl defaults' do
+        expect(output).to include 'export SSL_SUPPORTED_TLS_CIPHERS=""'
+      end
+
+      it 'uses default fail_if_no_peer_cert' do
+        expect(output).to include 'export SSL_FAIL_IF_NO_PEER_CERT="false"'
+      end
+
+      it 'uses default peer verification method' do
+        expect(output).to include 'export SSL_VERIFY="false"'
+      end
+
+      it 'uses default ssl verification depth' do
+        expect(output).to include 'export SSL_VERIFICATION_DEPTH="5"'
+      end
     end
-  end
 
-  context 'when tls versions are configured' do
-    let(:tls_versions) { ['tlsv1.2'] }
+    context 'when tls versions are configured' do
+      before :each do
+        manifest_properties['rabbitmq-server']['ssl']['versions'] = ['tlsv1.2']
+      end
 
-    it 'uses provided tls versions' do
-      expect(output).to include "SSL_SUPPORTED_TLS_VERSIONS=\"['tlsv1.2']\""
+      it 'uses provided tls versions' do
+        expect(output).to include "export SSL_SUPPORTED_TLS_VERSIONS=\"['tlsv1.2']\""
+      end
     end
-  end
 
-  context 'when tls is not a collection' do
-    let(:tls_versions) { '' }
+    context 'when ciphers are configured' do
+      before :each do
+        manifest_properties['rabbitmq-server']['ssl']['ciphers'] = %w[SOME-valid-cipher-12323 something]
+      end
 
-    it 'raises an error' do
-      expect { output }.to \
-        raise_error 'Expected rabbitmq-server.ssl.versions to be a collection'
+      it 'uses provided ciphers and wraps each of them with \" so they are interpretted by bash correctly' do
+        expect(output).to include "SSL_SUPPORTED_TLS_CIPHERS=\",{ciphers,[\\\"SOME-valid-cipher-12323\\\",\\\"something\\\"]}\""
+      end
     end
-  end
 
-  context 'when tls collection contain unsupported versions' do
-    let(:tls_versions) { ['tlsv1', 'weird-not-supported-version'] }
+    context 'when verification_depth is configured' do
+      before :each do
+        manifest_properties['rabbitmq-server']['ssl']['verification_depth'] = 10
+      end
 
-    it 'raises an error' do
-      expect { output }.to \
-        raise_error 'weird-not-supported-version is a not supported tls version'
+      it 'uses provided value' do
+        expect(output).to include 'export SSL_VERIFICATION_DEPTH="10"'
+      end
     end
-  end
 
-  context 'when tls ciphers are missing' do
-    let(:manifest_properties) { {} }
+    context 'when ssl_verify is configured' do
+      before :each do
+        manifest_properties['rabbitmq-server']['ssl']['verify'] = true
+      end
 
-    it 'do not configure ciphers and fallback to openssl defaults' do
-      expect(output).to include 'SSL_SUPPORTED_TLS_CIPHERS=""'
+      it 'uses provided value' do
+        expect(output).to include 'export SSL_VERIFY="true"'
+      end
     end
-  end
 
-  context 'when tls ciphers are specified' do
-    let(:tls_ciphers) { %w[SOME-valid-cipher-12323 something] }
+    context 'when ssl fail if no peer cert is configured' do
+      before :each do
+        manifest_properties['rabbitmq-server']['ssl']['fail_if_no_peer_cert'] = true
+      end
 
-    it 'uses provided ciphers and wraps each of them with \" so they are interpretted by bash correctly' do
-      expect(output).to include "SSL_SUPPORTED_TLS_CIPHERS=\",{ciphers,[\\\"SOME-valid-cipher-12323\\\",\\\"something\\\"]}\""
+      it 'uses provided value' do
+        expect(output).to include 'export SSL_FAIL_IF_NO_PEER_CERT="true"'
+      end
     end
-  end
 
-  context 'when invalid tls ciphers are specified' do
-    let(:tls_ciphers) { %w[SOME-valid-cipher-12323 an_invalid_!@#$] }
+    context 'when tls version is invalid' do
+      context 'when tls is not a collection' do
+        before :each do
+          manifest_properties['rabbitmq-server']['ssl']['versions'] = ''
+        end
 
-    it 'raise an error' do
-      expect { output }.to raise_error 'an_invalid_!@#$ is not a valid cipher suite'
+        it 'raises an error' do
+          expect { output }.to \
+            raise_error 'Expected rabbitmq-server.ssl.versions to be a collection'
+        end
+      end
+
+      context 'when tls version is not supported' do
+        before :each do
+          manifest_properties['rabbitmq-server']['ssl']['versions'] =  ['tlsv1', 'weird-not-supported-version'] 
+        end
+
+        it 'raises an error' do
+          expect { output }.to \
+            raise_error 'weird-not-supported-version is a not supported tls version'
+        end
+      end
     end
+
+    context 'when invalid tls ciphers are specified' do
+      before :each do
+        manifest_properties['rabbitmq-server']['ssl']['ciphers'] = %w[SOME-valid-cipher-1232 an_invalid_!@#$]
+      end
+
+      it 'raise an error' do
+        expect { output }.to raise_error 'an_invalid_!@#$ is not a valid cipher suite'
+      end
+    end
+
   end
 
   describe 'cluster partition handling' do
@@ -82,7 +133,7 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
       let(:manifest_properties) do
         { 'rabbitmq-server' => {
           'cluster_partition_handling' => 'autoheal'
-          }
+        }
         }
       end
 
@@ -101,7 +152,7 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
       let(:manifest_properties) do
         { 'rabbitmq-server' => {
           'disk_alarm_threshold' => '{mem_relative,1.5}'
-          }
+        }
         }
       end
 
