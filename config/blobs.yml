@@ -2,10 +2,6 @@ cf-cli/cf-cli_6.19.0_linux_x86-64.tgz:
   size: 6450885
   object_id: 22ad54c4-568e-4ca3-aa73-12b691e3f678
   sha: 625170654ffa4568dae97b4d3915e87557b29261
-erlang/otp_src_oss_19.3.6.2.tgz:
-  size: 35747840
-  object_id: 8a68024e-f1a3-44f7-96e5-7080bc0d8428
-  sha: ddcc37007c21d5882207f0fe9fba276f23a0bf02
 erlang/otp_src_oss_19.3.6.4.tgz:
   size: 33999248
   object_id: 3520c2b2-151a-443d-52c7-be9fb9a64a34
@@ -22,9 +18,6 @@ java/jre-1.8.0_77.tar.gz:
   size: 71796315
   object_id: f9f7a230-63e5-4eae-857f-fcb849966cc9
   sha: 8edb2189ef42d6756faa355efeb356aead6e6da3
-rabbitmq-server/rabbitmq-server-generic-unix-3.6.14.tar.xz:
-  size: 4787900
-  sha: 7c10d1ef1ffa57e81f0568d1f28b3ce888971faa
 rabbitmq-server/rabbitmq_clusterer-3.6.5.ez:
   size: 58675
   object_id: aca4b381-2afc-487c-913a-643fef65b3d1
