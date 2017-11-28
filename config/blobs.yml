@@ -18,10 +18,9 @@ java/jre-1.8.0_77.tar.gz:
   size: 71796315
   object_id: f9f7a230-63e5-4eae-857f-fcb849966cc9
   sha: 8edb2189ef42d6756faa355efeb356aead6e6da3
-rabbitmq-server/rabbitmq-server-generic-unix-3.6.12.tar.xz:
-  size: 4695132
-  object_id: 37c65b0c-1fbe-4eeb-48db-e700eee7e366
-  sha: 1545cffee57ec5b15a80a357e6d4c05dca0b78bb
+rabbitmq-server/rabbitmq-server-generic-unix-3.6.14.tar.xz:
+  size: 4787900
+  sha: 7c10d1ef1ffa57e81f0568d1f28b3ce888971faa
 rabbitmq-server/rabbitmq_clusterer-3.6.5.ez:
   size: 58675
   object_id: aca4b381-2afc-487c-913a-643fef65b3d1
