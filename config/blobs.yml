@@ -6,6 +6,9 @@ erlang/otp_src_oss_19.3.6.2.tgz:
   size: 35747840
   object_id: 8a68024e-f1a3-44f7-96e5-7080bc0d8428
   sha: ddcc37007c21d5882207f0fe9fba276f23a0bf02
+erlang/otp_src_oss_19.3.6.4.tgz:
+  size: 33999248
+  sha: b67f7cfedc8483570501928150cb550fbcfcca45
 golang/go1.9.1.linux-amd64.tar.gz:
   size: 104197862
   object_id: 650b3b65-ba36-4c70-4778-c6ad58b4cacd
