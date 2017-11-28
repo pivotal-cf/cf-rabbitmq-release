@@ -3,9 +3,9 @@ basht/basht_0.1.0_Linux_x86_64.tgz:
   object_id: bbc2200b-670b-4562-72db-27ce98bc3161
   sha: 5dee8d242fc333672e14d9e1d70162b77eab5924
 erlang/otp_src_oss_19.3.6.4.tgz:
-  size: 34955848
-  object_id: c8b54142-2f56-4c04-538e-777ddce04000
-  sha: 452b5acc787b5b4a7f45cbcbe6aba6db8505260c
+  size: 36173300
+  object_id: 019636ac-326f-4df7-57b6-80882ce20f6c
+  sha: e45a9f1ee0a396207f9691cb703745a9d0ca8de7
 golang/go1.9.1.linux-amd64.tar.gz:
   size: 104197862
   object_id: 650b3b65-ba36-4c70-4778-c6ad58b4cacd
