@@ -4,6 +4,7 @@ basht/basht_0.1.0_Linux_x86_64.tgz:
   sha: 5dee8d242fc333672e14d9e1d70162b77eab5924
 erlang/otp_src_oss_19.3.6.4.tgz:
   size: 33999248
+  object_id: 3520c2b2-151a-443d-52c7-be9fb9a64a34
   sha: b67f7cfedc8483570501928150cb550fbcfcca45
 golang/go1.9.1.linux-amd64.tar.gz:
   size: 104197862
@@ -15,4 +16,5 @@ haproxy/haproxy-1.6.13.tar.gz:
   sha: ae0cabea33c718b08d463016248facd31a3618b8
 rabbitmq-server/rabbitmq-server-generic-unix-3.6.14.tar.xz:
   size: 4787900
+  object_id: 095e9272-689f-4f9a-71a2-160e6fa4d26b
   sha: 7c10d1ef1ffa57e81f0568d1f28b3ce888971faa
