@@ -158,33 +158,6 @@ RSpec.describe 'RabbitMQ server configuration' do
       expect(response['name']).to eq(vhost)
     end
   end
-
-  describe 'when changing the cookie' do
-    before(:each) do
-      bosh.redeploy do |manifest|
-        rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
-        rmq_properties['cookie'] = 'change-the-cookie'
-      end
-    end
-
-    after(:each) do
-      bosh.deploy(test_manifest)
-    end
-
-    it 'all the nodes come back' do
-      creds = get_admin_creds
-      nodes = get("#{rabbitmq_api_url}/nodes", creds['username'], creds['password'])
-
-      expect(nodes.size).to eq(3)
-      nodes.each do |node|
-        expect(node['running']).to eq(true)
-
-        applications = (node['applications'] || []).map{|app| app['name']}
-        expect(applications).to include('rabbit')
-        expect(applications).to include('rabbitmq_management')
-      end
-    end
-  end
 end
 
 def get_admin_creds
