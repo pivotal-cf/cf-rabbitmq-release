@@ -154,7 +154,7 @@ RSpec.describe 'RabbitMQ server configuration' do
     end
 
     it 'creates a vhost when vhost definition is provided' do
-      creds = get_admin_creds
+      creds = admin_creds
       response = get("#{rabbitmq_api_url}/vhosts/#{vhost}", creds['username'], creds['password'])
 
       expect(response['name']).to eq(vhost)
@@ -162,10 +162,9 @@ RSpec.describe 'RabbitMQ server configuration' do
   end
 end
 
-def get_admin_creds
+def admin_creds
   get_properties(bosh.manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']['administrators']['management']
 end
-
 
 def stdout(output)
   output['Tables'].first['Rows'].first['stdout']
