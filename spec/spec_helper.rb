@@ -12,8 +12,8 @@ end
 BOSH_CLI = ENV.fetch("BOSH_CLI", 'bosh')
 
 class Bosh2
-  def initialize(bosh_cli = 'bosh')
-    @bosh_cli = bosh_cli
+  def initialize(bosh_cli = 'bosh', deployment = 'cf-rabbitmq')
+    @bosh_cli = "#{bosh_cli} -n -d #{deployment}"
 
     version = `#{@bosh_cli} --version`
     raise 'BOSH CLI >= v2 required' unless version.start_with?('version 2.')
@@ -21,8 +21,13 @@ class Bosh2
 
   def ssh(instance, command)
     command_escaped = Shellwords.escape(command)
-    output = `#{@bosh_cli} -n ssh #{instance} -r --json -c #{command_escaped}`
+    output = `#{@bosh_cli} ssh #{instance} -r --json -c #{command_escaped}`
     JSON.parse(output)
+  end
+
+  def indexed_instance(instance, index)
+    output = `#{@bosh_cli} instances | grep #{instance} | cut -f1`
+    output.split(' ')[index]
   end
 
   def deploy(manifest)
@@ -30,7 +35,7 @@ class Bosh2
       manifest_file.write(manifest.to_yaml)
       manifest_file.flush
       output = ""
-      exit_code = ::Open3.popen3("#{@bosh_cli} -n deploy #{manifest_file.path}") do |stdin, stdout, stderr, wait_thr|
+      exit_code = ::Open3.popen3("#{@bosh_cli} deploy #{manifest_file.path}") do |stdin, stdout, stderr, wait_thr|
         output << stdout.read
         wait_thr.value
       end
@@ -45,16 +50,16 @@ class Bosh2
   end
 
   def manifest
-    manifest = `#{@bosh_cli} -n manifest`
+    manifest = `#{@bosh_cli} manifest`
     YAML.load(manifest)
   end
 
   def start(instance)
-    `#{@bosh_cli} -n start #{instance}`
+    `#{@bosh_cli} start #{instance}`
   end
 
   def stop(instance)
-    `#{@bosh_cli} -n stop #{instance}`
+    `#{@bosh_cli} stop #{instance}`
   end
 end
 

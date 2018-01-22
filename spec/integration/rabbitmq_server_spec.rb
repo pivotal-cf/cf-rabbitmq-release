@@ -7,7 +7,9 @@ require 'tempfile'
 require 'httparty'
 
 RSpec.describe 'RabbitMQ server configuration' do
-  let(:rmq_host) { 'rmq/0' }
+  let(:rmq_host) do
+    bosh.indexed_instance('rmq', 0)
+  end
 
   let(:environment_settings) do
     stdout(bosh.ssh(rmq_host, 'sudo ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl environment'))
