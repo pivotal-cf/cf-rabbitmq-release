@@ -145,6 +145,7 @@ RSpec.describe 'RabbitMQ server configuration' do
       end
     end
   end
+end
 
 def admin_creds
   get_properties(bosh.manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']['administrators']['management']
@@ -153,4 +154,3 @@ end
 def stdout(output)
   output['Tables'].first['Rows'].first['stdout']
 end
-
