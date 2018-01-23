@@ -19,6 +19,10 @@ RSpec.describe 'RabbitMQ server configuration' do
     stdout(bosh.ssh(rmq_host, "sudo ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl eval 'application:get_env(rabbit, ssl_options).'"))
   end
 
+  def vhost
+    'foobar'
+  end
+
   context 'when properties are set' do
     before(:all) do
       manifest = bosh.manifest
@@ -52,6 +56,11 @@ RSpec.describe 'RabbitMQ server configuration' do
         tlsv1_compatible_cipher = 'ECDHE-RSA-AES256-SHA'
         tlsv1_2_compatible_cipher = 'ECDHE-RSA-AES256-GCM-SHA384'
         rmq_properties['ssl']['ciphers'] = [tlsv1_compatible_cipher, tlsv1_2_compatible_cipher]
+
+        rmq_ssl_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']['ssl']
+        rmq_ssl_properties['verify'] = true
+        rmq_ssl_properties['verification_depth'] = 10
+        rmq_ssl_properties['fail_if_no_peer_cert'] = true
 
         # Load Definitions
         rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
@@ -113,15 +122,6 @@ RSpec.describe 'RabbitMQ server configuration' do
       end
 
       context 'when verification and validation is enabled' do
-        before(:all) do
-          bosh.redeploy do |manifest|
-            rmq_ssl_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']['ssl']
-            rmq_ssl_properties['verify'] = true
-            rmq_ssl_properties['verification_depth'] = 10
-            rmq_ssl_properties['fail_if_no_peer_cert'] = true
-          end
-        end
-
         it 'has the right SSL verification options' do
           expect(ssl_options).to include('{verify,verify_peer}')
         end
