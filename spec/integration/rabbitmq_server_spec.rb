@@ -29,12 +29,34 @@ RSpec.describe 'RabbitMQ server configuration' do
       @new_password = 'newpassword'
 
       bosh.redeploy do |manifest|
+        # Change management creds
         rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
         rmq_properties['fd_limit'] = 350_000
 
         management_credentials = rmq_properties['administrators']['management']
         management_credentials['username'] = @new_username
         management_credentials['password'] = @new_password
+
+        # SSL
+        server_key = File.read(File.join(__dir__, '../..', '/spec/assets/server_key.pem'))
+        server_cert = File.read(File.join(__dir__, '../..', '/spec/assets/server_certificate.pem'))
+        ca_cert = File.read(File.join(__dir__, '../..', '/spec/assets/ca_certificate.pem'))
+
+        rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
+        rmq_properties['ssl'] = Hash.new
+        rmq_properties['ssl']['key'] = server_key
+        rmq_properties['ssl']['cert'] = server_cert
+        rmq_properties['ssl']['cacert'] = ca_cert
+        rmq_properties['ssl']['versions'] = ['tlsv1.2','tlsv1.1', 'tlsv1']
+
+        tlsv1_compatible_cipher = 'ECDHE-RSA-AES256-SHA'
+        tlsv1_2_compatible_cipher = 'ECDHE-RSA-AES256-GCM-SHA384'
+        rmq_properties['ssl']['ciphers'] = [tlsv1_compatible_cipher, tlsv1_2_compatible_cipher]
+
+        # Load Definitions
+        rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
+        rmq_properties['load_definitions'] = Hash.new
+        rmq_properties['load_definitions']['vhosts'] = [{'name'=> vhost}]
       end
     end
 
@@ -42,43 +64,20 @@ RSpec.describe 'RabbitMQ server configuration' do
       bosh.deploy(test_manifest)
     end
 
-    it 'it can only access the management HTTP API with the new credentials' do
-      manifest = bosh.manifest
-      rabbitmq_api = get_properties(manifest, 'haproxy', 'route_registrar')['route_registrar']['routes'].first['uris'].first
+    context 'when management credentials are rolled' do
+      it 'it can only access the management HTTP API with the new credentials' do
+        manifest = bosh.manifest
+        rabbitmq_api = get_properties(manifest, 'haproxy', 'route_registrar')['route_registrar']['routes'].first['uris'].first
 
-      response = HTTParty.get("http://#{rabbitmq_api}/api/whoami", {:basic_auth => {:username => @new_username, :password => @new_password}})
-      expect(response.code).to eq 200
+        response = HTTParty.get("http://#{rabbitmq_api}/api/whoami", {:basic_auth => {:username => @new_username, :password => @new_password}})
+        expect(response.code).to eq 200
 
-      response = HTTParty.get("http://#{rabbitmq_api}/api/whoami", {:basic_auth => {:username => @old_username, :password => @old_password}})
-      expect(response.code).to eq 401
+        response = HTTParty.get("http://#{rabbitmq_api}/api/whoami", {:basic_auth => {:username => @old_username, :password => @old_password}})
+        expect(response.code).to eq 401
+      end
     end
-  end
 
-  describe 'SSL' do
-    context 'when is configured' do
-      before(:all) do
-        server_key = File.read(File.join(__dir__, '../..', '/spec/assets/server_key.pem'))
-        server_cert = File.read(File.join(__dir__, '../..', '/spec/assets/server_certificate.pem'))
-        ca_cert = File.read(File.join(__dir__, '../..', '/spec/assets/ca_certificate.pem'))
-
-        bosh.redeploy do |manifest|
-          rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
-          rmq_properties['ssl'] = Hash.new
-          rmq_properties['ssl']['key'] = server_key
-          rmq_properties['ssl']['cert'] = server_cert
-          rmq_properties['ssl']['cacert'] = ca_cert
-          rmq_properties['ssl']['versions'] = ['tlsv1.2','tlsv1.1', 'tlsv1']
-
-          tlsv1_compatible_cipher = 'ECDHE-RSA-AES256-SHA'
-          tlsv1_2_compatible_cipher = 'ECDHE-RSA-AES256-GCM-SHA384'
-          rmq_properties['ssl']['ciphers'] = [tlsv1_compatible_cipher, tlsv1_2_compatible_cipher]
-        end
-      end
-
-      after(:all) do
-        bosh.deploy(test_manifest)
-      end
-
+    describe 'SSL' do
       context "when tlsv1, tlsv1.1, and tlsv1.2 are enabled" do
         it 'should have TLS 1.0 enabled' do
           output = bosh.ssh(rmq_host, connect_using('tls1'))
@@ -136,31 +135,16 @@ RSpec.describe 'RabbitMQ server configuration' do
         end
       end
     end
-  end
 
-  describe 'load definitions' do
-    let(:vhost) { 'foobar' }
+    describe 'load definitions' do
+      it 'creates a vhost when vhost definition is provided' do
+        creds = admin_creds
+        response = get("#{rabbitmq_api_url}/vhosts/#{vhost}", creds['username'], creds['password'])
 
-    before(:each) do
-      bosh.redeploy do |manifest|
-        rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
-        rmq_properties['load_definitions'] = Hash.new
-        rmq_properties['load_definitions']['vhosts'] = [{'name'=> vhost}]
+        expect(response['name']).to eq(vhost)
       end
     end
-
-    after(:each) do
-      bosh.deploy(test_manifest)
-    end
-
-    it 'creates a vhost when vhost definition is provided' do
-      creds = admin_creds
-      response = get("#{rabbitmq_api_url}/vhosts/#{vhost}", creds['username'], creds['password'])
-
-      expect(response['name']).to eq(vhost)
-    end
   end
-end
 
 def admin_creds
   get_properties(bosh.manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']['administrators']['management']
