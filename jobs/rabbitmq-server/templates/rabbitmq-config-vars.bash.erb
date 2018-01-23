@@ -15,8 +15,7 @@
 
   require 'digest'
   job_ip_md5 = Digest::MD5.hexdigest(job_ip)
-  cookie = Shellwords.escape(p('rabbitmq-server.cookie', Digest::MD5.hexdigest(ips.join))
-)
+  cookie = p('rabbitmq-server.cookie', Digest::MD5.hexdigest(ips.join))
 
   nodes = ips.map do |ip|
     "rabbit@#{Digest::MD5.hexdigest(ip)}"

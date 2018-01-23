@@ -21,7 +21,7 @@ class Bosh2
 
   def ssh(instance, command)
     command_escaped = Shellwords.escape(command)
-    output = `#{@bosh_cli} ssh #{instance} -r --json -c #{command_escaped}`
+    output = `#{@bosh_cli} ssh --gw-key #{key_path} #{instance} -r --json -c #{command_escaped}`
     JSON.parse(output)
   end
 
@@ -41,6 +41,12 @@ class Bosh2
       end
       abort "Deployment failed\n#{output}" unless exit_code == 0
     end
+  end
+
+  def key_path
+    ssh_key_file = ENV.fetch('INSTANCE_SSH_KEY_FILE')
+    raise 'please set environment variable INSTANCE_SSH_KEY_FILE' if ssh_key_file.nil
+    ssh_key_file
   end
 
   def redeploy
