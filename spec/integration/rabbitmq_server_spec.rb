@@ -30,7 +30,7 @@ RSpec.describe 'RabbitMQ server configuration' do
       @old_password = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']['administrators']['management']['password']
 
       @new_username = 'newusername'
-      @new_password = 'newpassword'
+      @new_password = "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz!\"\#$%&'()*+,-./0123456789:;<=>?"
 
       bosh.redeploy do |manifest|
         # Change management creds
