@@ -11,7 +11,7 @@ This release is now using BOSH v2 [job links](https://bosh.io/docs/links.html) a
 - [BOSH CLI v2](https://bosh.io/docs/cli-v2.html#install)
 - [BOSH Lite](https://bosh.io/docs/bosh-lite)
 
-## Updating
+## Install (locally)
 
 Clone the repository, update submodules and install dependencies.
 ```bash
