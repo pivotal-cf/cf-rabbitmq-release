@@ -1,7 +1,7 @@
 # Cloud Foundry RabbitMQ Service
 
 This repository contains the release for RabbitMQ for Cloud Foundry.
-It is deployable by BOSH in the usual way.
+It is deployable by BOSH in the [usual way](https://bosh.io/docs/deploying.html).
 
 This release is now using BOSH v2 [job links](https://bosh.io/docs/links.html) and [cloud config](https://bosh.io/docs/cloud-config.html) and requires at least BOSH Director v255.5
 
