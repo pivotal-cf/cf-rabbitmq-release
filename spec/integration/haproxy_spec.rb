@@ -2,15 +2,17 @@ require 'spec_helper'
 
 require 'httparty'
 
-RSpec.describe "haproxy" do
+RSpec.describe 'haproxy' do
   [0, 1].each do |job_index|
     context "when the job rmq/#{job_index} is down" do
       before(:all) do
-        bosh.stop("rmq/#{job_index}")
+        rmq_instance = bosh.indexed_instance('rmq', job_index)
+        bosh.stop(rmq_instance)
       end
 
       after(:all) do
-        bosh.start("rmq/#{job_index}")
+        rmq_instance = bosh.indexed_instance('rmq', job_index)
+        bosh.start(rmq_instance)
       end
 
       it 'I can still access the managment UI' do
