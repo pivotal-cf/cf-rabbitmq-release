@@ -9,10 +9,9 @@ export BOSH_CLIENT_SECRET="${BOSH_CLIENT_SECRET:-admin}"
 export BOSH_CA_CERT="${BOSH_CA_CERT:-"$(bosh int ~/deployments/vbox/creds.yml --path /director_ssl/ca)"}"
 export BOSH_DEPLOYMENT="${BOSH_DEPLOYMENT:-cf-rabbitmq}"
 export BOSH_MANIFEST=${BOSH_MANIFEST:-$(./scripts/generate-manifest)}
-export INSTANCE_SSH_KEY_FILE="${PWD}/director.key"
 
-echo -e "${BOSH_INSTANCE_SSH_KEY}" > "${INSTANCE_SSH_KEY_FILE}"
-chmod 0600 "${INSTANCE_SSH_KEY_FILE}"
+export JUMPBOX_PRIVATE_KEY="${JUMPBOX_PRIVATE_KEY:-"$(bosh int ~/deployments/vbox/creds.yml --path /jumpbox_ssh/private_key)"}"
+export BOSH_ALL_PROXY="${BOSH_ALL_PROXY:-ssh+socks5://jumpbox@192.168.50.6:22?private-key="$JUMPBOX_PRIVATE_KEY"}"
 
 bundle check || bundle install
 bundle exec "$@"

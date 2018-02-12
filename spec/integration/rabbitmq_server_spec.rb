@@ -47,11 +47,11 @@ RSpec.describe 'RabbitMQ server configuration' do
         ca_cert = File.read(File.join(__dir__, '../..', '/spec/assets/ca_certificate.pem'))
 
         rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
-        rmq_properties['ssl'] = Hash.new
+        rmq_properties['ssl'] = {}
         rmq_properties['ssl']['key'] = server_key
         rmq_properties['ssl']['cert'] = server_cert
         rmq_properties['ssl']['cacert'] = ca_cert
-        rmq_properties['ssl']['versions'] = ['tlsv1.2','tlsv1.1', 'tlsv1']
+        rmq_properties['ssl']['versions'] = ['tlsv1.2', 'tlsv1.1', 'tlsv1']
 
         tlsv1_compatible_cipher = 'ECDHE-RSA-AES256-SHA'
         tlsv1_2_compatible_cipher = 'ECDHE-RSA-AES256-GCM-SHA384'
@@ -64,8 +64,8 @@ RSpec.describe 'RabbitMQ server configuration' do
 
         # Load Definitions
         rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
-        rmq_properties['load_definitions'] = Hash.new
-        rmq_properties['load_definitions']['vhosts'] = [{'name'=> vhost}]
+        rmq_properties['load_definitions'] = {}
+        rmq_properties['load_definitions']['vhosts'] = [{ 'name' => vhost }]
       end
     end
 
@@ -78,16 +78,16 @@ RSpec.describe 'RabbitMQ server configuration' do
         manifest = bosh.manifest
         rabbitmq_api = get_properties(manifest, 'haproxy', 'route_registrar')['route_registrar']['routes'].first['uris'].first
 
-        response = HTTParty.get("http://#{rabbitmq_api}/api/whoami", {:basic_auth => {:username => @new_username, :password => @new_password}})
+        response = HTTParty.get("http://#{rabbitmq_api}/api/whoami", basic_auth: { username: @new_username, password: @new_password })
         expect(response.code).to eq 200
 
-        response = HTTParty.get("http://#{rabbitmq_api}/api/whoami", {:basic_auth => {:username => @old_username, :password => @old_password}})
+        response = HTTParty.get("http://#{rabbitmq_api}/api/whoami", basic_auth: { username: @old_username, password: @old_password })
         expect(response.code).to eq 401
       end
     end
 
     describe 'SSL' do
-      context "when tlsv1, tlsv1.1, and tlsv1.2 are enabled" do
+      context 'when tlsv1, tlsv1.1, and tlsv1.2 are enabled' do
         it 'should have TLS 1.0 enabled' do
           output = bosh.ssh(rmq_host, connect_using('tls1'))
 
@@ -115,7 +115,7 @@ RSpec.describe 'RabbitMQ server configuration' do
 
         context 'when client connects with a cipher not configured on the server' do
           it 'should not be able to connect' do
-            output = bosh.ssh(rmq_host, "openssl s_client -cipher AES256-SHA256 -connect 127.0.0.1:5671")
+            output = bosh.ssh(rmq_host, 'openssl s_client -cipher AES256-SHA256 -connect 127.0.0.1:5671')
             expect(stdout(output)).to include('insufficient security')
           end
         end
