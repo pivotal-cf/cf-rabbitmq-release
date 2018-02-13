@@ -10,8 +10,10 @@ export BOSH_CA_CERT="${BOSH_CA_CERT:-"$(bosh int ~/deployments/vbox/creds.yml --
 export BOSH_DEPLOYMENT="${BOSH_DEPLOYMENT:-cf-rabbitmq}"
 export BOSH_MANIFEST=${BOSH_MANIFEST:-$(./scripts/generate-manifest)}
 
-export JUMPBOX_PRIVATE_KEY="${JUMPBOX_PRIVATE_KEY:-"$(bosh int ~/deployments/vbox/creds.yml --path /jumpbox_ssh/private_key)"}"
-export BOSH_ALL_PROXY="${BOSH_ALL_PROXY:-ssh+socks5://jumpbox@192.168.50.6:22?private-key="$JUMPBOX_PRIVATE_KEY"}"
+export JUMPBOX_SSH_KEY="${JUMPBOX_SSH_KEY:-"$(bosh int ~/deployments/vbox/creds.yml --path /jumpbox_ssh/private_key)"}"
+export JUMPBOX_URL="${JUMPBOX_URL:-192.168.50.6}"
+export JUMPBOX_PORT="${JUMPBOX_PORT:-22}"
+export BOSH_ALL_PROXY="${BOSH_ALL_PROXY:-ssh+socks5://jumpbox@$JUMPBOX_URL:$JUMPBOX_PORT?private-key="$JUMPBOX_SSH_KEY"}"
 
 bundle check || bundle install
 bundle exec "$@"
