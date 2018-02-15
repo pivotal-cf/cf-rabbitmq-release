@@ -18,8 +18,7 @@ echo "$JUMPBOX_SSH_KEY" > "$JUMPBOX_PRIVATE_KEY"
 
 export JUMPBOX_URL="${JUMPBOX_URL:-192.168.50.6}"
 export JUMPBOX_PORT="${JUMPBOX_PORT:-22}"
-export BOSH_ALL_PROXY="${BOSH_ALL_PROXY:-ssh+socks5://jumpbox@$JUMPBOX_URL:$JUMPBOX_PORT?private-key="$JUMPBOX_PRIVATE_KEY"}"
+export BOSH_ALL_PROXY="ssh+socks5://jumpbox@$JUMPBOX_URL:$JUMPBOX_PORT?private-key="$JUMPBOX_PRIVATE_KEY""
 
 bundle check || bundle install
 bundle exec "$@"
-
