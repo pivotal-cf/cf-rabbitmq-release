@@ -22,7 +22,7 @@ export JUMPBOX_PRIVATE_KEY
 JUMPBOX_PRIVATE_KEY="$(mktemp -t jumpbox.pem.XXX)"
 echo "$JUMPBOX_SSH_KEY" > "$JUMPBOX_PRIVATE_KEY"
 
-# pcf-tile-pipeline currently exports BOSH_ALL_PROXY, but it seems not to be working propertly.
+# pcf-tile-pipeline currently exports BOSH_ALL_PROXY, but it seems not to be working properly.
 # We are then overwriting it here.
 unset BOSH_ALL_PROXY
 export BOSH_ALL_PROXY="ssh+socks5://jumpbox@$JUMPBOX_URL:$JUMPBOX_PORT?private-key=$JUMPBOX_PRIVATE_KEY"
