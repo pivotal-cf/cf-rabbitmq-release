@@ -2,24 +2,30 @@ require 'spec_helper'
 
 require 'httparty'
 
-RSpec.describe 'haproxy' do
-  [0, 1].each do |job_index|
-    context "when the job rmq/#{job_index} is down" do
-      before(:all) do
-        rmq_instance = bosh.indexed_instance('rmq', job_index)
-        bosh.stop(rmq_instance)
-      end
+RSpec.describe 'Load balancing' do
+  rmq_nodes = [0, 1, 2].shuffle
 
-      after(:all) do
-        rmq_instance = bosh.indexed_instance('rmq', job_index)
-        bosh.start(rmq_instance)
-      end
+  context "given a RabbitMQ cluster with #{rmq_nodes.size} nodes" do
+    rmq_nodes.each do |node|
+      rmq_instance = bosh.indexed_instance('rmq', node)
 
-      it 'I can still access the managment UI' do
-        res = HTTParty.get(rabbitmq_api_url)
+      context "when I take the node #{node + 1} down" do
+        before(:each) do
+          bosh.stop(rmq_instance, true)
+        end
 
-        expect(res.code).to eql(200)
-        expect(res.body).to include('RabbitMQ Management')
+        context 'but the other nodes remain up' do
+          it 'then managment UI is still accessible' do
+            response = HTTParty.get(rabbitmq_api_url)
+
+            expect(response.code).to be(200)
+            expect(response.body).to include('RabbitMQ Management')
+          end
+        end
+
+        after(:each) do
+          bosh.start(rmq_instance)
+        end
       end
     end
   end

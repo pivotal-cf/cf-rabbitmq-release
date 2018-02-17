@@ -58,8 +58,9 @@ class Bosh2
     `#{@bosh_cli} start #{instance}`
   end
 
-  def stop(instance)
-    `#{@bosh_cli} stop #{instance}`
+  def stop(instance, should_skip_drain = false)
+    skip_drain = '--skip-drain' if should_skip_drain
+    `#{@bosh_cli} stop #{skip_drain} #{instance}`
   end
 end
 
