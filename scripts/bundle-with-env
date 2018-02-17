@@ -19,7 +19,7 @@ export JUMPBOX_PORT="${JUMPBOX_PORT:-22}"
 
 # Jumpbox configuraiton for bosh-cli
 export JUMPBOX_PRIVATE_KEY
-JUMPBOX_PRIVATE_KEY="$(mktemp jumpbox.pem.XXX)"
+JUMPBOX_PRIVATE_KEY="$(mktemp -t jumpbox.pem.XXX)"
 echo "$JUMPBOX_SSH_KEY" > "$JUMPBOX_PRIVATE_KEY"
 
 # pcf-tile-pipeline currently exports BOSH_ALL_PROXY, but it seems not to be working propertly.
