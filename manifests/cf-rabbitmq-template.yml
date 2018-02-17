@@ -1,6 +1,5 @@
 ---
 name: ((deployment-name))
-director_uuid: ((director-uuid))
 
 releases:
 - name: cf-rabbitmq
