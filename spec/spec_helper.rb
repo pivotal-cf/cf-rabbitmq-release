@@ -11,22 +11,27 @@ end
 
 BOSH_CLI = ENV.fetch('BOSH_CLI', 'bosh')
 
+def execute(command)
+  output, = Open3.capture2(command)
+  output
+end
+
 class Bosh2
   def initialize(bosh_cli = 'bosh')
     @bosh_cli = "#{bosh_cli} -n"
 
-    version = `#{@bosh_cli} --version`
+    version = execute("#{@bosh_cli} --version")
     raise 'BOSH CLI >= v2 required' unless version.start_with?('version 2.')
   end
 
   def ssh(instance, command)
     command_escaped = Shellwords.escape(command)
-    output = `#{@bosh_cli} ssh #{instance} -r --json -c #{command_escaped}`
+    output = execute("#{@bosh_cli} ssh #{instance} -r --json -c #{command_escaped}")
     JSON.parse(output)
   end
 
   def indexed_instance(instance, index)
-    output = `#{@bosh_cli} instances | grep #{instance} | cut -f1`
+    output = execute("#{@bosh_cli} instances | grep #{instance} | cut -f1")
     output.split(' ')[index]
   end
 
@@ -50,17 +55,17 @@ class Bosh2
   end
 
   def manifest
-    manifest = `#{@bosh_cli} manifest`
+    manifest = execute("#{@bosh_cli} manifest")
     YAML.safe_load(manifest)
   end
 
   def start(instance)
-    `#{@bosh_cli} start #{instance}`
+    execute("#{@bosh_cli} start #{instance}")
   end
 
   def stop(instance, should_skip_drain = false)
     skip_drain = '--skip-drain' if should_skip_drain
-    `#{@bosh_cli} stop #{skip_drain} #{instance}`
+    execute("#{@bosh_cli} stop #{skip_drain} #{instance}")
   end
 end
 
