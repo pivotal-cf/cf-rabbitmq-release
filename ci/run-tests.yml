@@ -3,7 +3,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: golang
+    repository: cflondonservices/london-services-ci-rabbitmq
 inputs:
   - name: rabbitmq-upgrade-preparation
 run:
