@@ -2,7 +2,7 @@
 
 [ -z "$DEBUG" ] || set -x
 
-GOPATH=${}
+GOPATH="${GOPATH:-/go}"
 WORKDIR=$GOPATH/src/github.com/pivotal-cf/rabbitmq-upgrade-preparation
 
 main() {
