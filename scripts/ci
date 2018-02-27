@@ -5,18 +5,12 @@
 GOPATH="${GOPATH:-/go}"
 WORKDIR=$GOPATH/src/github.com/pivotal-cf/rabbitmq-upgrade-preparation
 
-main() {
-  setup_workdir
-  scripts/setup
-  useradd test-user
-  chown -R test-user $GOPATH
-  su test-user -c 'export PATH=$GOPATH/bin:/usr/local/go/bin:$PATH; cd $WORKDIR; godep get; scripts/run_tests' --preserve-environment
-}
+mkdir -p "$WORKDIR"
+cp -r "$PWD"/rabbitmq-upgrade-preparation/* "$WORKDIR"/
+cd "$WORKDIR"
+export PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
+cd $WORKDIR
+go get -u github.com/golang/dep/cmd/dep
+dep ensure
+scripts/run_tests
 
-setup_workdir() {
-  mkdir -p "$WORKDIR"
-  cp -r "$PWD"/rabbitmq-upgrade-preparation/* "$WORKDIR"/
-  cd "$WORKDIR"
-}
-
-main

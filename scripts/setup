@@ -1,6 +1,0 @@
-#!/bin/bash -e
-
-[ -z "$DEBUG" ] || set -x
-
-go get -u github.com/kardianos/govendor
-govendor install +vendor
