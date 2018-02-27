@@ -37,12 +37,14 @@ SCRIPT=`basename $0`
 
 cd /var/vcap/store/rabbitmq # this is our HOME for rabbit/vcap
 
+. /var/vcap/jobs/rabbitmq-server/etc/rabbitmq-server-version
+
 if [ `id -u` = `id -u ${RABBITMQ_USER}` -a "$SCRIPT" = "rabbitmqctl" ] ; then
-    /var/vcap/packages/rabbitmq-server/privbin/${SCRIPT} "$@"
+    /var/vcap/packages/rabbitmq-server-"$RMQ_SERVER_VERSION"/privbin/${SCRIPT} "$@"
 elif [ `id -u` = 0 ] ; then
-    su ${RABBITMQ_USER} -p -s /bin/sh -c "PATH=$PATH /var/vcap/packages/rabbitmq-server/privbin/${SCRIPT} ${CMDLINE}"
+    su ${RABBITMQ_USER} -p -s /bin/sh -c "PATH=$PATH /var/vcap/packages/rabbitmq-server-$RMQ_SERVER_VERSION/privbin/${SCRIPT} ${CMDLINE}"
 else
-    /var/vcap/packages/rabbitmq-server/privbin/${SCRIPT}
+    /var/vcap/packages/rabbitmq-server-"$RMQ_SERVER_VERSION"/privbin/${SCRIPT}
     echo
     echo "Only root or ${RABBITMQ_USER} should run ${SCRIPT}"
     echo

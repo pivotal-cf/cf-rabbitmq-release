@@ -8,13 +8,14 @@ set -o pipefail # fail if any component of any pipe fails
 # shellcheck disable=SC2128
 if [[ "$0" = "$BASH_SOURCE" ]]; then
   # only run, when called and not sourced
+  . /var/vcap/jobs/rabbitmq-server/etc/rabbitmq-server-version
   . /var/vcap/jobs/rabbitmq-server/lib/setup-vars.bash
 
   . /var/vcap/jobs/rabbitmq-server/lib/rabbitmq-config-vars.bash
 
   # Unfortunate tight coupling. Beware.
   # We need this for CONF_ENV_FILE, HOME, ERL_INETRC, and for MNESIA_BASE
-  . /var/vcap/packages/rabbitmq-server/privbin/rabbitmq-defaults
+  . /var/vcap/packages/rabbitmq-server-"$RMQ_SERVER_VERSION"/privbin/rabbitmq-defaults
 fi
 
 HOME_DIR="/var/vcap/store/rabbitmq"

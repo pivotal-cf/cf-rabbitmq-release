@@ -17,13 +17,15 @@ send_all_output_to_logfile() {
 }
 
 append_rabbitmq_server_and_erlang_to_global_path_via_login_shell() {
-  echo "export PATH=$PATH:/var/vcap/packages/rabbitmq-server/bin/:/var/vcap/packages/erlang/bin" > /etc/profile.d/add_rabbitmqctl_to_path.sh
+  echo "export PATH=$PATH:/var/vcap/packages/rabbitmq-server-$RMQ_SERVER_VERSION/bin/:/var/vcap/packages/erlang/bin" > /etc/profile.d/add_rabbitmqctl_to_path.sh
 }
 
 ensure_rabbitmqctl_in_login_shell_path() {
   bash -l -c "rabbitmqctl eval 'node().'" ||
   echo "rabbitmqctl not in PATH"
 }
+
+. /var/vcap/jobs/rabbitmq-server/etc/rabbitmq-server-version
 
 send_all_output_to_logfile
 main

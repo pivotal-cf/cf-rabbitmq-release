@@ -2,9 +2,10 @@
 
 [ -z "$DEBUG" ] || set -x
 
+. /var/vcap/jobs/rabbitmq-server/etc/rabbitmq-server-version
 (
   if [ -z $RABBITMQ_PLUGINS ]; then
-    RABBITMQ_PLUGINS=/var/vcap/packages/rabbitmq-server/bin/rabbitmq-plugins
+    RABBITMQ_PLUGINS=/var/vcap/packages/rabbitmq-server-"$RMQ_SERVER_VERSION"/bin/rabbitmq-plugins
   fi
   PATH=$RABBITMQ_HOME/bin:$ERLANG_HOME/bin:/var/vcap/packages/ruby/bin:$PATH
 

@@ -3,11 +3,15 @@
 name: rabbitmq-server
 packages:
 - erlang
-- rabbitmq-server
+- rabbitmq-server-3.6
+- rabbitmq-server-3.7
 - rabbitmq-common
 - rabbitmq-upgrade-preparation
 
 properties:
+  rabbitmq-server.version:
+    description: "Version of RabbitMQ to use"
+    default: "3.6"
   rabbitmq-server.ssl.cacert:
     description: "RabbitMQ server CA certificate"
   rabbitmq-server.ssl.cert:
@@ -89,6 +93,7 @@ templates:
   key.pem.erb:                              etc/key.pem
   rabbitmq.config.erb:                      etc/rabbitmq.config
   users.erb:                                etc/users
+  rabbitmq-server-version.erb:              etc/rabbitmq-server-version
   prepare-for-upgrade.bash:                 lib/prepare-for-upgrade.bash
   rabbitmq-config-vars.bash.erb:            lib/rabbitmq-config-vars.bash
   setup-vars.bash.erb:                      lib/setup-vars.bash

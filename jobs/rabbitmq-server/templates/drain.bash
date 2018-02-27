@@ -2,7 +2,9 @@
 
 [ -z "$DEBUG" ] || set -x
 
-export PATH=/var/vcap/jobs/rabbitmq-server/bin:/var/vcap/packages/erlang/bin:/var/vcap/packages/rabbitmq-server/bin:$PATH
+. /var/vcap/jobs/rabbitmq-server/etc/rabbitmq-server-version
+
+export PATH=/var/vcap/jobs/rabbitmq-server/bin:/var/vcap/packages/erlang/bin:/var/vcap/packages/rabbitmq-server-$"RMQ_SERVER_VERSION"/bin:$PATH
 
 ERLANG_PID_FILE=/var/vcap/sys/run/rabbitmq-server/pid
 

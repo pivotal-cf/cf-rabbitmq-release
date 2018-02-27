@@ -14,7 +14,11 @@ haproxy/haproxy-1.6.13.tar.gz:
   size: 1580214
   object_id: 84b3dd36-e9f7-4917-aa31-67798f94975a
   sha: ae0cabea33c718b08d463016248facd31a3618b8
-rabbitmq-server/rabbitmq-server-generic-unix-3.6.15.tar.xz:
+rabbitmq-server-3.6/rabbitmq-server-generic-unix-3.6.15.tar.xz:
   size: 4799688
-  object_id: 213fab4a-cfcd-4263-7936-7410d2678f44
+  object_id: be19e3a4-a491-4b6c-455a-711e979a0dec
   sha: c452469bfc6982a79271aedc529d41e0ed16366e
+rabbitmq-server-3.7/rabbitmq-server-generic-unix-3.7.3.tar.xz:
+  size: 11444792
+  object_id: 0886430f-8540-422a-704e-3318c1e7c53e
+  sha: 592d2d41aff4cad1f11b4a568a57da7b0c3838c3
