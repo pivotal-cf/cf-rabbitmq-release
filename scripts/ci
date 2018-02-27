@@ -2,14 +2,15 @@
 
 [ -z "$DEBUG" ] || set -x
 
+GOPATH=${}
 WORKDIR=$GOPATH/src/github.com/pivotal-cf/rabbitmq-upgrade-preparation
 
 main() {
   setup_workdir
   scripts/setup
   useradd test-user
-  chown -R test-user /go
-  su test-user -c 'export PATH=$GOPATH/bin:/usr/local/go/bin:$PATH; scripts/run_tests' --preserve-environment
+  chown -R test-user $GOPATH
+  su test-user -c 'export PATH=$GOPATH/bin:/usr/local/go/bin:$PATH; cd $WORKDIR; godep get; scripts/run_tests' --preserve-environment
 }
 
 setup_workdir() {
