@@ -449,7 +449,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 						"-nodes", "rabbitmq@node1,rabbitmq@node2",
 					}
 
-					ioutil.WriteFile(tmpFile, []byte("old-cookie"), 0200)
+					os.MkdirAll(tmpFile, 0700)
 
 					session = execBin("", args...)
 					Eventually(session).Should(gexec.Exit(1))
