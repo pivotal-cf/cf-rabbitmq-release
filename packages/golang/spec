@@ -1,7 +1,7 @@
 ---
 name: golang
 metadata:
-  version: '1.9.1'
+  version: '1.10'
 
 files:
-  - golang/go1.9.1.linux-amd64.tar.gz
+  - golang/go1.10.linux-amd64.tar.gz
