@@ -21,11 +21,11 @@ main() {
 }
 
 upload_stemcell() {
-  BOSH_LITE_STEMCELL_NAME="bosh-warden-boshlite-ubuntu-trusty-go_agent"
-  BOSH_LITE_STEMCELL_VERSION="$(yq .stemcells[0].version "$BOSH_MANIFEST")"
-  BOSH_LITE_STEMCELL_URL="https://bosh.io/d/stemcells/$BOSH_LITE_STEMCELL_NAME?v=$BOSH_LITE_STEMCELL_VERSION"
+  BOSH_STEMCELLCELL_NAME="${BOSH_STEMCELL:-bosh-warden-boshlite-ubuntu-trusty-go_agent}"
+  BOSH_STEMCELLCELL_VERSION="$(yq .stemcells[0].version "$BOSH_MANIFEST")"
+  BOSH_STEMCELLCELL_URL="https://bosh.io/d/stemcells/$BOSH_STEMCELLCELL_NAME?v=$BOSH_STEMCELLCELL_VERSION"
 
-  bosh upload-stemcell "$BOSH_LITE_STEMCELL_URL" --name "$BOSH_LITE_STEMCELL_NAME" --version "$BOSH_LITE_STEMCELL_VERSION"
+  bosh upload-stemcell "$BOSH_STEMCELLCELL_URL" --name "$BOSH_STEMCELLCELL_NAME" --version "$BOSH_STEMCELLCELL_VERSION"
 }
 
 download_blobs() {
