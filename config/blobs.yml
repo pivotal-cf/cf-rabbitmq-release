@@ -1,11 +1,10 @@
----
 basht/basht_0.1.0_Linux_x86_64.tgz:
   size: 757703
   object_id: bbc2200b-670b-4562-72db-27ce98bc3161
   sha: 5dee8d242fc333672e14d9e1d70162b77eab5924
 erlang/otp_src_oss_19.3.6.4.tgz:
   size: 36173300
-  object_id: '019636ac-326f-4df7-57b6-80882ce20f6c'
+  object_id: 019636ac-326f-4df7-57b6-80882ce20f6c
   sha: e45a9f1ee0a396207f9691cb703745a9d0ca8de7
 golang/go1.10.linux-amd64.tar.gz:
   size: 119905205
@@ -23,3 +22,6 @@ rabbitmq-server-3.7/rabbitmq-server-generic-unix-3.7.3.tar.xz:
   size: 11444792
   object_id: 0886430f-8540-422a-704e-3318c1e7c53e
   sha: 592d2d41aff4cad1f11b4a568a57da7b0c3838c3
+rabbitmq-server-3.7/rabbitmq-server-generic-unix-3.7.4.tar.xz:
+  size: 11484844
+  sha: 131b55207698b12d109b935db16e3f85e1b06540
