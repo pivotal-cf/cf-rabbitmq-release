@@ -27,6 +27,7 @@ do_interpolate() {
 
   bosh interpolate \
     --var-errs \
+    -v deployment-name="$BOSH_DEPLOYMENT" \
     --vars-file="$RELEASE_REPO/manifests/lite-vars-file.yml" \
     --ops-file="$RELEASE_REPO/manifests/change-vcap-password.yml" \
   "$RELEASE_REPO/manifests/cf-rabbitmq-template.yml" \
