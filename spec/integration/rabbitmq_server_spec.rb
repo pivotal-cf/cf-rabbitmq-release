@@ -11,12 +11,16 @@ RSpec.describe 'RabbitMQ server configuration' do
     bosh.indexed_instance('rmq', 0)
   end
 
+  def rabbitmqctl
+    'source /var/vcap/jobs/rabbitmq-server/etc/rabbitmq-server-version && sudo ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server-$RMQ_SERVER_VERSION/bin/rabbitmqctl'
+  end
+
   let(:environment_settings) do
-    stdout(bosh.ssh(rmq_host, 'sudo ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl environment'))
+    stdout(bosh.ssh(rmq_host, "#{rabbitmqctl} environment"))
   end
 
   let(:ssl_options) do
-    stdout(bosh.ssh(rmq_host, "sudo ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl eval 'application:get_env(rabbit, ssl_options).'"))
+    stdout(bosh.ssh(rmq_host, "#{rabbitmqctl} eval 'application:get_env(rabbit, ssl_options).'"))
   end
 
   def vhost
