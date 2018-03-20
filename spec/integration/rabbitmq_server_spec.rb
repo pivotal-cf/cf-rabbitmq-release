@@ -6,6 +6,8 @@ require 'tempfile'
 
 require 'httparty'
 
+RMQ_VERSION = '3.6'
+
 RSpec.describe 'RabbitMQ server configuration' do
   let(:rmq_host) do
     bosh.indexed_instance('rmq', 0)
@@ -40,6 +42,7 @@ RSpec.describe 'RabbitMQ server configuration' do
         # Change management creds
         rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
         rmq_properties['fd_limit'] = 350_000
+        rmq_properties['version'] = RMQ_VERSION
 
         management_credentials = rmq_properties['administrators']['management']
         management_credentials['username'] = @new_username
@@ -75,6 +78,13 @@ RSpec.describe 'RabbitMQ server configuration' do
 
     after(:all) do
       bosh.deploy(test_manifest)
+    end
+
+    it "should deploy RabbitMQ #{RMQ_VERSION}" do
+        creds = admin_creds
+        response = get("#{rabbitmq_api_url}/overview", creds['username'], creds['password'])
+
+        expect(response['rabbitmq_version']).to start_with(RMQ_VERSION)
     end
 
     context 'when management credentials are rolled' do
