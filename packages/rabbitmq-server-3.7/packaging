@@ -2,14 +2,15 @@
 
 set -e
 
-RMQ_VERSION="3.6.15"
-RMQ_VERSION_SEMVER="3.6.15"
+RMQ_VERSION="3.7.4"
+RMQ_VERSION_SEMVER="3.7.4"
 ERLANG_VERSION="19.3"
+RABBITMQ_SERVER_PATH="rabbitmq-server-3.7"
 
 echo "$RMQ_VERSION_SEMVER" > "$BOSH_INSTALL_TARGET/rmq_version"
 echo "$ERLANG_VERSION" > "$BOSH_INSTALL_TARGET/erlang_version"
 
-tar xf "rabbitmq-server/rabbitmq-server-generic-unix-$RMQ_VERSION.tar.xz"
+tar xf "${RABBITMQ_SERVER_PATH}/rabbitmq-server-generic-unix-$RMQ_VERSION.tar.xz"
 
 cp -a "rabbitmq_server-$RMQ_VERSION"/* "$BOSH_INSTALL_TARGET"
 
@@ -22,4 +23,4 @@ do
     chmod 0755 "$BOSH_INSTALL_TARGET/bin/$script"
 done
 
-cp -a "rabbitmq-server/rabbitmq-defaults" "$BOSH_INSTALL_TARGET/privbin/"
+cp -a rabbitmq-server/rabbitmq-defaults "$BOSH_INSTALL_TARGET/privbin/"

@@ -24,6 +24,8 @@
   ips.each_index do |idx|
     inetrc_hosts += "{host, {#{ips[idx].gsub('.',',')}}, [\"#{Digest::MD5.hexdigest(ips[idx])}\"]}.\n"
   end
+
+  rmq_server_version = p('rabbitmq-server.version')
 %>
 
 export JOB_IP=<%= job_ip %>
@@ -31,3 +33,4 @@ export SELF_NODE="rabbit@<%= job_ip_md5 %>"
 export RABBITMQ_NODES_STRING="<%= nodes %>"
 export ERLANG_COOKIE="<%= cookie %>"
 export ERL_INETRC_HOSTS='<%= inetrc_hosts %>'
+export RMQ_SERVER_VERSION='<%= rmq_server_version %>'

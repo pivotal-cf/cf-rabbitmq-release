@@ -12,4 +12,14 @@ run_basht_tests() {
   return $ret
 }
 
+set_rmq_version() {
+  if [ "$(uname -s)" != "Linux" ]; then
+    echo "WARNING: dynamic RMQ version only works on Linux..."
+  else
+    mkdir -p /var/vcap/jobs/rabbitmq-server/etc
+    echo "export RMQ_VERSION=3.7" >/var/vcap/jobs/rabbitmq-server/etc/rabbitmq-server-version
+  fi
+}
+
+set_rmq_version
 run_basht_tests

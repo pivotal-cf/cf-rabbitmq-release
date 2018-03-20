@@ -1,7 +1,7 @@
 ---
 deployment-name: cf-rabbitmq
 
-stemcell-version: 3421.24
+stemcell-version: 3468.27
 
 haproxy-instances: 1
 
@@ -23,3 +23,5 @@ cf-admin-password: admin
 cf-admin-username: admin
 
 bosh-domain: bosh-lite.com
+
+rabbitmq_version: 3.6

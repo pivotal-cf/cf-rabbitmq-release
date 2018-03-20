@@ -28,8 +28,14 @@ send_all_output_to_logfile() {
   exec 2> >(tee -a "${LOG_DIR}/node-check.log")
 }
 
-send_all_output_to_logfile
-SCRIPT_CALLER="${1:-node-check}"
-echo "Running node checks at $(date) from $SCRIPT_CALLER..."
-main
-echo "Node checks running from $SCRIPT_CALLER passed"
+# shellcheck disable=SC2128
+if [[ "$0" = "$BASH_SOURCE" ]]
+then
+  # only run, when called and not sourced
+
+  send_all_output_to_logfile
+  SCRIPT_CALLER="${1:-node-check}"
+  echo "Running node checks at $(date) from $SCRIPT_CALLER..."
+  main
+  echo "Node checks running from $SCRIPT_CALLER passed"
+fi

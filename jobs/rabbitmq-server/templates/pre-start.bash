@@ -57,8 +57,14 @@ ensure_http_log_cleanup_cron_job() {
   cp "${JOB_DIR}/bin/cleanup-http-logs" /etc/cron.daily
 }
 
+configure_rmq_version() {
+  ln -f -s /var/vcap/packages/rabbitmq-server-"$RMQ_SERVER_VERSION" /var/vcap/packages/rabbitmq-server
+}
+
 setup_erl_inetrc() {
   . /var/vcap/jobs/rabbitmq-server/lib/rabbitmq-config-vars.bash
+
+  configure_rmq_version
 
   # Unfortunate tight coupling. Beware.
   # We need this for CONF_ENV_FILE, HOME, ERL_INETRC, and for MNESIA_BASE
