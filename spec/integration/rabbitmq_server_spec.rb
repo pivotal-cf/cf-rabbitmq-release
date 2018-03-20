@@ -12,7 +12,7 @@ RSpec.describe 'RabbitMQ server configuration' do
   end
 
   def rabbitmqctl
-    'source /var/vcap/jobs/rabbitmq-server/etc/rabbitmq-server-version && sudo ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server-$RMQ_SERVER_VERSION/bin/rabbitmqctl'
+    'sudo ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl'
   end
 
   let(:environment_settings) do

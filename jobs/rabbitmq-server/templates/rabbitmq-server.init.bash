@@ -14,9 +14,7 @@
 
 export PATH=/var/vcap/packages/erlang/bin:$PATH
 
-. /var/vcap/jobs/rabbitmq-server/etc/rabbitmq-server-version
-
-RMQ_SERVER_PACKAGE=/var/vcap/packages/rabbitmq-server-"$RMQ_SERVER_VERSION"
+RMQ_SERVER_PACKAGE=/var/vcap/packages/rabbitmq-server
 DAEMON=${RMQ_SERVER_PACKAGE}/bin/rabbitmq-server
 CONTROL=${RMQ_SERVER_PACKAGE}/bin/rabbitmqctl
 PID_FILE=/var/vcap/sys/run/rabbitmq-server/pid

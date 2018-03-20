@@ -2,10 +2,7 @@
 
 [ -z "$DEBUG" ] || set -x
 
-# shellcheck disable=SC1091
-. /var/vcap/jobs/rabbitmq-server/etc/rabbitmq-server-version
-
-export PATH=/var/vcap/packages/erlang/bin/:/var/vcap/packages/rabbitmq-server-"$RMQ_SERVER_VERSION"/privbin/:$PATH
+export PATH=/var/vcap/packages/erlang/bin/:/var/vcap/packages/rabbitmq-server/privbin/:$PATH
 LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 
 main() {
