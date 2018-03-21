@@ -42,6 +42,11 @@ Run `bundle exec rake --tasks` to list all the test subsets.
 
 To run only unit tests locally, run: `bundle exec rake spec:unit`.
 
+### Integration Tests
+Integration tests require this release to be deployed into a BOSH director (see [Deploying section above](#deploying)).
+
+To run integration tests do `bundle exec rake spec:integration`.
+
 ### Embedded Release Tests
 
 Sometimes testing BOSH releases can lead to writing many tests at the top of
@@ -57,8 +62,3 @@ To execute embedded release tests you need to co-locate the tests within the
 release being tested and deploy. The deployment should fail if the tests fail.
 The tests we use can be found in the [test release repo](https://github.com/pivotal-cf/cf-rabbitmq-test-release).
 
-
-### Integration Tests
-Integration tests require this release to be deployed into a BOSH director (see [Deploying section above](#deploying)).
-
-To run integration tests do `bundle exec rake spec:integration`.
