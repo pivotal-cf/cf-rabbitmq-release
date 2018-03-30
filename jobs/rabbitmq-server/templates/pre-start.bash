@@ -58,7 +58,8 @@ ensure_http_log_cleanup_cron_job() {
 }
 
 configure_rmq_version() {
-  ln -f -s /var/vcap/packages/rabbitmq-server-"$RMQ_SERVER_VERSION" /var/vcap/packages/rabbitmq-server
+  rm -rf /var/vcap/packages/rabbitmq-server
+  ln -s /var/vcap/packages/rabbitmq-server-"$RMQ_SERVER_VERSION" /var/vcap/packages/rabbitmq-server
 }
 
 setup_erl_inetrc() {
