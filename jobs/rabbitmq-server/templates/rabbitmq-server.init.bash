@@ -136,7 +136,7 @@ start_rabbitmq () {
     else
         RETVAL=0
         run_script "${JOB_DIR}/bin/setup.sh"
-        run_prepare_for_upgrade_when_first_deploy "/var/vcap/store/rabbitmq/mnesia"
+        run_prepare_for_upgrade_when_first_deploy "/var/vcap/store/rabbitmq/mnesia" "/var/vcap/packages/rabbitmq-server"
 
         echo "Starting RabbitMQ"
         track_rabbitmq_erlang_vm_pid_in_pid_file

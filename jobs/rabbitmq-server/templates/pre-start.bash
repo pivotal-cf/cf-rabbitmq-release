@@ -34,7 +34,9 @@ main() {
   . "${JOB_DIR}"/lib/prepare-for-upgrade.bash
   . "${JOB_DIR}"/lib/rabbitmq-config-vars.bash
 
-  run_rabbitmq_upgrade_preparation_shutdown_cluster "$ERLANG_COOKIE" "${HOME_DIR}/.erlang.cookie" "$RABBITMQ_NODES_STRING"
+  local rmq_server_package
+  rmq_server_package=$(configure_rmq_version)
+  run_rabbitmq_upgrade_preparation_shutdown_cluster "$ERLANG_COOKIE" "${HOME_DIR}/.erlang.cookie" "$RABBITMQ_NODES_STRING" "$rmq_server_package"
   setup_erl_inetrc
   ${JOB_DIR}/bin/plugins.sh
 }
@@ -60,6 +62,7 @@ ensure_http_log_cleanup_cron_job() {
 configure_rmq_version() {
   rm -rf /var/vcap/packages/rabbitmq-server
   ln -s /var/vcap/packages/rabbitmq-server-"$RMQ_SERVER_VERSION" /var/vcap/packages/rabbitmq-server
+  echo "/var/vcap/packages/rabbitmq-server"
 }
 
 setup_erl_inetrc() {

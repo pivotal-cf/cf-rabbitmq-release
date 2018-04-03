@@ -25,3 +25,5 @@ cf-admin-username: admin
 bosh-domain: bosh-lite.com
 
 rabbitmq_version: 3.6
+
+rabbitmq-cookie: "this is something secret"
