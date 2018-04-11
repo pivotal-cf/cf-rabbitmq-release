@@ -1,0 +1,11 @@
+deployment-name: cf-rabbitmq-37
+stemcell-version: latest
+rabbitmq_version: 3.7
+rabbitmq-management-username: admin
+rabbitmq-management-password: admin
+rabbitmq-broker-username: broker
+rabbitmq-broker-password: broker
+cluster-partition-handling-strategy: pause_minority
+haproxy-instances: 1
+rabbitmq-management-hostname: cf-rabbitmq-37
+bosh-domain: rabbitmq.pivotal.io
