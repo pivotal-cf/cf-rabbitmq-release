@@ -63,3 +63,10 @@ To execute embedded release tests you need to co-locate the tests within the
 release being tested and deploy. The deployment should fail if the tests fail.
 The tests we use can be found in the [test release repo](https://github.com/pivotal-cf/cf-rabbitmq-test-release).
 
+### Bonus
+Back in time [Multitenant Broker Release](https://github.com/pivotal-cf/cf-rabbitmq-multitenant-broker-release/) used to live in the same Github repository as [cf-rabbitmq-release](https://github.com/pivotal-cf/cf-rabbitmq-release), but not anymore. We have split both releases into two different repositories. They do different things and have different lifecyle, which explains our decision to do that.
+
+A collection of ops-files and vars-files, features from [Bosh 2 CLI](https://bosh.io/docs/cli-int/), can be used to generate manifests. You’ll find a folder called `manifests` in both repositories with a manifest template, some ops-files and example of vars-files. It's not required to have two different deployments for `cf-rabbitmq-release` and `cf-rabbitmq-multitenant-broker-release`. In case you want to colocate both jobs you can leverage [this ops-file](https://github.com/pivotal-cf/cf-rabbitmq-multitenant-broker-release/blob/master/manifests/add-cf-rabbitmq.yml) to colocate them in the same deployment.
+
+More information about bosh interpolate here: https://bosh.io/docs/cli-int/
+
