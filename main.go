@@ -18,7 +18,7 @@ type logWriter struct {
 }
 
 func (writer logWriter) Write(bytes []byte) (int, error) {
-	return fmt.Print(time.Now().UTC().Format(time.RFC3339) + string(bytes))
+	return fmt.Print(time.Now().UTC().Format(time.RFC3339) + " " + string(bytes))
 }
 
 func main() {
