@@ -14,9 +14,15 @@ import (
 	"github.com/pivotal-cf/rabbitmq-upgrade-preparation/versions"
 )
 
+type logWriter struct {
+}
+
+func (writer logWriter) Write(bytes []byte) (int, error) {
+	return fmt.Print(time.Now().UTC().Format(time.RFC3339) + string(bytes))
+}
+
 func main() {
-	logger := log.New(os.Stdout, "", 0)
-	log.SetFlags(0)
+	logger := log.New(new(logWriter), "", 0)
 
 	if os.Args[3] == "shutdown-cluster" {
 		shutdownCluster(logger)
