@@ -2,6 +2,9 @@
 
 [ -z "$DEBUG" ] || set -x
 
+# shellcheck disable=SC1091
+. /var/vcap/jobs/rabbitmq-server/lib/logger.bash
+
 (
   if [ -z $RABBITMQ_PLUGINS ]; then
     RABBITMQ_PLUGINS=/var/vcap/packages/rabbitmq-server/bin/rabbitmq-plugins
@@ -18,7 +21,7 @@
 
     bad_plugin_list="$(comm -1 -3 <($RABBITMQ_PLUGINS list -m) <(echo -e "<%= plugins.sort.join("\\n") %>"))"
     for bad_plugin in $bad_plugin_list; do
-      echo "Ignoring unrecognised plugin: ${bad_plugin}"
+      log "Ignoring unrecognised plugin: ${bad_plugin}"
     done
   <% end %>
 
