@@ -6,7 +6,7 @@ require 'tempfile'
 
 require 'httparty'
 
-RMQ_VERSION = '3.6'
+RMQ_VERSION = '3.7'
 
 RSpec.describe 'RabbitMQ server configuration' do
   let(:rmq_host) do
