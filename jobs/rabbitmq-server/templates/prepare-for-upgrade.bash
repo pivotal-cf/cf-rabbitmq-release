@@ -4,14 +4,11 @@
 
 export PATH=/var/vcap/packages/erlang/bin:$PATH
 
-# shellcheck disable=SC1091
-. /var/vcap/jobs/rabbitmq-server/lib/logger.bash
-
 UPGRADE_PREPARATION_BINARY="/var/vcap/packages/rabbitmq-upgrade-preparation/bin/rabbitmq-upgrade-preparation"
 LOG_DIR="/var/vcap/sys/log/rabbitmq-server"
 
 _run_rabbitmq_upgrade_preparation_on_every_node() {
-  log "$STARTUP_LOG" "Preparing RabbitMQ for potential upgrade"
+  echo "$STARTUP_LOG" "Preparing RabbitMQ for potential upgrade"
 
   local remote_nodes remote_node new_rabbitmq_version new_erlang_version rmq_server_package
   rmq_server_package="$1"
@@ -40,7 +37,7 @@ run_rabbitmq_upgrade_preparation_shutdown_cluster () {
     local rmq_server_package="$4"
 
     if [[ ! -d $rmq_server_package ]]; then
-      log "$rmq_server_package is not a valid directory" 1> >(tee -a "${LOG_DIR}/upgrade.log") 2>&1
+      echo "$rmq_server_package is not a valid directory" 1> >(tee -a "${LOG_DIR}/upgrade.log") 2>&1
     fi
 
     "$UPGRADE_PREPARATION_BINARY" \

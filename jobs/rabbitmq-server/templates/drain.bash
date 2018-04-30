@@ -30,7 +30,7 @@ main() {
 }
 
 log() {
-  echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") $*" 1>> "$SHUTDOWN_LOG"
+  echo "$*" 1>> "$SHUTDOWN_LOG"
 }
 
 rabbitmq_node_is_stopped() {

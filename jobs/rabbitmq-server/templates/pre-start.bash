@@ -17,11 +17,7 @@ USER=vcap
 
 source /var/vcap/packages/rabbitmq-common/ensure_dir_with_permissions
 
-# shellcheck disable=SC1091
-. /var/vcap/jobs/rabbitmq-server/lib/logger.bash
-
 main() {
-  log "pre-start script started"
   remove_old_syslog_config
 
   ensure_dir_with_permissions "${ROOT_LOG_DIR}"
@@ -43,7 +39,6 @@ main() {
   run_rabbitmq_upgrade_preparation_shutdown_cluster "$ERLANG_COOKIE" "${HOME_DIR}/.erlang.cookie" "$RABBITMQ_NODES_STRING" "$rmq_server_package"
   setup_erl_inetrc
   ${JOB_DIR}/bin/plugins.sh
-  log "pre-start script completed"
 }
 
 remove_old_syslog_config() {
