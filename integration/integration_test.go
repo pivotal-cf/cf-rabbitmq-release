@@ -12,6 +12,7 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gbytes"
 	"github.com/onsi/gomega/gexec"
+	"github.com/onsi/gomega/types"
 )
 
 var _ = Describe("Upgrading RabbitMQ", func() {
@@ -34,6 +35,10 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		tmpFile string
 	)
 
+	sayWithTimestamp := func(matchString string) types.GomegaMatcher {
+		return gbytes.Say("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z: " + matchString)
+	}
+
 	itExitsWithZero := func() {
 		It("exits with a zero exit code", func() {
 			Eventually(session).Should(gexec.Exit(0))
@@ -54,9 +59,9 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 			contents, err := ioutil.ReadFile(tmpFile)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(strings.Count(string(contents), "stop_app -n rabbit@host\n")).To(Equal(1))
-			Eventually(session.Out).Should(gbytes.Say("It looks like you are trying to upgrade"))
-			Eventually(session.Out).Should(gbytes.Say("The cluster needs to be taken offline as it cannot run in mixed mode"))
-			Eventually(session.Out).Should(gbytes.Say("Stopping RabbitMQ on rabbit@host"))
+			Eventually(session.Out).Should(sayWithTimestamp("It looks like you are trying to upgrade"))
+			Eventually(session.Out).Should(sayWithTimestamp("The cluster needs to be taken offline as it cannot run in mixed mode"))
+			Eventually(session.Out).Should(sayWithTimestamp("Stopping RabbitMQ on rabbit@host"))
 		})
 	}
 
@@ -64,7 +69,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		It("doesn't call stop app", func() {
 			_, err := os.Stat(tmpFile)
 			Expect(os.IsNotExist(err)).To(BeTrue())
-			Consistently(session.Out).ShouldNot(gbytes.Say("Stopping RabbitMQ"))
+			Consistently(session.Out).ShouldNot(sayWithTimestamp("Stopping RabbitMQ"))
 		})
 	}
 
@@ -93,8 +98,8 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 	})
 
 	It("logs the arguments passed to the binary", func() {
-		Eventually(session.Out).Should(gbytes.Say("Checking whether upgrade preparation is necessary for node"))
-		Eventually(session.Out).Should(gbytes.Say("Safe to proceed without stopping RabbitMQ node application, exiting: RabbitMQ application already stopped"))
+		Eventually(session.Out).Should(sayWithTimestamp("Checking whether upgrade preparation is necessary for node"))
+		Eventually(session.Out).Should(sayWithTimestamp("Safe to proceed without stopping RabbitMQ node application, exiting: RabbitMQ application already stopped"))
 	})
 
 	Context("When there is no new version of RabbitMQ or Erlang", func() {
@@ -113,7 +118,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itDoesntCallStopApp()
 
 		It("logs the fact that it doesn't need to stop RabbitMQ", func() {
-			Eventually(session.Out).Should(gbytes.Say("Safe to proceed without taking the cluster offline"))
+			Eventually(session.Out).Should(sayWithTimestamp("Safe to proceed without taking the cluster offline"))
 		})
 	})
 
@@ -184,7 +189,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itDoesntCallStopApp()
 
 		It("logs that RabbitMQ is down through stdout (no need to stop, not an error)", func() {
-			Eventually(session.Out).Should(gbytes.Say("Safe to proceed without stopping RabbitMQ rabbit@host application, exiting: RabbitMQ application already stopped"))
+			Eventually(session.Out).Should(sayWithTimestamp("Safe to proceed without stopping RabbitMQ rabbit@host application, exiting: RabbitMQ application already stopped"))
 		})
 	})
 
@@ -205,7 +210,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itDoesntCallStopApp()
 
 		It("logs that the 'rabbit' node is down through stdout (no need to stop)", func() {
-			Eventually(session.Out).Should(gbytes.Say("RabbitMQ rabbit@host already stopped: No rabbit node running"))
+			Eventually(session.Out).Should(sayWithTimestamp("RabbitMQ rabbit@host already stopped: No rabbit node running"))
 		})
 	})
 
@@ -226,7 +231,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itDoesntCallStopApp()
 
 		It("logs that the remote epmd cannot be reached, but that this is OK", func() {
-			Eventually(session.Out).Should(gbytes.Say("RabbitMQ rabbit@host already stopped: Unable to reach epmd but host seems up"))
+			Eventually(session.Out).Should(sayWithTimestamp("RabbitMQ rabbit@host already stopped: Unable to reach epmd but host seems up"))
 		})
 	})
 
@@ -247,19 +252,19 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itDoesntCallStopApp()
 
 		It("logs connection attempt to node", func() {
-			Eventually(session.Out).Should(gbytes.Say("Trying to connect to rabbit@host..."))
+			Eventually(session.Out).Should(sayWithTimestamp("Trying to connect to rabbit@host..."))
 		})
 
 		It("logs connection retry to node", func() {
-			Eventually(session.Out).Should(gbytes.Say(`Failed to connect to rabbit@host after \d retries, retrying in \d+\.\d+ms`))
+			Eventually(session.Out).Should(sayWithTimestamp(`Failed to connect to rabbit@host after \d retries, retrying in \d+\.\d+ms`))
 		})
 
 		It("does not log connection retry to node after retry timeout is exceeded", func() {
-			Consistently(session.Out, 2*time.Second).ShouldNot(gbytes.Say("Failed to connect to rabbit@host after 3 retries, retrying in -1ns"))
+			Consistently(session.Out, 2*time.Second).ShouldNot(sayWithTimestamp("Failed to connect to rabbit@host after 3 retries, retrying in -1ns"))
 		})
 
 		It("logs to stderr, because we're in an unsafe state", func() {
-			Eventually(session.Err).Should(gbytes.Say("Unable to connect to node rabbit@host after 3 retries within 1s: Unable to reach epmd and host seems down"))
+			Eventually(session.Err).Should(sayWithTimestamp("Unable to connect to node rabbit@host after 3 retries within 1s: Unable to reach epmd and host seems down"))
 		})
 	})
 
@@ -280,7 +285,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itCallsStopApp()
 
 		It("logs that it failed to stop RabbitMQ", func() {
-			Eventually(session.Err).Should(gbytes.Say("Failed to stop RabbitMQ"))
+			Eventually(session.Err).Should(sayWithTimestamp("Failed to stop RabbitMQ"))
 		})
 	})
 
@@ -296,7 +301,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itExitsWithNonZero()
 
 		It("provides a meaningful error", func() {
-			Eventually(session.Err).Should(gbytes.Say("Missing -rabbitmqctl-path flag"))
+			Eventually(session.Err).Should(sayWithTimestamp("Missing -rabbitmqctl-path flag"))
 		})
 	})
 
@@ -312,7 +317,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itExitsWithNonZero()
 
 		It("provides a meaningful error", func() {
-			Eventually(session.Err).Should(gbytes.Say("Missing -node flag"))
+			Eventually(session.Err).Should(sayWithTimestamp("Missing -node flag"))
 		})
 	})
 
@@ -328,7 +333,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itExitsWithNonZero()
 
 		It("provides a meaningful error", func() {
-			Eventually(session.Err).Should(gbytes.Say("Missing -new-rabbitmq-version flag"))
+			Eventually(session.Err).Should(sayWithTimestamp("Missing -new-rabbitmq-version flag"))
 		})
 	})
 
@@ -344,7 +349,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		itExitsWithNonZero()
 
 		It("provides a meaningful error", func() {
-			Eventually(session.Err).Should(gbytes.Say("Missing -new-erlang-version flag"))
+			Eventually(session.Err).Should(sayWithTimestamp("Missing -new-erlang-version flag"))
 		})
 	})
 
@@ -363,7 +368,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 				session = execBin("", args...)
 				Eventually(session).Should(gexec.Exit(0))
-				Eventually(session.Out).Should(gbytes.Say("New deployment, cluster will not be shutdown"))
+				Eventually(session.Out).Should(sayWithTimestamp("New deployment, cluster will not be shutdown"))
 			})
 		})
 
@@ -394,7 +399,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 					session = execBin("", args...)
 					Eventually(session).Should(gexec.Exit(0))
-					Eventually(session.Out).Should(gbytes.Say("Cookies match, cluster will not be shutdown"))
+					Eventually(session.Out).Should(sayWithTimestamp("Cookies match, cluster will not be shutdown"))
 				})
 			})
 
@@ -414,8 +419,8 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 					session = execBin("", args...)
 					Eventually(session).Should(gexec.Exit(0))
 
-					Eventually(session.Out).Should(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node1"))
-					Eventually(session.Out).Should(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node2"))
+					Eventually(session.Out).Should(sayWithTimestamp("Shutdown RabbitMQ on rabbitmq@node1"))
+					Eventually(session.Out).Should(sayWithTimestamp("Shutdown RabbitMQ on rabbitmq@node2"))
 				})
 			})
 
@@ -433,9 +438,9 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 					session = execBin("", args...)
 					Eventually(session).Should(gexec.Exit(0))
-					Eventually(session.Out).Should(gbytes.Say("Failed to shutdown node rabbitmq@node1. Moving on."))
-					Eventually(session.Out).Should(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node2"))
-					Eventually(session.Out).ShouldNot(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node1"))
+					Eventually(session.Out).Should(sayWithTimestamp("Failed to shutdown node rabbitmq@node1. Moving on."))
+					Eventually(session.Out).Should(sayWithTimestamp("Shutdown RabbitMQ on rabbitmq@node2"))
+					Eventually(session.Out).ShouldNot(sayWithTimestamp("Shutdown RabbitMQ on rabbitmq@node1"))
 				})
 			})
 
@@ -453,9 +458,9 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 					session = execBin("", args...)
 					Eventually(session).Should(gexec.Exit(1))
-					Eventually(session.Out).Should(gbytes.Say("Cannot read the cookie"))
-					Eventually(session.Out).ShouldNot(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node1"))
-					Eventually(session.Out).ShouldNot(gbytes.Say("Shutdown RabbitMQ on rabbitmq@node2"))
+					Eventually(session.Out).Should(sayWithTimestamp("Cannot read the cookie"))
+					Eventually(session.Out).ShouldNot(sayWithTimestamp("Shutdown RabbitMQ on rabbitmq@node1"))
+					Eventually(session.Out).ShouldNot(sayWithTimestamp("Shutdown RabbitMQ on rabbitmq@node2"))
 				})
 			})
 		})

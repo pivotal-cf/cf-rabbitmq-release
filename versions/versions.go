@@ -2,9 +2,10 @@ package versions
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
+
+	"github.com/pivotal-cf/rabbitmq-upgrade-preparation/logger"
 
 	version "github.com/hashicorp/go-version"
 )
@@ -40,17 +41,17 @@ func (v *RabbitVersions) checkDesiredVersions(deployed, desired, boundary string
 
 	boundaryVersion, err := version.NewVersion(boundary)
 	if err != nil {
-		log.Fatalln(err)
+		logger.Err.Fatalln(err)
 	}
 
 	deployedVersion, err := version.NewVersion(deployed)
 	if err != nil {
-		log.Fatalln(err)
+		logger.Err.Fatalln(err)
 	}
 
 	desiredVersion, err := version.NewVersion(desired)
 	if err != nil {
-		log.Fatalln(err)
+		logger.Err.Fatalln(err)
 	}
 
 	return !deployedVersion.GreaterThan(boundaryVersion) && !desiredVersion.LessThan(boundaryVersion)
@@ -84,7 +85,7 @@ func versionComponents(version string) []string {
 func enforceSemver(v string) *version.Version {
 	semver, err := version.NewVersion(v)
 	if err != nil {
-		log.Fatalln(err)
+		logger.Err.Fatalln(err)
 	}
 
 	var segments []string
