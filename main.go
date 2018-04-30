@@ -14,22 +14,15 @@ import (
 	"github.com/pivotal-cf/rabbitmq-upgrade-preparation/versions"
 )
 
-type logWriter struct {
-}
-
-func (writer logWriter) Write(bytes []byte) (int, error) {
-	return fmt.Print(time.Now().UTC().Format(time.RFC3339) + " " + string(bytes))
-}
-
 func main() {
-	log.SetOutput(new(logWriter))
+	logger := log.New(os.Stdout, "", 0)
 	log.SetFlags(0)
 
 	if os.Args[3] == "shutdown-cluster" {
-		shutdownCluster()
+		shutdownCluster(logger)
 		// os.Exit(0)
 	} else {
-		stopRabbitMQApp()
+		stopRabbitMQApp(logger)
 		// os.Exit(0)
 	}
 }
@@ -50,10 +43,10 @@ func parseStopRabbitMQArgs() (string, string, string, string, time.Duration) {
 	return *rabbitmqctlPath, *node, *newRabbitmqVersion, *newErlangVersion, *timeout
 }
 
-func stopRabbitMQApp() {
+func stopRabbitMQApp(logger *log.Logger) {
 	rabbitmqCtlPath, node, desiredRabbitMQVersion, desiredErlangVersion, timeout := parseStopRabbitMQArgs()
 
-	log.Printf("Checking whether upgrade preparation is necessary for %s\n", node)
+	logger.Printf("Checking whether upgrade preparation is necessary for %s\n", node)
 	rabbitMQCtl := rabbitmqctl.New(rabbitmqCtlPath)
 
 	backOffStrategy := backoff.NewExponentialBackOff()
@@ -66,19 +59,19 @@ func stopRabbitMQApp() {
 
 	operation := func() error {
 		retryCount++
-		log.Printf("Trying to connect to %s...\n", node)
+		logger.Printf("Trying to connect to %s...\n", node)
 		status, statusErr = rabbitMQCtl.Status(node)
 		if statusErr != nil {
 			err := statusErr.(*rabbitmqctl.Error)
 
 			if err.Status == rabbitmqctl.UnreachableEpmd || err.Status == rabbitmqctl.StoppedRabbitNode {
-				log.Printf("RabbitMQ %s already stopped: %s\n", node, err)
+				logger.Printf("RabbitMQ %s already stopped: %s\n", node, err)
 				return nil
 			}
 		}
 
 		if backOffStrategy.NextBackOff() != backoff.Stop {
-			log.Printf("Failed to connect to %s after %d retries, retrying in %s\n", node, retryCount, backOffStrategy.NextBackOff())
+			logger.Printf("Failed to connect to %s after %d retries, retrying in %s\n", node, retryCount, backOffStrategy.NextBackOff())
 		}
 		return statusErr
 	}
@@ -93,7 +86,7 @@ func stopRabbitMQApp() {
 
 	deployedRabbitVersion, ok := status.RabbitMQVersion()
 	if !ok {
-		log.Printf("Safe to proceed without stopping RabbitMQ %s application, exiting: RabbitMQ application already stopped\n", node)
+		logger.Printf("Safe to proceed without stopping RabbitMQ %s application, exiting: RabbitMQ application already stopped\n", node)
 		return
 	}
 
@@ -105,17 +98,17 @@ func stopRabbitMQApp() {
 	}
 
 	for _, difference := range differences {
-		log.Printf("%s\n", difference.UpgradeMessage())
+		logger.Printf("%s\n", difference.UpgradeMessage())
 		if difference.PreparationRequired() {
-			log.Println("The cluster needs to be taken offline as it cannot run in mixed mode")
-			log.Printf("Stopping RabbitMQ on %s\n", node)
+			logger.Println("The cluster needs to be taken offline as it cannot run in mixed mode")
+			logger.Printf("Stopping RabbitMQ on %s\n", node)
 			if err := rabbitMQCtl.StopApp(node); err != nil {
 				log.Fatalf("Failed to stop RabbitMQ on %s: %s", node, err)
 			}
 			return
 		}
 	}
-	log.Println("Safe to proceed without taking the cluster offline")
+	logger.Println("Safe to proceed without taking the cluster offline")
 }
 
 type nodeList []string
@@ -149,22 +142,22 @@ func parseShutdownClusterArgs() (string, nodeList, string, string) {
 	return *rabbitmqctlPath, nodes, *oldCookiePath, *newCookie
 }
 
-func shutdownCluster() {
+func shutdownCluster(logger *log.Logger) {
 	rabbitmqCtlPath, nodes, oldCookiePath, newCookie := parseShutdownClusterArgs()
 
 	if _, err := os.Stat(oldCookiePath); os.IsNotExist(err) {
-		log.Println("New deployment, cluster will not be shutdown")
+		fmt.Println("New deployment, cluster will not be shutdown")
 		return
 	}
 
 	oldCookie, err := ioutil.ReadFile(oldCookiePath)
 
 	if err != nil {
-		log.Fatalf("Cannot read the cookie: %s\n", err)
+		logger.Fatalf("Cannot read the cookie: %s\n", err)
 	}
 
 	if string(oldCookie) == newCookie {
-		log.Println("Cookies match, cluster will not be shutdown")
+		fmt.Println("Cookies match, cluster will not be shutdown")
 		return
 	}
 
@@ -173,9 +166,9 @@ func shutdownCluster() {
 	for _, node := range nodes {
 		err := rabbitMQCtl.Shutdown(node)
 		if err != nil {
-			log.Printf("Failed to shutdown node %s. Moving on.\n", node)
+			fmt.Printf("Failed to shutdown node %s. Moving on.\n", node)
 		} else {
-			log.Printf("Shutdown RabbitMQ on %s\n", node)
+			fmt.Printf("Shutdown RabbitMQ on %s\n", node)
 		}
 	}
 }
