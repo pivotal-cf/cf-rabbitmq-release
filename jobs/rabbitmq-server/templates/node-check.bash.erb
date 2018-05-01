@@ -5,11 +5,12 @@
 export PATH=/var/vcap/packages/erlang/bin/:/var/vcap/packages/rabbitmq-server/privbin/:$PATH
 LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 
-# shellcheck disable=SC1091
-. /var/vcap/jobs/rabbitmq-server/lib/logger.bash
-
 main() {
   pid_file_contains_rabbitmq_erlang_vm_pid
+}
+
+write_log() {
+  echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ"): $*"
 }
 
 pid_file_contains_rabbitmq_erlang_vm_pid() {
@@ -22,7 +23,7 @@ pid_file_contains_rabbitmq_erlang_vm_pid() {
 }
 
 fail() {
-  log "$*"
+  write_log "$*"
   exit 1
 }
 
@@ -38,7 +39,7 @@ then
 
   send_all_output_to_logfile
   SCRIPT_CALLER="${1:-node-check}"
-  log "Running node checks at $(date) from $SCRIPT_CALLER..."
+  write_log "Running node checks at $(date) from $SCRIPT_CALLER..."
   main
-  log "Node checks running from $SCRIPT_CALLER passed"
+  write_log "Node checks running from $SCRIPT_CALLER passed"
 fi
