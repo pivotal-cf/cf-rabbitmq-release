@@ -5,6 +5,9 @@
 export PATH=/var/vcap/packages/erlang/bin/:/var/vcap/packages/rabbitmq-server/privbin/:$PATH
 LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 
+# shellcheck disable=SC1091
+. /var/vcap/jobs/rabbitmq-server/lib/logger.bash
+
 main() {
   rabbitmq_application_is_running
 
@@ -130,7 +133,7 @@ then
 
   send_all_output_to_logfile
   SCRIPT_CALLER="${1:-cluster-check}"
-  echo "Running cluster checks at $(date) from $SCRIPT_CALLER..."
+  log "Running cluster checks from $SCRIPT_CALLER..."
   main
-  echo "Cluster check running from $SCRIPT_CALLER passed"
+  log "Cluster check running from $SCRIPT_CALLER passed"
 fi

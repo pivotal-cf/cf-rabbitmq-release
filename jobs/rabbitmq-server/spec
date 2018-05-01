@@ -96,6 +96,7 @@ templates:
   prepare-for-upgrade.bash:                 lib/prepare-for-upgrade.bash
   rabbitmq-config-vars.bash.erb:            lib/rabbitmq-config-vars.bash
   setup-vars.bash.erb:                      lib/setup-vars.bash
+  logger.bash:                              lib/logger.bash
 
 provides:
   - name: rabbitmq-server
