@@ -18,6 +18,7 @@ USER=vcap
 source /var/vcap/packages/rabbitmq-common/ensure_dir_with_permissions
 
 main() {
+  write_log "pre-start script started"
   remove_old_syslog_config
 
   ensure_dir_with_permissions "${ROOT_LOG_DIR}"
@@ -39,6 +40,11 @@ main() {
   run_rabbitmq_upgrade_preparation_shutdown_cluster "$ERLANG_COOKIE" "${HOME_DIR}/.erlang.cookie" "$RABBITMQ_NODES_STRING" "$rmq_server_package"
   setup_erl_inetrc
   ${JOB_DIR}/bin/plugins.sh
+  write_log "pre-start script completed"
+}
+
+write_log() {
+  echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ"): $*"
 }
 
 remove_old_syslog_config() {

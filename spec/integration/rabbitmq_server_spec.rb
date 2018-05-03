@@ -6,7 +6,7 @@ require 'tempfile'
 
 require 'httparty'
 
-RMQ_VERSION = '3.6'
+RMQ_VERSION = '3.7'
 
 RSpec.describe 'RabbitMQ server configuration' do
   let(:rmq_host) do
@@ -36,7 +36,7 @@ RSpec.describe 'RabbitMQ server configuration' do
       @old_password = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']['administrators']['management']['password']
 
       @new_username = 'newusername'
-      @new_password = "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_abcdefghijklmnopqrstuvwxyz!\"\#$%&()*+,-./0123456789:;<=>?" # no backtick or single quote supported
+      @new_password = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_abcdefghijklmnopqrstuvwxyz!"#$%&()*+,-./0123456789:;<=>?' # no backtick or single quote supported
 
       bosh.redeploy do |manifest|
         # Change management creds

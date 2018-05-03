@@ -30,6 +30,10 @@ main() {
   fi
 }
 
+write_log() {
+  echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ"): $*"
+}
+
 # rabbitmq_application_is_running checks the health of the node to determine
 # whether the application is running. We assume if the application is not
 # running that the cluster is not healthy.
@@ -130,7 +134,7 @@ then
 
   send_all_output_to_logfile
   SCRIPT_CALLER="${1:-cluster-check}"
-  echo "Running cluster checks at $(date) from $SCRIPT_CALLER..."
+  write_log "Running cluster checks from $SCRIPT_CALLER..."
   main
-  echo "Cluster check running from $SCRIPT_CALLER passed"
+  write_log "Cluster check running from $SCRIPT_CALLER passed"
 fi
