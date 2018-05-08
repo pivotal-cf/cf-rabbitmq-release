@@ -1,12 +1,58 @@
-set -e
+#!/usr/bin/env bash
 
-export HOME=${BOSH_INSTALL_DIR}
+set -ex
 
-VERSION="19.3.6.4"
+DISABLED_APPLICATIONS=(debugger et jinterface observer odbc wx)
+export PATH=/var/vcap/packages/autoconf-2.69/bin:$PATH
 
-tar xzf erlang/otp_src_oss_${VERSION}.tgz
-cd otp_src_oss_${VERSION}
-./configure --prefix=${BOSH_INSTALL_TARGET}
-make
-make install
+# erl (1) / erlc (1) require $HOME to be set.
+export HOME=/tmp
 
+main() {
+  extract_archive
+  (
+    cd otp*
+    configure
+    compile
+    install
+  )
+  add_src_for_gdb
+}
+
+extract_archive() {
+  tar xzf erlang*/*.tar.gz
+}
+
+configure() {
+  ./otp_build autoconf
+
+  # Disable Erlang applications we don't care about.
+  # This is now supported through ./configure since at least 19.2.3 (possibly earlier)
+  local app
+  for app in "${DISABLED_APPLICATIONS[@]}"; do
+    echo > "lib/$app/SKIP"
+    rm -f "lib/$app/configure"
+    configure_flags="$configure_flags --without-$app"
+  done
+
+  # shellcheck disable=2086
+  ./configure --prefix="${BOSH_INSTALL_TARGET:?must be defined}" \
+    --enable-hipe \
+    --enable-lock-counter \
+    --disable-sctp \
+    $configure_flags
+}
+
+compile() {
+  make -j "$(getconf _NPROCESSORS_ONLN)"
+}
+
+install() {
+  make install
+}
+
+add_src_for_gdb() {
+  cp -r otp* "${BOSH_INSTALL_TARGET}/src"
+}
+
+main
