@@ -1,11 +1,11 @@
 <%
   ips = link('rabbitmq-server').instances.map(&:address)
   ports = link('rabbitmq-server').p('rabbitmq-server.ports').to_s.
-			split(/[\[\], ]/).
-			map { |port| port.to_i }.
-			select { |port| port > 0 && port < 65536 }
+      split(/[\[\], ]/).
+      map { |port| port.to_i }.
+      select { |port| port > 0 && port < 65536 }
 
-	timeouts = link('rabbitmq-server').p('rabbitmq-server.timeouts', []).map{ | timeout| timeout.to_a}
+  timeouts = link('rabbitmq-server').p('rabbitmq-server.timeouts', []).map{ | timeout| timeout.to_a}
 %>
 global
 daemon
@@ -26,20 +26,20 @@ timeout client  2d
 timeout server  2d
 
 <% ports.each do |port| %>
-	frontend input-<%= port %>
-	bind :<%= port %>
-	default_backend output-<%= port %>
-	<%  timeouts.each do |key, timeout| %>
-		<%  if timeout['port'] == port %>
-			timeout client <%= timeout['client'] %>
-			timeout server <%= timeout['server'] %>
-		<%  end %>
-	<%  end %>
+  frontend input-<%= port %>
+  bind :<%= port %>
+  default_backend output-<%= port %>
+  <%  timeouts.each do |key, timeout| %>
+    <%  if timeout['port'] == port %>
+      timeout client <%= timeout['client'] %>
+      timeout server <%= timeout['server'] %>
+    <%  end %>
+  <%  end %>
 
-	backend output-<%= port %>
-	mode tcp
-	balance leastconn
-	<% ips.each_with_index do |ip, idx| %>
-		server node<%= idx %> <%= ip %>:<%= port %> check inter 5000
-	<% end %>
+  backend output-<%= port %>
+  mode tcp
+  balance leastconn
+  <% ips.each_with_index do |ip, idx| %>
+    server node<%= idx %> <%= ip %>:<%= port %> check inter 5000
+  <% end %>
 <% end %>
