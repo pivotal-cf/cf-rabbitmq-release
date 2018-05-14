@@ -14,9 +14,7 @@
 
 export PATH=/var/vcap/packages/erlang/bin:$PATH
 
-. /var/vcap/jobs/rabbitmq-server/etc/rabbitmq-server-version
-
-RMQ_SERVER_PACKAGE=/var/vcap/packages/rabbitmq-server-"$RMQ_SERVER_VERSION"
+RMQ_SERVER_PACKAGE=/var/vcap/packages/rabbitmq-server
 DAEMON=${RMQ_SERVER_PACKAGE}/bin/rabbitmq-server
 CONTROL=${RMQ_SERVER_PACKAGE}/bin/rabbitmqctl
 PID_FILE=/var/vcap/sys/run/rabbitmq-server/pid
@@ -44,6 +42,10 @@ RETVAL=0
 . /var/vcap/jobs/rabbitmq-server/etc/config
 # shellcheck disable=SC1091
 . /var/vcap/jobs/rabbitmq-server/lib/prepare-for-upgrade.bash
+
+write_log() {
+  echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ"): $*"
+}
 
 remove_pid() {
     rm -f "${PID_FILE}"
@@ -101,7 +103,7 @@ delete_operator_admin() {
 run_script() {
     local script
     script=$1
-    echo "Starting ${script}"
+    write_log "Starting ${script}"
     set +e
     "${script}" \
         1>> "${STARTUP_LOG}" \
@@ -110,11 +112,11 @@ run_script() {
     set -e
     case "${RETVAL}" in
         0)
-            echo "Finished ${script}"
+            write_log "Finished ${script}"
             return 0
             ;;
         *)
-            echo "Errored ${script}"
+            write_log "Errored ${script}"
             RETVAL=1
             exit "${RETVAL}"
             ;;
@@ -125,11 +127,11 @@ start_rabbitmq () {
     status_rabbitmq
 
     ulimit -n "$RMQ_FD_LIMIT"
-    echo "Start RabbitMQ node..."
+    write_log "Start RabbitMQ node..."
 
     if [ "${RETVAL}" = 0 ]; then
         "${CONTROL}" eval 'list_to_integer(os:getpid()).' > $PID_FILE
-        echo "RabbitMQ is currently running"
+        write_log "RabbitMQ is currently running"
         if [ -f "$PID_FILE" ]
         then
           /var/vcap/jobs/rabbitmq-server/bin/node-check "rabbitmq-server.init" ||
@@ -138,9 +140,9 @@ start_rabbitmq () {
     else
         RETVAL=0
         run_script "${JOB_DIR}/bin/setup.sh"
-        run_prepare_for_upgrade_when_first_deploy "/var/vcap/store/rabbitmq/mnesia"
+        run_prepare_for_upgrade_when_first_deploy "/var/vcap/store/rabbitmq/mnesia" "/var/vcap/packages/rabbitmq-server"
 
-        echo "Starting RabbitMQ"
+        write_log "Starting RabbitMQ"
         track_rabbitmq_erlang_vm_pid_in_pid_file
         RABBITMQ_PID_FILE="${PID_FILE}" "${START_PROG}" "${DAEMON}" \
             >> "${STARTUP_LOG}" \
@@ -162,28 +164,28 @@ start_rabbitmq () {
 
                 if ! /var/vcap/jobs/rabbitmq-server/bin/cluster-check "rabbitmq-server.init"
                 then
-                  echo "RabbitMQ cluster is not healthy"
+                  write_log "RabbitMQ cluster is not healthy"
                   remove_pid
                   RETVAL=1
                   return
                 fi
 
-                echo "RabbitMQ cluster is healthy"
+                write_log "RabbitMQ cluster is healthy"
 
                 ;;
             *)
-                echo "RabbitMQ application failed to start while waiting for cluster to form"
+                write_log "RabbitMQ application failed to start while waiting for cluster to form"
                 remove_pid
                 RETVAL=1
                 ;;
         esac
 
-        echo "RabbitMQ node started successfully."
+        write_log "RabbitMQ node started successfully."
     fi
 }
 
 configure_users() {
-  echo "Configuring RabbitMQ users ..."
+  write_log "Configuring RabbitMQ users ..."
 
   delete_guest
   [ -f $OPERATOR_USERNAME_FILE ] && delete_operator_admin
@@ -192,7 +194,7 @@ configure_users() {
 }
 
 signal_monit_that_rabbitmq_node_is_not_healthy() {
-  echo "RabbitMQ node is not healthy"
+  write_log "RabbitMQ node is not healthy"
 
   echo 0 > "$PID_FILE"
 }

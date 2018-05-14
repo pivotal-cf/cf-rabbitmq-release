@@ -93,7 +93,6 @@ templates:
   key.pem.erb:                              etc/key.pem
   rabbitmq.config.erb:                      etc/rabbitmq.config
   users.erb:                                etc/users
-  rabbitmq-server-version.erb:              etc/rabbitmq-server-version
   prepare-for-upgrade.bash:                 lib/prepare-for-upgrade.bash
   rabbitmq-config-vars.bash.erb:            lib/rabbitmq-config-vars.bash
   setup-vars.bash.erb:                      lib/setup-vars.bash

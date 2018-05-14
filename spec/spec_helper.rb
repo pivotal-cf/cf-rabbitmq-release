@@ -21,7 +21,7 @@ class Bosh2
     @bosh_cli = "#{bosh_cli} -n"
 
     version = execute("#{@bosh_cli} --version")
-    raise 'BOSH CLI >= v2 required' unless version.start_with?('version 2.')
+    raise 'BOSH CLI >= v2 required' if version.start_with?('version 1.')
   end
 
   def ssh(instance, command)

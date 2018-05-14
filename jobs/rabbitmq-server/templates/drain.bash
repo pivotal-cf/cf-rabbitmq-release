@@ -2,9 +2,7 @@
 
 [ -z "$DEBUG" ] || set -x
 
-. /var/vcap/jobs/rabbitmq-server/etc/rabbitmq-server-version
-
-export PATH=/var/vcap/jobs/rabbitmq-server/bin:/var/vcap/packages/erlang/bin:/var/vcap/packages/rabbitmq-server-$"RMQ_SERVER_VERSION"/bin:$PATH
+export PATH=/var/vcap/jobs/rabbitmq-server/bin:/var/vcap/packages/erlang/bin:/var/vcap/packages/rabbitmq-server/bin:$PATH
 
 ERLANG_PID_FILE=/var/vcap/sys/run/rabbitmq-server/pid
 
@@ -14,25 +12,25 @@ SHUTDOWN_ERR_LOG="${LOG_DIR}"/shutdown_stderr.log
 DRAIN_LOG="${LOG_DIR}/drain.log"
 
 main() {
-  log "Begin RabbitMQ node shutdown ..."
+  write_log "Begin RabbitMQ node shutdown ..."
 
   if rabbitmq_node_is_stopped
   then
-    log "RabbitMQ node is not running, nothing to shutdown."
+    write_log "RabbitMQ node is not running, nothing to shutdown."
   else
-    log "Stop RabbitMQ node..."
+    write_log "Stop RabbitMQ node..."
     stop_erlang_vm_and_rabbitmq_app
-    log "Checking RabbitMQ node is stopped ..."
+    write_log "Checking RabbitMQ node is stopped ..."
     rabbitmq_node_is_stopped
     rm -f "$ERLANG_PID_FILE"
-    log "RabbitMQ node stopped successfully."
+    write_log "RabbitMQ node stopped successfully."
   fi
 
   echo "0"
 }
 
-log() {
-  echo "$*" 1>> "$SHUTDOWN_LOG"
+write_log() {
+  echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ"): $*" 1>> "$SHUTDOWN_LOG"
 }
 
 rabbitmq_node_is_stopped() {
@@ -62,7 +60,7 @@ stop_erlang_vm_and_rabbitmq_app() {
   exit_status=$?
   if [[ $exit_status == 70 ]]
   then
-    log "RabbitMQ application is not running, but the Erlang VM was. Erlang VM has been shutdown."
+    write_log "RabbitMQ application is not running, but the Erlang VM was. Erlang VM has been shutdown."
   fi
   set -e
 }

@@ -18,6 +18,7 @@ USER=vcap
 source /var/vcap/packages/rabbitmq-common/ensure_dir_with_permissions
 
 main() {
+  write_log "pre-start script started"
   remove_old_syslog_config
 
   ensure_dir_with_permissions "${ROOT_LOG_DIR}"
@@ -34,9 +35,16 @@ main() {
   . "${JOB_DIR}"/lib/prepare-for-upgrade.bash
   . "${JOB_DIR}"/lib/rabbitmq-config-vars.bash
 
-  run_rabbitmq_upgrade_preparation_shutdown_cluster "$ERLANG_COOKIE" "${HOME_DIR}/.erlang.cookie" "$RABBITMQ_NODES_STRING"
+  local rmq_server_package
+  rmq_server_package=$(configure_rmq_version)
+  run_rabbitmq_upgrade_preparation_shutdown_cluster "$ERLANG_COOKIE" "${HOME_DIR}/.erlang.cookie" "$RABBITMQ_NODES_STRING" "$rmq_server_package"
   setup_erl_inetrc
   ${JOB_DIR}/bin/plugins.sh
+  write_log "pre-start script completed"
+}
+
+write_log() {
+  echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ"): $*"
 }
 
 remove_old_syslog_config() {
@@ -57,14 +65,20 @@ ensure_http_log_cleanup_cron_job() {
   cp "${JOB_DIR}/bin/cleanup-http-logs" /etc/cron.daily
 }
 
-setup_erl_inetrc() {
-  . /var/vcap/jobs/rabbitmq-server/etc/rabbitmq-server-version
+configure_rmq_version() {
+  rm -rf /var/vcap/packages/rabbitmq-server
+  ln -s /var/vcap/packages/rabbitmq-server-"$RMQ_SERVER_VERSION" /var/vcap/packages/rabbitmq-server
+  echo "/var/vcap/packages/rabbitmq-server"
+}
 
+setup_erl_inetrc() {
   . /var/vcap/jobs/rabbitmq-server/lib/rabbitmq-config-vars.bash
+
+  configure_rmq_version
 
   # Unfortunate tight coupling. Beware.
   # We need this for CONF_ENV_FILE, HOME, ERL_INETRC, and for MNESIA_BASE
-  . /var/vcap/packages/rabbitmq-server-"$RMQ_SERVER_VERSION"/privbin/rabbitmq-defaults
+  . /var/vcap/packages/rabbitmq-server/privbin/rabbitmq-defaults
 
   # 1. Write out our new erl_inetrc file. We do this to avoid modifying
   #    /etc/hosts.

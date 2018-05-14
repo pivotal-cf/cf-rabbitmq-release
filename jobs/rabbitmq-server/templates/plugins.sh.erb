@@ -2,10 +2,13 @@
 
 [ -z "$DEBUG" ] || set -x
 
-. /var/vcap/jobs/rabbitmq-server/etc/rabbitmq-server-version
+write_log() {
+  echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ"): $*"
+}
+
 (
   if [ -z $RABBITMQ_PLUGINS ]; then
-    RABBITMQ_PLUGINS=/var/vcap/packages/rabbitmq-server-"$RMQ_SERVER_VERSION"/bin/rabbitmq-plugins
+    RABBITMQ_PLUGINS=/var/vcap/packages/rabbitmq-server/bin/rabbitmq-plugins
   fi
   PATH=$RABBITMQ_HOME/bin:$ERLANG_HOME/bin:/var/vcap/packages/ruby/bin:$PATH
 
@@ -19,7 +22,7 @@
 
     bad_plugin_list="$(comm -1 -3 <($RABBITMQ_PLUGINS list -m) <(echo -e "<%= plugins.sort.join("\\n") %>"))"
     for bad_plugin in $bad_plugin_list; do
-      echo "Ignoring unrecognised plugin: ${bad_plugin}"
+      write_log "Ignoring unrecognised plugin: ${bad_plugin}"
     done
   <% end %>
 

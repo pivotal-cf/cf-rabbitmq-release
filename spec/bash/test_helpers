@@ -60,6 +60,11 @@ expect_file_to_exist() {
   expect_to_equal $? 0
 }
 
+expect_file_to_contain() {
+  expect_file_to_exist "$1"
+  expect_to_contain "$(cat "$1")" "$2"
+}
+
 expect_file_not_to_exist() {
   local filepath="$1"
 

@@ -43,7 +43,7 @@ instance_groups:
           broker:
             username: ((rabbitmq-broker-username))
             password: ((rabbitmq-broker-password))
-        cookie: "rabbit-cluster:aws"
+        cookie: ((rabbitmq-cookie))
         cluster_partition_handling: ((cluster-partition-handling-strategy))
   vm_type: n1-highmem-4
   stemcell: trusty

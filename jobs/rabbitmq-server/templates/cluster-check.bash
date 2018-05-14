@@ -2,10 +2,7 @@
 
 [ -z "$DEBUG" ] || set -x
 
-# shellcheck disable=SC1091
-. /var/vcap/jobs/rabbitmq-server/etc/rabbitmq-server-version
-
-export PATH=/var/vcap/packages/erlang/bin/:/var/vcap/packages/rabbitmq-server-"$RMQ_SERVER_VERSION"/privbin/:$PATH
+export PATH=/var/vcap/packages/erlang/bin/:/var/vcap/packages/rabbitmq-server/privbin/:$PATH
 LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 
 main() {
@@ -31,6 +28,10 @@ main() {
     # For reference read story #121737885
     # ensure_rmq_user_has_correct_permissions_on_all_vhosts "$RMQ_OPERATOR_USERNAME"
   fi
+}
+
+write_log() {
+  echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ"): $*"
 }
 
 # rabbitmq_application_is_running checks the health of the node to determine
@@ -133,7 +134,7 @@ then
 
   send_all_output_to_logfile
   SCRIPT_CALLER="${1:-cluster-check}"
-  echo "Running cluster checks at $(date) from $SCRIPT_CALLER..."
+  write_log "Running cluster checks from $SCRIPT_CALLER..."
   main
-  echo "Cluster check running from $SCRIPT_CALLER passed"
+  write_log "Cluster check running from $SCRIPT_CALLER passed"
 fi

@@ -6,13 +6,15 @@ require 'tempfile'
 
 require 'httparty'
 
+RMQ_VERSION = '3.7'
+
 RSpec.describe 'RabbitMQ server configuration' do
   let(:rmq_host) do
     bosh.indexed_instance('rmq', 0)
   end
 
   def rabbitmqctl
-    'source /var/vcap/jobs/rabbitmq-server/etc/rabbitmq-server-version && sudo ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server-$RMQ_SERVER_VERSION/bin/rabbitmqctl'
+    'sudo ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl'
   end
 
   let(:environment_settings) do
@@ -34,12 +36,13 @@ RSpec.describe 'RabbitMQ server configuration' do
       @old_password = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']['administrators']['management']['password']
 
       @new_username = 'newusername'
-      @new_password = "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_abcdefghijklmnopqrstuvwxyz!\"\#$%&()*+,-./0123456789:;<=>?" # no backtick or single quote supported
+      @new_password = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_abcdefghijklmnopqrstuvwxyz!"#$%&()*+,-./0123456789:;<=>?' # no backtick or single quote supported
 
       bosh.redeploy do |manifest|
         # Change management creds
         rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
         rmq_properties['fd_limit'] = 350_000
+        rmq_properties['version'] = RMQ_VERSION
 
         management_credentials = rmq_properties['administrators']['management']
         management_credentials['username'] = @new_username
@@ -75,6 +78,13 @@ RSpec.describe 'RabbitMQ server configuration' do
 
     after(:all) do
       bosh.deploy(test_manifest)
+    end
+
+    it "should deploy RabbitMQ #{RMQ_VERSION}" do
+        creds = admin_creds
+        response = get("#{rabbitmq_api_url}/overview", creds['username'], creds['password'])
+
+        expect(response['rabbitmq_version']).to start_with(RMQ_VERSION)
     end
 
     context 'when management credentials are rolled' do
