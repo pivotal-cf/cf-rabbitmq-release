@@ -1,0 +1,5 @@
+#!/bin/bash -e
+
+[ -z "$DEBUG" ] || set -x
+
+ginkgo -r -race -keepGoing -randomizeAllSpecs -skipMeasurements -failOnPending "$@"

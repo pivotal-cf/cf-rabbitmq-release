@@ -1,0 +1,14 @@
+---
+resources:
+- name: rabbitmq-upgrade-preparation
+  type: git
+  source:
+    uri: https://github.com/pivotal-cf/rabbitmq-upgrade-preparation
+
+jobs:
+- name: run-tests
+  plan:
+  - get: rabbitmq-upgrade-preparation
+    trigger: true
+  - task: run-tests
+    file: rabbitmq-upgrade-preparation/ci/run-tests.yml

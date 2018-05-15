@@ -1,0 +1,10 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: cflondonservices/london-services-ci-rabbitmq
+inputs:
+  - name: rabbitmq-upgrade-preparation
+run:
+  path: rabbitmq-upgrade-preparation/scripts/ci
