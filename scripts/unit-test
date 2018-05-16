@@ -4,6 +4,7 @@ set -e
 
 ROOT_DIR_PATH="$(cd "$(dirname "$0")"/.. && pwd)"
 cd "$ROOT_DIR_PATH"
+export GOPATH="$ROOT_DIR_PATH"
 
 echo "Upgrade preparation"
 pushd src/rabbitmq-upgrade-preparation
