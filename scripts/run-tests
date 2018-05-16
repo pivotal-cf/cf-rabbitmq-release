@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-set -e
-
-scripts/bundle-with-env rake spec

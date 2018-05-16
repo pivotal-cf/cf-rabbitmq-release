@@ -1,12 +1,9 @@
 #!/usr/bin/env bash
 
-set -e -x
+set -e
 
 ROOT_DIR_PATH="$(cd "$(dirname "$0")"/.. && pwd)"
 cd "$ROOT_DIR_PATH"
 
-scripts/run-tests
-
-pushd src/rabbitmq-upgrade-preparation
-  scripts/run_tests
-popd
+echo "Ruby integration tests"
+scripts/bundle-with-env rake spec:integration
