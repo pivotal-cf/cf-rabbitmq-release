@@ -1,8 +1,9 @@
 package versions_test
 
 import (
+	. "rabbitmq-upgrade-preparation/versions"
+
 	. "github.com/onsi/ginkgo/extensions/table"
-	. "github.com/pivotal-cf/rabbitmq-upgrade-preparation/versions"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

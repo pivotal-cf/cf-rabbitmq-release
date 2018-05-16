@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	. "github.com/pivotal-cf/rabbitmq-upgrade-preparation/rabbitmqctl"
+	. "rabbitmq-upgrade-preparation/rabbitmqctl"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

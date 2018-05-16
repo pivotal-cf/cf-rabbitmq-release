@@ -7,6 +7,6 @@ cd "$ROOT_DIR_PATH"
 
 scripts/run-tests
 
-pushd src/github.com/pivotal-cf/rabbitmq-upgrade-preparation
+pushd src/rabbitmq-upgrade-preparation
   scripts/run_tests
 popd

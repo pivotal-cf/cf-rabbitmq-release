@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/pivotal-cf/rabbitmq-upgrade-preparation/logger"
+	"rabbitmq-upgrade-preparation/logger"
 
 	version "github.com/hashicorp/go-version"
 )

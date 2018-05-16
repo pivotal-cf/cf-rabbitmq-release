@@ -15,7 +15,7 @@ var binPath string
 var _ = BeforeSuite(func() {
 	SetDefaultEventuallyTimeout(2 * time.Second)
 	var err error
-	binPath, err = gexec.Build("github.com/pivotal-cf/rabbitmq-upgrade-preparation")
+	binPath, err = gexec.Build("rabbitmq-upgrade-preparation")
 	Expect(err).NotTo(HaveOccurred())
 })
 

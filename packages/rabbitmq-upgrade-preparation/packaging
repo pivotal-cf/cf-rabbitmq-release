@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-PACKAGE_NAME=github.com/pivotal-cf/rabbitmq-upgrade-preparation
+PACKAGE_NAME=rabbitmq-upgrade-preparation
 PACKAGE_DIR=${BOSH_INSTALL_TARGET}/src/${PACKAGE_NAME}
 
 mkdir -p $(dirname $PACKAGE_DIR)

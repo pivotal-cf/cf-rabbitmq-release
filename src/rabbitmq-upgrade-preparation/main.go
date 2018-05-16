@@ -8,10 +8,11 @@ import (
 	"strings"
 	"time"
 
+	"rabbitmq-upgrade-preparation/logger"
+	"rabbitmq-upgrade-preparation/rabbitmqctl"
+	"rabbitmq-upgrade-preparation/versions"
+
 	"github.com/cenkalti/backoff"
-	"github.com/pivotal-cf/rabbitmq-upgrade-preparation/logger"
-	"github.com/pivotal-cf/rabbitmq-upgrade-preparation/rabbitmqctl"
-	"github.com/pivotal-cf/rabbitmq-upgrade-preparation/versions"
 )
 
 func main() {
