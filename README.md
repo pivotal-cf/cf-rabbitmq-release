@@ -35,18 +35,16 @@ Alternatively, you can use the `scripts/generate-manifest` in order to generate 
 
 ## Testing
 
-To run all the tests do `bundle exec rake spec`.
-
 Run `bundle exec rake --tasks` to list all the test subsets.
 
 ### Unit Tests
 
-To run only unit tests locally, run: `bundle exec rake spec:unit`.
+To run only unit tests locally, run: `scripts/unit-test`.
 
 ### Integration Tests
 Integration tests require this release to be deployed into a BOSH director (see [Deploying section above](#deploying)).
 
-To run integration tests do `bundle exec rake spec:integration`.
+To run integration tests do `scripts/integration-test`.
 
 ### Embedded Release Tests
 
