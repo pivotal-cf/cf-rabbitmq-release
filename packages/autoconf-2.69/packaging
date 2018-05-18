@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -ex
+
+export PREFIX=${BOSH_INSTALL_TARGET:?must be defined}
+export PATH=${PREFIX}/bin:$PATH
+
+# autoconf
+tar xJf autotools/autoconf*.tar.xz
+cd autoconf*
+autoconf_dir="$PREFIX/share/autoconf" ./configure --prefix="$PREFIX"
+make
+make install prefix="$PREFIX"
