@@ -12,6 +12,7 @@ properties:
   rabbitmq-server.version:
     description: "Version of RabbitMQ to use"
     default: "3.6"
+
   rabbitmq-server.ssl.cacert:
     description: "RabbitMQ server CA certificate"
   rabbitmq-server.ssl.cert:
