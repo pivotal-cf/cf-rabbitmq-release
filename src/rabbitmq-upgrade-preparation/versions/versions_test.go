@@ -54,6 +54,26 @@ var _ = Describe("Versions", func() {
 				Expect(versions.UpgradeMessage()).To(Equal("It looks like you are trying to upgrade from RabbitMQ 3.6.5 to RabbitMQ 3.6.6-rc1"))
 			})
 		})
+
+		Describe("malformed versions", func() {
+			Context("when the desired version of RabbitMQ is malformed", func() {
+				It("returns an error", func() {
+					versions := &RabbitVersions{Desired: "malformed-version", Deployed: "3.6.5"}
+
+					_, err := versions.PreparationRequired()
+					Expect(err).To(MatchError("The desired version of RabbitMQ is malformed: malformed-version"))
+				})
+			})
+
+			Context("when the deployed version of RabbitMQ is malformed", func() {
+				It("returns an error", func() {
+					versions := &RabbitVersions{Desired: "3.6.5", Deployed: "malformed-version"}
+
+					_, err := versions.PreparationRequired()
+					Expect(err).To(MatchError("The deployed version of RabbitMQ is malformed: malformed-version"))
+				})
+			})
+		})
 	})
 
 	Describe("ErlangVersions", func() {
@@ -81,4 +101,5 @@ var _ = Describe("Versions", func() {
 		})
 
 	})
+
 })

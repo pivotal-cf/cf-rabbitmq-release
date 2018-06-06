@@ -140,8 +140,11 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 	})
 
 	Context("When upgrading RabbitMQ", func() {
+		var cwd string
 		BeforeEach(func() {
-			cwd, err := os.Getwd()
+			var err error
+
+			cwd, err = os.Getwd()
 			Expect(err).NotTo(HaveOccurred())
 
 			args = []string{
@@ -154,6 +157,38 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 		itExitsWithZero()
 		itCallsStopApp()
+
+		Context("when the new version of RabbitMQ is malformed", func() {
+			BeforeEach(func() {
+				args = []string{
+					"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-erlang-17-rabbit-3.4.3.1.sh"),
+					"-node", "rabbit@host",
+					"-new-rabbitmq-version", "this-is-a-malformed-version",
+					"-new-erlang-version", "17",
+				}
+			})
+
+			It("exists with an error", func() {
+				Eventually(session.Err).Should(gbytes.Say("The desired version of RabbitMQ is malformed: this-is-a-malformed-version"))
+				Eventually(session).Should(gexec.Exit(1))
+			})
+		})
+
+		Context("when the current version of RabbitMQ is malformed", func() {
+			BeforeEach(func() {
+				args = []string{
+					"-rabbitmqctl-path", filepath.Join(cwd, "..", "rabbitmqctl", "test-assets", "rabbitmqctl-erlang-17-rabbit-malformed.sh"),
+					"-node", "rabbit@host",
+					"-new-rabbitmq-version", "4.4.0.0",
+					"-new-erlang-version", "17",
+				}
+			})
+
+			It("exists with an error", func() {
+				Eventually(session.Err).Should(gbytes.Say("The deployed version of RabbitMQ is malformed: this-is-a-malformed-version"))
+				Eventually(session).Should(gexec.Exit(1))
+			})
+		})
 	})
 
 	Context("When upgrading both Erlang and RabbitMQ", func() {

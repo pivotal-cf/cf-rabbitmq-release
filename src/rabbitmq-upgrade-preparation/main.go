@@ -97,7 +97,12 @@ func stopRabbitMQApp() {
 
 	for _, difference := range differences {
 		logger.Out.Printf("%s\n", difference.UpgradeMessage())
-		if difference.PreparationRequired() {
+		prepReq, err := difference.PreparationRequired()
+		if err != nil {
+			logger.Err.Fatalf("Error determining whether upgrade preparation is required: %s", err)
+		}
+
+		if prepReq {
 			logger.Out.Println("The cluster needs to be taken offline as it cannot run in mixed mode")
 			logger.Out.Printf("Stopping RabbitMQ on %s\n", node)
 			if err := rabbitMQCtl.StopApp(node); err != nil {
