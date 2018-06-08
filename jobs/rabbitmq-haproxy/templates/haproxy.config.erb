@@ -5,7 +5,7 @@
       map { |port| port.to_i }.
       select { |port| port > 0 && port < 65536 }
 
-  timeouts = link('rabbitmq-server').p('rabbitmq-server.timeouts', []).map{ | timeout| timeout.to_a}
+  timeouts = link('rabbitmq-server').p('rabbitmq-server.timeouts', []).to_a
 %>
 global
 daemon
@@ -29,8 +29,8 @@ timeout server  2d
   frontend input-<%= port %>
   bind :<%= port %>
   default_backend output-<%= port %>
-  <%  timeouts.each do |key, timeout| %>
-    <%  if timeout['port'] == port %>
+  <%  timeouts.each do |timeout| %>
+    <%  if timeout['port'].to_i == port %>
       timeout client <%= timeout['client'] %>
       timeout server <%= timeout['server'] %>
     <%  end %>
