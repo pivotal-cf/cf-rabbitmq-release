@@ -28,7 +28,7 @@ T_setup_environment() {
     RABBITMQ_NODES_STRING="node-1,node-2"
     LOAD_DEFINITIONS="my-definitions"
 
-    SSL_KEY="ssk-key"
+    SSL_ENABLED=true
     SSL_VERIFY=false
     SSL_VERIFICATION_DEPTH="5"
     SSL_FAIL_IF_NO_PEER_CERT=true
@@ -126,21 +126,19 @@ T_configure_load_definitions() {
 
 T_configure_tls_listeners() {
   (
-    local ssl_key listeners
+    SSL_ENABLED=true
 
-    ssl_key="--this is my key--"
+    listeners="$(configure_tls_listeners)"
 
-    listeners="$(configure_tls_listeners \"$ssl_key\")"
     expect_to_equal "$listeners" "-rabbit tcp_listeners [] -rabbit ssl_listeners [5671] -rabbitmq_management listener [{port,15672},{ssl,false}] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614]"
-
   ) || $T_fail "Failed to configure TLS listeners"
 }
 
 T_configure_tls_options() {
   (
-    local ssl_key ssl_verify ssl_verification_mode ssl_verification_depth script_dir ssl_fail_if_no_peer_cert ssl_supported_tls_versions ssl_options options
+    local ssl_verify ssl_verification_mode ssl_verification_depth script_dir ssl_fail_if_no_peer_cert ssl_supported_tls_versions ssl_options options
 
-    ssl_key="--this is my key--"
+    SSL_ENABLED=true
     ssl_verify="true"
     ssl_verification_depth="5"
     ssl_fail_if_no_peer_cert=true
@@ -148,7 +146,7 @@ T_configure_tls_options() {
     script_dir="/path/to/script/dir"
     ssl_supported_tls_ciphers=",{ciphers, ['DHE_AES128_GCM_SHA256','DHE_AES256_GCM_SHA256']}"
 
-    options="$(configure_tls_options "${ssl_key}" "${ssl_verify}" "${ssl_verification_depth}" "${ssl_fail_if_no_peer_cert}" "${ssl_supported_tls_versions}" "${ssl_supported_tls_ciphers}" "${script_dir}")"
+    options="$(configure_tls_options "${ssl_verify}" "${ssl_verification_depth}" "${ssl_fail_if_no_peer_cert}" "${ssl_supported_tls_versions}" "${ssl_supported_tls_ciphers}" "${script_dir}")"
     expect_to_equal "$options" " -rabbit ssl_options [{cacertfile,\"${script_dir}/../etc/cacert.pem\"},{certfile,\"${script_dir}/../etc/cert.pem\"},{keyfile,\"${script_dir}/../etc/key.pem\"},{verify,verify_peer},{depth,$ssl_verification_depth},{fail_if_no_peer_cert,$ssl_fail_if_no_peer_cert},{versions,$ssl_supported_tls_versions}$ssl_supported_tls_ciphers]"
 
   ) || $T_fail "Failed to configure TLS options"

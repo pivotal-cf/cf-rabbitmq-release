@@ -13,6 +13,9 @@ properties:
     description: "Version of RabbitMQ to use"
     default: "3.6"
 
+  rabbitmq-server.ssl.enabled:
+    default: false
+    description: "Use TLS listeners. Will not accept non-TLS connections."
   rabbitmq-server.ssl.cacert:
     description: "RabbitMQ server CA certificate"
   rabbitmq-server.ssl.cert:

@@ -35,8 +35,8 @@ main(){
 
   cluster_args=$(create_cluster_args "${RABBITMQ_NODES_STRING}" "${DISK_ALARM_THRESHOLD}" "${CLUSTER_PARTITION_HANDLING}" "${HTTP_ACCESS_LOG_DIR}")
   load_definitions=$(configure_load_definitions "${LOAD_DEFINITIONS}" "${script_dir}")
-  tls_listeners=$(configure_tls_listeners "${SSL_KEY}")
-  tls_options=$(configure_tls_options "${SSL_KEY}" \
+  tls_listeners=$(configure_tls_listeners)
+  tls_options=$(configure_tls_options \
     "${SSL_VERIFY}" \
     "${SSL_VERIFICATION_DEPTH}" \
     "${SSL_FAIL_IF_NO_PEER_CERT}" \
@@ -112,11 +112,7 @@ configure_load_definitions() {
 }
 
 configure_tls_listeners() {
-  local ssl_key
-
-  ssl_key="$1"
-
-  if [[ ! -z "${ssl_key}" ]]; then
+  if [[ ${SSL_ENABLED} = "true" ]]; then
     # if TLS is enabled, disable the non-TLS listener for AMQP 0-9-1 and make the management/HTTP API
     # listener use TLS.
     echo "-rabbit tcp_listeners [] -rabbit ssl_listeners [5671] -rabbitmq_management listener [{port,15672},{ssl,false}] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614]"
@@ -124,7 +120,6 @@ configure_tls_listeners() {
 }
 
 configure_tls_options() {
-  local ssl_key
   local ssl_verify
   local ssl_verification_mode
   local ssl_verification_depth
@@ -134,15 +129,14 @@ configure_tls_options() {
   local ssl_supported_tls_ciphers
   local ssl_options
 
-  ssl_key="$1"
-  ssl_verify="$2"
-  ssl_verification_depth="$3"
-  ssl_fail_if_no_peer_cert="$4"
-  ssl_supported_tls_versions="$5"
-  ssl_supported_tls_ciphers="$6"
-  script_dir="$7"
+  ssl_verify="$1"
+  ssl_verification_depth="$2"
+  ssl_fail_if_no_peer_cert="$3"
+  ssl_supported_tls_versions="$4"
+  ssl_supported_tls_ciphers="$5"
+  script_dir="$6"
 
-  if [[ ! -z "${ssl_key}" ]]; then
+  if [[ ${SSL_ENABLED} = "true" ]]; then
     ssl_verification_mode='verify_none'
     if [[ $ssl_verify = true ]]; then
       ssl_verification_mode='verify_peer'
