@@ -35,15 +35,19 @@ main(){
 
   cluster_args=$(create_cluster_args "${RABBITMQ_NODES_STRING}" "${DISK_ALARM_THRESHOLD}" "${CLUSTER_PARTITION_HANDLING}" "${HTTP_ACCESS_LOG_DIR}")
   load_definitions=$(configure_load_definitions "${LOAD_DEFINITIONS}" "${script_dir}")
-  tls_listeners=$(configure_tls_listeners)
-  tls_options=$(configure_tls_options \
-    "${SSL_VERIFY}" \
-    "${SSL_VERIFICATION_DEPTH}" \
-    "${SSL_FAIL_IF_NO_PEER_CERT}" \
-    "${SSL_SUPPORTED_TLS_VERSIONS}" \
-    "${SSL_SUPPORTED_TLS_CIPHERS}" \
-    "${script_dir}" \
-  )
+
+  if ${SSL_ENABLED:?must be set}
+  then
+    tls_listeners=$(configure_tls_listeners)
+    tls_options=$(configure_tls_options \
+      "${SSL_VERIFY}" \
+      "${SSL_VERIFICATION_DEPTH}" \
+      "${SSL_FAIL_IF_NO_PEER_CERT}" \
+      "${SSL_SUPPORTED_TLS_VERSIONS}" \
+      "${SSL_SUPPORTED_TLS_CIPHERS}" \
+      "${script_dir}" \
+    )
+  fi
 
   server_start_args="$(
     echo \
@@ -112,11 +116,9 @@ configure_load_definitions() {
 }
 
 configure_tls_listeners() {
-  if [[ ${SSL_ENABLED} = "true" ]]; then
-    # if TLS is enabled, disable the non-TLS listener for AMQP 0-9-1 and make the management/HTTP API
-    # listener use TLS.
-    echo "-rabbit tcp_listeners [] -rabbit ssl_listeners [5671] -rabbitmq_management listener [{port,15672},{ssl,false}] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614]"
-  fi
+  # if TLS is enabled, disable the non-TLS listener for AMQP 0-9-1 and make the management/HTTP API
+  # listener use TLS.
+  echo "-rabbit tcp_listeners [] -rabbit ssl_listeners [5671] -rabbitmq_management listener [{port,15672},{ssl,false}] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614]"
 }
 
 configure_tls_options() {
@@ -136,17 +138,15 @@ configure_tls_options() {
   ssl_supported_tls_ciphers="$5"
   script_dir="$6"
 
-  if [[ ${SSL_ENABLED} = "true" ]]; then
-    ssl_verification_mode='verify_none'
-    if [[ $ssl_verify = true ]]; then
-      ssl_verification_mode='verify_peer'
-    fi
-
-    # concatenate options encoded in double quotes, see the concatenation comment above.
-    # {versions,['tlsv1.2','tlsv1.1',tlsv1]} disables SSLv3 to mitigate the POODLE attack.
-    ssl_options=" -rabbit ssl_options [{cacertfile,\"${script_dir}/../etc/cacert.pem\"},{certfile,\"${script_dir}/../etc/cert.pem\"},{keyfile,\"${script_dir}/../etc/key.pem\"},{verify,$ssl_verification_mode},{depth,$ssl_verification_depth},{fail_if_no_peer_cert,$ssl_fail_if_no_peer_cert},{versions,$ssl_supported_tls_versions}${ssl_supported_tls_ciphers}]"
-    echo "${ssl_options}"
+  ssl_verification_mode='verify_none'
+  if [[ $ssl_verify = true ]]; then
+    ssl_verification_mode='verify_peer'
   fi
+
+  # concatenate options encoded in double quotes, see the concatenation comment above.
+  # {versions,['tlsv1.2','tlsv1.1',tlsv1]} disables SSLv3 to mitigate the POODLE attack.
+  ssl_options=" -rabbit ssl_options [{cacertfile,\"${script_dir}/../etc/cacert.pem\"},{certfile,\"${script_dir}/../etc/cert.pem\"},{keyfile,\"${script_dir}/../etc/key.pem\"},{verify,$ssl_verification_mode},{depth,$ssl_verification_depth},{fail_if_no_peer_cert,$ssl_fail_if_no_peer_cert},{versions,$ssl_supported_tls_versions}${ssl_supported_tls_ciphers}]"
+  echo "${ssl_options}"
 }
 
 escape_for_singlequoted_string() {

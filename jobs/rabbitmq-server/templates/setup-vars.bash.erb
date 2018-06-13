@@ -1,45 +1,45 @@
-export SSL_KEY=""
 export LOAD_DEFINITIONS=""
+export SSL_ENABLED=false
 
-<%
-  supported_tls_versions = ['tlsv1', 'tlsv1.1', 'tlsv1.2']
+<% if_p("rabbitmq-server.ssl.enabled") do
 
-  tls_versions = p('rabbitmq-server.ssl.versions')
+    supported_tls_versions = ['tlsv1', 'tlsv1.1', 'tlsv1.2']
 
-  tls_versions.respond_to?('map') or
-    raise "Expected rabbitmq-server.ssl.versions to be a collection"
+    tls_versions = p('rabbitmq-server.ssl.versions')
 
-  tls_versions = tls_versions.map do |v|
-    supported_tls_versions.include?(v) or
-      raise "#{v} is a not supported tls version"
+    tls_versions.respond_to?('map') or
+      raise "Expected rabbitmq-server.ssl.versions to be a collection"
 
-    # make sure the erlang atom is quoted by one and
-    # only one single quote
-    "'#{v}'".gsub(/^'+|'+$/, "'")
-  end
-  tls_versions = '[' + tls_versions.join(',') + ']'
+    tls_versions = tls_versions.map do |v|
+      supported_tls_versions.include?(v) or
+        raise "#{v} is a not supported tls version"
 
-  tls_ciphers = ''
-  if_p('rabbitmq-server.ssl.ciphers') do |ciphers|
-    ciphers.respond_to?('map') or
-      raise "Expected rabbitmq-server.ssl.ciphers to be a collection"
+      # make sure the erlang atom is quoted by one and
+      # only one single quote
+      "'#{v}'".gsub(/^'+|'+$/, "'")
+    end
+    tls_versions = '[' + tls_versions.join(',') + ']'
 
-    tls_ciphers = ciphers.map do |c|
-      /^[a-zA-Z0-9\-]+$/.match(c) or raise "#{c} is not a valid cipher suite"
-      "\\\"#{c}\\\"".gsub(/^'+|'+$/, "'")
-    end.join(',')
-    tls_ciphers = ",{ciphers,[#{tls_ciphers}]}"
-  end
+    tls_ciphers = ''
+    if_p('rabbitmq-server.ssl.ciphers') do |ciphers|
+      ciphers.respond_to?('map') or
+        raise "Expected rabbitmq-server.ssl.ciphers to be a collection"
 
+      tls_ciphers = ciphers.map do |c|
+        /^[a-zA-Z0-9\-]+$/.match(c) or raise "#{c} is not a valid cipher suite"
+        "\\\"#{c}\\\"".gsub(/^'+|'+$/, "'")
+      end.join(',')
+      tls_ciphers = ",{ciphers,[#{tls_ciphers}]}"
+    end
 %>
+  export SSL_ENABLED=true
+  export SSL_SUPPORTED_TLS_VERSIONS="<%= tls_versions %>"
+  export SSL_SUPPORTED_TLS_CIPHERS="<%= tls_ciphers %>"
+  export SSL_VERIFY="<%= p("rabbitmq-server.ssl.verify") %>"
+  export SSL_VERIFICATION_DEPTH="<%= p("rabbitmq-server.ssl.verification_depth") %>"
+  export SSL_FAIL_IF_NO_PEER_CERT="<%= p("rabbitmq-server.ssl.fail_if_no_peer_cert") %>"
+<% end %>
 
-export SSL_SUPPORTED_TLS_VERSIONS="<%= tls_versions %>"
-export SSL_SUPPORTED_TLS_CIPHERS="<%= tls_ciphers %>"
-export SSL_VERIFY="<%= p("rabbitmq-server.ssl.verify") %>"
-export SSL_VERIFICATION_DEPTH="<%= p("rabbitmq-server.ssl.verification_depth") %>"
-export SSL_FAIL_IF_NO_PEER_CERT="<%= p("rabbitmq-server.ssl.fail_if_no_peer_cert") %>"
-
-export SSL_ENABLED="<%= p("rabbitmq-server.ssl.enabled") %>"
 
 export CLUSTER_PARTITION_HANDLING="<%= p("rabbitmq-server.cluster_partition_handling") %>"
 export DISK_ALARM_THRESHOLD="<%= p("rabbitmq-server.disk_alarm_threshold") %>"
