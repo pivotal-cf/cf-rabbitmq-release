@@ -17,6 +17,10 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
     context 'when properties are not configured' do
       let(:manifest_properties) { {} }
 
+      it 'knows ssl is not enabled' do
+        expect(output).to include 'export SSL_ENABLED="false"'
+        expect(output).not_to include 'export SSL_ENABLED="true"'
+      end
       it 'uses default tls versions' do
         expect(output).to include "export SSL_SUPPORTED_TLS_VERSIONS=\"['tlsv1.2','tlsv1.1']\""
       end

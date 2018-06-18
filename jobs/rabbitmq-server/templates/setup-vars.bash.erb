@@ -1,5 +1,4 @@
 export LOAD_DEFINITIONS=""
-export SSL_ENABLED=false
 
 <% if_p("rabbitmq-server.ssl.enabled") do
 
@@ -30,9 +29,10 @@ export SSL_ENABLED=false
         "\\\"#{c}\\\"".gsub(/^'+|'+$/, "'")
       end.join(',')
       tls_ciphers = ",{ciphers,[#{tls_ciphers}]}"
+
     end
 %>
-  export SSL_ENABLED=true
+  export SSL_ENABLED="<%= p("rabbitmq-server.ssl.enabled") %>"
   export SSL_SUPPORTED_TLS_VERSIONS="<%= tls_versions %>"
   export SSL_SUPPORTED_TLS_CIPHERS="<%= tls_ciphers %>"
   export SSL_VERIFY="<%= p("rabbitmq-server.ssl.verify") %>"
