@@ -55,6 +55,7 @@ RSpec.describe 'RabbitMQ server configuration' do
 
         rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
         rmq_properties['ssl'] = {}
+        rmq_properties['ssl']['enabled'] = true
         rmq_properties['ssl']['key'] = server_key
         rmq_properties['ssl']['cert'] = server_cert
         rmq_properties['ssl']['cacert'] = ca_cert
