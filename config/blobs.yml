@@ -3,10 +3,10 @@ basht/basht_0.1.0_Linux_x86_64.tgz:
   size: 757703
   object_id: bbc2200b-670b-4562-72db-27ce98bc3161
   sha: 5dee8d242fc333672e14d9e1d70162b77eab5924
-erlang/otp_src_oss_20.3.7.tgz:
-  size: 54637442
-  object_id: 55cec027-1c0b-4d1a-553d-56e53612eae3
-  sha: sha256:e3379fb27918e3745217dde575f75191edaf9f69438d0d6dd0d9195a85ce192e
+erlang/otp_src_oss_20.3.8.tgz:
+  size: 54638074
+  object_id: da864d9a-ccd0-43ae-78ac-a11b73bc8109
+  sha: sha256:900979b3542262c98e1e448437c59c7831ed52af9d43250d0318f73a286414ad
 golang/go1.10.2.linux-amd64.tar.gz:
   size: 132481801
   object_id: ed7dc9dc-8d6c-4562-7f25-630ff5a2eacc
@@ -15,11 +15,11 @@ haproxy/haproxy-1.6.13.tar.gz:
   size: 1580214
   object_id: 84b3dd36-e9f7-4917-aa31-67798f94975a
   sha: ae0cabea33c718b08d463016248facd31a3618b8
-rabbitmq-server-3.6/rabbitmq-server-generic-unix-3.6.15.tar.xz:
-  size: 4799688
-  object_id: be19e3a4-a491-4b6c-455a-711e979a0dec
-  sha: c452469bfc6982a79271aedc529d41e0ed16366e
 rabbitmq-server-3.7/rabbitmq-server-generic-unix-3.7.6.tar.xz:
   size: 9075236
   object_id: 275383fc-79a0-443f-55bb-fb5a1c4d8753
   sha: sha256:23e61ec405fea9903c2de9532013feb124a5bc667a43a010c949276eda17e1d4
+rabbitmq-server-3.6/rabbitmq-server-generic-unix-3.6.16.tar.xz:
+  size: 4808464
+  object_id: b9575b38-5483-44bb-4c4a-58de00155fb5
+  sha: sha256:d7b0a5dbe670a79da7895b0dea6ccc74e778c3d309b6f7116e8ee4e2bd796b20
