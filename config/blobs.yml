@@ -7,10 +7,10 @@ erlang/otp_src_oss_20.3.8.tgz:
   size: 54638074
   object_id: da864d9a-ccd0-43ae-78ac-a11b73bc8109
   sha: sha256:900979b3542262c98e1e448437c59c7831ed52af9d43250d0318f73a286414ad
-golang/go1.10.2.linux-amd64.tar.gz:
-  size: 132481801
-  object_id: ed7dc9dc-8d6c-4562-7f25-630ff5a2eacc
-  sha: sha256:4b677d698c65370afa33757b6954ade60347aaca310ea92a63ed717d7cb0c2ff
+golang/go1.10.3.linux-amd64.tar.gz:
+  size: 132489256
+  object_id: 87588d3a-44e7-4ea7-43c6-f245c8c8418f
+  sha: sha256:fa1b0e45d3b647c252f51f5e1204aba049cde4af177ef9f2181f43004f901035
 haproxy/haproxy-1.6.13.tar.gz:
   size: 1580214
   object_id: 84b3dd36-e9f7-4917-aa31-67798f94975a
