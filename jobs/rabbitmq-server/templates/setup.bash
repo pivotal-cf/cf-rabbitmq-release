@@ -218,7 +218,7 @@ create_erlang_cookie() {
   user="$4"
   group="$5"
 
-  printf "${erlang_cookie}" > "${dir}/.erlang.cookie"
+  echo -n "${erlang_cookie}" > "${dir}/.erlang.cookie"
   chown ${user}:${group} ${dir}/.erlang.cookie
   chmod 0400 ${dir}/.erlang.cookie
   cp -a "${dir}/.erlang.cookie" ${home}
