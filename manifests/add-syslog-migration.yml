@@ -125,6 +125,14 @@
                 Tag="rabbitmq_server_post_deploy_stdout")
 
           input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-server/post-start.stderr.log"
+                Tag="rabbitmq_server_post_deploy_stderr")
+
+          input(type="imfile"
+                File="/var/vcap/sys/log/rabbitmq-server/post-start.stdout.log"
+                Tag="rabbitmq_server_post_deploy_stdout")
+
+          input(type="imfile"
                 File="/var/vcap/sys/log/rabbitmq-server/drain.log"
                 Tag="rabbitmq_server_drain")
 
