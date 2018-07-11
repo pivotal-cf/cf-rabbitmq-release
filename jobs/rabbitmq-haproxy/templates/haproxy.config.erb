@@ -1,45 +1,47 @@
 <%
   ips = link('rabbitmq-server').instances.map(&:address)
   ports = link('rabbitmq-server').p('rabbitmq-server.ports').to_s.
-      split(/[\[\], ]/).
-      map { |port| port.to_i }.
-      select { |port| port > 0 && port < 65536 }
+    split(/[\[\], ]/).
+    map { |port| port.to_i }.
+    select { |port| port > 0 && port < 65536 }
 
-  timeouts = link('rabbitmq-server').p('rabbitmq-server.timeouts', []).to_a
+    timeouts = link('rabbitmq-server').p('rabbitmq-server.timeouts', []).to_a
 %>
 global
-daemon
-user vcap
-group vcap
-maxconn 64000
-spread-checks 4
-log 127.0.0.1 local2 info
-stats socket /var/vcap/sys/run/rabbitmq-haproxy/haproxy.sock mode 600 level admin user vcap
-stats timeout 2m #Wait up to 2 minutes for input
+	daemon
+	user vcap
+	group vcap
+	maxconn 64000
+        spread-checks 4
+        log 127.0.0.1 local2 info
+  stats socket /var/vcap/sys/run/rabbitmq-haproxy/haproxy.sock mode 600 level admin user vcap
+  stats timeout 2m #Wait up to 2 minutes for input
 
 defaults
-option  tcplog
-log     global
-maxconn 64000
-timeout connect 10s
-timeout client  2d
-timeout server  2d
+	option  tcplog
+        log     global
+        maxconn 64000
+        timeout connect 10s
+        timeout client  2d
+        timeout server  2d
 
 <% ports.each do |port| %>
-  frontend input-<%= port %>
-  bind :<%= port %>
-  default_backend output-<%= port %>
-  <%  timeouts.each do |timeout| %>
-    <%  if timeout['port'].to_i == port %>
-      timeout client <%= timeout['client'] %>
-      timeout server <%= timeout['server'] %>
-    <%  end %>
-  <%  end %>
+frontend input-<%= port %>
+	bind :<%= port %>
+        default_backend output-<%= port %>
+        
+<%  timeouts.each do |timeout| %>
+        <%  if timeout['port'].to_i == port %>
+        timeout client <%= timeout['timeout'] %>
+        timeout server <%= timeout['timeout'] %>
+        <%  end %>
+<%  end %>	
 
-  backend output-<%= port %>
-  mode tcp
-  balance leastconn
-  <% ips.each_with_index do |ip, idx| %>
-    server node<%= idx %> <%= ip %>:<%= port %> check inter 5000
-  <% end %>
+backend output-<%= port %>
+        mode tcp
+        balance leastconn
+<% ips.each_with_index do |ip, idx| %>
+	server node<%= idx %> <%= ip %>:<%= port %> check inter 5000
 <% end %>
+<% end %>
+
