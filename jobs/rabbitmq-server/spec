@@ -42,9 +42,7 @@ properties:
   rabbitmq-server.ports:
     description: "List of ports on which the RabbitMQ cluster accepts connections"
   rabbitmq-server.timeouts.port:
-    description: "Port for server and client timeout definitions"
-  rabbitmq-server.timeouts.port.timeout:
-    description: "Timeout in seconds for server and client"
+    description: "Server and client timeout for a specific port"
 
   rabbitmq-server.administrators.broker.username:
     description: "RabbitMQ admin username for broker"

@@ -7,6 +7,7 @@
 
     timeouts = link('rabbitmq-server').p('rabbitmq-server.timeouts', []).to_a
 %>
+<%=timeouts %>
 global
 	daemon
 	user vcap
@@ -29,11 +30,10 @@ defaults
 frontend input-<%= port %>
 	bind :<%= port %>
         default_backend output-<%= port %>
-        
-<%  timeouts.each do |timeout| %>
-        <%  if timeout['port'].to_i == port %>
-        timeout client <%= timeout['timeout'] %>
-        timeout server <%= timeout['timeout'] %>
+<%  timeouts.each do |index,timeout| %>
+        <%  if index.to_i == port %>
+        timeout client <%= timeout %>
+        timeout server <%= timeout %>
         <%  end %>
 <%  end %>	
 
