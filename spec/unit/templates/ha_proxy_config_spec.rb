@@ -12,9 +12,7 @@ RSpec.describe 'Cluster', template: true do
         'properties' => {
           'rabbitmq-server' => {
             'ports' => [ 123, 456, 789, 10000000 ],
-            'timeouts' => [
-              { "port" => 123, "client" => "300s", "server" => "300s"}
-            ]
+            'timeouts' => [[123, "30s"]]
           }
         }
       }
@@ -36,7 +34,7 @@ RSpec.describe 'Cluster', template: true do
   end
 
   it 'should contain timeout for first port' do
-    expect(rendered_template).to include("timeout client 300s")
-    expect(rendered_template).to include("timeout server 300s")
+    expect(rendered_template).to include("timeout client 30s")
+    expect(rendered_template).to include("timeout server 30s")
   end
 end
