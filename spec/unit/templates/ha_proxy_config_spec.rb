@@ -11,7 +11,8 @@ RSpec.describe 'Cluster', template: true do
         ],
         'properties' => {
           'rabbitmq-server' => {
-            'ports' => [ 123, 456, 789, 10000000 ]
+            'ports' => [ 123, 456, 789, 10000000 ],
+            'timeouts' => [[123, "30s"]]
           }
         }
       }
@@ -30,5 +31,10 @@ RSpec.describe 'Cluster', template: true do
   it 'does not include too big ports' do
     expect(rendered_template).not_to include("server node0 1.1.1.1:10000000 check inter 5000")
     expect(rendered_template).not_to include("server node1 2.2.2.2:10000000 check inter 5000")
+  end
+
+  it 'should contain timeout for first port' do
+    expect(rendered_template).to include("timeout client 30s")
+    expect(rendered_template).to include("timeout server 30s")
   end
 end

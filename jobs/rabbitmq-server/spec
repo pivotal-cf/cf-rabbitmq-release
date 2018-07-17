@@ -41,6 +41,8 @@ properties:
     description: "List of RabbitMQ plugins"
   rabbitmq-server.ports:
     description: "List of ports on which the RabbitMQ cluster accepts connections"
+  rabbitmq-server.timeouts.port:
+    description: "Server and client timeout for a specific port"
 
   rabbitmq-server.administrators.broker.username:
     description: "RabbitMQ admin username for broker"
