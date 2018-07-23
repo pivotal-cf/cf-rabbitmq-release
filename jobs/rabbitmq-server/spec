@@ -36,6 +36,9 @@ properties:
   rabbitmq-server.ssl.fail_if_no_peer_cert:
     description: "Should RabbitMQ server reject connection if there is no peer cert"
     default: false
+  rabbitmq-server.ssl.enabled_on_management:
+    description: "Should RabbitMQ management API use SSL"
+    default: false
 
   rabbitmq-server.plugins:
     description: "List of RabbitMQ plugins"

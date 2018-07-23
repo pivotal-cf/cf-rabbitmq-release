@@ -33,6 +33,7 @@ T_setup_environment() {
     SSL_FAIL_IF_NO_PEER_CERT=true
     SSL_SUPPORTED_TLS_VERSIONS="['tlsv1.2','tlsv1.1']"
     SSL_SUPPORTED_TLS_CIPHERS=",{ciphers, ['cipher1','cipher2']}"
+    SSL_ENABLED_ON_MANAGEMENT=true
 
     ERLANG_COOKIE="my-awesome-cookie"
     VCAP_USER="$(id -u)"
@@ -65,7 +66,7 @@ T_setup_environment() {
     expect_to_contain "$env" "{verify,verify_none},"
 
     # SSL
-    expect_to_contain "$env" " -rabbitmq_management listener [{port,15672},{ssl,false}]"
+    expect_to_contain "$env" " -rabbitmq_management listener [{port,15671},{ssl,true}"
     expect_to_contain "$env" " -rabbitmq_mqtt ssl_listeners [8883]"
     expect_to_contain "$env" " -rabbitmq_stomp ssl_listeners [61614]"
     expect_to_contain "$env" " -rabbit ssl_options [{cacertfile,"
@@ -130,6 +131,7 @@ T_do_not_configure_tls_listeners() {
     trap "rm -rf ${DIR}" EXIT
     trap "rm -rf ${VCAP_HOME}" EXIT
     SSL_ENABLED=false
+    SSL_ENABLED_ON_MANAGEMENT=false
     UPGRADE_PREPARATION_NODES_FILE="$(mktemp)"
     trap "rm -rf ${UPGRADE_PREPARATION_NODES_FILE}" EXIT
 
@@ -158,7 +160,7 @@ T_configure_tls_listeners() {
   (
     listeners="$(configure_tls_listeners)"
 
-    expect_to_equal "$listeners" "-rabbit tcp_listeners [] -rabbit ssl_listeners [5671] -rabbitmq_management listener [{port,15672},{ssl,false}] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614]"
+    expect_to_equal "$listeners" "-rabbit tcp_listeners [] -rabbit ssl_listeners [5671] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614]"
   ) || $T_fail "Failed to configure TLS listeners"
 }
 
@@ -253,4 +255,20 @@ T_create_erlang_cookie() {
     expect_to_equal "$(<$dir/.erlang.cookie)" "$erlang_cookie"
 
   ) || $T_fail "Failed to create erlang cookie"
+}
+
+T_configure_management_listener_tls() {
+  (
+    listeners="$(configure_management_listener "true" "fake_path")"
+
+    expect_to_equal "$listeners" "-rabbitmq_management listener [{port,15671},{ssl,true},{ssl_opts,[{cacertfile,\"fake_path/../etc/cacert.pem\"},{certfile,\"fake_path/../etc/cert.pem\"},{keyfile,\"fake_path/../etc/key.pem\"}]}]"
+  ) || $T_fail "Failed to configure management listener for TLS"
+}
+
+T_configure_management_listener_no_tls() {
+  (
+    listeners="$(configure_management_listener "false" "fake_path")"
+
+    expect_to_equal "$listeners" "-rabbitmq_management listener [{port,15672},{ssl,false}]"
+  ) || $T_fail "Failed to configure management listener for no TLS"
 }

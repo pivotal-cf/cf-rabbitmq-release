@@ -47,6 +47,7 @@ main(){
       "${SSL_SUPPORTED_TLS_CIPHERS}" \
       "${script_dir}" \
     )
+    management_options=$(configure_management_listener "$SSL_ENABLED_ON_MANAGEMENT" "${script_dir}")
   fi
 
   server_start_args="$(
@@ -55,6 +56,7 @@ main(){
       ${load_definitions} \
       ${tls_listeners} \
       ${tls_options} \
+      ${management_options} \
     | escape_for_singlequoted_string
   )"
 
@@ -116,9 +118,22 @@ configure_load_definitions() {
 }
 
 configure_tls_listeners() {
-  # if TLS is enabled, disable the non-TLS listener for AMQP 0-9-1 and make the management/HTTP API
-  # listener use TLS.
-  echo "-rabbit tcp_listeners [] -rabbit ssl_listeners [5671] -rabbitmq_management listener [{port,15672},{ssl,false}] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614]"
+  # if TLS is enabled, disable the non-TLS listener for AMQP
+  echo "-rabbit tcp_listeners [] -rabbit ssl_listeners [5671] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614]"
+}
+
+configure_management_listener() {
+  local ssl_enabled_on_management
+  local script_dir
+  ssl_enabled_on_management="$1"
+  script_dir="$2"
+
+  if ${ssl_enabled_on_management:?must be set}
+  then
+    echo "-rabbitmq_management listener [{port,15671},{ssl,true},{ssl_opts,[{cacertfile,\"${script_dir}/../etc/cacert.pem\"},{certfile,\"${script_dir}/../etc/cert.pem\"},{keyfile,\"${script_dir}/../etc/key.pem\"}]}]"
+  else
+    echo "-rabbitmq_management listener [{port,15672},{ssl,false}]"
+  fi
 }
 
 configure_tls_options() {
