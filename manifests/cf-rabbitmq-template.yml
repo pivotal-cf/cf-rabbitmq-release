@@ -5,9 +5,9 @@ releases:
 - name: cf-rabbitmq
   version: latest
 - name: routing
-  version: 0.152.0
-  url: https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.152.0
-  sha1: ea67ad087880fc0e492b6cce27fa2a25f977b691
+  version: 0.179.0
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.179.0
+  sha1: 203061d0438ed76f25573080f9d1f73f06de5851
 
 stemcells:
 - alias: trusty
@@ -70,7 +70,7 @@ instance_groups:
           port: 15672
           registration_interval: 20s
           uris:
-          - ((rabbitmq-management-hostname)).((bosh-domain))
+          - ((rabbitmq-management-hostname)).((system-domain))
   vm_type: n1-standard-1
   stemcell: trusty
   networks:
