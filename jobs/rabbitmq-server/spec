@@ -15,7 +15,7 @@ properties:
 
   rabbitmq-server.ssl.enabled:
     default: false
-    description: "Use TLS listeners. Will not accept non-TLS connections."
+    description: "Use TLS listeners. Will not accept non-TLS connections"
   rabbitmq-server.ssl.cacert:
     description: "RabbitMQ server CA certificate"
   rabbitmq-server.ssl.cert:
@@ -36,9 +36,16 @@ properties:
   rabbitmq-server.ssl.fail_if_no_peer_cert:
     description: "Should RabbitMQ server reject connection if there is no peer cert"
     default: false
-  rabbitmq-server.ssl.enabled_on_management:
-    description: "Should RabbitMQ management API use SSL"
+
+  rabbitmq-server.management_tls.enabled:
     default: false
+    description: "Use HTTPS listeners on management. Will not accept HTTP connections"
+  rabbitmq-server.management_tls.cacert:
+    description: "RabbitMQ management CA certificate"
+  rabbitmq-server.management_tls.cert:
+    description: "RabbitMQ management certificate"
+  rabbitmq-server.management_tls.key:
+    description: "RabbitMQ management private key"
 
   rabbitmq-server.plugins:
     description: "List of RabbitMQ plugins"
@@ -86,7 +93,6 @@ templates:
   add-rabbitmqctl-to-path.bash:             bin/add-rabbitmqctl-to-path
   cleanup-http-logs.bash:                   bin/cleanup-http-logs
   cluster-check.bash:                       bin/cluster-check
-  delete_old_files.bash:                    lib/delete_old_files.bash
   drain.bash:                               bin/drain
   kill-with-fire.bash:                      bin/kill-with-fire
   node-check.bash.erb:                      bin/node-check
@@ -100,8 +106,12 @@ templates:
   config.erb:                               etc/config
   definitions.json.erb:                     etc/definitions.json
   key.pem.erb:                              etc/key.pem
+  management-cacert.pem.erb:                etc/management-cacert.pem
+  management-cert.pem.erb:                  etc/management-cert.pem
+  management-key.pem.erb:                   etc/management-key.pem
   rabbitmq.config.erb:                      etc/rabbitmq.config
   users.erb:                                etc/users
+  delete_old_files.bash:                    lib/delete_old_files.bash
   prepare-for-upgrade.bash:                 lib/prepare-for-upgrade.bash
   rabbitmq-config-vars.bash.erb:            lib/rabbitmq-config-vars.bash
   setup-vars.bash.erb:                      lib/setup-vars.bash

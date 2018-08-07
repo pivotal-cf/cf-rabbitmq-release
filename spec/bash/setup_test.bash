@@ -261,7 +261,7 @@ T_configure_management_listener_tls() {
   (
     listeners="$(configure_management_listener "true" "fake_path")"
 
-    expect_to_equal "$listeners" "-rabbitmq_management listener [{port,15671},{ssl,true},{ssl_opts,[{cacertfile,\"fake_path/../etc/cacert.pem\"},{certfile,\"fake_path/../etc/cert.pem\"},{keyfile,\"fake_path/../etc/key.pem\"}]}]"
+    expect_to_equal "$listeners" "-rabbitmq_management listener [{port,15671},{ssl,true},{ssl_opts,[{cacertfile,\"fake_path/../etc/management-cacert.pem\"},{certfile,\"fake_path/../etc/management-cert.pem\"},{keyfile,\"fake_path/../etc/management-key.pem\"}]}]"
   ) || $T_fail "Failed to configure management listener for TLS"
 }
 

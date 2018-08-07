@@ -130,7 +130,7 @@ configure_management_listener() {
 
   if ${ssl_enabled_on_management:?must be set}
   then
-    echo "-rabbitmq_management listener [{port,15671},{ssl,true},{ssl_opts,[{cacertfile,\"${script_dir}/../etc/cacert.pem\"},{certfile,\"${script_dir}/../etc/cert.pem\"},{keyfile,\"${script_dir}/../etc/key.pem\"}]}]"
+    echo "-rabbitmq_management listener [{port,15671},{ssl,true},{ssl_opts,[{cacertfile,\"${script_dir}/../etc/management-cacert.pem\"},{certfile,\"${script_dir}/../etc/management-cert.pem\"},{keyfile,\"${script_dir}/../etc/management-key.pem\"}]}]"
   else
     echo "-rabbitmq_management listener [{port,15672},{ssl,false}]"
   fi
