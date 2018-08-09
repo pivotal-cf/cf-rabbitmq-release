@@ -47,8 +47,9 @@ main(){
       "${SSL_SUPPORTED_TLS_CIPHERS}" \
       "${script_dir}" \
     )
-    management_options=$(configure_management_listener "$SSL_ENABLED_ON_MANAGEMENT" "${script_dir}")
   fi
+
+  management_options=$(configure_management_listener "$SSL_ENABLED_ON_MANAGEMENT" "${script_dir}")
 
   server_start_args="$(
     echo \
