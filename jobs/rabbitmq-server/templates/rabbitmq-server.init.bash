@@ -28,6 +28,10 @@ LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 STARTUP_LOG="${LOG_DIR}"/startup_stdout.log
 STARTUP_ERR_LOG="${LOG_DIR}"/startup_stderr.log
 
+<% if_p("rabbitmq-server.additional_plugin_dir") do |dir| %>
+export RABBITMQ_PLUGINS_DIR=/var/vcap/packages/rabbitmq-server/plugins/:<%= dir %>
+<% end %>
+
 test -x "${DAEMON}"
 test -x "${CONTROL}"
 test -x "${START_PROG}"

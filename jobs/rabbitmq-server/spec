@@ -49,6 +49,8 @@ properties:
 
   rabbitmq-server.plugins:
     description: "List of RabbitMQ plugins"
+  rabbitmq-server.additional_plugin_dir:
+    description: "Additional directory to look in for RabbitMQ plugins"
   rabbitmq-server.ports:
     description: "List of ports on which the RabbitMQ cluster accepts connections"
   rabbitmq-server.timeouts.port:

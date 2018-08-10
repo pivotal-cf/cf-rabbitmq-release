@@ -7,6 +7,9 @@ write_log() {
 }
 
 (
+  <% if_p("rabbitmq-server.additional_plugin_dir") do |dir| %>
+  export RABBITMQ_PLUGINS_DIR=/var/vcap/packages/rabbitmq-server/plugins/:<%= dir %>
+  <% end %>
   if [ -z $RABBITMQ_PLUGINS ]; then
     RABBITMQ_PLUGINS=/var/vcap/packages/rabbitmq-server/bin/rabbitmq-plugins
   fi
