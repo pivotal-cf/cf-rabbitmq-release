@@ -3,9 +3,9 @@
   path: /releases/name=loggregator?
   value:
     name: loggregator
-    version: 90.1
-    url: https://bosh.io/d/github.com/cloudfoundry/loggregator?v=90.1
-    sha1: c6d8f4269cdca3b4a68f59cb85ffde816940d4ec
+    version: 103
+    url: "https://bosh.io/d/github.com/cloudfoundry/loggregator-release?v=103.0"
+    sha1: 41fe210afef030a9bae37795fdd7c5e5ca779ea3
 
 - type: replace
   path: /releases/name=consul?
@@ -21,12 +21,14 @@
     name: metron_agent
     release: loggregator
     properties:
+      metron_agent:
+        deployment: ((deployment-name))
       loggregator:
         tls:
-          ca_cert: ((loggregator-ca-cert))
+          ca_cert: ((loggregator-tls-ca-cert))
           metron:
-            cert: ((loggregator-metron-cert))
-            key: ((loggregator-metron-key))
+            cert: ((loggregator-tls-metron-cert))
+            key: ((loggregator-tls-metron-key))
 
 - type: replace
   path: /instance_groups/name=rmq/jobs/-
