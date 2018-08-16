@@ -74,7 +74,7 @@ T_when_rmq_server_package_path_does_not_exist_should_log_error_message() {
     LOG_DIR="$(mktemp -d)"
     local rmq_server_path="/path/does/not/exist"
 
-    run_rabbitmq_upgrade_preparation_shutdown_cluster "new cookie" "old cookie path" "node list" "$rmq_server_path" 2>&1
+    run_rabbitmq_upgrade_preparation_shutdown_cluster_if_cookie_changed "new cookie" "old cookie path" "node list" "$rmq_server_path" 2>&1
 
     expect_file_to_contain "$LOG_DIR/upgrade.log" "$rmq_server_path is not a valid directory" ||
     $T_fail
@@ -87,9 +87,9 @@ T_when_rmq_server_package_path_exists_should_call_the_upgrade_preparation_binary
     LOG_DIR="$(mktemp -d)"
     local rmq_server_path="$(mktemp -d)"
 
-    arguments_passed=$(run_rabbitmq_upgrade_preparation_shutdown_cluster "new-cookie" "old-cookie-path" "node-list" "$rmq_server_path")
+    arguments_passed=$(run_rabbitmq_upgrade_preparation_shutdown_cluster_if_cookie_changed "new-cookie" "old-cookie-path" "node-list" "$rmq_server_path")
 
-    expect_to_contain "$arguments_passed" "-rabbitmqctl-path $rmq_server_path/bin/rabbitmqctl shutdown-cluster -new-cookie new-cookie -old-cookie-path old-cookie-path -nodes node-list" ||
+    expect_to_contain "$arguments_passed" "-rabbitmqctl-path $rmq_server_path/bin/rabbitmqctl shutdown-cluster-if-cookie-changed -new-cookie new-cookie -old-cookie-path old-cookie-path -nodes node-list" ||
     $T_fail
   )
 }

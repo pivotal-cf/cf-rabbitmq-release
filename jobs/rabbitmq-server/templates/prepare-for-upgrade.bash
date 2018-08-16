@@ -37,7 +37,7 @@ _prepare_for_upgrade () {
   fi
 }
 
-run_rabbitmq_upgrade_preparation_shutdown_cluster () {
+run_rabbitmq_upgrade_preparation_shutdown_cluster_if_cookie_changed () {
     local rmq_server_package="$4"
 
     if [[ ! -d $rmq_server_package ]]; then
@@ -46,7 +46,7 @@ run_rabbitmq_upgrade_preparation_shutdown_cluster () {
 
     "$UPGRADE_PREPARATION_BINARY" \
       -rabbitmqctl-path "$rmq_server_package/bin/rabbitmqctl" \
-      shutdown-cluster \
+      shutdown-cluster-if-cookie-changed \
       -new-cookie "$1" \
       -old-cookie-path "$2" \
       -nodes "$3" \

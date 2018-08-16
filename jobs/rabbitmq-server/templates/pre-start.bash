@@ -37,7 +37,7 @@ main() {
 
   local rmq_server_package
   rmq_server_package=$(configure_rmq_version)
-  run_rabbitmq_upgrade_preparation_shutdown_cluster "$ERLANG_COOKIE" "${HOME_DIR}/.erlang.cookie" "$RABBITMQ_NODES_STRING" "$rmq_server_package"
+  run_rabbitmq_upgrade_preparation_shutdown_cluster_if_cookie_changed "$ERLANG_COOKIE" "${HOME_DIR}/.erlang.cookie" "$RABBITMQ_NODES_STRING" "$rmq_server_package"
   setup_erl_inetrc
   ${JOB_DIR}/bin/plugins.sh
   write_log "pre-start script completed"

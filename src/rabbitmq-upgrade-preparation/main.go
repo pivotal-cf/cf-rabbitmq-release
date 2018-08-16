@@ -16,8 +16,8 @@ import (
 )
 
 func main() {
-	if os.Args[3] == "shutdown-cluster" {
-		shutdownCluster()
+	if os.Args[3] == "shutdown-cluster-if-cookie-changed" {
+		shutdownClusterIfCookieChanged()
 		// os.Exit(0)
 	} else {
 		stopRabbitMQApp()
@@ -131,7 +131,7 @@ func parseShutdownClusterArgs() (string, nodeList, string, string) {
 
 	var nodes nodeList
 
-	shutdownClusterFlags := flag.NewFlagSet("shutdown-cluster", flag.PanicOnError)
+	shutdownClusterFlags := flag.NewFlagSet("shutdown-cluster-if-cookie-changed", flag.PanicOnError)
 	newCookie := shutdownClusterFlags.String("new-cookie", "", "cookie for the new deployment")
 	oldCookiePath := shutdownClusterFlags.String("old-cookie-path", "", "path for cookie file")
 	shutdownClusterFlags.Var(&nodes, "nodes", "list of rabbit nodes")
@@ -145,7 +145,7 @@ func parseShutdownClusterArgs() (string, nodeList, string, string) {
 	return *rabbitmqctlPath, nodes, *oldCookiePath, *newCookie
 }
 
-func shutdownCluster() {
+func shutdownClusterIfCookieChanged() {
 	rabbitmqCtlPath, nodes, oldCookiePath, newCookie := parseShutdownClusterArgs()
 
 	if _, err := os.Stat(oldCookiePath); os.IsNotExist(err) {

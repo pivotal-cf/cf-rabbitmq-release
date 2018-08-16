@@ -388,14 +388,14 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		})
 	})
 
-	Describe("shutdown-cluster subcommand", func() {
+	Describe("shutdown-cluster-if-cookie-changed subcommand", func() {
 
 		Context("for a new deployment", func() {
 			It("does not shut down the cluster", func() {
 				var session *gexec.Session
 				args = []string{
 					"-rabbitmqctl-path", "/bin/echo",
-					"shutdown-cluster",
+					"shutdown-cluster-if-cookie-changed",
 					"-new-cookie", "same-cookie",
 					"-old-cookie-path", "/tmp/idbetternotexist",
 					"-nodes", "rabbitmq@node1,rabbitmq@node2",
@@ -424,7 +424,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 					var session *gexec.Session
 					args = []string{
 						"-rabbitmqctl-path", "/bin/echo",
-						"shutdown-cluster",
+						"shutdown-cluster-if-cookie-changed",
 						"-new-cookie", "same-cookie",
 						"-old-cookie-path", tmpFile,
 						"-nodes", "rabbitmq@node1,rabbitmq@node2",
@@ -443,7 +443,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 				It("shuts down all the nodes in the cluster", func() {
 					args = []string{
 						"-rabbitmqctl-path", "/bin/echo",
-						"shutdown-cluster",
+						"shutdown-cluster-if-cookie-changed",
 						"-new-cookie", "new-cookie",
 						"-old-cookie-path", tmpFile,
 						"-nodes", "rabbitmq@node1,rabbitmq@node2",
@@ -463,7 +463,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 				It("logs a message and moves on", func() {
 					args = []string{
 						"-rabbitmqctl-path", "../rabbitmqctl/test-assets/rabbitmqctl-echo-with-fails",
-						"shutdown-cluster",
+						"shutdown-cluster-if-cookie-changed",
 						"-new-cookie", "new-cookie",
 						"-old-cookie-path", tmpFile,
 						"-nodes", "rabbitmq@node1,rabbitmq@node2",
@@ -483,7 +483,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 				It("returns an error", func() {
 					args = []string{
 						"-rabbitmqctl-path", "/bin/echo",
-						"shutdown-cluster",
+						"shutdown-cluster-if-cookie-changed",
 						"-new-cookie", "new-cookie",
 						"-old-cookie-path", tmpFile,
 						"-nodes", "rabbitmq@node1,rabbitmq@node2",
