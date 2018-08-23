@@ -17,7 +17,7 @@ properties:
     default: false
     description: "Use TLS listeners. Will not accept non-TLS connections"
   rabbitmq-server.ssl.cacert:
-    description: "RabbitMQ server CA certificate"
+    description: "RabbitMQ server CA certificate(s).  If there is more than one certificate, they should be concatenated"
   rabbitmq-server.ssl.cert:
     description: "RabbitMQ server certificate"
   rabbitmq-server.ssl.key:
