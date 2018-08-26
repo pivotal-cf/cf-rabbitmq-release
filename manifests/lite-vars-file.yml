@@ -1,7 +1,7 @@
 ---
 deployment-name: cf-rabbitmq
 
-stemcell-version: 3468.27
+stemcell-version: 3586.36
 
 haproxy-instances: 1
 
