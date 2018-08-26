@@ -23,6 +23,7 @@ cf-admin-password: admin
 cf-admin-username: admin
 
 bosh-domain: bosh-lite.com
+system-domain: sys.bosh-lite.com
 
 rabbitmq_version: 3.6
 
