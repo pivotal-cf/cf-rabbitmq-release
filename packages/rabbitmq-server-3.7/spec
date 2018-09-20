@@ -1,9 +1,9 @@
 ---
 name: rabbitmq-server-3.7
 metadata:
-  version: 3.7.7
+  version: 3.7.8
 files:
-- rabbitmq-server-3.7/rabbitmq-server-generic-unix-3.7.7.tar.xz
+- rabbitmq-server-3.7/rabbitmq-server-generic-unix-3.7.8.tar.xz
 - rabbitmq-server/rabbitmq-script-wrapper
 - rabbitmq-server/rabbitmq-defaults
 dependencies: []
