@@ -1,10 +1,10 @@
 - type: replace
-  path: /releases/name=syslog-migration?
+  path: /releases/name=syslog?
   value:
-    name: syslog-migration
-    version: 8 # changed by the pipeline
-    url: https://github.com/pivotal-cf/syslog-migration-release/releases/download/v8/syslog-migration-8.tgz
-    sha1: 59f49b55b36223f458a8c437b0931d511ad748a7
+    name: syslog
+    version: 11.3.2 # changed by the pipeline
+    url: https://bosh.io/d/github.com/cloudfoundry/syslog-release?v=11.3.2
+    sha1: 64cf40d44746b50edffa78cb0e0dd6f072fee695
 
 - type: replace
   path: /instance_groups/name=haproxy/jobs/name=rabbitmq-haproxy/properties?/rabbitmq-haproxy/do-not-configure-syslog
@@ -14,12 +14,10 @@
   path: /instance_groups/name=haproxy/jobs/-
   value:
     name: syslog_forwarder
-    release: syslog-migration
+    release: syslog
     properties:
       syslog:
         forward_files: false
-        migration:
-          message_format: job_index_id
         address: ((syslog-host))
         port: ((syslog-port))
         transport: tcp
@@ -60,12 +58,10 @@
   path: /instance_groups/name=rmq/jobs/-
   value:
     name: syslog_forwarder
-    release: syslog-migration
+    release: syslog
     properties:
       syslog:
         forward_files: false
-        migration:
-          message_format: job_index_id
         address: ((syslog-host))
         port: ((syslog-port))
         transport: tcp
