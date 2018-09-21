@@ -127,11 +127,3 @@
           input(type="imfile"
                 File="/var/vcap/sys/log/rabbitmq-server/pre-start.log"
                 Tag="rabbitmq_server_pre_start")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/route_registrar/route_registrar.log"
-                Tag="rabbitmq_route_registrar_stdout")
-
-          input(type="imfile"
-                File="/var/vcap/sys/log/route_registrar/route_registrar.err.log"
-                Tag="rabbitmq_route_registrar_stderr")
