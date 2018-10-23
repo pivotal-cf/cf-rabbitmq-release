@@ -8,11 +8,21 @@ releases:
   version: 0.179.0
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.179.0
   sha1: 203061d0438ed76f25573080f9d1f73f06de5851
+- name: bpm
+  version: 0.13.0
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bpm-release?v=0.13.0
+  sha1: 4b6ebfdaa467c04855528172b099e565d679e0f5
 
 stemcells:
 - alias: trusty
   os: ubuntu-trusty
   version: ((stemcell-version))
+
+addons:
+  name: bpm
+  jobs:
+    - name: bpm
+      release: bpm
 
 instance_groups:
 - name: rmq
