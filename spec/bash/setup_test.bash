@@ -139,10 +139,10 @@ T_do_not_configure_tls_listeners() {
 
     env="$(<$DIR/env)"
     expect_file_to_exist "${DIR}/env"
+    expect_to_contain "$env" " -rabbitmq_management listener [{port,15672},{ssl,false}]"
     expect_to_not_contain "$env" " -rabbit tcp_listeners []"
     expect_to_not_contain "$env" " -rabbit ssl_listeners [5671]"
     expect_to_not_contain "$env" "{verify,verify_none},"
-    expect_to_not_contain "$env" " -rabbitmq_management listener [{port,15672},{ssl,false}]"
     expect_to_not_contain "$env" " -rabbitmq_mqtt ssl_listeners [8883]"
     expect_to_not_contain "$env" " -rabbitmq_stomp ssl_listeners [61614]"
     expect_to_not_contain "$env" " -rabbit ssl_options [{cacertfile,"
