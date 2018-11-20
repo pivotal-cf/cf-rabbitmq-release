@@ -17,6 +17,9 @@ USER=vcap
 
 source /var/vcap/packages/rabbitmq-common/ensure_dir_with_permissions
 
+# shellcheck source=jobs/rabbimq-server/templates/bin/_add_env_to_global_shell_profile
+. ${JOB_DIR}/bin/_add_env_to_global_shell_profile
+
 main() {
   write_log "pre-start script started"
   remove_old_syslog_config

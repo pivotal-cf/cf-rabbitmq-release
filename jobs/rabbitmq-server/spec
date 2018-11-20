@@ -91,9 +91,11 @@ properties:
 
 templates:
   add-rabbitmqctl-to-path.bash:             bin/add-rabbitmqctl-to-path
+  _add_env_to_global_shell_profile.bash:    bin/_add_env_to_global_shell_profile
   cleanup-http-logs.bash:                   bin/cleanup-http-logs
   cluster-check.bash:                       bin/cluster-check
   drain.bash:                               bin/drain
+  env.erb:                                  bin/env
   kill-with-fire.bash:                      bin/kill-with-fire
   node-check.bash.erb:                      bin/node-check
   plugins.sh.erb:                           bin/plugins.sh
