@@ -58,6 +58,7 @@ main(){
       ${tls_listeners} \
       ${tls_options} \
       ${management_options} \
+      -mnesia core_dir \"/var/vcap/sys/log/rabbitmq-server\" \
     | escape_for_singlequoted_string
   )"
 
