@@ -10,7 +10,7 @@ main() {
 
   # rabbitmqctl hangs if run before application
   mapfile -s1 -t RMQ_USERS  < <( rabbitmqctl list_users )
-  mapfile -s1 -t RMQ_VHOSTS < <( rabbitmqctl list_vhosts )
+  mapfile -s1 -t RMQ_VHOSTS < <( rabbitmqctl list_vhosts --no-table-headers)
 
   ensure_rmq_user_does_not_exist "guest"
 
