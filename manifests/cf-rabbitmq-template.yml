@@ -4,10 +4,16 @@ name: ((deployment-name))
 releases:
 - name: cf-rabbitmq
   version: latest
-- name: routing
-  version: 0.179.0
-  url: https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.179.0
-  sha1: 203061d0438ed76f25573080f9d1f73f06de5851
+
+- name: "routing"
+  version: "0.183.0"
+  url: "https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.183.0"
+  sha1: "92d7a81cddab5d26764c51d9dbb2baece1fbe3e6"
+
+- name: "bpm"
+  version: "1.0.0"
+  url: "https://bosh.io/d/github.com/cloudfoundry-incubator/bpm-release?v=1.0.0"
+  sha1: "42b95d4a0d6d15dd0b0ead62418ffb56208e2307"
 
 stemcells:
 - alias: trusty
@@ -71,6 +77,8 @@ instance_groups:
           registration_interval: 20s
           uris:
           - ((rabbitmq-management-hostname)).((system-domain))
+  - name: bpm
+    release: bpm
   vm_type: n1-standard-1
   stemcell: trusty
   networks:

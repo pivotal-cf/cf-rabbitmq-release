@@ -1,10 +1,10 @@
 - type: replace
   path: /releases/name=syslog?
   value:
-    name: syslog
-    version: 11.3.2 # changed by the pipeline
-    url: https://bosh.io/d/github.com/cloudfoundry/syslog-release?v=11.3.2
-    sha1: 64cf40d44746b50edffa78cb0e0dd6f072fee695
+    name: "syslog"
+    version: "11.4.0"
+    url: "https://bosh.io/d/github.com/cloudfoundry/syslog-release?v=11.4.0"
+    sha1: "f00edc8ae2c4abf92bdb8d9037cd8b7aa85e2f89"
 
 - type: replace
   path: /instance_groups/name=haproxy/jobs/name=rabbitmq-haproxy/properties?/rabbitmq-haproxy/do-not-configure-syslog
