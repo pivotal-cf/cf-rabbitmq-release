@@ -103,6 +103,8 @@ templates:
   pre-start.bash:                           bin/pre-start
   rabbitmq-server.init.bash:                bin/rabbitmq-server.init
   setup.bash:                               bin/setup.sh
+  drop-amqp-traffic.bash:                   bin/drop-amqp-traffic
+  restore-amqp-traffic.bash:                bin/restore-amqp-traffic
   cacert.pem.erb:                           etc/cacert.pem
   cert.pem.erb:                             etc/cert.pem
   config.erb:                               etc/config
