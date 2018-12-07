@@ -1,0 +1,17 @@
+---
+apiVersion: v0
+product:
+  name: cf-rabbitmq
+  version: v42
+
+metadata:
+  source_id: <%= spec.deployment.split("_")[1] %>
+  deployment: <%= spec.deployment %>
+  expected_number_of_nodes: <%= link('rabbitmq-server').instances.size %>
+
+indicators:
+  - name: reachable_nodes
+    promql: _p_rabbitmq_rabbitmq_erlang_reachable_nodes{source_id="$source_id",deployment="$deployment"}
+    thresholds:
+      - level: critical
+        neq: $expected_number_of_nodes

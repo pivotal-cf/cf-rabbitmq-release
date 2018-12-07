@@ -117,6 +117,7 @@ templates:
   prepare-for-upgrade.bash:                 lib/prepare-for-upgrade.bash
   rabbitmq-config-vars.bash.erb:            lib/rabbitmq-config-vars.bash
   setup-vars.bash.erb:                      lib/setup-vars.bash
+  indicators.yml.erb:                       config/indicators.yml
 
 provides:
   - name: rabbitmq-server
