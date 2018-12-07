@@ -17,9 +17,6 @@ USER=vcap
 
 source /var/vcap/packages/rabbitmq-common/ensure_dir_with_permissions
 
-# shellcheck source=jobs/rabbimq-server/templates/bin/_add_env_to_global_shell_profile
-. ${JOB_DIR}/bin/_add_env_to_global_shell_profile
-
 main() {
   write_log "pre-start script started"
   remove_old_syslog_config
@@ -42,6 +39,7 @@ main() {
   rmq_server_package=$(configure_rmq_version)
   run_rabbitmq_upgrade_preparation_shutdown_cluster_if_cookie_changed "$ERLANG_COOKIE" "${HOME_DIR}/.erlang.cookie" "$RABBITMQ_NODES_STRING" "$rmq_server_package"
   setup_erl_inetrc
+  add_env_to_global_shell_profile
   ${JOB_DIR}/bin/plugins.sh
   write_log "pre-start script completed"
 }
@@ -93,6 +91,10 @@ setup_erl_inetrc() {
   cp ${DIR}/erl_inetrc ${ERL_INETRC}
 
   mkdir -p $(dirname ${CONF_ENV_FILE})
+}
+
+add_env_to_global_shell_profile() {
+  ln -sf "${JOB_DIR}/bin/env" "/etc/profile.d/rabbitmq-server-env.sh"
 }
 
 main
