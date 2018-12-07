@@ -1,0 +1,18 @@
+set -eu
+
+PACKAGE_NAME="rabbitmq-admin"
+export GOROOT="$(readlink -nf /var/vcap/packages/golang)"
+export GOPATH="${BOSH_INSTALL_TARGET}"
+export PATH="${GOROOT}/bin:${PATH}"
+
+SOURCE="${BOSH_INSTALL_TARGET}/src"
+mkdir -p "${SOURCE}"
+cp -r "${PACKAGE_NAME}" "${SOURCE}"
+
+# Although we manage the dependencies using Go modules, we use good old $GOPATH
+# to compile on a BOSH VM.  This is because compilation of Go modules in BOSH is
+# not yet sufficiently reliable.
+GO111MODULES=off go install rabbitmq-admin/amqp-traffic/drop-amqp-traffic
+GO111MODULES=off go install rabbitmq-admin/amqp-traffic/restore-amqp-traffic
+
+rm -rf "${SOURCE}"

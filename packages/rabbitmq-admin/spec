@@ -1,0 +1,8 @@
+---
+name: rabbitmq-admin
+
+dependencies:
+- golang
+
+files:
+- rabbitmq-admin/**
