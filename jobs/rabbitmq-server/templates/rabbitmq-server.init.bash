@@ -13,6 +13,9 @@
 [ -z "$DEBUG" ] || set -x
 
 export PATH=/var/vcap/packages/erlang/bin:$PATH
+export LANGUAGE="en_US.UTF-8"
+export LANG="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
 
 RMQ_SERVER_PACKAGE=/var/vcap/packages/rabbitmq-server
 DAEMON=${RMQ_SERVER_PACKAGE}/bin/rabbitmq-server
