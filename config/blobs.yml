@@ -19,6 +19,26 @@ rabbitmq-server-3.6/rabbitmq-server-generic-unix-3.6.16.tar.xz:
   size: 4808464
   object_id: b9575b38-5483-44bb-4c4a-58de00155fb5
   sha: sha256:d7b0a5dbe670a79da7895b0dea6ccc74e778c3d309b6f7116e8ee4e2bd796b20
+rabbitmq-server-3.7/accept-0.3.3.ez:
+  size: 13397
+  object_id: 80746518-324a-4741-637c-980a3d327b7d
+  sha: 44571bfe89be4eac98228a8b7d9b3afd03b4760a
+rabbitmq-server-3.7/prometheus-3.5.1.ez:
+  size: 200783
+  object_id: 3cbad519-2cf1-44cc-5f0d-b825e983a8f0
+  sha: ddbfa5a3b15e8c63247909c63ef88632dd31b748
+rabbitmq-server-3.7/prometheus_cowboy-0.1.4.ez:
+  size: 14343
+  object_id: bc7b532f-3d00-4bae-5886-bdcec9b19b10
+  sha: 537969b947d4ddb4166cac826e4a0a243f4e5dc7
+rabbitmq-server-3.7/prometheus_httpd-2.1.8.ez:
+  size: 22059
+  object_id: b6721e81-8191-4b7d-6f26-0500f748e135
+  sha: 494e6169a833635238111cd1d3bd1c952c1fe83a
+rabbitmq-server-3.7/prometheus_rabbitmq_exporter-3.7.2.4.ez:
+  size: 224548
+  object_id: d12ff82a-1e6a-4fc6-78f8-79f4fca1c330
+  sha: 00061e8e7b8f836e34b831e88baeb87199c33136
 rabbitmq-server-3.7/rabbitmq-server-generic-unix-3.7.9.tar.xz:
   size: 9200564
   object_id: 560b5d50-0415-486e-7975-c7ff4eabe1ba
