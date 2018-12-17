@@ -1,17 +1,16 @@
 #!/bin/bash -e
 
-PACKAGE_NAME=rabbitmq-upgrade-preparation
-PACKAGE_DIR=${BOSH_INSTALL_TARGET}/src/${PACKAGE_NAME}
+set -eu
 
-mkdir -p $(dirname $PACKAGE_DIR)
+PACKAGE_NAME="rabbitmq-upgrade-preparation"
+export GOROOT="$(readlink -nf /var/vcap/packages/golang)"
+export GOPATH="${BOSH_INSTALL_TARGET}"
+export PATH="${GOROOT}/bin:${PATH}"
 
-cp -a $PACKAGE_NAME/ $PACKAGE_DIR
+SOURCE="${BOSH_INSTALL_TARGET}/src"
+mkdir -p "${SOURCE}"
+cp -r "${PACKAGE_NAME}" "${SOURCE}"
 
-export GOROOT=$(readlink -nf /var/vcap/packages/golang)
-export GOPATH=$BOSH_INSTALL_TARGET
-export PATH=$GOROOT/bin:$PATH
+GO111MODULES=off go install "${PACKAGE_NAME}"
 
-go install ${PACKAGE_NAME}
-
-# # clean up source artifacts
-rm -rf ${BOSH_INSTALL_TARGET}/src ${BOSH_INSTALL_TARGET}/pkg
+rm -rf "${SOURCE}"

@@ -1,0 +1,12 @@
+github.com/cenkalti/backoff v0.0.0-20161020194410-b02f2bbce11d h1:R0xkk/RPUCY1lWmZrFLbmZ315T774svBZkTwXvVm3Uc=
+github.com/cenkalti/backoff v0.0.0-20161020194410-b02f2bbce11d/go.mod h1:90ReRw6GdpyfrHakVjL/QHaoyV4aDUVVkXQJJJ3NXXM=
+github.com/hashicorp/go-version v0.0.0-20160725212058-deeb027c13a9 h1:UEEJcYZVCPMVwHlPAJNthReZTbjh7rPsa5nKAM5927k=
+github.com/hashicorp/go-version v0.0.0-20160725212058-deeb027c13a9/go.mod h1:fltr4n8CU8Ke44wwGCBoEymUuxUHl09ZGVZPK5anwXA=
+github.com/onsi/ginkgo v0.0.0-20161023203019-a8ccd8176116 h1:K2wQZGZMdMc3fRU/KVbkPkJfqxDDXslnvdWcKzTGyj4=
+github.com/onsi/ginkgo v0.0.0-20161023203019-a8ccd8176116/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
+github.com/onsi/gomega v0.0.0-20161026030358-7e2072f716a9 h1:tqWBdbbBs8XSMsIRSwK9MMrrDLKJrs73jjBk4m4l7JY=
+github.com/onsi/gomega v0.0.0-20161026030358-7e2072f716a9/go.mod h1:C1qb7wdrVGGVU+Z6iS04AVkA3Q65CEZX59MT0QO5uiA=
+golang.org/x/sys v0.0.0-20161023150541-c200b10b5d5e h1:uau++4dmjGy3TuvPvRbhZHY+TQVsImIxtWY5HRh9eho=
+golang.org/x/sys v0.0.0-20161023150541-c200b10b5d5e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+gopkg.in/yaml.v2 v2.0.0-20160928153709-a5b47d31c556 h1:hKXbLW5oaJoQgs8KrzTLdF4PoHi+0oQPgea9TNtvE3E=
+gopkg.in/yaml.v2 v2.0.0-20160928153709-a5b47d31c556/go.mod h1:JAlM8MvJe8wmxCU4Bli9HhUf9+ttbYbLASfIpnQbh74=

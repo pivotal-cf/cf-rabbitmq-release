@@ -9,5 +9,8 @@ script:
   - pushd src/rabbitmq-upgrade-preparation
   - ginkgo -r
   - popd
+  - pushd src/rabbitmq-admin
+  - ginkgo -r
+  - popd
   - bash ./scripts/run-basht-tests
   - bundle exec rake spec:unit
