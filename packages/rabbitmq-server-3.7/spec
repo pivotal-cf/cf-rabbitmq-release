@@ -6,9 +6,4 @@ files:
 - rabbitmq-server-3.7/rabbitmq-server-generic-unix-3.7.9.tar.xz
 - rabbitmq-server/rabbitmq-script-wrapper
 - rabbitmq-server/rabbitmq-defaults
-- rabbitmq-server-3.7/accept-0.3.3.ez
-- rabbitmq-server-3.7/prometheus-3.5.1.ez
-- rabbitmq-server-3.7/prometheus_cowboy-0.1.4.ez
-- rabbitmq-server-3.7/prometheus_rabbitmq_exporter-3.7.2.4.ez
-- rabbitmq-server-3.7/prometheus_httpd-2.1.8.ez
 dependencies: []

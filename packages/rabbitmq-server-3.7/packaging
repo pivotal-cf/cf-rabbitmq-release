@@ -14,10 +14,6 @@ tar xf "${RABBITMQ_SERVER_PATH}/rabbitmq-server-generic-unix-$RMQ_VERSION.tar.xz
 
 cp -a "rabbitmq_server-$RMQ_VERSION"/* "$BOSH_INSTALL_TARGET"
 
-cp -a "prometheus*.ez" "$BOSH_INSTALL_TARGET/plugins/"
-
-cp -a "accept-*.ez" "$BOSH_INSTALL_TARGET/plugins/"
-
 mv "$BOSH_INSTALL_TARGET/sbin" "$BOSH_INSTALL_TARGET/privbin"
 
 mkdir "$BOSH_INSTALL_TARGET/bin"
