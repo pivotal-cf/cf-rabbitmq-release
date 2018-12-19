@@ -37,6 +37,12 @@ var _ = Describe("Main", func() {
 		Eventually(session.Out).Should(Say("iptables -A INPUT -p tcp --dport 5672 -j DROP"))
 	})
 
+	It("prints a command to help debugging", func() {
+		session := runWithInput(pathToCmd, "no\n", 0)
+
+		Eventually(session.Out).Should(Say("You can view the iptables rules using the command: iptables -L"))
+	})
+
 	When("the user is not root", func() {
 		It("warns that the command may not work", func() {
 			session := runWithInput(pathToCmd, "no\n", 1)

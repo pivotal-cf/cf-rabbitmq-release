@@ -15,8 +15,8 @@ const (
 	failed = 1
 )
 
-func ConfirmAndRun(explanation, success string, commands []string) int {
-	showExplanation(explanation, commands)
+func ConfirmAndRun(explanation, success, helper string, commands []string) int {
+	showExplanation(explanation, helper, commands)
 	warnIfNotRoot()
 
 	carryOn := false
@@ -39,11 +39,13 @@ func ConfirmAndRun(explanation, success string, commands []string) int {
 	return ok
 }
 
-func showExplanation(explanation string, commands []string) {
+func showExplanation(explanation, helper string, commands []string) {
 	fmt.Printf("%s:\n\n", explanation)
 	for _, cmd := range commands {
 		fmt.Printf(" -  %s\n", cmd)
 	}
+	fmt.Println("") // For spacing
+	fmt.Println(helper)
 	fmt.Println("") // For spacing
 }
 

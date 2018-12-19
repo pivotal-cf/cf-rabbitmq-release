@@ -15,6 +15,7 @@ func main() {
 	os.Exit(internal.ConfirmAndRun(
 		"The following commands will be used to unblock AMQP and AMQPS traffic on this node",
 		"AMQP and AMQPS traffic is now unblocked",
+		"You can view the iptables rules using the command: iptables -L",
 		commands,
 	))
 }
