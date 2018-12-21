@@ -16,8 +16,8 @@ releases:
   sha1: "42b95d4a0d6d15dd0b0ead62418ffb56208e2307"
 
 stemcells:
-- alias: trusty
-  os: ubuntu-trusty
+- alias: xenial
+  os: ubuntu-xenial
   version: ((stemcell-version))
 
 instance_groups:
@@ -52,7 +52,7 @@ instance_groups:
         cookie: ((rabbitmq-cookie))
         cluster_partition_handling: ((cluster-partition-handling-strategy))
   vm_type: n1-highmem-4
-  stemcell: trusty
+  stemcell: xenial
   persistent_disk_type: 100GB
   networks:
   - name: default
@@ -80,7 +80,7 @@ instance_groups:
   - name: bpm
     release: bpm
   vm_type: n1-standard-1
-  stemcell: trusty
+  stemcell: xenial
   networks:
   - name: default
   azs:
