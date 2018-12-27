@@ -126,10 +126,25 @@ run_script() {
     esac
 }
 
+set_file_descriptor_limit() {
+  local limit
+  limit=$1
+
+  if [[ "$(lsb_release -c | awk '{print $2}')" == "trusty" ]]
+  then
+    ulimit -n $limit
+  else
+    limits_file=/etc/security/limits.d/rabbitmq.conf
+    echo "vcap    soft    nofile  $limit" >> $limits_file
+    echo "vcap    hard    nofile  $limit" >> $limits_file
+  fi
+}
+
 start_rabbitmq () {
     status_rabbitmq
 
-    ulimit -n "$RMQ_FD_LIMIT"
+    set_file_descriptor_limit "$RMQ_FD_LIMIT"
+
     write_log "Start RabbitMQ node..."
 
     if [ "${RETVAL}" = 0 ]; then
