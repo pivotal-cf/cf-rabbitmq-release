@@ -5,15 +5,11 @@ releases:
 - name: cf-rabbitmq
   version: latest
 
-- name: "routing"
-  version: "0.183.0"
-  url: "https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.183.0"
-  sha1: "92d7a81cddab5d26764c51d9dbb2baece1fbe3e6"
+- name: routing
+  version: latest
 
-- name: "bpm"
-  version: "1.0.0"
-  url: "https://bosh.io/d/github.com/cloudfoundry-incubator/bpm-release?v=1.0.0"
-  sha1: "42b95d4a0d6d15dd0b0ead62418ffb56208e2307"
+- name: bpm
+  version: latest
 
 stemcells:
 - alias: xenial
