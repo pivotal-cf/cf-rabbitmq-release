@@ -10,7 +10,10 @@
   value: &loggregator_agent_config
     name: loggregator_agent
     release: loggregator-agent
-    consumes: 'doppler: {from: doppler, deployment: "((cf-deployment-name))"}'
+    consumes:
+      doppler:
+        from: doppler
+        deployment: ((cf-deployment-name))
     properties:
       deployment: ((deployment-name))
       loggregator:
