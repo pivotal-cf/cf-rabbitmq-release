@@ -10,14 +10,15 @@
   value: &loggregator_agent_config
     name: loggregator_agent
     release: loggregator-agent
+    consumes: 'doppler: {from: doppler, deployment: "(( ..cf.deployment_name ))"}'
     properties:
       deployment: ((deployment-name))
       loggregator:
         tls:
-          ca_cert: ((loggregator-tls-ca-cert))
+          ca_cert: ((loggregator-agent-tls-ca-cert))
           agent:
-            cert: ((loggregator-tls-metron-cert))
-            key: ((loggregator-tls-metron-key))
+            cert: ((loggregator-agent-tls-cert))
+            key: ((loggregator-agent-tls-key))
 
 - type: replace
   path: /instance_groups/name=haproxy/jobs/-
