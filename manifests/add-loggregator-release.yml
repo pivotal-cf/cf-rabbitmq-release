@@ -24,5 +24,11 @@
             key: ((loggregator-agent-tls-key))
 
 - type: replace
+  path: /instance_groups/name=rmq/jobs/-
+  value:
+    name: bpm
+    release: bpm
+
+- type: replace
   path: /instance_groups/name=haproxy/jobs/-
   value: *loggregator_agent_config
