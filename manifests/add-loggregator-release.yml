@@ -1,25 +1,24 @@
 ---
 - type: replace
-  path: /releases/name=loggregator?
+  path: /releases/name=loggregator-agent?
   value:
-    name: loggregator
+    name: loggregator-agent
     version: latest
 
 - type: replace
   path: /instance_groups/name=rmq/jobs/-
-  value: &metron_agent_config
-    name: metron_agent
-    release: loggregator
+  value: &loggregator_agent_config
+    name: loggregator_agent
+    release: loggregator-agent
     properties:
-      metron_agent:
-        deployment: ((deployment-name))
+      deployment: ((deployment-name))
       loggregator:
         tls:
           ca_cert: ((loggregator-tls-ca-cert))
-          metron:
+          agent:
             cert: ((loggregator-tls-metron-cert))
             key: ((loggregator-tls-metron-key))
 
 - type: replace
   path: /instance_groups/name=haproxy/jobs/-
-  value: *metron_agent_config
+  value: *loggregator_agent_config
