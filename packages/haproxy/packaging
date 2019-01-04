@@ -1,6 +1,6 @@
 set -e
 
-VERSION="1.6.14"
+VERSION="1.8.16"
 
 tar xzf haproxy/haproxy-${VERSION}.tar.gz
 cd haproxy-${VERSION}
