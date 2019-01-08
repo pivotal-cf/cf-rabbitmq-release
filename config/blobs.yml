@@ -11,10 +11,10 @@ golang/go1.11.4.linux-amd64.tar.gz:
   size: 126643341
   object_id: 846b3fe5-f2a6-4aae-64b1-61093f6f4f60
   sha: sha256:fb26c30e6a04ad937bbc657a1b5bba92f80096af1e8ee6da6430c045a8db3a5b
-haproxy/haproxy-1.8.16.tar.gz:
-  size: 2076646
-  object_id: 3b20352b-0c9f-400b-58e6-0307e010e54f
-  sha: sha256:5401e4ad243d9e403621e389ec3605d8d43241affe0b72f0b15c0db8a7a3653f
+haproxy/haproxy-1.8.17.tar.gz:
+  size: 2077525
+  object_id: 2a6a65eb-8299-4ba3-540a-a008542a95eb
+  sha: sha256:7b789b177875afdd5ddeff058e7efde73aa895dc2dcf728b464358635ae3948e
 rabbitmq-server-3.6/rabbitmq-server-generic-unix-3.6.16.tar.xz:
   size: 4808464
   object_id: b9575b38-5483-44bb-4c4a-58de00155fb5
