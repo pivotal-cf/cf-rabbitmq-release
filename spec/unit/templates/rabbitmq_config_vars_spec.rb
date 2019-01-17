@@ -5,7 +5,13 @@ RSpec.describe 'Configuration', template: true do
   let(:rendered_template) {
     compiled_template('rabbitmq-server', 'rabbitmq-config-vars.bash', manifest_properties, links, network_properties)
   }
-  let(:manifest_properties) { {} }
+  let(:manifest_properties) do
+    {
+      'rabbitmq-server' => {
+        'cookie' => 'foobar1234'
+      }
+    }
+  end
   let(:links) do
     {
       'rabbitmq-server' => {
