@@ -1,10 +1,13 @@
 module rabbitmq-upgrade-preparation
 
 require (
-	github.com/cenkalti/backoff v0.0.0-20161020194410-b02f2bbce11d
-	github.com/hashicorp/go-version v0.0.0-20160725212058-deeb027c13a9
-	github.com/onsi/ginkgo v0.0.0-20161023203019-a8ccd8176116
-	github.com/onsi/gomega v0.0.0-20161026030358-7e2072f716a9
-	golang.org/x/sys v0.0.0-20161023150541-c200b10b5d5e // indirect
-	gopkg.in/yaml.v2 v2.0.0-20160928153709-a5b47d31c556 // indirect
+	github.com/cenkalti/backoff v2.1.1+incompatible
+	github.com/hashicorp/go-version v1.1.0
+	github.com/onsi/ginkgo v1.7.0
+	github.com/onsi/gomega v1.4.3
+	golang.org/x/net v0.0.0-20190110200230-915654e7eabc // indirect
+	golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4 // indirect
+	golang.org/x/sys v0.0.0-20190116161447-11f53e031339 // indirect
+	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
+	gopkg.in/yaml.v2 v2.2.2 // indirect
 )
