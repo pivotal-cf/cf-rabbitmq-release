@@ -33,6 +33,8 @@ bosh interpolate \
 
 Alternatively, you can use the `scripts/generate-manifest` in order to generate a vanilla manifest for BOSH lite.
 
+Currently, the release has only been tested to run on manual networks (https://bosh.io/docs/networks/).
+
 ## Testing
 
 Run `bundle exec rake --tasks` to list all the test subsets.
