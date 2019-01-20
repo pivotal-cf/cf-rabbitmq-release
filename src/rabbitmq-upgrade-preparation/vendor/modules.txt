@@ -43,7 +43,7 @@ github.com/onsi/gomega/matchers/support/goraph/bipartitegraph
 github.com/onsi/gomega/matchers/support/goraph/edge
 github.com/onsi/gomega/matchers/support/goraph/node
 github.com/onsi/gomega/matchers/support/goraph/util
-# golang.org/x/net v0.0.0-20190110200230-915654e7eabc
+# golang.org/x/net v0.0.0-20190119204137-ed066c81e75e
 golang.org/x/net/html/charset
 golang.org/x/net/html
 golang.org/x/net/html/atom
