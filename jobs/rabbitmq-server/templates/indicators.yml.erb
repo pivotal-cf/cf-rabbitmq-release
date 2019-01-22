@@ -2,7 +2,7 @@
 apiVersion: v0
 product:
   name: cf-rabbitmq
-  version: v42
+  version: v0
 
 metadata:
   source_id: <%= spec.deployment.split("_")[1] %>
@@ -10,8 +10,145 @@ metadata:
   expected_number_of_nodes: <%= link('rabbitmq-server').instances.size %>
 
 indicators:
+  - name: channels_count
+    promql: _p_rabbitmq_rabbitmq_channels_count{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: Channel Count
+      description: The number of channels open on the cluster
+
+  - name: connections_count
+    promql: _p_rabbitmq_rabbitmq_connections_count{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: Connection Count
+      description: The number of connections open on the cluster
+
+  - name: consumers_count
+    promql: _p_rabbitmq_rabbitmq_consumers_count{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: Consumer Count
+      description: The number of consumers registered on the cluster
+
+  - name: erlang_processes
+    promql: _p_rabbitmq_rabbitmq_erlang_erlang_processes{source_id="$source_id", deployment="$deployment"}
+    thresholds:
+      - level: critical
+        gt: 950000
+      - level: warning
+        gt: 900000
+    documentation:
+      title: Erlang Processes
+      description: The number of erlang processes consumed by RabbitMQ, which runs on an Erlang VM. This is the key indicator of the processing capability of a cluster. 
+      frequency: 30 s (default), 10 s (configurable minimum)
+      threhold_note: The defalut Erlang process limit in RabbitMQ for PCF v1.6 and later is 1,048,816.
+      recommended_response: If this metric meets or exceeds the recommended thresholds for extended periods of time, consider scaling the RabbitMQ nodes in the tile Resource Config pane.
+
   - name: reachable_nodes
     promql: _p_rabbitmq_rabbitmq_erlang_reachable_nodes{source_id="$source_id",deployment="$deployment"}
     thresholds:
       - level: critical
         neq: $expected_number_of_nodes
+    documentation:
+      title: Reachable Nodes
+      description: The number of nodes the current cluster can reach
+
+  - name: exchanges_count
+    promql: _p_rabbitmq_rabbitmq_exchanges_count{source_id="$source_id",deployment="$deployment"}
+    documentation:
+      title: Exchanges Count
+      description: The number of exchanges registered on the cluster
+
+  - name: heartbeat
+    promql: _p_rabbitmq_rabbitmq_heartbeat{source_id="$source_id", deployment="$deployment"}
+    thresholds:
+      - level: critical
+        lt: 1
+    documentation:
+      title: Server Heartbeat
+      description: rabbitmq server `is alive` poll, which indicates if the component is available and able to respond to requests
+      frequency: 30 s (default), 10 s (configurable minimum)
+      threshold_note: recommended measurment average over last 5 minumtes
+      recommended_response: check the rabbitmq server logs for errors. you can find the vm by targeting your rabbitmq deployment with bosh and running the following command, which lists rabbitmq `bosh -d service-instance_guid vms`
+
+  - name: messages_available
+    promql: _p_rabbitmq_rabbitmq_messages_available{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: Messages Available
+      description: the total number of messages with the status `messagse_ready` on the node
+
+  - name: messages_delivered
+    promql: _p_rabbitmq_rabbitmq_messages_delivered{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: Messages Delivered
+      description: the total number of messages with the status `deliver_get` on the node
+
+  - name: messages_delivered_noack
+    promql: _p_rabbitmq_rabbitmq_messages_delivered_noack{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: Messages Delivered No Ack
+      description: the total number of messages with the status `deliver_noack` on the node
+
+  - name: messages_delivered_rate
+    promql: _p_rabbitmq_rabbitmq_messages_delivered_rate{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: Messages Delivered Rate
+      description: the rate at which messages are being published by the node
+
+  - name: messages_depth
+    promql: _p_rabbitmq_rabbitmq_messages_depth{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: Message Depth
+      description: The number of messages with the status `messages_unacknowledged` or `messages_ready` on the node
+
+  - name: get_no_ack
+    promql: _p_rabbitmq_rabbitmq_messages_get_no_ack{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: Messages Get No Ack
+      description: The number of messages with the status `get_no_ack` on the node
+
+  - name: get_no_ack_rate
+    promql: _p_rabbitmq_rabbitmq_messages_get_no_ack_rate{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: Messages Get No Ack Rate
+      description: The rate at which messages get the status `get_no_ack` on the node
+
+  - name: messages_pending
+    promql: _p_rabbitmq_rabbitmq_messages_pending{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: Messages Pending
+      description: The number of messages with the status `messages_unacknowledged` on the node
+
+  - name: messages_published
+    promql: _p_rabbitmq_rabbitmq_messages_published{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: Messages Published
+      description: The total number of messages with the status `publish` on the node
+
+  - name: messages_published_rate
+    promql: _p_rabbitmq_rabbitmq_messages_published_rate{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: Messages Published Rate
+      description: The rate at which messages are being published by the node
+
+  - name: messages_redelivered
+    promql: _p_rabbitmq_rabbitmq_messages_redelivered{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: Messages Redelivered
+      description: The total number of messages with the status `redeliver` on the node
+
+  - name: messages_redelivered_rate
+    promql: _p_rabbitmq_rabbitmq_messages_redelivered_rate{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: Messages Redelivered Rate
+      description: The rate at which messages are getting the status `redeliver` on the node
+
+  - name: queues_count
+    promql: _p_rabbitmq_rabbitmq_queues_count{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: Queue Count
+      description: The number of queues on the node
+
+  - name: vhosts_count
+    promql: _p_rabbitmq_rabbitmq_vhosts_count{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: Vhost Count
+      description: The number of vhosts
