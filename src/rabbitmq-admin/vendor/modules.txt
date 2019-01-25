@@ -43,7 +43,7 @@ github.com/vito/go-interact/interact
 github.com/vito/go-interact/interact/terminal
 # golang.org/x/crypto v0.0.0-20190123085648-057139ce5d2b
 golang.org/x/crypto/ssh/terminal
-# golang.org/x/net v0.0.0-20190125002852-4b62a64f59f7
+# golang.org/x/net v0.0.0-20190125091013-d26f9f9a57f3
 golang.org/x/net/html/charset
 golang.org/x/net/html
 golang.org/x/net/html/atom
