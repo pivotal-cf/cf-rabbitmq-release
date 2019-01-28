@@ -2,7 +2,7 @@
 apiVersion: v0
 product:
   name: cf-rabbitmq
-  version: v0
+  version: latest
 
 metadata:
   source_id: <%= spec.deployment.split("_")[1] %>
@@ -91,7 +91,7 @@ indicators:
     promql: _p_rabbitmq_rabbitmq_messages_delivered_rate{source_id="$source_id", deployment="$deployment"}
     documentation:
       title: Messages Delivered Rate
-      description: the rate at which messages are being published by the node
+      description: the rate per second at which messages are being published by the node
 
   - name: messages_depth
     promql: _p_rabbitmq_rabbitmq_messages_depth{source_id="$source_id", deployment="$deployment"}
@@ -109,7 +109,7 @@ indicators:
     promql: _p_rabbitmq_rabbitmq_messages_get_no_ack_rate{source_id="$source_id", deployment="$deployment"}
     documentation:
       title: Messages Get No Ack Rate
-      description: The rate at which messages get the status `get_no_ack` on the node
+      description: The rate per second at which messages get the status `get_no_ack` on the node
 
   - name: messages_pending
     promql: _p_rabbitmq_rabbitmq_messages_pending{source_id="$source_id", deployment="$deployment"}
@@ -127,7 +127,7 @@ indicators:
     promql: _p_rabbitmq_rabbitmq_messages_published_rate{source_id="$source_id", deployment="$deployment"}
     documentation:
       title: Messages Published Rate
-      description: The rate at which messages are being published by the node
+      description: The rate per second at which messages are being published by the node
 
   - name: messages_redelivered
     promql: _p_rabbitmq_rabbitmq_messages_redelivered{source_id="$source_id", deployment="$deployment"}
@@ -139,7 +139,7 @@ indicators:
     promql: _p_rabbitmq_rabbitmq_messages_redelivered_rate{source_id="$source_id", deployment="$deployment"}
     documentation:
       title: Messages Redelivered Rate
-      description: The rate at which messages are getting the status `redeliver` on the node
+      description: The rate per second at which messages are getting the status `redeliver` on the node
 
   - name: queues_count
     promql: _p_rabbitmq_rabbitmq_queues_count{source_id="$source_id", deployment="$deployment"}
@@ -152,3 +152,47 @@ indicators:
     documentation:
       title: Vhost Count
       description: The number of vhosts
+
+  - name: file_descriptors
+    promql: _p_rabbitmq_rabbitmq_system_file_descriptors{source_id="$source_id", deployment="$deployment"}
+    thresholds:
+      - level: critical
+        gt: 280000
+      - level: warning
+        gt: 250000
+    documentation:
+      title: File Descriptors
+      description: Count of file descriptors consumed. If the number of file descriptors consumed becomes too large, the VM might lose the ability to perform disk IO, which can cause data loss. Note, This assumes non-persistent messages are handled by retries or some other logic by the producers.
+      frequency: 30 s (default), 10 s (configurable minimum)
+      threhold_note: The default `ulimit` for RabbitMQ for PCF is 300000.
+      recommended_response: If this metric is met or exceeded for an extended period of time, consider reducing the load on the server.
+
+  - name: system_memory
+    promql: _p_rabbitmq_rabbitmq_system_memory{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: System Memory
+      description: The memory in MB used by the node
+
+  - name: system_memory_alarm
+    promql: _p_rabbitmq_rabbitmq_system_mem_alarm{source_id="$source_id", deployment="$deployment"}
+    thresholds:
+      - level: critical
+        gt: 0
+    documentation:
+      title: System Memory Alarm
+      description: Indicates if the memory alarm went off
+
+  - name: disk_free
+    promql: _p_rabbitmq_rabbitmq_system_disk_free{source_id="$source_id", deployment="$deployment"}
+    documentation:
+      title: Disk Free
+      description: The disk space in MB available on the node
+
+  - name: disk_free_alarm
+    promql: _p_rabbitmq_rabbitmq_system_disk_free_alarm{source_id="$source_id", deployment="$deployment"}
+    thresholds:
+      - level: critical
+        gt: 0
+    documentation:
+      title: Disk Free Alarm
+      description: Indicates if the disk free alarm went off
