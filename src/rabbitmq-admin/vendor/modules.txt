@@ -41,7 +41,7 @@ github.com/onsi/gomega/matchers/support/goraph/util
 # github.com/vito/go-interact v0.0.0-20171111012221-fa338ed9e9ec
 github.com/vito/go-interact/interact
 github.com/vito/go-interact/interact/terminal
-# golang.org/x/crypto v0.0.0-20190123085648-057139ce5d2b
+# golang.org/x/crypto v0.0.0-20190128193316-c7b33c32a30b
 golang.org/x/crypto/ssh/terminal
 # golang.org/x/net v0.0.0-20190125091013-d26f9f9a57f3
 golang.org/x/net/html/charset
