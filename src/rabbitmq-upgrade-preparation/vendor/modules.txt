@@ -43,11 +43,11 @@ github.com/onsi/gomega/matchers/support/goraph/bipartitegraph
 github.com/onsi/gomega/matchers/support/goraph/edge
 github.com/onsi/gomega/matchers/support/goraph/node
 github.com/onsi/gomega/matchers/support/goraph/util
-# golang.org/x/net v0.0.0-20190125091013-d26f9f9a57f3
+# golang.org/x/net v0.0.0-20190206173232-65e2d4e15006
 golang.org/x/net/html/charset
 golang.org/x/net/html
 golang.org/x/net/html/atom
-# golang.org/x/sys v0.0.0-20190203050204-7ae0202eb74c
+# golang.org/x/sys v0.0.0-20190209173611-3b5209105503
 golang.org/x/sys/unix
 # golang.org/x/text v0.3.0
 golang.org/x/text/encoding
