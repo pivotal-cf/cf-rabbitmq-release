@@ -47,7 +47,7 @@ github.com/onsi/gomega/matchers/support/goraph/util
 golang.org/x/net/html/charset
 golang.org/x/net/html
 golang.org/x/net/html/atom
-# golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a
+# golang.org/x/sys v0.0.0-20190222171317-cd391775e71e
 golang.org/x/sys/unix
 # golang.org/x/text v0.3.0
 golang.org/x/text/encoding
