@@ -40,6 +40,10 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
       it 'uses default ssl verification depth' do
         expect(output).to include 'export SSL_VERIFICATION_DEPTH="5"'
       end
+
+      it 'uses default disable non tls listeners for plugins' do
+        expect(output).to include 'export SSL_DISABLE_NON_SSL_LISTENERS="false"'
+      end
     end
 
     context 'when tls versions are configured' do
@@ -89,6 +93,16 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
 
       it 'uses provided value' do
         expect(output).to include 'export SSL_FAIL_IF_NO_PEER_CERT="true"'
+      end
+    end
+
+    context 'when disable non SSL listeners for plugins is configured' do
+      before :each do
+        manifest_properties['rabbitmq-server']['ssl']['disable_non_ssl_listeners'] = true
+      end
+
+      it 'uses provided value' do
+        expect(output).to include 'export SSL_DISABLE_NON_SSL_LISTENERS="true"'
       end
     end
 

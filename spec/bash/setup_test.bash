@@ -34,6 +34,7 @@ T_setup_environment() {
     SSL_SUPPORTED_TLS_VERSIONS="['tlsv1.2','tlsv1.1']"
     SSL_SUPPORTED_TLS_CIPHERS=",{ciphers, ['cipher1','cipher2']}"
     SSL_ENABLED_ON_MANAGEMENT=true
+    SSL_DISABLE_NON_SSL_LISTENERS=false
 
     ERLANG_COOKIE="my-awesome-cookie"
     VCAP_USER="$(id -u)"
@@ -158,9 +159,13 @@ T_do_not_configure_tls_listeners() {
 
 T_configure_tls_listeners() {
   (
-    listeners="$(configure_tls_listeners)"
-
+    DISABLE_NON_SSL_LISTENERS=false
+    listeners="$(configure_tls_listeners "$DISABLE_NON_SSL_LISTENERS")"
     expect_to_equal "$listeners" "-rabbit tcp_listeners [] -rabbit ssl_listeners [5671] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614]"
+
+    DISABLE_NON_SSL_LISTENERS=true
+    listeners_non_tls_disabled="$(configure_tls_listeners "$DISABLE_NON_SSL_LISTENERS")"
+    expect_to_equal "$listeners_non_tls_disabled" "-rabbit tcp_listeners [] -rabbit ssl_listeners [5671] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614] -rabbitmq_mqtt tcp_listeners [] -rabbitmq_stomp tcp_listeners []"
   ) || $T_fail "Failed to configure TLS listeners"
 }
 

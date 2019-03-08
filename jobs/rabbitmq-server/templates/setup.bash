@@ -38,7 +38,7 @@ main(){
 
   if ${SSL_ENABLED:?must be set}
   then
-    tls_listeners=$(configure_tls_listeners)
+    tls_listeners=$(configure_tls_listeners "$SSL_DISABLE_NON_SSL_LISTENERS")
     tls_options=$(configure_tls_options \
       "${SSL_VERIFY}" \
       "${SSL_VERIFICATION_DEPTH}" \
@@ -120,8 +120,17 @@ configure_load_definitions() {
 }
 
 configure_tls_listeners() {
-  # if TLS is enabled, disable the non-TLS listener for AMQP
-  echo "-rabbit tcp_listeners [] -rabbit ssl_listeners [5671] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614]"
+  local disable_non_ssl_listeners="$1"
+
+  local cmd="-rabbit tcp_listeners [] -rabbit ssl_listeners [5671] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614]"
+  local disable_non_ssl_listeners_cmd="-rabbitmq_mqtt tcp_listeners [] -rabbitmq_stomp tcp_listeners []"
+
+  if ${disable_non_ssl_listeners:?must be set}
+  then
+    echo "${cmd} ${disable_non_ssl_listeners_cmd}"
+  else
+    echo "${cmd}"
+  fi
 }
 
 configure_management_listener() {

@@ -37,6 +37,9 @@ properties:
   rabbitmq-server.ssl.fail_if_no_peer_cert:
     description: "Should RabbitMQ server reject connection if there is no peer cert"
     default: false
+  rabbitmq-server.ssl.disable_non_ssl_listeners:
+    description: "Should RabbitMQ reject connections on non-TLS ports when TLS is enabled"
+    default: false
 
   rabbitmq-server.management_tls.enabled:
     default: false
