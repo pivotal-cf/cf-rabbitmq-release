@@ -156,13 +156,13 @@ RSpec.describe 'RabbitMQ server configuration' do
       end
 
       context 'when disable non SSL listeners is set' do
-        it 'disables the non SSL listeners', :focus => true do
+        it 'disables the non SSL listeners' do
           output = bosh.ssh(rmq_host, "#{rabbitmq_diagnostics} listeners")
-          mqtt_port = 1883
-          stomp_port = 61614
+          mqtt_tcp_port = "1883"
+          stomp_tcp_port = "61613"
 
-          expect(stdout(output)).not_to include(mqtt_port)
-          expect(stdout(output)).not_to include(stomp_port)
+          expect(stdout(output)).not_to include(mqtt_tcp_port)
+          expect(stdout(output)).not_to include(stomp_tcp_port)
         end
       end
     end
