@@ -17,6 +17,10 @@ RSpec.describe 'RabbitMQ server configuration' do
     'sudo ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl'
   end
 
+  def rabbitmq_diagnostics
+    'sudo ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/privbin/rabbitmq-diagnostics'
+  end
+
   let(:environment_settings) do
     stdout(bosh.ssh(rmq_host, "#{rabbitmqctl} environment"))
   end
@@ -60,6 +64,7 @@ RSpec.describe 'RabbitMQ server configuration' do
         rmq_properties['ssl']['cert'] = server_cert
         rmq_properties['ssl']['cacert'] = ca_cert
         rmq_properties['ssl']['versions'] = ['tlsv1.2', 'tlsv1.1', 'tlsv1']
+        rmq_properties['ssl']['disable_non_ssl_listeners'] = true
 
         tlsv1_compatible_cipher = 'ECDHE-RSA-AES256-SHA'
         tlsv1_2_compatible_cipher = 'ECDHE-RSA-AES256-GCM-SHA384'
@@ -147,6 +152,17 @@ RSpec.describe 'RabbitMQ server configuration' do
 
         it 'has the right SSL peer options' do
           expect(ssl_options).to include('{fail_if_no_peer_cert,true}')
+        end
+      end
+
+      context 'when disable non SSL listeners is set' do
+        it 'disables the non SSL listeners', :focus => true do
+          output = bosh.ssh(rmq_host, "#{rabbitmq_diagnostics} listeners")
+          mqtt_port = 1883
+          stomp_port = 61614
+
+          expect(stdout(output)).not_to include(mqtt_port)
+          expect(stdout(output)).not_to include(stomp_port)
         end
       end
     end
