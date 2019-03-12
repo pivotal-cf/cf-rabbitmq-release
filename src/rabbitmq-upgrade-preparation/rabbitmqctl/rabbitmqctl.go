@@ -86,7 +86,7 @@ func (r *RabbitMQCtl) StopApp(node string) error {
 }
 
 func (r *RabbitMQCtl) Shutdown(node string) error {
-	err := exec.Command(r.path, "shutdown", "-n", node).Run()
+	err := exec.Command(r.path, "shutdown", "-n", node, "--no-wait").Run()
 	if err != nil {
 		return errors.New(fmt.Sprintf("Failed to shutdown RabbitMQ: %s", err))
 	}
