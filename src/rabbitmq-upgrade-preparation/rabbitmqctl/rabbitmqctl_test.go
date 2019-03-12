@@ -71,7 +71,7 @@ var _ = Describe("Rabbitmqctl", func() {
 
 			fmt.Printf(string(contents))
 			Expect(err).NotTo(HaveOccurred())
-			Expect(strings.Count(string(contents), fmt.Sprintf("shutdown -n %s\n", node))).To(Equal(1))
+			Expect(strings.Count(string(contents), fmt.Sprintf("shutdown -n %s --no-wait\n", node))).To(Equal(1))
 		}
 
 		It("passes the node to the stop command", func() {
