@@ -29,6 +29,12 @@ case $1 in
     exit 2
     ;;
 
+  shutdown)
+    echo "$status" >&2
+    echo "status $2 $3" >> $TEST_OUTPUT_FILE
+    exit 69
+    ;;
+
   *)
     exit 3
     ;;

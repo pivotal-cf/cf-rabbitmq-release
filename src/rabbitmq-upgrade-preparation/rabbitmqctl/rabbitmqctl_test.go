@@ -90,7 +90,14 @@ var _ = Describe("Rabbitmqctl", func() {
 			path := filepath.Join(cwd, "test-assets", "rabbitmqctl-echo-with-fails")
 			err := New(path).Shutdown("rabbitmq@node1")
 
-			Expect(err).To(MatchError(errors.New("Failed to shutdown RabbitMQ: exit status 1")))
+			Expect(err).To(MatchError(ContainSubstring("Failed to shutdown RabbitMQ: exit status 1:\nFail args")))
+		})
+
+		It("succeeds when the node not running (exit code 69)", func() {
+			cwd, _ := os.Getwd()
+			path := filepath.Join(cwd, "test-assets", "rabbitmqctl-stopped-rabbit-node.sh")
+			err := New(path).Shutdown("rabbitmq@node1")
+			Expect(err).NotTo(HaveOccurred())
 		})
 	})
 

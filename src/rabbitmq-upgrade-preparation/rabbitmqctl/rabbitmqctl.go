@@ -80,15 +80,21 @@ func matchRegexp(re string, text string) (string, bool) {
 func (r *RabbitMQCtl) StopApp(node string) error {
 	err := exec.Command(r.path, "stop_app", "-n", node).Run()
 	if err != nil {
-		return errors.New(fmt.Sprintf("Failed to stop RabbitMQ app: %s", err))
+		return fmt.Errorf("Failed to stop RabbitMQ app: %s", err)
 	}
 	return nil
 }
 
 func (r *RabbitMQCtl) Shutdown(node string) error {
-	err := exec.Command(r.path, "shutdown", "-n", node, "--no-wait").Run()
+	output, err := exec.Command(r.path, "shutdown", "-n", node, "--no-wait").CombinedOutput()
 	if err != nil {
-		return errors.New(fmt.Sprintf("Failed to shutdown RabbitMQ: %s", err))
+		if strings.Contains(string(output), "epmd reports: node 'rabbit' not running at all") {
+			// Note, when we move to Go 1.12, we can use this instead:
+			// if exitErr, ok := err.(*exec.ExitError); ok {
+			// 	if exitErr.ExitCode() == 69 { // already shutdown
+			return nil
+		}
+		return fmt.Errorf("Failed to shutdown RabbitMQ: %s:\n%s", err, string(output))
 	}
 	return nil
 }

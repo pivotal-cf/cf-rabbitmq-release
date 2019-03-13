@@ -163,13 +163,14 @@ func shutdownClusterIfCookieChanged() {
 		logger.Out.Println("Cookies match, cluster will not be shutdown")
 		return
 	}
+	logger.Out.Println("Cookies have changed, cluster will be shutdown")
 
 	rabbitMQCtl := rabbitmqctl.New(rabbitmqCtlPath)
 
 	for _, node := range nodes {
 		err := rabbitMQCtl.Shutdown(node)
 		if err != nil {
-			logger.Out.Printf("Failed to shutdown node %s. Moving on.\n", node)
+			logger.Out.Printf("Failed to shutdown node %s - moving on:\n%s", node, err)
 		} else {
 			logger.Out.Printf("Shutdown RabbitMQ on %s\n", node)
 		}

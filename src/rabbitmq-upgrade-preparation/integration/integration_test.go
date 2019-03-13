@@ -473,7 +473,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 
 					session = execBin("", args...)
 					Eventually(session).Should(gexec.Exit(0))
-					Eventually(session.Out).Should(sayWithTimestamp("Failed to shutdown node rabbitmq@node1. Moving on."))
+					Eventually(session.Out).Should(sayWithTimestamp("Failed to shutdown node rabbitmq@node1 - moving on."))
 					Eventually(session.Out).Should(sayWithTimestamp("Shutdown RabbitMQ on rabbitmq@node2"))
 					Eventually(session.Out).ShouldNot(sayWithTimestamp("Shutdown RabbitMQ on rabbitmq@node1"))
 				})
