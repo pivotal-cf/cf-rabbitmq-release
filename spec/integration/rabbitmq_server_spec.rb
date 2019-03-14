@@ -8,6 +8,14 @@ require 'httparty'
 
 RMQ_VERSION = '3.7'
 
+MQTT_TCP_PORT = "1883"
+STOMP_TCP_PORT = "61613"
+AMQP_TCP_PORT = "5672"
+
+MQTT_SSL_PORT = "8883"
+STOMP_SSL_PORT = "61614"
+AMQP_SSL_PORT = "5671"
+
 RSpec.describe 'RabbitMQ server configuration' do
   let(:rmq_host) do
     bosh.indexed_instance('rmq', 0)
@@ -107,6 +115,15 @@ RSpec.describe 'RabbitMQ server configuration' do
     end
 
     describe 'SSL' do
+      it 'enables SSL listeners' do
+          output = bosh.ssh(rmq_host, "#{rabbitmq_diagnostics} listeners")
+
+          expect(stdout(output)).to include(MQTT_SSL_PORT)
+          expect(stdout(output)).to include(STOMP_SSL_PORT)
+          expect(stdout(output)).to include(AMQP_SSL_PORT)
+      end
+
+
       context 'when tlsv1, tlsv1.1, and tlsv1.2 are enabled' do
         it 'should have TLS 1.0 enabled' do
           output = bosh.ssh(rmq_host, connect_using('tls1'))
@@ -158,11 +175,10 @@ RSpec.describe 'RabbitMQ server configuration' do
       context 'when disable non SSL listeners is set' do
         it 'disables the non SSL listeners' do
           output = bosh.ssh(rmq_host, "#{rabbitmq_diagnostics} listeners")
-          mqtt_tcp_port = "1883"
-          stomp_tcp_port = "61613"
 
-          expect(stdout(output)).not_to include(mqtt_tcp_port)
-          expect(stdout(output)).not_to include(stomp_tcp_port)
+          expect(stdout(output)).not_to include(MQTT_TCP_PORT)
+          expect(stdout(output)).not_to include(STOMP_TCP_PORT)
+          expect(stdout(output)).not_to include(AMQP_TCP_PORT)
         end
       end
     end
