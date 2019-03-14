@@ -7,7 +7,13 @@ RSpec.describe AMQPPortRegex, '#regex' do
     end
 
     it "does not match the management port" do
-      output = "Asking node for listeners\nmgmt port 15672\nanother port 007\n"
+      output = "Asking node for listeners\nmgmt port: 15672\nanother port 007\n"
+
+      expect(output).not_to match(@amqp_tcp_regexp)
+    end
+
+    it "does not match the inter-node communication port" do
+      output = "Asking node for listeners\nmgmt port: 25672\nanother port 007\n"
 
       expect(output).not_to match(@amqp_tcp_regexp)
     end
