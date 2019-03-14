@@ -10,7 +10,6 @@ RMQ_VERSION = '3.7'
 
 MQTT_TCP_PORT = "1883"
 STOMP_TCP_PORT = "61613"
-AMQP_TCP_PORT = "5672"
 
 MQTT_SSL_PORT = "8883"
 STOMP_SSL_PORT = "61614"
@@ -117,10 +116,12 @@ RSpec.describe 'RabbitMQ server configuration' do
     describe 'SSL' do
       it 'enables SSL listeners' do
           output = bosh.ssh(rmq_host, "#{rabbitmq_diagnostics} listeners")
+          # regex in order not to match the management api ssl port 15671
+          amqp_ssl_port_regex = AMQPPortRegex.ssl_regex
 
           expect(stdout(output)).to include(MQTT_SSL_PORT)
           expect(stdout(output)).to include(STOMP_SSL_PORT)
-          expect(stdout(output)).to include(AMQP_SSL_PORT)
+          expect(stdout(output)).to match(amqp_ssl_port_regex)
       end
 
 
@@ -175,10 +176,12 @@ RSpec.describe 'RabbitMQ server configuration' do
       context 'when disable non SSL listeners is set' do
         it 'disables the non SSL listeners' do
           output = bosh.ssh(rmq_host, "#{rabbitmq_diagnostics} listeners")
+          # regex in order not to match the management api port 15672
+          amqp_tcp_regex = AMQPPortRegex.regex
 
           expect(stdout(output)).not_to include(MQTT_TCP_PORT)
           expect(stdout(output)).not_to include(STOMP_TCP_PORT)
-          expect(stdout(output)).not_to include(AMQP_TCP_PORT)
+          expect(stdout(output)).not_to match(amqp_tcp_regex)
         end
       end
     end
