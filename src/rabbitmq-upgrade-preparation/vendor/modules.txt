@@ -28,7 +28,7 @@ github.com/onsi/ginkgo/internal/leafnodes
 github.com/onsi/ginkgo/internal/spec
 github.com/onsi/ginkgo/internal/specrunner
 github.com/onsi/ginkgo/reporters/stenographer/support/go-isatty
-# github.com/onsi/gomega v1.4.3
+# github.com/onsi/gomega v1.5.0
 github.com/onsi/gomega
 github.com/onsi/gomega/gbytes
 github.com/onsi/gomega/gexec
@@ -43,13 +43,13 @@ github.com/onsi/gomega/matchers/support/goraph/bipartitegraph
 github.com/onsi/gomega/matchers/support/goraph/edge
 github.com/onsi/gomega/matchers/support/goraph/node
 github.com/onsi/gomega/matchers/support/goraph/util
-# golang.org/x/net v0.0.0-20190311031020-56fb01167e7d
+# golang.org/x/net v0.0.0-20190313220215-9f648a60d977
 golang.org/x/net/html/charset
 golang.org/x/net/html
 golang.org/x/net/html/atom
-# golang.org/x/sys v0.0.0-20190310054646-10058d7d4faa
+# golang.org/x/sys v0.0.0-20190316082340-a2f829d7f35f
 golang.org/x/sys/unix
-# golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2
+# golang.org/x/text v0.3.0
 golang.org/x/text/encoding
 golang.org/x/text/encoding/charmap
 golang.org/x/text/encoding/htmlindex
@@ -64,8 +64,6 @@ golang.org/x/text/encoding/unicode
 golang.org/x/text/language
 golang.org/x/text/internal/utf8internal
 golang.org/x/text/runes
-golang.org/x/text/internal/language
-golang.org/x/text/internal/language/compact
 golang.org/x/text/internal/tag
 # gopkg.in/fsnotify.v1 v1.4.7
 gopkg.in/fsnotify.v1
