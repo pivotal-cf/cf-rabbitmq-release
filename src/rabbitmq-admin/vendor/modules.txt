@@ -47,7 +47,7 @@ golang.org/x/crypto/ssh/terminal
 golang.org/x/net/html/charset
 golang.org/x/net/html
 golang.org/x/net/html/atom
-# golang.org/x/sys v0.0.0-20190415145633-3fd5a3612ccd
+# golang.org/x/sys v0.0.0-20190416152802-12500544f89f
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 # golang.org/x/text v0.3.0
