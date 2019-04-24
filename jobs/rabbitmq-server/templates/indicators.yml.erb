@@ -5,7 +5,7 @@ product:
   version: latest
 
 metadata:
-  source_id: <%= spec.deployment && spec.deployment.include?("service-instance") ? spec.deployment.split("_")[1] : spec.deployment %>
+  source_id: <%= spec.deployment.include?("service-instance") ? spec.deployment.split("_")[1] : spec.deployment %>
   deployment: <%= spec.deployment %>
   expected_number_of_nodes: <%= link('rabbitmq-server').instances.size %>
 
