@@ -1,18 +1,18 @@
 set -eu
 
-PACKAGE_NAME="rabbitmq-admin"
+# required to call the go binary
 export GOROOT="$(readlink -nf /var/vcap/packages/golang)"
-export GOPATH="${BOSH_INSTALL_TARGET}"
 export PATH="${GOROOT}/bin:${PATH}"
+export GOPATH="${BOSH_INSTALL_TARGET}"
 
-SOURCE="${BOSH_INSTALL_TARGET}/src"
-mkdir -p "${SOURCE}"
-cp -r "${PACKAGE_NAME}" "${SOURCE}"
+# required in order to use go modules in go 1.11
+# may not be needed for go 1.12
+export GOCACHE=$PWD/cache
 
-# Although we manage the dependencies using Go modules, we use good old $GOPATH
-# to compile on a BOSH VM.  This is because compilation of Go modules in BOSH is
-# not yet sufficiently reliable.
-GO111MODULES=off go install rabbitmq-admin/amqp-traffic/drop-amqp-traffic
-GO111MODULES=off go install rabbitmq-admin/amqp-traffic/restore-amqp-traffic
+PACKAGE_NAME="rabbitmq-admin"
+mkdir ${BOSH_INSTALL_TARGET}/bin
 
-rm -rf "${SOURCE}"
+cd $PACKAGE_NAME
+
+GO111MODULES=on go build -mod vendor -o ${BOSH_INSTALL_TARGET}/bin/restore-amqp-traffic amqp-traffic/restore-amqp-traffic/*.go
+GO111MODULES=on go build -mod vendor -o ${BOSH_INSTALL_TARGET}/bin/drop-amqp-traffic amqp-traffic/drop-amqp-traffic/*.go
