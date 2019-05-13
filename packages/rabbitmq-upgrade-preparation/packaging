@@ -7,6 +7,8 @@ export GOROOT="$(readlink -nf /var/vcap/packages/golang)"
 export GOPATH="${BOSH_INSTALL_TARGET}"
 export PATH="${GOROOT}/bin:${PATH}"
 
+export GOCACHE=$PWD/cache
+
 SOURCE="${BOSH_INSTALL_TARGET}/src"
 mkdir -p "${SOURCE}"
 cp -r "${PACKAGE_NAME}" "${SOURCE}"
