@@ -1,18 +1,16 @@
 set -eu
 
+PACKAGE_NAME="rabbitmq-admin"
+
 # required to call the go binary
 export GOROOT="$(readlink -nf /var/vcap/packages/golang)"
 export PATH="${GOROOT}/bin:${PATH}"
 export GOPATH="${BOSH_INSTALL_TARGET}"
-
-# required in order to use go modules in go 1.11
-# may not be needed for go 1.12
 export GOCACHE=$PWD/cache
 
-PACKAGE_NAME="rabbitmq-admin"
 mkdir ${BOSH_INSTALL_TARGET}/bin
 
 cd $PACKAGE_NAME
 
-GO111MODULES=on go build -mod vendor -o ${BOSH_INSTALL_TARGET}/bin/restore-amqp-traffic amqp-traffic/restore-amqp-traffic/*.go
-GO111MODULES=on go build -mod vendor -o ${BOSH_INSTALL_TARGET}/bin/drop-amqp-traffic amqp-traffic/drop-amqp-traffic/*.go
+go build -mod vendor -o ${BOSH_INSTALL_TARGET}/bin/restore-amqp-traffic amqp-traffic/restore-amqp-traffic/*.go
+go build -mod vendor -o ${BOSH_INSTALL_TARGET}/bin/drop-amqp-traffic amqp-traffic/drop-amqp-traffic/*.go

@@ -1,18 +1,16 @@
-#!/bin/bash -e
-
 set -eu
 
 PACKAGE_NAME="rabbitmq-upgrade-preparation"
-export GOROOT="$(readlink -nf /var/vcap/packages/golang)"
-export GOPATH="${BOSH_INSTALL_TARGET}"
-export PATH="${GOROOT}/bin:${PATH}"
 
+# required to call the go binary
+export GOROOT="$(readlink -nf /var/vcap/packages/golang)"
+export PATH="${GOROOT}/bin:${PATH}"
+export GOPATH="${BOSH_INSTALL_TARGET}"
 export GOCACHE=$PWD/cache
 
-SOURCE="${BOSH_INSTALL_TARGET}/src"
-mkdir -p "${SOURCE}"
-cp -r "${PACKAGE_NAME}" "${SOURCE}"
+mkdir ${BOSH_INSTALL_TARGET}/bin
 
-GO111MODULES=off go install "${PACKAGE_NAME}"
+cd $PACKAGE_NAME
 
-rm -rf "${SOURCE}"
+go build -mod vendor -o ${BOSH_INSTALL_TARGET}/bin/${PACKAGE_NAME} main.go
+
