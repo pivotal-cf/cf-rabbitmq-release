@@ -5,6 +5,13 @@ It is deployable by BOSH in the [usual way](https://bosh.io/docs/deploying.html)
 
 This release is now using BOSH v2 [job links](https://bosh.io/docs/links.html) and [cloud config](https://bosh.io/docs/cloud-config.html) and requires at least BOSH Director v255.5
 
+## Status
+
+Job | Status
+--- | ---
+unit tests | [![pcf-rabbitmq.ci.cf-app.com](https://pcf-rabbitmq.ci.cf-app.com/api/v1/pipelines/cf-rabbitmq-release/jobs/unit-tests-for-cf-rabbitmq/badge)](https://pcf-rabbitmq.ci.cf-app.com/teams/main/pipelines/cf-rabbitmq-release/jobs/unit-tests-for-cf-rabbitmq)
+integration tests | [![pcf-rabbitmq.ci.cf-app.com](https://pcf-rabbitmq.ci.cf-app.com/api/v1/pipelines/cf-rabbitmq-release/jobs/test-bosh-release/badge)](https://pcf-rabbitmq.ci.cf-app.com/teams/main/pipelines/cf-rabbitmq-release/jobs/test-bosh-release)
+
 ## Dependencies
 
 - [bundler](http://bundler.io/)
