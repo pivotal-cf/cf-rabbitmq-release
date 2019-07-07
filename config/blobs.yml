@@ -15,7 +15,7 @@ haproxy/haproxy-1.8.20.tar.gz:
   size: 2083917
   object_id: 71408931-a167-4faa-623d-d5759178cf59
   sha: sha256:3228f78d5fe1dfbaccf41bf387e36b08eeef6e16330053cafde5fa303e262b16
-rabbitmq-server-3.7/rabbitmq-server-generic-unix-3.7.15.tar.xz:
-  size: 9802228
-  object_id: 28acbd36-5ed3-4945-5342-6884fa31ecfe
-  sha: sha256:4d70e4d057c6e40022369584626fd7c2bdaa24997aae5cc7f8f182c6d46456cf
+rabbitmq-server-3.7/rabbitmq-server-generic-unix-3.7.16.tar.xz:
+  size: 9830924
+  object_id: a8bc356e-ea07-4080-45bc-1c317bf7f31b
+  sha: sha256:a34011f8ff1682a1601d4b8e0167ad39b91fd8f0fb35b484c41efde9f104ed08
