@@ -26,7 +26,7 @@ RSpec.describe 'OSS Compliance', run_compliance_tests: true do
 end
 
 def download_from_blob_bucket(blob_object_id, local_destination)
-  bucket_address ="https://s3.amazonaws.com/pcf-rabbitmq-bosh-release-blobs"
+  bucket_address ="https://pcf-rabbitmq-bosh-release-blobs.s3.amazonaws.com"
   File.open("#{local_destination}", "wb") do |f|
       f.write HTTParty.get("#{bucket_address}/#{blob_object_id}").parsed_response
   end
