@@ -85,8 +85,8 @@ properties:
     description: "Cluster partition recover mode property. Valid values are: pause_minority, autoheal"
     default: "pause_minority"
 
-  rabbitmq-server.force-unsafe-upgrade.disable-version-checking:
-    description: "This property is for support cases only. Leave as false unless you are prepared to get your cluster in an unrecoverable state, including complete data loss."
+  rabbitmq-server.force_cluster_shutdown_on_version_change:
+    description: "Force a cluster shutdown in the event of a Erlang major version upgrade, to ensure cluster consistency. This will lead to app downtime."
     default: false
 
   rabbitmq-server.load_definitions:

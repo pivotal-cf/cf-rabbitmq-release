@@ -1,6 +1,6 @@
 RMQ_FD_LIMIT=<%= p('rabbitmq-server.fd_limit') %>
 RMQ_FD_LIMIT="${RMQ_FD_LIMIT:?must be set}"
 
-<% if p('rabbitmq-server.force-unsafe-upgrade.disable-version-checking') %>
+<% if !p('rabbitmq-server.force_cluster_shutdown_on_version_change') %>
   SKIP_PREPARE_FOR_UPGRADE=true
 <% end %>
