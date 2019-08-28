@@ -1,4 +1,4 @@
-# github.com/cenkalti/backoff v2.1.1+incompatible
+# github.com/cenkalti/backoff v2.2.1+incompatible
 github.com/cenkalti/backoff
 # github.com/hashicorp/go-version v1.2.0
 github.com/hashicorp/go-version
@@ -8,7 +8,7 @@ github.com/hpcloud/tail/ratelimiter
 github.com/hpcloud/tail/util
 github.com/hpcloud/tail/watch
 github.com/hpcloud/tail/winfile
-# github.com/onsi/ginkgo v1.8.0
+# github.com/onsi/ginkgo v1.9.0
 github.com/onsi/ginkgo
 github.com/onsi/ginkgo/extensions/table
 github.com/onsi/ginkgo/config
@@ -28,7 +28,7 @@ github.com/onsi/ginkgo/internal/leafnodes
 github.com/onsi/ginkgo/internal/spec
 github.com/onsi/ginkgo/internal/specrunner
 github.com/onsi/ginkgo/reporters/stenographer/support/go-isatty
-# github.com/onsi/gomega v1.5.0
+# github.com/onsi/gomega v1.6.0
 github.com/onsi/gomega
 github.com/onsi/gomega/gbytes
 github.com/onsi/gomega/gexec
@@ -43,11 +43,11 @@ github.com/onsi/gomega/matchers/support/goraph/bipartitegraph
 github.com/onsi/gomega/matchers/support/goraph/edge
 github.com/onsi/gomega/matchers/support/goraph/node
 github.com/onsi/gomega/matchers/support/goraph/util
-# golang.org/x/net v0.0.0-20190522155817-f3200d17e092
+# golang.org/x/net v0.0.0-20190813141303-74dc4d7220e7
 golang.org/x/net/html/charset
 golang.org/x/net/html
 golang.org/x/net/html/atom
-# golang.org/x/sys v0.0.0-20190526052359-791d8a0f4d09
+# golang.org/x/sys v0.0.0-20190825160603-fb81701db80f
 golang.org/x/sys/unix
 # golang.org/x/text v0.3.2
 golang.org/x/text/encoding
