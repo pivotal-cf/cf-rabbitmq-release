@@ -1,0 +1,60 @@
+name: cf-rabbitmq
+version: 267.3.0
+commit_hash: 13d14ed
+uncommitted_changes: false
+jobs:
+- name: rabbitmq-haproxy
+  version: 85aceb6bf5afdb9a0aa70f83dfbbb7b09c95293071b41ba96dad688fc9aa27ab
+  fingerprint: 85aceb6bf5afdb9a0aa70f83dfbbb7b09c95293071b41ba96dad688fc9aa27ab
+  sha1: sha256:e1bfbbad5ffa5abb766c34f64c2486d58356bd990bc8179d992b0861a583126f
+- name: rabbitmq-server
+  version: ba38fbb4bb94975d23d571010d0c11aac700c2dc0b1e63e8bca8c6b280af6f6e
+  fingerprint: ba38fbb4bb94975d23d571010d0c11aac700c2dc0b1e63e8bca8c6b280af6f6e
+  sha1: sha256:b8619a91748e1ee62c71877dfa5ec2f5372909f84459d6cd68f6bfc0e6b20f56
+packages:
+- name: basht
+  version: 7079f05c64eaa4f8fb9985a514bf3290d270f921fa3b9cf6e1bf9f70a664e793
+  fingerprint: 7079f05c64eaa4f8fb9985a514bf3290d270f921fa3b9cf6e1bf9f70a664e793
+  sha1: sha256:9f6a1e10e91d6897982cc26fdca9cb302984fbb4e7bcb01f0c16cda7610fdaf2
+  dependencies: []
+- name: erlang
+  version: 5820c2b7c9de5a09aad3d547a455985f129a9e7d2f3a60936dba40db7ab777c7
+  fingerprint: 5820c2b7c9de5a09aad3d547a455985f129a9e7d2f3a60936dba40db7ab777c7
+  sha1: sha256:b44214450493a9c791b2658331b8e548e70d8c258c6bd4348b84dbbfde75d1ab
+  dependencies: []
+- name: golang
+  version: 08a68fd35c218784af306bb63dea3fd7ef164f1e78bf0846580ed79aa52e19ce
+  fingerprint: 08a68fd35c218784af306bb63dea3fd7ef164f1e78bf0846580ed79aa52e19ce
+  sha1: sha256:dba1f4132a1c8acf59793f3a37ed0a58b432b464f4ce708bc02c89cd10f51d0d
+  dependencies: []
+- name: haproxy
+  version: c11c986935fc7b204f7c046b07229e865c70f7bd76ecf56222d39e689ac1e17b
+  fingerprint: c11c986935fc7b204f7c046b07229e865c70f7bd76ecf56222d39e689ac1e17b
+  sha1: sha256:358a5b7d3f7fc417bd512848c0b5b36d5b7aa657f06277ce9f7081209e7f85ec
+  dependencies: []
+- name: rabbitmq-admin
+  version: b5b8760c9110dfb917105a9bcbd3c871d8a72706492e64d02aaa3ca068ae039e
+  fingerprint: b5b8760c9110dfb917105a9bcbd3c871d8a72706492e64d02aaa3ca068ae039e
+  sha1: sha256:c9413c63965c3227262db8a88fec34804f54415064d025048919e6fd8df1caa8
+  dependencies:
+  - golang
+- name: rabbitmq-common
+  version: c7b701f8368c5f7d76569d43187eeed4bb32513e071a4cd3964bf62f04cc2dbb
+  fingerprint: c7b701f8368c5f7d76569d43187eeed4bb32513e071a4cd3964bf62f04cc2dbb
+  sha1: sha256:391c2bec3eedfe4bb7cfaeef61c034bc5f02269545d003ae4605f394258ed5ee
+  dependencies: []
+- name: rabbitmq-server-3.7
+  version: e74bde74ca1c09379b88d839665d918f59061626b5839532e8d85f5a3f90de28
+  fingerprint: e74bde74ca1c09379b88d839665d918f59061626b5839532e8d85f5a3f90de28
+  sha1: sha256:533757e9a0209f4c56bdbb021d8cd97d89759e337b05b3a9153df2d6dc3eb3c7
+  dependencies: []
+- name: rabbitmq-upgrade-preparation
+  version: dbb23da0fb8c705f5c5748b31004163a58f7a4c089f7c1f57a5e2e11e4677efd
+  fingerprint: dbb23da0fb8c705f5c5748b31004163a58f7a4c089f7c1f57a5e2e11e4677efd
+  sha1: sha256:c74f2b1ce1c6b269a416a548073e940f76e53175cc4dc41e4e803770c1d53f06
+  dependencies:
+  - golang
+license:
+  version: a15ad8054f690c010fa3465e0926350d26338d6e40645b94c592d26c65afc810
+  fingerprint: a15ad8054f690c010fa3465e0926350d26338d6e40645b94c592d26c65afc810
+  sha1: sha256:53311649b0cc714e4631a04eb4b678724db8afd3c4c8f774163adf62ebdf836a
