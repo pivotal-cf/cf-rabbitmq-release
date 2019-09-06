@@ -4,6 +4,7 @@ name: rabbitmq-server
 packages:
 - erlang
 - rabbitmq-server-3.7
+- rabbitmq-server-3.8-alpha
 - rabbitmq-common
 - rabbitmq-upgrade-preparation
 - rabbitmq-admin
