@@ -1,9 +1,9 @@
 ---
 name: rabbitmq-server-3.8-alpha
 metadata:
-  version: 3.8.0-alpha.864
+  version: 3.8.0-alpha.867
 files:
-- rabbitmq-server-3.8-alpha/rabbitmq-server-generic-unix-3.8.0-alpha.864.tar.xz
+- rabbitmq-server-3.8-alpha/rabbitmq-server-generic-unix-3.8.0-alpha.867.tar.xz
 - rabbitmq-server/rabbitmq-script-wrapper
 - rabbitmq-server/rabbitmq-defaults
 dependencies: []
