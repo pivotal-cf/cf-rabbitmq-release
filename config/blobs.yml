@@ -3,10 +3,10 @@ basht/basht_0.1.0_Linux_x86_64.tgz:
   size: 757703
   object_id: bbc2200b-670b-4562-72db-27ce98bc3161
   sha: 5dee8d242fc333672e14d9e1d70162b77eab5924
-erlang/otp_src_oss_21.3.8.6.tgz:
-  size: 55208469
-  object_id: e48afa4a-9ad6-47b5-49c7-f5264efac199
-  sha: sha256:824c95ec6753fcfc053d5a5dd753a85f2edb421898ffebd435189456b2b602f3
+erlang/otp_src_oss_21.3.8.7.tgz:
+  size: 55209290
+  object_id: 686f00ac-bd05-4d7b-6242-0d37677f499c
+  sha: sha256:545ca3aa3684a9b68ff124a599e8ae7137e856d0692f8bc044a1e0fa33886e49
 golang/go1.12.9.linux-amd64.tar.gz:
   size: 127961523
   object_id: 42bff6f3-3d54-4980-7f12-77c1a6428be1
