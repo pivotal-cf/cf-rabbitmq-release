@@ -3,6 +3,10 @@ basht/basht_0.1.0_Linux_x86_64.tgz:
   size: 757703
   object_id: bbc2200b-670b-4562-72db-27ce98bc3161
   sha: 5dee8d242fc333672e14d9e1d70162b77eab5924
+erlang-20/otp_src_oss_20.3.8.22.tgz:
+  size: 54686156
+  object_id: 67a18d70-d849-4817-4a84-951a4bc7085b
+  sha: sha256:f6f19c8a2ecc2e968abed536fe9be40d775b82c87327e0e948a81cfdb02f32ae
 erlang-21/otp_src_oss_21.3.8.6.tgz:
   size: 55208469
   object_id: e48afa4a-9ad6-47b5-49c7-f5264efac199
