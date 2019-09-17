@@ -1,7 +1,7 @@
 ---
-name: erlang
+name: erlang-21
 metadata:
   version: 21.3.8.6
 files:
-- erlang/otp_src_oss_21.3.8.6.tgz
+- erlang-21/otp_src_oss_21.3.8.6.tgz
 dependencies: []

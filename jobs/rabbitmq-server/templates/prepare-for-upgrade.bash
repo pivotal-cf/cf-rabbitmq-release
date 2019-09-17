@@ -16,9 +16,10 @@ _run_rabbitmq_upgrade_preparation_on_every_node() {
 
   local remote_nodes remote_node new_rabbitmq_version new_erlang_version rmq_server_package
   rmq_server_package="$1"
+  erlang_package="$1"
   remote_nodes=($(cat /var/vcap/data/upgrade_preparation_nodes))
   new_rabbitmq_version="$(cat "${rmq_server_package}/rmq_version")"
-  new_erlang_version="$(cat "${rmq_server_package}/erlang_version")"
+  new_erlang_version="$(cat "${erlang_package}/erlang_version")"
 
   for remote_node in "${remote_nodes[@]}" ; do
     "$UPGRADE_PREPARATION_BINARY" \
@@ -33,7 +34,7 @@ _run_rabbitmq_upgrade_preparation_on_every_node() {
 _prepare_for_upgrade () {
   if [ -z "$SKIP_PREPARE_FOR_UPGRADE" ]
   then
-    _run_rabbitmq_upgrade_preparation_on_every_node "$1"
+    _run_rabbitmq_upgrade_preparation_on_every_node "$1" "$2"
   fi
 }
 
@@ -54,14 +55,13 @@ run_rabbitmq_upgrade_preparation_shutdown_cluster_if_cookie_changed () {
 }
 
 run_prepare_for_upgrade_when_first_deploy() {
-  local mnesia_dir
-  local rmq_server_dir
-  mnesia_dir="${1:?mnesia_dir must be provided as first argument}"
-  rmq_server_dir="${2:?rmq_server_dir must be provided as second argument}"
+  local mnesia_dir="${1:?mnesia_dir must be provided as first argument}"
+  local rmq_server_dir="${2:?rmq_server_dir must be provided as second argument}"
+  local erlang_dir="${3:?erlang_dir must be provided as third argument}"
 
-  if [ -d "$mnesia_dir" ] && [ -d "$rmq_server_dir" ]
+  if [ -d "$mnesia_dir" ] && [ -d "$rmq_server_dir" ] && [ -d "$erlang_dir" ]
   then
-    _prepare_for_upgrade "$rmq_server_dir"
+    _prepare_for_upgrade "$rmq_server_dir" "$erlang_dir"
   fi
 }
 

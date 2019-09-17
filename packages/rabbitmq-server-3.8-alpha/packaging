@@ -4,11 +4,9 @@ set -e
 
 RMQ_VERSION="3.8.0-rc.1"
 RMQ_VERSION_SEMVER="3.8.0"
-ERLANG_VERSION="21.3"
 RABBITMQ_SERVER_PATH="rabbitmq-server-3.8-alpha"
 
 echo "$RMQ_VERSION_SEMVER" > "$BOSH_INSTALL_TARGET/rmq_version"
-echo "$ERLANG_VERSION" > "$BOSH_INSTALL_TARGET/erlang_version"
 
 tar xf "${RABBITMQ_SERVER_PATH}/rabbitmq-server-generic-unix-$RMQ_VERSION.tar.xz"
 
