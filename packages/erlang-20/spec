@@ -1,0 +1,7 @@
+---
+name: erlang-20
+metadata:
+  version: 20.3.8.22
+files:
+- erlang-20/otp_src_oss_20.3.8.22.tgz
+dependencies: []

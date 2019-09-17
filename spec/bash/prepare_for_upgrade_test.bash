@@ -21,6 +21,14 @@ T_when_rmq_server_package_dir_not_provided_it_fails() {
   $T_fail
 }
 
+T_when_erlang_package_dir_not_provided_it_fails() {
+  local mnesia_dir="$(mktemp -d)"
+  local rmq_server_dir="$(mktemp -d)"
+
+  expect_to_contain "$(run_prepare_for_upgrade_when_first_deploy "$mnesia_dir" "$rmq_server_dir" 2>&1)" "erlang_dir must be provided as third argument" ||
+  $T_fail
+}
+
 T_when_mnesia_dir_exists_it_runs_prepare_for_upgrade() {
   (
     _prepare_for_upgrade() {
@@ -28,8 +36,9 @@ T_when_mnesia_dir_exists_it_runs_prepare_for_upgrade() {
     }
     mnesia_dir="$PWD"
     rmq_server_dir="$(mktemp -d)"
+    erlang_dir="$(mktemp -d)"
 
-    [ "$(run_prepare_for_upgrade_when_first_deploy "$mnesia_dir" "$rmq_server_dir")" = "running prepare for upgrade..." ]
+    [ "$(run_prepare_for_upgrade_when_first_deploy "$mnesia_dir" "$rmq_server_dir" "$erlang_dir")" = "running prepare for upgrade..." ]
   ) || $T_fail "prepare_for_upgrade did not run"
 }
 
@@ -40,8 +49,9 @@ T_when_mnesia_dir_does_not_exist_it_does_not_run_prepare_for_upgrade() {
     }
     mnesia_dir="/i_do_not_exist"
     rmq_server_dir="$(mktemp -d)"
+    erlang_dir="$(mktemp -d)"
 
-    [ "$(run_prepare_for_upgrade_when_first_deploy "$mnesia_dir" "$rmq_server_dir")" != "running prepare for upgrade..." ]
+    [ "$(run_prepare_for_upgrade_when_first_deploy "$mnesia_dir" "$rmq_server_dir" "$erlang_dir")" != "running prepare for upgrade..." ]
   ) || $T_fail "prepare_for_upgrade ran"
 }
 

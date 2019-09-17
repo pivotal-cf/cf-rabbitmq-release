@@ -72,10 +72,17 @@ configure_rmq_version() {
   echo "/var/vcap/packages/rabbitmq-server"
 }
 
+configure_erlang_version() {
+  rm -rf /var/vcap/packages/erlang
+  ln -s /var/vcap/packages/erlang-"$ERLANG_MAJOR_VERSION" /var/vcap/packages/erlang
+  echo "/var/vcap/packages/erlang"
+}
+
 setup_erl_inetrc() {
   . /var/vcap/jobs/rabbitmq-server/lib/rabbitmq-config-vars.bash
 
   configure_rmq_version
+  configure_erlang_version
 
   # Unfortunate tight coupling. Beware.
   # We need this for CONF_ENV_FILE, HOME, ERL_INETRC, and for MNESIA_BASE

@@ -26,11 +26,13 @@
   end
 
   rmq_server_version = p('rabbitmq-server.version')
+  erlang_major_version = p('rabbitmq-server.erlang_major_version')
 %>
 
 export JOB_IP=<%= job_ip %>
 export SELF_NODE="rabbit@<%= job_ip_md5 %>"
 export RABBITMQ_NODES_STRING="<%= nodes %>"
 export ERLANG_COOKIE="<%= cookie %>"
+export ERLANG_MAJOR_VERSION='<%= erlang_major_version %>'
 export ERL_INETRC_HOSTS='<%= inetrc_hosts %>'
 export RMQ_SERVER_VERSION='<%= rmq_server_version %>'
