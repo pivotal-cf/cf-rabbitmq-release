@@ -4,23 +4,30 @@ require 'zlib'
 require 'yaml'
 require 'httparty'
 
+def list_blobs
+  blobs = YAML.load_file('config/blobs.yml')
+  blobs.select { |key| key.match('(erlang-\d+\/otp)') }.keys
+end
+
 RSpec.describe 'OSS Compliance', run_compliance_tests: true do
+  list_blobs.each do |version|
 
-  describe 'Erlang blob compliance' do
-    before :all do
-      @blob_path = fetch_blob("erlang\/otp")
-    end
+    describe "Erlang blob compliance #{version}" do
+      before :all do
+        @blob_path = fetch_blob(version)
+      end
 
-    it 'should not contain proper/proper_common.hrl' do
-      expect(blob_contains(@blob_path, "proper\/proper_common.hrl")).to be(false)
-    end
+      it 'should not contain proper/proper_common.hrl' do
+        expect(blob_contains(@blob_path, "proper\/proper_common.hrl")).to be(false)
+      end
 
-    it 'should not contain ewgi/ewgi.hrl' do
-      expect(blob_contains(@blob_path, "ewgi\/ewgi.hrl")).to be(false)
-    end
+      it 'should not contain ewgi/ewgi.hrl' do
+        expect(blob_contains(@blob_path, "ewgi\/ewgi.hrl")).to be(false)
+      end
 
-    it 'should not contain ewgi2/ewgi.hrl' do
-      expect(blob_contains(@blob_path, "ewgi2\/ewgi.hrl")).to be(false)
+      it 'should not contain ewgi2/ewgi.hrl' do
+        expect(blob_contains(@blob_path, "ewgi2\/ewgi.hrl")).to be(false)
+      end
     end
   end
 end
