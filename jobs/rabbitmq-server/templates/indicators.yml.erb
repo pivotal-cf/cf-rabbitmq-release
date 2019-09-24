@@ -1,15 +1,20 @@
 ---
-apiVersion: v0
-product:
-  name: cf-rabbitmq
-  version: latest
+apiVersion: indicatorprotocol.io/v1
+kind: IndicatorDocument
 
 metadata:
-  source_id: <%= spec.deployment.include?("service-instance") ? spec.deployment.split("_")[1] : "p-rabbitmq" %>
-  deployment: <%= spec.deployment.include?("service-instance") ? spec.deployment : "cf-rabbitmq" %>
-  expected_number_of_nodes: <%= link('rabbitmq-server').instances.size %>
+  labels:
+    source_id: <%= spec.deployment.include?("service-instance") ? spec.deployment.split("_")[1]: "p-rabbitmq" %>
+    deployment: <%= spec.deployment.include?("service-instance") ? spec.deployment: "cf-rabbitmq" %>
+    expected_number_of_nodes: <%= link('rabbitmq-server').instances.size %>
+    component: rabbitmq-server
 
-indicators:
+spec:
+  product:
+    name: cf-rabbitmq
+    version: latest
+
+  indicators:
   - name: channels_count
     promql: _p_rabbitmq_rabbitmq_channels_count{source_id="$source_id", deployment="$deployment"}
     documentation:
@@ -31,13 +36,15 @@ indicators:
   - name: erlang_processes
     promql: _p_rabbitmq_rabbitmq_erlang_erlang_processes{source_id="$source_id", deployment="$deployment"}
     thresholds:
-      - level: critical
-        gt: 950000
-      - level: warning
-        gt: 900000
+    - level: critical
+      operator: gt
+      value: 950000
+    - level: warning
+      operator: gt
+      value: 900000
     documentation:
       title: Erlang Processes
-      description: The number of erlang processes consumed by RabbitMQ, which runs on an Erlang VM. This is the key indicator of the processing capability of a cluster. 
+      description: The number of erlang processes consumed by RabbitMQ, which runs on an Erlang VM. This is the key indicator of the processing capability of a cluster.
       frequency: 30 s (default), 10 s (configurable minimum)
       threhold_note: The defalut Erlang process limit in RabbitMQ for PCF v1.6 and later is 1,048,816.
       recommended_response: If this metric meets or exceeds the recommended thresholds for extended periods of time, consider scaling the RabbitMQ nodes in the tile Resource Config pane.
@@ -45,8 +52,9 @@ indicators:
   - name: reachable_nodes
     promql: _p_rabbitmq_rabbitmq_erlang_reachable_nodes{source_id="$source_id",deployment="$deployment"}
     thresholds:
-      - level: critical
-        neq: $expected_number_of_nodes
+    - level: critical
+      operator: neq
+      value: $expected_number_of_nodes
     documentation:
       title: Reachable Nodes
       description: The number of nodes the current cluster can reach
@@ -60,8 +68,9 @@ indicators:
   - name: heartbeat
     promql: _p_rabbitmq_rabbitmq_heartbeat{source_id="$source_id", deployment="$deployment"}
     thresholds:
-      - level: critical
-        lt: 1
+    - level: critical
+      operator: lt
+      value: 1
     documentation:
       title: Server Heartbeat
       description: rabbitmq server `is alive` poll, which indicates if the component is available and able to respond to requests
@@ -156,10 +165,12 @@ indicators:
   - name: file_descriptors
     promql: _p_rabbitmq_rabbitmq_system_file_descriptors{source_id="$source_id", deployment="$deployment"}
     thresholds:
-      - level: critical
-        gt: 280000
-      - level: warning
-        gt: 250000
+    - level: critical
+      operator: gt
+      value: 280000
+    - level: warning
+      operator: gt
+      value: 250000
     documentation:
       title: File Descriptors
       description: Count of file descriptors consumed. If the number of file descriptors consumed becomes too large, the VM might lose the ability to perform disk IO, which can cause data loss. Note, This assumes non-persistent messages are handled by retries or some other logic by the producers.
@@ -176,8 +187,9 @@ indicators:
   - name: system_memory_alarm
     promql: _p_rabbitmq_rabbitmq_system_mem_alarm{source_id="$source_id", deployment="$deployment"}
     thresholds:
-      - level: critical
-        gt: 0
+    - level: critical
+      operator: gt
+      value: 0
     documentation:
       title: System Memory Alarm
       description: Indicates if the memory alarm went off
@@ -191,8 +203,9 @@ indicators:
   - name: disk_free_alarm
     promql: _p_rabbitmq_rabbitmq_system_disk_free_alarm{source_id="$source_id", deployment="$deployment"}
     thresholds:
-      - level: critical
-        gt: 0
+    - level: critical
+      operator: gt
+      value: 0
     documentation:
       title: Disk Free Alarm
       description: Indicates if the disk free alarm went off
