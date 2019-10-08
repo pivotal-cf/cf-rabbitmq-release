@@ -11,10 +11,10 @@ erlang-21/otp_src_oss_21.3.8.7.tgz:
   size: 55209598
   object_id: 29d514e3-13b9-480d-43db-96ee8f266689
   sha: sha256:2489f7270d9ed54f1717914d8d972717d2e0874bd8987a9120797a1b1b0ade66
-erlang-22/otp_src_oss_22.1.1.tgz:
-  size: 56202839
-  object_id: 4435deb1-2ad2-4a93-67e8-8e5019f0c3c1
-  sha: sha256:159a793ffa9a9197430407376a41673566c5450b3858248bc0bb0307e8c5acc8
+erlang-22/otp_src_oss_22.1.2.tgz:
+  size: 56204541
+  object_id: 98581e58-f427-461e-5c90-853628ca91a7
+  sha: sha256:f2a5b373d6f996e38bb42cb654d9500643b2d8c6c5e568b581760c79f761db07
 golang/go1.13.1.linux-amd64.tar.gz:
   size: 120040373
   object_id: 0b56091e-f1bd-4626-65e6-d7eff6e193bf
