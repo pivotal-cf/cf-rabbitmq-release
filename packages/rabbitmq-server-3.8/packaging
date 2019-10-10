@@ -2,7 +2,7 @@
 
 set -e
 
-RMQ_VERSION="3.8.0-rc.3"
+RMQ_VERSION="3.8.0"
 RMQ_VERSION_SEMVER="3.8.0"
 RABBITMQ_SERVER_PATH="rabbitmq-server-3.8"
 
