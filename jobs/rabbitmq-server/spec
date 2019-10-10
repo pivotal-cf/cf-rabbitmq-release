@@ -6,7 +6,7 @@ packages:
 - erlang-21
 - erlang-22
 - rabbitmq-server-3.7
-- rabbitmq-server-3.8-alpha
+- rabbitmq-server-3.8
 - rabbitmq-common
 - rabbitmq-upgrade-preparation
 - rabbitmq-admin
