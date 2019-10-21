@@ -7,10 +7,10 @@ erlang-20/otp_src_oss_20.3.8.23.tgz:
   size: 54687816
   object_id: 52ff0e68-5df2-488d-6e13-ff71010caf40
   sha: sha256:b80e128e137843fcfd9eee44d7efb1fdab4307e769b725c6d5b412c31d1a119b
-erlang-21/otp_src_oss_21.3.8.8.tgz:
-  size: 55214764
-  object_id: e0d56d2d-daca-4288-77cd-2d5072d03f22
-  sha: sha256:8d3c90cd805344318d91ad6879c44ada372ccf346d556e5ad9676bbd73213496
+erlang-21/otp_src_oss_21.3.8.9.tgz:
+  size: 55207142
+  object_id: be3c5e99-fded-4817-6974-c5c16edd97a7
+  sha: sha256:9102fe9d89d9bb04a4ec861e0211da52bf2cf38a175b57462e3d86b0bec12446
 erlang-22/otp_src_oss_22.1.3.tgz:
   size: 56207643
   object_id: 1e00ea0a-8c68-4edf-4d22-952caaf0de4b
