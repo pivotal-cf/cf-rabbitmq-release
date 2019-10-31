@@ -2,7 +2,6 @@
 ---
 name: rabbitmq-server
 packages:
-- erlang-20
 - erlang-21
 - erlang-22
 - rabbitmq-server-3.7
