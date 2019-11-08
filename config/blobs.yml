@@ -11,18 +11,20 @@ erlang-22/otp_src_oss_22.1.6.tgz:
   size: 56218510
   object_id: 344cb3fb-7ba2-49b5-563c-58f8ca956a60
   sha: sha256:ba6fa528569d17aa46835728b5f6196a6718d6ed515723b00799cc97e10ed608
+# Comment to prevent git conflicts in package-bumper pipeline
 golang/go1.13.4.linux-amd64.tar.gz:
   size: 120054682
   object_id: badf2520-20b7-4290-47bc-52ab4407d3f0
   sha: sha256:692d17071736f74be04a72a06dab9cac1cd759377bd85316e52b2227604c004c
+# Comment to prevent git conflicts in package-bumper pipeline
 haproxy/haproxy-1.8.22.tar.gz:
   size: 2100471
   object_id: 146b3d07-897f-44b9-6ad8-59ce5bff0551
   sha: sha256:7be245cdbc3fff9365af1df1c13fdff768fb7f9c4363e7daa52c315ec20dc1f8
-rabbitmq-server-3.7/rabbitmq-server-generic-unix-3.7.20.tar.xz:
-  size: 10051972
-  object_id: 5acbc636-15de-4196-7a75-5602358c039c
-  sha: sha256:4db50b4587fc0cd8b1c15752efa3f72f78527a14a60fd9133be7a629a0249800
+rabbitmq-server-3.7/rabbitmq-server-generic-unix-3.7.21.tar.xz:
+  size: 10054132
+  object_id: e6980339-e805-4c37-5b7a-d4aab9792e78
+  sha: sha256:ef9a944f965393cb16c983d5dd6a7337c6aca77efbe89683e9ef37fab9d421a2
 rabbitmq-server-3.8/rabbitmq-server-generic-unix-3.8.0.tar.xz:
   size: 11588100
   object_id: 4d3012ea-f9e7-484a-7a84-d05c57a9d7f0
