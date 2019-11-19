@@ -5,10 +5,10 @@ basht/basht_0.1.0_Linux_x86_64.tgz:
   object_id: bbc2200b-670b-4562-72db-27ce98bc3161
   sha: 5dee8d242fc333672e14d9e1d70162b77eab5924
 # this comment prevents git conflicts
-erlang-21/otp_src_oss_21.3.8.10.tgz:
-  size: 55217381
-  object_id: c3224b35-0a54-4458-70c9-9f8df2a6b6c8
-  sha: sha256:49d87375a0b85d859610844160dd6c8c0b5b6c203c63c8d2e0dab0b2bdd63984
+erlang-21/otp_src_oss_21.3.8.11.tgz:
+  size: 55225208
+  object_id: 02bb8511-8560-480c-415d-98b101d28bff
+  sha: sha256:0effce4bc95b138aa9f1b0f58d3dff080a813715c94d81f37e72036494f38e14
 # this comment prevents git conflicts
 erlang-22/otp_src_oss_22.1.7.tgz:
   size: 56222559
