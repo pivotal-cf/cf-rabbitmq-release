@@ -54,7 +54,7 @@ spec:
       thresholds:
         - level: critical
           operator: neq
-          value: $expected_number_of_nodes
+          value: <%= link('rabbitmq-server').instances.size %>
       documentation:
         title: Reachable Nodes
         description: The number of nodes the current cluster can reach
