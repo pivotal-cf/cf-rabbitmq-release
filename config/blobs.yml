@@ -15,10 +15,10 @@ erlang-22/otp_src_oss_22.1.8.tgz:
   object_id: 3b6c1aff-8318-4287-7558-d4d83614a3e8
   sha: sha256:757fb1ca89937dd9f950e10a4aafdf5a3498a6a15366fc5dea23e997c51c7586
 # this comment prevents git conflicts
-golang/go1.13.4.linux-amd64.tar.gz:
-  size: 120054682
-  object_id: badf2520-20b7-4290-47bc-52ab4407d3f0
-  sha: sha256:692d17071736f74be04a72a06dab9cac1cd759377bd85316e52b2227604c004c
+golang/go1.13.5.linux-amd64.tar.gz:
+  size: 120074076
+  object_id: d32d15d3-1de5-4dfd-692c-e8267085b3d8
+  sha: sha256:512103d7ad296467814a6e3f635631bd35574cab3369a97a323c9a585ccaa569
 # this comment prevents git conflicts
 haproxy/haproxy-1.8.23.tar.gz:
   size: 2101424
