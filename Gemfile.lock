@@ -78,6 +78,3 @@ DEPENDENCIES
   rspec-instafail
   rspec-retry
   stomp
-
-BUNDLED WITH
-   1.16.0
