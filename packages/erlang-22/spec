@@ -1,7 +1,7 @@
 ---
 name: erlang-22
 metadata:
-  version: 22.2.4
+  version: 22.2.5
 files:
-- erlang-22/otp_src_oss_22.2.4.tgz
+- erlang-22/otp_src_oss_22.2.5.tgz
 dependencies: []
