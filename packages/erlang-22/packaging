@@ -2,7 +2,7 @@ set -e
 
 export HOME=${BOSH_INSTALL_DIR}
 
-VERSION="22.2.6"
+VERSION="22.2.7"
 MAJOR_VERSION="22"
 echo "$MAJOR_VERSION" > "$BOSH_INSTALL_TARGET/erlang_version"
 
