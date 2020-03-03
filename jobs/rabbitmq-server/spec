@@ -106,6 +106,7 @@ templates:
   kill-with-fire.bash:                      bin/kill-with-fire
   node-check.bash.erb:                      bin/node-check
   plugins.sh.erb:                           bin/plugins.sh
+  post-start.bash:                          bin/post-start
   post-deploy.bash:                         bin/post-deploy
   pre-start.bash:                           bin/pre-start
   rabbitmq-server.init.bash:                bin/rabbitmq-server.init

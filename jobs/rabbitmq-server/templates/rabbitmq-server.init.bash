@@ -50,51 +50,6 @@ write_log() {
   echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ"): $*"
 }
 
-remove_pid() {
-    rm -f "${PID_FILE}"
-}
-
-delete_guest() {
-    set +e
-    "${CONTROL}" delete_user guest >> "${STARTUP_LOG}" 2>&1
-    set -e
-}
-
-grant_permissions_for_all_vhosts() {
-    set +e
-    username=$1
-
-    VHOSTS=$(${CONTROL} list_vhosts | tail -n +2)
-    for vhost in $VHOSTS
-    do
-    "${CONTROL}" set_permissions -p "$vhost" "$username" ".*" ".*" ".*"  >> "${STARTUP_LOG}" 2>&1
-    done
-    true
-    set -e
-}
-
-create_operator_admin() {
-  if [ -n "$RMQ_OPERATOR_USERNAME" ]
-  then
-    echo "$RMQ_OPERATOR_USERNAME" > $OPERATOR_USERNAME_FILE
-    create_admin "$RMQ_OPERATOR_USERNAME" "$RMQ_OPERATOR_PASSWORD"
-  fi
-}
-
-create_admin() {
-    username=$1
-    password=$2
-
-    set +e
-    {
-      "${CONTROL}" add_user "$username" "$password"
-      "${CONTROL}" change_password "$username" "$password"
-      "${CONTROL}" set_user_tags "$username" administrator
-    } >> "${STARTUP_LOG}" 2>&1
-    grant_permissions_for_all_vhosts "$username"
-    set -e
-}
-
 delete_operator_admin() {
   set +e
   USERNAME=$(cat $OPERATOR_USERNAME_FILE)
@@ -166,49 +121,7 @@ start_rabbitmq () {
             >> "${STARTUP_LOG}" \
             2>> "${STARTUP_ERR_LOG}" \
             0<&- &
-
-        RETVAL="$(wait_for_rabbitmq_application_to_start)"
-        case "$RETVAL" in
-            0)
-                if ! /var/vcap/jobs/rabbitmq-server/bin/node-check "rabbitmq-server.init"
-                then
-                  signal_monit_that_rabbitmq_node_is_not_healthy
-                  return
-                fi
-
-                <% if spec.bootstrap %>
-                  configure_users
-                <% end %>
-
-                if ! /var/vcap/jobs/rabbitmq-server/bin/cluster-check "rabbitmq-server.init"
-                then
-                  write_log "RabbitMQ cluster is not healthy"
-                  remove_pid
-                  RETVAL=1
-                  return
-                fi
-
-                write_log "RabbitMQ cluster is healthy"
-
-                ;;
-            *)
-                write_log "RabbitMQ application failed to start while waiting for cluster to form"
-                remove_pid
-                RETVAL=1
-                ;;
-        esac
-
-        write_log "RabbitMQ node started successfully."
     fi
-}
-
-configure_users() {
-  write_log "Configuring RabbitMQ users ..."
-
-  delete_guest
-  [ -f $OPERATOR_USERNAME_FILE ] && delete_operator_admin
-  create_operator_admin
-  create_admin "$RMQ_BROKER_USERNAME" "$RMQ_BROKER_PASSWORD"
 }
 
 signal_monit_that_rabbitmq_node_is_not_healthy() {
@@ -221,15 +134,6 @@ track_rabbitmq_erlang_vm_pid_in_pid_file() {
   export RUNNING_UNDER_SYSTEMD=true
 }
 
-wait_for_rabbitmq_application_to_start() {
-  local retval
-
-  set +e
-  "${CONTROL}" wait "${PID_FILE}" >> "${STARTUP_LOG}" 2>> "${STARTUP_ERR_LOG}"
-  retval="$?"
-  set -e
-  echo "$retval"
-}
 
 status_rabbitmq() {
     set +e
