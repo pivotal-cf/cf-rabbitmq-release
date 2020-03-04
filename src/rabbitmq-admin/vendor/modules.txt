@@ -41,7 +41,7 @@ github.com/onsi/gomega/types
 # github.com/vito/go-interact v1.0.0
 github.com/vito/go-interact/interact
 github.com/vito/go-interact/interact/terminal
-# golang.org/x/crypto v0.0.0-20200128174031-69ecbb4d6d5d
+# golang.org/x/crypto v0.0.0-20200220183623-bac4c82f6975
 golang.org/x/crypto/ssh/terminal
 # golang.org/x/net v0.0.0-20200202094626-16171245cfb2
 golang.org/x/net/html
