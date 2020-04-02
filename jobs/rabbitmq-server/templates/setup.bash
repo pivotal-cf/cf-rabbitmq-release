@@ -33,7 +33,7 @@ main(){
   local script_dir cluster_args load_definitions server_start_args
   script_dir="$(dirname "$0")"
 
-  cluster_args=$(create_cluster_args "${RABBITMQ_NODES_STRING}" "${DISK_ALARM_THRESHOLD}" "${CLUSTER_PARTITION_HANDLING}" "${HTTP_ACCESS_LOG_DIR}")
+  cluster_args=$(create_cluster_args "${RABBITMQ_NODES_STRING}" "${DISK_ALARM_THRESHOLD}" "${CLUSTER_PARTITION_HANDLING}" "${HTTP_ACCESS_LOG_DIR}" "${CLUSTER_NAME}")
   load_definitions=$(configure_load_definitions "${LOAD_DEFINITIONS}" "${script_dir}")
 
   if ${SSL_ENABLED:?must be set}
@@ -75,12 +75,13 @@ main(){
 }
 
 create_cluster_args() {
-  local cluster_args rabbitmq_nodes disk_alarm_threshold cluster_partition_handling http_access_log_dir
+  local cluster_args rabbitmq_nodes disk_alarm_threshold cluster_partition_handling http_access_log_dir cluster_name
 
   rabbitmq_nodes="$1"
   disk_alarm_threshold="$2"
   cluster_partition_handling="$3"
   http_access_log_dir="$4"
+  cluster_name="$5"
 
   # Modify the rabbitmq-env.conf to include the right NODENAME and SERVER_START_ARGS.
   #    SERVER_START_ARGS is appended to the Erlang VM command line, like so
@@ -102,6 +103,7 @@ create_cluster_args() {
   cluster_args="$cluster_args -rabbit halt_on_upgrade_failure false"
   cluster_args="$cluster_args -rabbitmq_mqtt subscription_ttl 1800000"
   cluster_args="$cluster_args -rabbitmq_management http_log_dir \"${http_access_log_dir}\""
+  cluster_args="$cluster_args -rabbit cluster_name \"${cluster_name}\""
 
   echo "$cluster_args"
 }

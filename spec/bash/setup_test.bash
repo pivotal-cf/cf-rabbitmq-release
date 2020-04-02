@@ -26,6 +26,7 @@ T_setup_environment() {
     SELF_NODE="my-node-name"
     RABBITMQ_NODES_STRING="node-1,node-2"
     LOAD_DEFINITIONS="my-definitions"
+    CLUSTER_NAME="RMQ4TAS-CLUSTER"
 
     SSL_ENABLED=true
     SSL_VERIFY=false
@@ -64,6 +65,7 @@ T_setup_environment() {
     expect_to_contain "$env" " -rabbitmq_management load_definitions"
     expect_to_contain "$env" " -rabbit tcp_listeners []"
     expect_to_contain "$env" " -rabbit ssl_listeners [5671]"
+    expect_to_contain "$env" " -rabbit cluster_name \"${CLUSTER_NAME}\""
     expect_to_contain "$env" "{verify,verify_none},"
 
     # SSL
