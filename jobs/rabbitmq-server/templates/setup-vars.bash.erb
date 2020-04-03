@@ -45,7 +45,9 @@ export LOAD_DEFINITIONS=""
 
 export CLUSTER_PARTITION_HANDLING="<%= p("rabbitmq-server.cluster_partition_handling") %>"
 export DISK_ALARM_THRESHOLD="<%= p("rabbitmq-server.disk_alarm_threshold") %>"
-export CLUSTER_NAME="<%= p("spec.deployment") %>"
-< if_p("rabbitmq-server.load_definitions") do |definitions| %>
+
+export CLUSTER_NAME="<%= spec.deployment %>"
+
+<% if_p("rabbitmq-server.load_definitions") do |definitions| %>
   export LOAD_DEFINITIONS="<%= definitions %>"
 <% end %>
