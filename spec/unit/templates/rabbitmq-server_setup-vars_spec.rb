@@ -1,3 +1,6 @@
+require 'spec_helper'
+require 'bosh/template/test'
+
 RSpec.describe 'setup-vars.bash file generation', template: true do
 
   let(:manifest_properties) do
@@ -12,6 +15,13 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
   let(:output) do
     compiled_template('rabbitmq-server', 'setup-vars.bash', manifest_properties).strip
   end
+
+  describe 'cluster name' do
+    it 'exports a variable with cluster name set do bosh deployment name' do
+      expect(output).to include 'export CLUSTER_NAME="p.rabbitmq-some-service-guid"'
+    end
+  end
+
 
   describe 'TLS configuration' do
     context 'when properties are not configured' do
