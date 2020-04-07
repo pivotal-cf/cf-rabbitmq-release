@@ -25,11 +25,6 @@ haproxy/haproxy-1.8.25.tar.gz:
   object_id: 47b0cf98-47e9-4c26-7aca-17f010ea99e4
   sha: sha256:62c0b77de2275a54a443a869947ddcca2bad7bdc1cafd804732a0e0d59b1708b
 # this comment prevents git conflicts
-rabbitmq-server-3.7/rabbitmq-server-generic-unix-3.7.24.tar.xz:
-  size: 10059652
-  object_id: a81b6146-7ec9-4281-5d31-49b79dfc71e6
-  sha: sha256:9c40440a2b66ca352c8d329acca1268a279729e7e237db1087291dad9400918a
-# this comment prevents git conflicts
 rabbitmq-server-3.8/rabbitmq-server-generic-unix-3.8.3.tar.xz:
   size: 11958032
   object_id: b8cef8eb-5090-4462-7b52-93a19be01789
