@@ -100,6 +100,7 @@ templates:
   cleanup-http-logs.bash:                   bin/cleanup-http-logs
   cluster-check.bash:                       bin/cluster-check
   drain.bash:                               bin/drain
+  pre-stop.bash:                            bin/pre-stop
   env.erb:                                  bin/env
   kill-with-fire.bash:                      bin/kill-with-fire
   node-check.bash.erb:                      bin/node-check

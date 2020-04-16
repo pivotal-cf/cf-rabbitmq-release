@@ -23,6 +23,7 @@ namespace :spec do
   desc 'runs basht unit tests'
   task :bash_unit do
     execute_cmd('./scripts/run-basht-tests')
+    execute_cmd('bats spec/bash/')
   end
 
   task :unit => [:bash_unit, :rspec_unit]
