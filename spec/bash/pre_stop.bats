@@ -22,7 +22,7 @@
  [[ "${lines[1]}" == *"Checking if node is quorum queue critical" ]]
  [[ "${lines[2]}" == *"Waiting for quorum queue critical node to sync" ]]
  [[ "${lines[3]}" == *"Waiting for quorum queue critical node to sync" ]]
- [[ "${lines[4]}" == *"Timed out waiting for quorum queue critical node to sync after more than 1 hour" ]]
+ [[ "${lines[4]}" == *"Timed out waiting for quorum queue critical node to sync after 3 seconds" ]]
 }
 
 @test "it calls the rabbitmq-diagnostics" {

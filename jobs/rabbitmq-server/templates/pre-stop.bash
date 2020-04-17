@@ -24,7 +24,7 @@ wait_for_queues_to_sync() {
     sleep $(( next_wait_time_secs++ ))
   done
   if [[ $next_wait_time_secs -gt "$number_of_requests" ]]; then
-    write_log "Timed out waiting for $queue_type queue critical node to sync after more than 1 hour"
+    write_log "Timed out waiting for $queue_type queue critical node to sync after $TOTAL_WAIT_TIME_SECS seconds"
     exit 1
   fi
 }
