@@ -10,14 +10,12 @@
 }
 
 @test "when waiting for queues to be synced times out, it returns exit code 1" {
- export WAIT_TIME_MAX=3
-
  bash() {
   return 2
  }
  export -f bash
 
- run jobs/rabbitmq-server/templates/pre-stop.bash
+ TOTAL_WAIT_TIME_SECS=3 run jobs/rabbitmq-server/templates/pre-stop.bash
 
  [ "$status" -eq 1 ]
  [[ "${lines[0]}" == *"Running pre-stop script" ]]
