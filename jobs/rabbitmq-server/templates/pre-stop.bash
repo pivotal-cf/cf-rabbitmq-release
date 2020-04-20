@@ -3,6 +3,10 @@
 set -eo pipefail
 [ -z "$DEBUG" ] || set -x
 
+export LANGUAGE="en_US.UTF-8"
+export LANG="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
+
 export PATH=/var/vcap/packages/erlang/bin:/var/vcap/packages/rabbitmq-server/bin:$PATH
 
 TOTAL_WAIT_TIME_SECS=${TOTAL_WAIT_TIME_SECS:-3600}
