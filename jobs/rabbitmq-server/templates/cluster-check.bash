@@ -34,12 +34,13 @@ write_log() {
   echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ"): $*"
 }
 
-# rabbitmq_application_is_running checks the health of the node to determine
-# whether the application is running. We assume if the application is not
-# running that the cluster is not healthy.
 rabbitmq_application_is_running() {
-  rabbitmqctl node_health_check ||
-  fail "RabbitMQ application is not running"
+  (
+    rabbitmq-diagnostics -q check_running &&
+    rabbitmq-diagnostics -q check_local_alarms &&
+    rabbitmq-diagnostics -q check_port_connectivity &&
+    rabbitmq-diagnostics -q check_virtual_hosts
+  ) || fail "RabbitMQ application is not running"
 }
 
 get_rmq_user() {
