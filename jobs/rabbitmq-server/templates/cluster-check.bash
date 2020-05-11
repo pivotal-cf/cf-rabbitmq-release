@@ -6,7 +6,7 @@ export PATH=/var/vcap/packages/erlang/bin/:/var/vcap/packages/rabbitmq-server/pr
 LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 
 main() {
-  rabbitmq_application_is_running
+  ensure_rabbitmq_startup_complete
 
   # rabbitmqctl hangs if run before application
   mapfile -s1 -t RMQ_USERS  < <( rabbitmqctl list_users )
@@ -34,12 +34,11 @@ write_log() {
   echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ"): $*"
 }
 
-# rabbitmq_application_is_running checks the health of the node to determine
-# whether the application is running. We assume if the application is not
-# running that the cluster is not healthy.
-rabbitmq_application_is_running() {
-  rabbitmqctl node_health_check ||
-  fail "RabbitMQ application is not running"
+ensure_rabbitmq_startup_complete() {
+  (
+    rabbitmq-diagnostics check_port_connectivity &&
+    rabbitmq-diagnostics check_virtual_hosts
+  ) || fail "RabbitMQ did not complete startup"
 }
 
 get_rmq_user() {
