@@ -6,7 +6,7 @@ export PATH=/var/vcap/packages/erlang/bin/:/var/vcap/packages/rabbitmq-server/pr
 LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 
 main() {
-  rabbitmq_application_is_running
+  ensure_rabbitmq_startup_complete
 
   # rabbitmqctl hangs if run before application
   mapfile -s1 -t RMQ_USERS  < <( rabbitmqctl list_users )
@@ -34,13 +34,11 @@ write_log() {
   echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ"): $*"
 }
 
-rabbitmq_application_is_running() {
+ensure_rabbitmq_startup_complete() {
   (
-    rabbitmq-diagnostics -q check_running &&
-    rabbitmq-diagnostics -q check_local_alarms &&
-    rabbitmq-diagnostics -q check_port_connectivity &&
-    rabbitmq-diagnostics -q check_virtual_hosts
-  ) || fail "RabbitMQ application is not running"
+    rabbitmq-diagnostics check_port_connectivity &&
+    rabbitmq-diagnostics check_virtual_hosts
+  ) || fail "RabbitMQ did not complete startup"
 }
 
 get_rmq_user() {
