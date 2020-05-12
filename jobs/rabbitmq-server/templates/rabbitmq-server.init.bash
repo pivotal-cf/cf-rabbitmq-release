@@ -40,8 +40,6 @@ RETVAL=0
 # shellcheck disable=SC1091
 [ -f "/var/vcap/store/rabbitmq/etc/default/rabbitmq-server" ] && . "/var/vcap/store/rabbitmq/etc/default/rabbitmq-server"
 # shellcheck disable=SC1091
-. /var/vcap/jobs/rabbitmq-server/etc/users
-# shellcheck disable=SC1091
 . /var/vcap/jobs/rabbitmq-server/etc/config
 # shellcheck disable=SC1091
 . /var/vcap/jobs/rabbitmq-server/lib/prepare-for-upgrade.bash
