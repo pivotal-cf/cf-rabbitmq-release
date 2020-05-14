@@ -2,7 +2,7 @@
 
 [ -z "$DEBUG" ] || set -x
 
-export PATH=/var/vcap/packages/erlang/bin/:/var/vcap/packages/rabbitmq-server/privbin/:$PATH
+export PATH=/var/vcap/packages/erlang/bin/:/var/vcap/packages/rabbitmq-server/bin/:$PATH
 LOG_DIR=/var/vcap/sys/log/rabbitmq-server
 
 main() {
