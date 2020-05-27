@@ -81,7 +81,7 @@ run_script_as_rabbitmq() {
 }
 
 exec_script_as_rabbitmq() {
-  HOME="$(cd ~rabbitmq && pwd)" exec "/usr/lib/rabbitmq/bin/$SCRIPT" "$@"
+  HOME="$RABBITMQ_HOME" exec "$PRIVBIN/$SCRIPT" "$@"
 }
 
 exec_script_as_root() {
