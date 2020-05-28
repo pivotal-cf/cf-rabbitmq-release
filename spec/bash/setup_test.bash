@@ -60,6 +60,7 @@ T_setup_environment() {
     expect_to_contain "$env" "RABBITMQ_MNESIA_DIR=/var/vcap/store/rabbitmq/mnesia/db"
     expect_to_contain "$env" "RABBITMQ_PLUGINS_EXPAND_DIR=/var/vcap/store/rabbitmq/mnesia/db-plugins-expand"
     expect_to_contain "$env" "NODENAME='my-node-name'"
+    expect_to_contain "$env" "RABBITMQ_NODENAME='my-node-name'"
     expect_to_contain "$env" "RABBITMQ_BOOT_MODULE=rabbit"
     expect_to_contain "$env" "CONFIG_FILE='"
     expect_to_contain "$env" " -rabbitmq_management load_definitions"
@@ -207,6 +208,7 @@ T_create_config_file() {
 
     expect_to_contain "$(<$dir/env)" "CONFIG_FILE='/path/to/script/dir/../etc/rabbitmq'"
     expect_to_contain "$(<$dir/env)" "NODENAME='node-1'"
+    expect_to_contain "$(<$dir/env)" "RABBITMQ_NODENAME='node-1'"
     expect_to_contain "$(<$dir/env)" "SERVER_START_ARGS='this-is-my-config'"
     expect_to_contain "$(<$dir/env)" "RABBITMQ_MNESIA_DIR=/var/vcap/store/rabbitmq/mnesia/db"
     expect_to_contain "$(<$dir/env)" "RABBITMQ_PLUGINS_EXPAND_DIR=/var/vcap/store/rabbitmq/mnesia/db-plugins-expand"
