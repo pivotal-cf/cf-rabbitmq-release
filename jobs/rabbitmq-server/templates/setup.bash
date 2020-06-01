@@ -21,6 +21,7 @@ HOME_DIR="/var/vcap/store/rabbitmq"
 HTTP_ACCESS_LOG_DIR="/var/vcap/sys/log/rabbitmq-server/management-ui"
 RABBITMQ_MNESIA_BASE="${HOME_DIR}/mnesia"
 RABBITMQ_MNESIA_DIR="${RABBITMQ_MNESIA_BASE}/db"
+RABBITMQ_QUORUM_DIR="${RABBITMQ_MNESIA_DIR}/quorum"
 RABBITMQ_PLUGINS_EXPAND_DIR="$RABBITMQ_MNESIA_BASE/db-plugins-expand"
 RABBITMQ_BOOT_MODULE="RABBITMQ_BOOT_MODULE=rabbit"
 RMQ_VERSION="3.6.12"
@@ -216,6 +217,7 @@ create_config_file() {
   printf "RABBITMQ_MNESIA_DIR=${RABBITMQ_MNESIA_DIR}\n" >> ${dir}/env
   printf "RABBITMQ_PLUGINS_EXPAND_DIR=${RABBITMQ_PLUGINS_EXPAND_DIR}\n" >> ${dir}/env
 
+  printf "RABBITMQ_QUORUM_DIR=${RABBITMQ_QUORUM_DIR=}\n" >> ${dir}/env
   printf "${suffix}\n" >> ${dir}/env
 
   if [[ "${conf_env_file}" != "" ]]; then
