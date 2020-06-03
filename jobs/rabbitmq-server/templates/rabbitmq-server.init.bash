@@ -120,7 +120,7 @@ start_rabbitmq () {
 
         RABBITMQ_NODENAME="$SELF_NODE" \
           RABBITMQ_LOG_BASE="$LOG_DIR" \
-          RABBITMQ_MNESIA_BASE=/var/vcap/store/rabbitmq/mnesia \
+          RABBITMQ_MNESIA_BASE="${HOME_DIR}/mnesia" \
           RABBITMQ_PID_FILE="${PID_FILE}" \
           "${START_PROG}" "${DAEMON}" \
             >> "${STARTUP_LOG}" \
