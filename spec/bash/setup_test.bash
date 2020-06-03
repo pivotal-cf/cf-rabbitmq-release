@@ -58,7 +58,6 @@ T_setup_environment() {
     expect_to_contain "$env" " -rabbitmq_mqtt subscription_ttl 1800000"
     expect_to_contain "$env" " -rabbitmq_management http_log_dir \"${HTTP_ACCESS_LOG_DIR}\""
     expect_to_contain "$env" "RABBITMQ_MNESIA_DIR=/var/vcap/store/rabbitmq/mnesia/db"
-    expect_to_contain "$env" "RABBITMQ_QUORUM_DIR=/var/vcap/store/rabbitmq/mnesia/db/quorum"
     expect_to_contain "$env" "RABBITMQ_PLUGINS_EXPAND_DIR=/var/vcap/store/rabbitmq/mnesia/db-plugins-expand"
     expect_to_contain "$env" "NODENAME='my-node-name'"
     expect_to_contain "$env" "RABBITMQ_NODENAME='my-node-name'"
@@ -212,7 +211,6 @@ T_create_config_file() {
     expect_to_contain "$(<$dir/env)" "RABBITMQ_NODENAME='node-1'"
     expect_to_contain "$(<$dir/env)" "SERVER_START_ARGS='this-is-my-config'"
     expect_to_contain "$(<$dir/env)" "RABBITMQ_MNESIA_DIR=/var/vcap/store/rabbitmq/mnesia/db"
-    expect_to_contain "$(<$dir/env)" "RABBITMQ_QUORUM_DIR=/var/vcap/store/rabbitmq/mnesia/db/quorum"
     expect_to_contain "$(<$dir/env)" "RABBITMQ_PLUGINS_EXPAND_DIR=/var/vcap/store/rabbitmq/mnesia/db-plugins-expand"
 
   ) || $T_fail "Failed to create conf_env file"
