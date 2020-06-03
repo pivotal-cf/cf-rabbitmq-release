@@ -115,7 +115,14 @@ start_rabbitmq () {
 
         write_log "Starting RabbitMQ"
         track_rabbitmq_erlang_vm_pid_in_pid_file
-        RABBITMQ_PID_FILE="${PID_FILE}" "${START_PROG}" "${DAEMON}" \
+
+        . "${JOB_DIR}/lib/rabbitmq-config-vars.bash"
+
+        RABBITMQ_NODENAME="$SELF_NODE" \
+        RABBITMQ_LOGS=- \
+          RABBITMQ_MNESIA_BASE=/var/vcap/store/rabbitmq/mnesia \
+          RABBITMQ_PID_FILE="${PID_FILE}" \
+          "${START_PROG}" "${DAEMON}" \
             >> "${STARTUP_LOG}" \
             2>> "${STARTUP_ERR_LOG}" \
             0<&- &
