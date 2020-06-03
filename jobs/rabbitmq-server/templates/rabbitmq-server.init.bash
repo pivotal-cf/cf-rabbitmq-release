@@ -119,7 +119,7 @@ start_rabbitmq () {
         . "${JOB_DIR}/lib/rabbitmq-config-vars.bash"
 
         RABBITMQ_NODENAME="$SELF_NODE" \
-        RABBITMQ_LOGS=- \
+          RABBITMQ_LOG_BASE="$LOG_DIR" \
           RABBITMQ_MNESIA_BASE=/var/vcap/store/rabbitmq/mnesia \
           RABBITMQ_PID_FILE="${PID_FILE}" \
           "${START_PROG}" "${DAEMON}" \
