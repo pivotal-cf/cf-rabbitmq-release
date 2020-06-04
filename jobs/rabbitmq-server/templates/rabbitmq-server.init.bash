@@ -118,7 +118,7 @@ start_rabbitmq () {
 
         . "${JOB_DIR}/lib/rabbitmq-config-vars.bash"
 
-        RABBITMQ_NODENAME="$SELF_NODE" \
+        RABBITMQ_CONF_ENV_FILE="${HOME_DIR}/etc/rabbitmq/rabbitmq-env.conf" \
           RABBITMQ_LOG_BASE="$LOG_DIR" \
           RABBITMQ_MNESIA_BASE="${HOME_DIR}/mnesia" \
           RABBITMQ_PID_FILE="${PID_FILE}" \
