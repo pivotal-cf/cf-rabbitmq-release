@@ -103,7 +103,7 @@ properties:
     default: ""
   rabbitmq-server.oauth.signing_key:
     description: "The public key (verification key) of the RSA key pair or the symmetric signing key used by UAA to sign the JWT token"
- rabbitmq-server.oauth.uaa_client_id:
+  rabbitmq-server.oauth.uaa_client_id:
     description: "The UAA client which presents a valid access_token acquired from UAA as the password in order to authenticate with RabbitMQ."
   rabbitmq-server.oauth.uaa_location:
     description: "UAA URL (e.g. http://localhost:8080/uaa)"
@@ -132,6 +132,7 @@ templates:
   management-cert.pem.erb:                  etc/management-cert.pem
   management-key.pem.erb:                   etc/management-key.pem
   rabbitmq.config.erb:                      etc/rabbitmq.config
+  rabbitmq-oauth.conf.erb:                  etc/rabbitmq-oauth.conf
   users.erb:                                etc/users
   delete_old_files.bash:                    lib/delete_old_files.bash
   prepare-for-upgrade.bash:                 lib/prepare-for-upgrade.bash
