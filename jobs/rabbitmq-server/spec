@@ -67,7 +67,7 @@ properties:
     description: "RabbitMQ admin password for operator"
 
   rabbitmq-server.config:
-    description: "RabbitMQ configuration (base64 encoded)"
+    description: "RabbitMQ configuration (base64 encoded). If this property is set, rabbitmq-server.load_definitions is ignored."
     default: "W10u" # base64 encoding of '[].'
 
   rabbitmq-server.erlang_major_version:
@@ -93,7 +93,7 @@ properties:
     default: false
 
   rabbitmq-server.load_definitions:
-    description: "Definitions to be loaded by RabbitMQ at startup"
+    description: "Definitions to be loaded by RabbitMQ at startup. If rabbitmq-server.config is set, this property is ignored."
 
 templates:
   add-rabbitmqctl-to-path.bash:             bin/add-rabbitmqctl-to-path
@@ -118,7 +118,8 @@ templates:
   management-cacert.pem.erb:                etc/management-cacert.pem
   management-cert.pem.erb:                  etc/management-cert.pem
   management-key.pem.erb:                   etc/management-key.pem
-  rabbitmq.config.erb:                      etc/rabbitmq.config
+  rabbitmq.config.erb:                      etc/rabbitmq.config # classic format
+  rabbitmq.conf.erb:                        etc/rabbitmq.conf   # new format
   users.erb:                                etc/users
   delete_old_files.bash:                    lib/delete_old_files.bash
   prepare-for-upgrade.bash:                 lib/prepare-for-upgrade.bash
