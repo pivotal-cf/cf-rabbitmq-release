@@ -19,7 +19,7 @@ RSpec.describe 'Configuration', template: true do
       }
     end
     it 'renders load_definition path' do
-      expect(rendered_template).to include("management.load_definitions = /var/vcap/jobs/rabbitmq-server/etc/definitions.json")
+      expect(rendered_template).to include("load_definitions = /var/vcap/jobs/rabbitmq-server/etc/definitions.json")
     end
   end
 
