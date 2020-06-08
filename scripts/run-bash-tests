@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+which basht 1>/dev/null 2>&1 || go get github.com/progrium/basht
+basht spec/bash/*_test.bash
+
+which bats 1>/dev/null 2>&1 || (
+  git clone https://github.com/bats-core/bats-core.git /tmp/bats-core
+  pushd /tmp/bats-core
+  sudo ./install.sh /usr/local
+  popd
+  rm -rf /tmp/bats-core
+)
+bats spec/bash/

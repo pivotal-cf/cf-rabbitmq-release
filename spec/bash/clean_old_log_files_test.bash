@@ -47,7 +47,7 @@ T_when_log_files_older_than_7_days_it_removes_them() {
     actual=$(find . -name "access.log.*")
 
     expect_to_equal "$actual" ""
-  ) || $T_fail
+    ) || ( $T_fail && return 1 )
 }
 
 T_when_log_files_younger_than_7_days_it_does_not_remove_them() {
@@ -66,7 +66,7 @@ T_when_log_files_younger_than_7_days_it_does_not_remove_them() {
     actual=$(find . -name "access.log.*")
 
     expect_to_equal "$actual" "$expected"
-  ) || $T_fail
+    ) || ( $T_fail && return 1 )
 }
 
 T_when_not_provided_a_path_it_should_error() {
@@ -75,7 +75,7 @@ T_when_not_provided_a_path_it_should_error() {
   actual=$(delete_old_files 2>&1)
   expected="first argument must be logs path"
 
-  expect_to_contain "$actual" "$expected" || $T_fail
+  expect_to_contain "$actual" "$expected" || ( $T_fail && return 1 )
 }
 
 T_when_provided_a_broken_path_it_should_error() {
@@ -84,5 +84,5 @@ T_when_provided_a_broken_path_it_should_error() {
   actual=$(delete_old_files /i_do_not_exist 2>&1)
   expected="logs path is not a directory"
 
-  expect_to_contain "$actual" "$expected" || $T_fail
+  expect_to_contain "$actual" "$expected" || ( $T_fail && return 1 )
 }

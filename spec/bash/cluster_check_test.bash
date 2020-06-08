@@ -40,21 +40,21 @@ T_ensure_rmq_user_is_admin_when_user_is_unknown() {
   (
     RMQ_USERS=( "${RMQ_USERS_WITH_GUEST[@]}" )
     ensure_rmq_user_is_admin 'no_user' && return 1 || return 0
-  ) || $T_fail 'Expected user guest to not be an admin'
+    ) || ( $T_fail 'Expected user guest to not be an admin' && return 1 )
 }
 
 T_ensure_rmq_user_is_admin_when_guest_is_not_admin() {
   (
     RMQ_USERS=( "${RMQ_USERS_WITH_GUEST[@]}" )
     ensure_rmq_user_is_admin 'guest' && return 1 || return 0
-  ) || $T_fail 'Expected user guest to not be an admin'
+    ) || ( $T_fail 'Expected user guest to not be an admin' && return 1 )
 }
 
 T_ensure_rmq_user_is_admin_when_broker_is_admin() {
   (
     RMQ_USERS=( "${RMQ_USERS_WITH_GUEST[@]}" )
     ensure_rmq_user_is_admin 'broker'
-  ) || $T_fail 'Expected user broker to be an admin'
+    ) || ( $T_fail 'Expected user broker to be an admin' && return 1 )
 }
 
 T_ensure_rmq_user_does_not_exist_when_guest_user_was_removed() {
@@ -62,7 +62,7 @@ T_ensure_rmq_user_does_not_exist_when_guest_user_was_removed() {
     # shellcheck disable=SC2034
     RMQ_USERS=( "${RMQ_USERS_WITHOUT_GUEST[@]}" )
     ensure_rmq_user_does_not_exist 'guest'
-  ) || $T_fail "Expected user guest to be absent in the list uof users"
+    ) || ( $T_fail "Expected user guest to be absent in the list uof users" && return 1 )
 }
 
 T_ensure_rmq_user_does_not_exist_when_guest_user_was_not_removed() {
@@ -70,7 +70,7 @@ T_ensure_rmq_user_does_not_exist_when_guest_user_was_not_removed() {
     # shellcheck disable=SC2034
     RMQ_USERS=( "${RMQ_USERS_WITH_GUEST[@]}" )
     ensure_rmq_user_does_not_exist 'guest' && return 1 || return 0
-  ) || $T_fail "Expected user guest in the list of users"
+    ) || ( $T_fail "Expected user guest in the list of users" && return 1 )
 }
 
 T_ensure_rmq_user_exists_when_user_was_not_removed() {
@@ -78,7 +78,7 @@ T_ensure_rmq_user_exists_when_user_was_not_removed() {
     # shellcheck disable=SC2034
     RMQ_USERS=( "${RMQ_USERS_WITH_GUEST[@]}" )
     ensure_rmq_user_exists 'guest'
-  ) || $T_fail 'Expected user guest to exist'
+    ) || ( $T_fail 'Expected user guest to exist' && return 1 )
 }
 
 T_ensure_rmq_user_exists_when_user_was_removed() {
@@ -86,5 +86,5 @@ T_ensure_rmq_user_exists_when_user_was_removed() {
     # shellcheck disable=SC2034
     RMQ_USERS=( "${RMQ_USERS_WITHOUT_GUEST[@]}" )
     ensure_rmq_user_exists 'guest' && return 1 || return 0
-  ) || $T_fail 'Expected user guest to not exist'
+    ) || ( $T_fail 'Expected user guest to not exist' && return 1 )
 }

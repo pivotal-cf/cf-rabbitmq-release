@@ -17,7 +17,7 @@ pushd src/rabbitmq-admin
 popd
 
 echo "Bash scripts"
-scripts/run-basht-tests
+scripts/run-bash-tests
 
 echo "Ruby unit tests"
 scripts/bundle-with-env rake spec:unit
