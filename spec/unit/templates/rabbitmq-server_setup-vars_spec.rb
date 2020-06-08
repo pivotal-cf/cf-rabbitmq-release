@@ -201,4 +201,10 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
       end
     end
   end
+
+  describe 'advanced_config_file' do
+    it 'sets advanced_config_file to the new advanced.config file' do
+      expect(output).to include 'advanced_config_file="/var/vcap/jobs/rabbitmq-server/etc/advanced.config"'
+    end
+  end
 end

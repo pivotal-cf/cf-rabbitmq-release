@@ -40,7 +40,7 @@ T_setup_environment() {
     ERLANG_COOKIE="my-awesome-cookie"
     VCAP_USER="$(id -u)"
     VCAP_GROUP="$(id -g)"
-
+    advanced_config_file="/var/vcap/jobs/rabbitmq-server/etc/advanced.config"
     UPGRADE_PREPARATION_NODES_FILE="$(mktemp)"
     trap "rm -rf ${UPGRADE_PREPARATION_NODES_FILE}" EXIT
 
@@ -64,6 +64,7 @@ T_setup_environment() {
     expect_to_contain "$env" "RABBITMQ_NODENAME='my-node-name'"
     expect_to_contain "$env" "RABBITMQ_BOOT_MODULE=rabbit"
     expect_to_contain "$env" "CONFIG_FILE="
+    expect_to_contain "$env" "ADVANCED_CONFIG_FILE=/var/vcap/jobs/rabbitmq-server/etc/advanced.config"
     expect_to_contain "$env" " -rabbit tcp_listeners []"
     expect_to_contain "$env" " -rabbit ssl_listeners [5671]"
     expect_to_contain "$env" " -rabbit cluster_name \"${CLUSTER_NAME}\""
