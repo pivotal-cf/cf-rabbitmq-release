@@ -131,7 +131,7 @@ templates:
   management-cacert.pem.erb:                etc/management-cacert.pem
   management-cert.pem.erb:                  etc/management-cert.pem
   management-key.pem.erb:                   etc/management-key.pem
-  rabbitmq-oauth.conf.erb:                  etc/rabbitmq-oauth.conf
+  advanced.config.erb:                      etc/advanced.config
   rabbitmq.config.erb:                      etc/rabbitmq.config # classic format
   rabbitmq.conf.erb:                        etc/rabbitmq.conf   # new format
   users.erb:                                etc/users

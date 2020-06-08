@@ -1,6 +1,6 @@
-RSpec.describe 'rabbit.config file generation for oauth', template: true do
+RSpec.describe 'advanced.config file generation for oauth', template: true do
 	let(:output) do
-		compiled_template('rabbitmq-server', 'rabbitmq-oauth.conf', manifest_properties).strip
+    compiled_template('rabbitmq-server', 'advanced.config', manifest_properties).strip
 	end
 
 	context 'when oauth is not defined' do
