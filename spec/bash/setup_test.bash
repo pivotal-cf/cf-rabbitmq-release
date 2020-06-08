@@ -25,8 +25,8 @@ T_setup_environment() {
     DISK_ALARM_THRESHOLD="{mem_relative,0.4}"
     SELF_NODE="my-node-name"
     RABBITMQ_NODES_STRING="node-1,node-2"
-    LOAD_DEFINITIONS="my-definitions"
     CLUSTER_NAME="RMQ4TAS-CLUSTER"
+    ENABLED_PLUGINS_FILE="/var/vcap/store/rabbitmq/enabled_plugins"
 
     SSL_ENABLED=true
     SSL_VERIFY=false
@@ -59,11 +59,11 @@ T_setup_environment() {
     expect_to_contain "$env" " -rabbitmq_management http_log_dir \"${HTTP_ACCESS_LOG_DIR}\""
     expect_to_contain "$env" "RABBITMQ_MNESIA_DIR=/var/vcap/store/rabbitmq/mnesia/db"
     expect_to_contain "$env" "RABBITMQ_PLUGINS_EXPAND_DIR=/var/vcap/store/rabbitmq/mnesia/db-plugins-expand"
+    expect_to_contain "$env" "ENABLED_PLUGINS_FILE=/var/vcap/store/rabbitmq/enabled_plugins"
     expect_to_contain "$env" "NODENAME='my-node-name'"
     expect_to_contain "$env" "RABBITMQ_NODENAME='my-node-name'"
     expect_to_contain "$env" "RABBITMQ_BOOT_MODULE=rabbit"
-    expect_to_contain "$env" "CONFIG_FILE='"
-    expect_to_contain "$env" " -rabbitmq_management load_definitions"
+    expect_to_contain "$env" "CONFIG_FILE="
     expect_to_contain "$env" " -rabbit tcp_listeners []"
     expect_to_contain "$env" " -rabbit ssl_listeners [5671]"
     expect_to_contain "$env" " -rabbit cluster_name \"${CLUSTER_NAME}\""
@@ -113,19 +113,6 @@ T_create_cluster_args() {
     expect_to_contain "$cluster_args" " -rabbitmq_management http_log_dir \"/path/to/http-access.log\""
 
   ) || $T_fail "Failed to create cluster args to pass to SERVER_START_ARGS"
-}
-
-T_configure_load_definitions() {
-  (
-    local load_definitions script_dir load_definitions_file_path definitions
-
-    load_definitions="my-definitions"
-    script_dir="/path/to/script/dir"
-
-    definitions="$(configure_load_definitions $load_definitions $script_dir)"
-    expect_to_equal "$definitions" "-rabbitmq_management load_definitions \"/path/to/script/dir/../etc/definitions.json\""
-
-  ) || $T_fail "Failed to load definitions"
 }
 
 T_do_not_configure_tls_listeners() {
@@ -191,27 +178,30 @@ T_configure_tls_options() {
 
 T_create_config_file() {
   (
-    local conf_env_file self_node dir nodename config script_dir prefix suffix server_start_args
+    local conf_env_file self_node dir nodename config script_dir prefix suffix server_start_args plugins_file
 
     conf_env_file=""
     self_node="node-1"
     dir="$(mktemp -d)"
     script_dir="/path/to/script/dir"
     server_start_args="SERVER_START_ARGS='this-is-my-config'"
+    plugins_file="/var/vcap/store/rabbitmq/enabled_plugins"
+    config_file="/path/to/rabbitmq.conf(ig)"
 
     trap "rm -rf ${dir}" EXIT
 
-    create_config_file "$conf_env_file" "$self_node" "$dir" "$script_dir" "$server_start_args"
+    create_config_file "$conf_env_file" "$self_node" "$dir" "$script_dir" "$server_start_args" "$plugins_file"
 
     expect_file_to_exist "${dir}/env"
     expect_file_to_exist "${dir}/env.backup"
 
-    expect_to_contain "$(<$dir/env)" "CONFIG_FILE='/path/to/script/dir/../etc/rabbitmq'"
+    expect_to_contain "$(<$dir/env)" "CONFIG_FILE=/path/to/rabbitmq.conf(ig)"
     expect_to_contain "$(<$dir/env)" "NODENAME='node-1'"
     expect_to_contain "$(<$dir/env)" "RABBITMQ_NODENAME='node-1'"
     expect_to_contain "$(<$dir/env)" "SERVER_START_ARGS='this-is-my-config'"
     expect_to_contain "$(<$dir/env)" "RABBITMQ_MNESIA_DIR=/var/vcap/store/rabbitmq/mnesia/db"
     expect_to_contain "$(<$dir/env)" "RABBITMQ_PLUGINS_EXPAND_DIR=/var/vcap/store/rabbitmq/mnesia/db-plugins-expand"
+    expect_to_contain "$(<$dir/env)" "ENABLED_PLUGINS_FILE=/var/vcap/store/rabbitmq/enabled_plugins"
 
   ) || $T_fail "Failed to create conf_env file"
 }

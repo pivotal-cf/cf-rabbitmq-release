@@ -179,4 +179,26 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
       end
     end
   end
+
+  describe 'config_file' do
+    context 'when rabbitmq-server.config is set to default value' do
+      let(:manifest_properties) do
+        { 'rabbitmq-server' => { 'config' => 'W10u' } }
+      end
+
+      it 'sets config_file to the new rabbitmq.conf file' do
+        expect(output).to include 'config_file="/var/vcap/jobs/rabbitmq-server/etc/rabbitmq.conf"'
+      end
+    end
+
+    context 'when rabbitmq-server.config is not set to default value' do
+      let(:manifest_properties) do
+        { 'rabbitmq-server' => { 'config' => 'I am not the default value' } }
+      end
+
+      it 'sets config_file to the classic rabbitmq.config file' do
+        expect(output).to include 'config_file="/var/vcap/jobs/rabbitmq-server/etc/rabbitmq.config"'
+      end
+    end
+  end
 end

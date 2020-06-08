@@ -1,5 +1,3 @@
-export LOAD_DEFINITIONS=""
-
 <% if_p("rabbitmq-server.ssl.enabled") do
 
     supported_tls_versions = ['tlsv1', 'tlsv1.1', 'tlsv1.2']
@@ -48,6 +46,11 @@ export DISK_ALARM_THRESHOLD="<%= p("rabbitmq-server.disk_alarm_threshold") %>"
 
 export CLUSTER_NAME="<%= spec.deployment %>"
 
-<% if_p("rabbitmq-server.load_definitions") do |definitions| %>
-  export LOAD_DEFINITIONS="<%= definitions %>"
+<% if_p("rabbitmq-server.config") do |config|
+  config_file = 'rabbitmq.conf'
+  if config != 'W10u'
+    config_file = 'rabbitmq.config'
+end
+%>
+config_file="/var/vcap/jobs/rabbitmq-server/etc/<%= config_file %>"
 <% end %>
