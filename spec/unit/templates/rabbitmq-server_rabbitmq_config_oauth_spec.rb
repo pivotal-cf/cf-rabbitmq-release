@@ -48,7 +48,7 @@ VwIDAQAB
       } 
     }
 
-		fit 'configures oauth and management plugins' do
+		it 'configures oauth and management plugins' do
       expect(output).to eq(File.open("spec/unit/templates/assets/expected_rabbitmq_advanced.config").read.strip)
     end
 	end
