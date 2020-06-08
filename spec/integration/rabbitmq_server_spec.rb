@@ -21,11 +21,11 @@ RSpec.describe 'RabbitMQ server configuration' do
   end
 
   def rabbitmqctl
-    'sudo ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl'
+    'sudo PATH=$PATH:/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl'
   end
 
   def rabbitmq_diagnostics
-    'sudo ERL_DIR=/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/privbin/rabbitmq-diagnostics'
+    'sudo PATH=$PATH:/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/privbin/rabbitmq-diagnostics'
   end
 
   let(:environment_settings) do
