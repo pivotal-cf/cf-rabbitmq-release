@@ -195,6 +195,7 @@ create_config_file() {
   printf "${RABBITMQ_BOOT_MODULE}\n" >> ${dir}/env
 
   printf "CONFIG_FILE=${config_file}\n" >> ${dir}/env
+  printf "ADVANCED_CONFIG_FILE=${advanced_config_file}\n" >> ${dir}/env
   printf "${server_start_args}\n" >> "${dir}/env"
 
   # set custom RabbitMQ db / plugin directory not specifying the node name
