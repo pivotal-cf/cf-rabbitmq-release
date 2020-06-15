@@ -11,9 +11,9 @@
   {rabbitmq_auth_backend_oauth2, [
     {resource_server_id, <<"<%= p('rabbitmq-server.oauth.resource_server_id') %>">>},
     {key_config, [
-      {default_key, <<"<%= p('rabbitmq-server.oauth.uaa_client_id') %>_key">>},
+      {default_key, <<"<%= p('rabbitmq-server.oauth.signing_key_id') %>">>},
       {signing_keys,
-        #{<<"<%= p('rabbitmq-server.oauth.uaa_client_id') %>_key">> => {pem, <<"<%= p('rabbitmq-server.oauth.signing_key') %>">>}}
+        #{<<"<%= p('rabbitmq-server.oauth.signing_key_id') %>">> => {pem, <<"<%= p('rabbitmq-server.oauth.signing_key') %>">>}}
       }
     ]}
   ]}

@@ -34,6 +34,7 @@ RSpec.describe 'advanced.config file generation for oauth', template: true do
             'resource_server_id': '5507278f-73bc-44fd-904d-03aea4add4f0',
             'uaa_client_id': '67866802-73bc-44fd-904d-03aea4add4f0',
             'uaa_location': 'https://uaa.cf.example.com',
+            'signing_key_id': 'fake-key-id',
             'signing_key': "-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2dP+vRn+Kj+S/oGd49kq
 6+CKNAduCC1raLfTH7B3qjmZYm45yDl+XmgK9CNmHXkho9qvmhdksdzDVsdeDlhK

@@ -103,6 +103,8 @@ properties:
     default: ""
   rabbitmq-server.oauth.signing_key:
     description: "The public key (verification key) of the RSA key pair or the symmetric signing key used by UAA to sign the JWT token"
+  rabbitmq-server.oauth.signing_key_id:
+    description: "The ID of the JWT signing key to be used when signing tokens."
   rabbitmq-server.oauth.uaa_client_id:
     description: "The UAA client which presents a valid access_token acquired from UAA as the password in order to authenticate with RabbitMQ."
   rabbitmq-server.oauth.uaa_location:
