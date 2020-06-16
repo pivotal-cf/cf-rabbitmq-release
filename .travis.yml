@@ -12,5 +12,5 @@ script:
   - pushd src/rabbitmq-admin
   - ginkgo -r
   - popd
-  - bash ./scripts/run-basht-tests
+  - bash ./scripts/run-bash-tests
   - bundle exec rake spec:unit
