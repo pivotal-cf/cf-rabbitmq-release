@@ -2,11 +2,19 @@
 
 @test "when deployment is going to be deleted, it skips the check_if_node_is_xxx_critical checks" {
  export BOSH_DEPLOYMENT_NEXT_STATE=delete
- run jobs/rabbitmq-server/templates/pre-stop.bash
+ run jobs/rabbitmq-server/templates/pre-stop.bash.erb
 
  [ "$status" -eq 0 ]
  [[ "${lines[0]}" == *"Running pre-stop script" ]]
  [[ "${lines[1]}" == *"Not waiting for queues to sync since this deployment is going to be deleted" ]]
+}
+
+@test "when we want to skip queue synchronization, it skips the check_if_node_is_xxx_critical checks" {
+ CHECK_QUEUE_SYNC=false TOTAL_WAIT_TIME_SECS=1 run jobs/rabbitmq-server/templates/pre-stop.bash.erb
+
+ [ "$status" -eq 0 ]
+ [[ "${lines[0]}" == *"Running pre-stop script" ]]
+ [[ "${lines[1]}" == *"Not waiting for queues to sync since CHECK_QUEUE_SYNC is false" ]]
 }
 
 @test "when waiting for queues to be synced times out, it returns exit code 1" {
@@ -14,8 +22,7 @@
   return 2
  }
  export -f bash
-
- TOTAL_WAIT_TIME_SECS=3 run jobs/rabbitmq-server/templates/pre-stop.bash
+ CHECK_QUEUE_SYNC=true TOTAL_WAIT_TIME_SECS=3 run jobs/rabbitmq-server/templates/pre-stop.bash.erb
 
  [ "$status" -eq 1 ]
  [[ "${lines[0]}" == *"Running pre-stop script" ]]
@@ -37,8 +44,7 @@
    fi
  }
  export -f bash
-
- run jobs/rabbitmq-server/templates/pre-stop.bash
+ CHECK_QUEUE_SYNC=true run jobs/rabbitmq-server/templates/pre-stop.bash.erb
 
  [ "$status" -eq 0 ]
  [[ "${lines[0]}" == *"Running pre-stop script" ]]

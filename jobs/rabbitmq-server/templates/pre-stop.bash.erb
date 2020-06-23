@@ -10,6 +10,7 @@ export LC_ALL="en_US.UTF-8"
 export PATH=/var/vcap/packages/erlang/bin:/var/vcap/packages/rabbitmq-server/bin:$PATH
 
 TOTAL_WAIT_TIME_SECS=${TOTAL_WAIT_TIME_SECS:-3600}
+CHECK_QUEUE_SYNC=${CHECK_QUEUE_SYNC:-<%= p("rabbitmq-server.check_queue_sync")%>}
 
 # increase the wait time by 1 second between every request resulting in TOTAL_WAIT_TIME_SECS, i.e.
 # 1+2+3+...+number_of_requests=TOTAL_WAIT_TIME_SECS
@@ -38,9 +39,13 @@ write_log() {
 }
 
 write_log "Running pre-stop script"
-
 if [[ "${BOSH_DEPLOYMENT_NEXT_STATE}" == "delete" ]]; then
   write_log "Not waiting for queues to sync since this deployment is going to be deleted"
+  exit 0
+fi
+
+if [[ "${CHECK_QUEUE_SYNC}" == "false" ]]; then
+  write_log "Not waiting for queues to sync since CHECK_QUEUE_SYNC is false"
   exit 0
 fi
 

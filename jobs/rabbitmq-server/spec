@@ -110,6 +110,11 @@ properties:
   rabbitmq-server.oauth.uaa_location:
     description: "UAA URL (e.g. http://localhost:8080/uaa)"
 
+  rabbitmq-server.check_queue_sync:
+    description: "If true, waits for quorum and mirror queues to sync before stopping the node"
+    default: false
+
+
 templates:
   add-rabbitmqctl-to-path.bash:             bin/add-rabbitmqctl-to-path
   cleanup-http-logs.bash:                   bin/cleanup-http-logs
