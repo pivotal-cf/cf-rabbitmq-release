@@ -127,7 +127,7 @@ templates:
   plugins.sh.erb:                           bin/plugins.sh
   post-start.bash:                          bin/post-start
   post-deploy.bash:                         bin/post-deploy
-  pre-start.bash:                           bin/pre-start
+  pre-start.bash.erb:                       bin/pre-start
   rabbitmq-server.init.bash:                bin/rabbitmq-server.init
   setup.bash:                               bin/setup.sh
   cacert.pem.erb:                           etc/cacert.pem
