@@ -102,8 +102,9 @@ T_create_cluster_args() {
     disk_alarm_threshold="{mem_relative,0.4}"
     cluster_partition_handling="autoheal"
     http_access_log_dir="/path/to/http-access.log"
+    cluster_name=""
 
-    cluster_args="$(create_cluster_args $rabbitmq_nodes $disk_alarm_threshold $cluster_partition_handling, $http_access_log_dir)"
+    cluster_args="$(create_cluster_args $rabbitmq_nodes $disk_alarm_threshold $cluster_partition_handling $http_access_log_dir $cluster_name)"
 
     expect_to_contain "$cluster_args" "-rabbit cluster_nodes {[node-1,node-2],disc}"
     expect_to_contain "$cluster_args" " -rabbit log_levels [{connection,info}]"
@@ -112,6 +113,7 @@ T_create_cluster_args() {
     expect_to_contain "$cluster_args" " -rabbit halt_on_upgrade_failure false"
     expect_to_contain "$cluster_args" " -rabbitmq_mqtt subscription_ttl 1800000"
     expect_to_contain "$cluster_args" " -rabbitmq_management http_log_dir \"/path/to/http-access.log\""
+    expect_to_not_contain "$cluster_args" "-rabbit cluster_name"
 
     ) || ( $T_fail "Failed to create cluster args to pass to SERVER_START_ARGS" && return 1 )
 }

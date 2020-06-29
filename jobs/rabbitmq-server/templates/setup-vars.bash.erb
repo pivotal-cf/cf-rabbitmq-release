@@ -44,7 +44,7 @@
 export CLUSTER_PARTITION_HANDLING="<%= p("rabbitmq-server.cluster_partition_handling") %>"
 export DISK_ALARM_THRESHOLD="<%= p("rabbitmq-server.disk_alarm_threshold") %>"
 
-export CLUSTER_NAME="<%= spec.deployment %>"
+export CLUSTER_NAME="<%= p("rabbitmq-server.cluster_name") %>"
 
 <% if_p("rabbitmq-server.config") do |config|
   config_file = 'rabbitmq.conf'

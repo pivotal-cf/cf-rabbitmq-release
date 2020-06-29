@@ -114,6 +114,9 @@ properties:
     description: "If true, waits for quorum and mirror queues to sync before stopping the node"
     default: false
 
+  rabbitmq-server.cluster_name:
+    description: "The cluster_name is used by plugins such as rabbitmq_prometheus and rabbitmq_federation. Warning: do not change the cluster_name across BOSH deployments when federation is already set up."
+    default: ""
 
 templates:
   add-rabbitmqctl-to-path.bash:             bin/add-rabbitmqctl-to-path

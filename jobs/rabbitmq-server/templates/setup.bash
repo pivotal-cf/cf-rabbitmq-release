@@ -102,7 +102,9 @@ create_cluster_args() {
   cluster_args="$cluster_args -rabbit halt_on_upgrade_failure false"
   cluster_args="$cluster_args -rabbitmq_mqtt subscription_ttl 1800000"
   cluster_args="$cluster_args -rabbitmq_management http_log_dir \"${http_access_log_dir}\""
-  cluster_args="$cluster_args -rabbit cluster_name \"${cluster_name}\""
+  if [ -n "$cluster_name" ]; then
+    cluster_args="$cluster_args -rabbit cluster_name \"${cluster_name}\""
+  fi
 
   echo "$cluster_args"
 }

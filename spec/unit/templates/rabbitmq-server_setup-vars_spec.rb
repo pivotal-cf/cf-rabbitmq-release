@@ -207,4 +207,20 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
       expect(output).to include 'advanced_config_file="/var/vcap/jobs/rabbitmq-server/etc/advanced.config"'
     end
   end
+
+  describe 'cluster_name' do
+    it 'defaults to empty string' do
+      expect(output).to include 'export CLUSTER_NAME=""'
+    end
+
+    context 'when set' do
+      let(:manifest_properties) do
+        { 'rabbitmq-server' => { 'cluster_name' => 'my_cluster' } }
+      end
+
+      it 'exports the set CLUSTER_NAME' do
+        expect(output).to include 'export CLUSTER_NAME="my_cluster"'
+      end
+    end
+  end
 end
