@@ -1,14 +1,6 @@
 <%
-  networks = spec.networks.marshal_dump.values
-  network = networks.find do |network_spec|
-    network_spec.default
-  end
-
-  network ||= networks.first
-  job_ip = network.ip
-
+  job_ip = spec.ip
   ips = link('rabbitmq-server').instances.map(&:address)
-
   if ips.size <= 1 then
     ips = [job_ip]
   end
@@ -29,7 +21,6 @@
   erlang_major_version = p('rabbitmq-server.erlang_major_version')
 %>
 
-export JOB_IP=<%= job_ip %>
 export SELF_NODE="rabbit@<%= job_ip_md5 %>"
 export RABBITMQ_NODES_STRING="<%= nodes %>"
 export ERLANG_COOKIE="<%= cookie %>"
