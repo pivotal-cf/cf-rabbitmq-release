@@ -1,29 +1,42 @@
 <%
-  job_ip = spec.ip
-  ips = link('rabbitmq-server').instances.map(&:address)
-  if ips.size <= 1 then
-    ips = [job_ip]
-  end
-
   require 'digest'
-  job_ip_md5 = Digest::MD5.hexdigest(job_ip)
-  cookie = p('rabbitmq-server.cookie', Digest::MD5.hexdigest(ips.join))
 
-  nodes = ips.map do |ip|
-    "rabbit@#{Digest::MD5.hexdigest(ip)}"
-  end.join(",")
-  inetrc_hosts=""
-  ips.each_index do |idx|
-    inetrc_hosts += "{host, {#{ips[idx].gsub('.',',')}}, [\"#{Digest::MD5.hexdigest(ips[idx])}\"]}.\n"
+  create_swap_delete = p('rabbitmq-server.create_swap_delete') == true
+
+  addresses = link('rabbitmq-server').instances.map(&:address)
+  if addresses.size <= 1
+    addresses = create_swap_delete ? [spec.address] : [spec.ip]
   end
 
-  rmq_server_version = p('rabbitmq-server.version')
-  erlang_major_version = p('rabbitmq-server.erlang_major_version')
+  inetrc_hosts=""
+
+  if create_swap_delete
+    nodes = addresses.map do |fqdn|
+      "'rabbit@#{fqdn}'"
+    end.join(",")
+
+  else
+    nodes = addresses.map do |ip|
+      "rabbit@#{Digest::MD5.hexdigest(ip)}"
+    end.join(",")
+
+    addresses.each_index do |idx|
+      inetrc_hosts += "{host, {#{addresses[idx].gsub('.',',')}}, [\"#{Digest::MD5.hexdigest(addresses[idx])}\"]}.\n"
+    end
+  end
+
+  cookie = p('rabbitmq-server.cookie', Digest::MD5.hexdigest(addresses.join))
 %>
 
-export SELF_NODE="rabbit@<%= job_ip_md5 %>"
+<% if create_swap_delete %>
+export USE_LONGNAME=true
+export SELF_NODE="rabbit@<%= spec.address %>"
+<% else %>
+export USE_LONGNAME=false
+export SELF_NODE="rabbit@<%= Digest::MD5.hexdigest(spec.ip) %>"
+<% end %>
 export RABBITMQ_NODES_STRING="<%= nodes %>"
 export ERLANG_COOKIE="<%= cookie %>"
-export ERLANG_MAJOR_VERSION='<%= erlang_major_version %>'
+export ERLANG_MAJOR_VERSION='<%= p('rabbitmq-server.erlang_major_version') %>'
 export ERL_INETRC_HOSTS='<%= inetrc_hosts %>'
-export RMQ_SERVER_VERSION='<%= rmq_server_version %>'
+export RMQ_SERVER_VERSION='<%= p('rabbitmq-server.version') %>'
