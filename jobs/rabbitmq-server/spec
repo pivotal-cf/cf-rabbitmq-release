@@ -2,7 +2,7 @@
 ---
 name: rabbitmq-server
 packages:
-- erlang-22
+- erlang-23
 - rabbitmq-server-3.8
 - rabbitmq-common
 - rabbitmq-upgrade-preparation
@@ -72,7 +72,7 @@ properties:
 
   rabbitmq-server.erlang_major_version:
     description: "Major version of Erlang to use on RabbitMQ instances in this deployment"
-    default: 22
+    default: 23
   rabbitmq-server.cookie:
     description: "Erlang cookie used by RabbitMQ nodes and rabbitmqctl. You should set this to a secure password"
 
