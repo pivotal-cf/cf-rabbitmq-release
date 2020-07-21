@@ -1,7 +1,7 @@
 ---
 name: erlang-23
 metadata:
-  version: 23.0.2
+  version: 23.0.3
 files:
-- erlang-23/otp_src_oss_23.0.2.tgz
+- erlang-23/otp_src_oss_23.0.3.tgz
 dependencies: []
