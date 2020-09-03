@@ -23,9 +23,9 @@
             cert: ((loggregator-agent-tls-cert))
             key: ((loggregator-agent-tls-key))
       metrics:
-        ca_cert: ((/bosh-mughalgreen/cf/loggregator_ca.ca))
-        cert: ((/bosh-mughalgreen/cf/loggregator_ca.certificate))
-        key: ((/bosh-mughalgreen/cf/loggregator_ca.private_key))
+        ca_cert: ((loggregator-agent-tls-ca-cert))
+        cert: ((loggregator-agent-tls-cert))
+        key: ((loggregator-agent-tls-key))
         server_name: loggregator_agent_metrics
 
 - type: replace
