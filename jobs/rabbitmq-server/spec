@@ -154,6 +154,7 @@ templates:
   rabbitmq-config-vars.bash.erb:            lib/rabbitmq-config-vars.bash
   setup-vars.bash.erb:                      lib/setup-vars.bash
   indicators.yml.erb:                       config/indicators.yml
+  prom_scraper_config.yml.erb:              config/prom_scraper_config.yml
 
 provides:
   - name: rabbitmq-server
