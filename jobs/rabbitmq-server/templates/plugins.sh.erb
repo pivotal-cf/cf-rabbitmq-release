@@ -24,6 +24,13 @@ write_log() {
     for bad_plugin in $bad_plugin_list; do
       write_log "Ignoring unrecognised plugin: ${bad_plugin}"
     done
-  <% end %>
 
+    # when rabbitmq_prometheus is disabled, do not scrape it using prom_scraper
+    PROMETHEUS_ENABLED=<%= p('rabbitmq-server.plugins').include? 'rabbitmq_prometheus' %>
+    if [[ "$PROMETHEUS_ENABLED" == "false" ]]
+    then
+      rm -f /var/vcap/jobs/rabbitmq-server/config/prom_scraper_config.yml
+    fi
+
+    <% end %>
 )
