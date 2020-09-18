@@ -14,10 +14,14 @@ main() {
 
   ensure_rmq_user_does_not_exist "guest"
 
-  ensure_rmq_user_exists "$RMQ_BROKER_USERNAME"
-  ensure_rmq_user_is_admin "$RMQ_BROKER_USERNAME"
-  ensure_rmq_user_can_authenticate "$RMQ_BROKER_USERNAME" "$RMQ_BROKER_PASSWORD"
-  ensure_rmq_user_has_correct_permissions_on_all_vhosts "$RMQ_BROKER_USERNAME"
+
+  if broker_admin_configured
+  then
+    ensure_rmq_user_exists "$RMQ_BROKER_USERNAME"
+    ensure_rmq_user_is_admin "$RMQ_BROKER_USERNAME"
+    ensure_rmq_user_can_authenticate "$RMQ_BROKER_USERNAME" "$RMQ_BROKER_PASSWORD"
+    ensure_rmq_user_has_correct_permissions_on_all_vhosts "$RMQ_BROKER_USERNAME"
+  fi
 
   if operator_user_configured
   then
@@ -111,6 +115,10 @@ ensure_rmq_user_has_correct_permissions_on_all_vhosts() {
 
 operator_user_configured() {
   [[ -n "$RMQ_OPERATOR_USERNAME" ]]
+}
+
+broker_admin_configured() {
+  [[ -n "$RMQ_BROKER_USERNAME" ]]
 }
 
 fail() {

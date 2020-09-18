@@ -12,6 +12,7 @@ RMQ_CTL=${RMQ_SERVER_PACKAGE}/bin/rabbitmqctl
 PID_FILE=/var/vcap/sys/run/rabbitmq-server/pid
 HOME_DIR=/var/vcap/store/rabbitmq
 OPERATOR_USERNAME_FILE="${HOME_DIR}/operator_administrator.username"
+BROKER_USERNAME_FILE="${HOME_DIR}/broker_administrator.username"
 
 test -x "${RMQ_CTL}"
 
@@ -53,9 +54,25 @@ create_operator_admin() {
   fi
 }
 
+create_broker_admin() {
+  if [ -n "$RMQ_BROKER_USERNAME" ]
+  then
+    echo "$RMQ_BROKER_USERNAME" > $BROKER_USERNAME_FILE
+    create_admin "$RMQ_BROKER_USERNAME" "$RMQ_BROKER_PASSWORD"
+  fi
+}
+
 delete_operator_admin() {
   set +e
   USERNAME=$(cat $OPERATOR_USERNAME_FILE)
+  "${RMQ_CTL}" delete_user "$USERNAME" 2>&1
+  set -e
+  true
+}
+
+delete_broker_admin() {
+  set +e
+  USERNAME=$(cat $BROKER_USERNAME_FILE)
   "${RMQ_CTL}" delete_user "$USERNAME" 2>&1
   set -e
   true
@@ -81,7 +98,8 @@ configure_users() {
   delete_guest
   [ -f $OPERATOR_USERNAME_FILE ] && delete_operator_admin
   create_operator_admin
-  create_admin "$RMQ_BROKER_USERNAME" "$RMQ_BROKER_PASSWORD"
+  [ -f $BROKER_USERNAME_FILE ] && delete_broker_admin
+  create_broker_admin
 }
 
 wait_for_rabbitmq_application_to_start() {

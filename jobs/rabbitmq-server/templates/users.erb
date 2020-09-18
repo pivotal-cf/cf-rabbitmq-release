@@ -8,7 +8,10 @@ RMQ_OPERATOR_PASSWORD=<%= Shellwords.escape(password) %>
 RMQ_OPERATOR_PASSWORD="${RMQ_OPERATOR_PASSWORD:?must be set}"
 <% end %>
 
-RMQ_BROKER_USERNAME=<%= Shellwords.escape(p('rabbitmq-server.administrators.broker.username')) %>
-RMQ_BROKER_USERNAME="${RMQ_BROKER_USERNAME:?must be set}"
+<% if_p('rabbitmq-server.administrators.broker.username') do |username| %>
+RMQ_BROKER_USERNAME=<%= Shellwords.escape(username) %>
+<% end %>
 
-RMQ_BROKER_PASSWORD=<%= Shellwords.escape(p('rabbitmq-server.administrators.broker.password')) %>
+<% if_p('rabbitmq-server.administrators.broker.password') do |password| %>
+RMQ_BROKER_PASSWORD=<%= Shellwords.escape(password) %>
+<% end %>
