@@ -9,8 +9,8 @@ This release is now using BOSH v2 [job links](https://bosh.io/docs/links.html) a
 
 Job | Status
 --- | ---
-unit tests | [![pcf-rabbitmq.ci.cf-app.com](https://pcf-rabbitmq.ci.cf-app.com/api/v1/pipelines/cf-rabbitmq-release/jobs/unit-tests-for-cf-rabbitmq/badge)](https://pcf-rabbitmq.ci.cf-app.com/teams/main/pipelines/cf-rabbitmq-release/jobs/unit-tests-for-cf-rabbitmq)
-integration tests | [![pcf-rabbitmq.ci.cf-app.com](https://pcf-rabbitmq.ci.cf-app.com/api/v1/pipelines/cf-rabbitmq-release/jobs/test-bosh-release/badge)](https://pcf-rabbitmq.ci.cf-app.com/teams/main/pipelines/cf-rabbitmq-release/jobs/test-bosh-release)
+unit tests | [![hush-house.pivotal.io](https://hush-house.pivotal.io/api/v1/teams/pcf-rabbitmq/pipelines/cf-rabbitmq-release/jobs/unit-tests/badge)](https://hush-house.pivotal.io/teams/pcf-rabbitmq/pipelines/cf-rabbitmq-release/jobs/unit-tests)
+integration tests | [![hush-house.pivotal.io](https://hush-house.pivotal.io/api/v1/teams/pcf-rabbitmq/pipelines/cf-rabbitmq-release/jobs/integration-test/badge)](https://hush-house.pivotal.io/teams/pcf-rabbitmq/pipelines/cf-rabbitmq-release/jobs/integration-test)
 
 ## Dependencies
 
@@ -21,9 +21,8 @@ integration tests | [![pcf-rabbitmq.ci.cf-app.com](https://pcf-rabbitmq.ci.cf-ap
 
 ## Install (locally)
 
-Clone the repository, update submodules and install dependencies.
+Clone the repository and install dependencies.
 ```bash
-$ git submodule update --init --recursive
 $ bundle install
 ```
 
@@ -76,4 +75,3 @@ Back in time [Multitenant Broker Release](https://github.com/pivotal-cf/cf-rabbi
 A collection of ops-files and vars-files, features from [Bosh 2 CLI](https://bosh.io/docs/cli-int/), can be used to generate manifests. You’ll find a folder called `manifests` in both repositories with a manifest template, some ops-files and example of vars-files. It's not required to have two different deployments for `cf-rabbitmq-release` and `cf-rabbitmq-multitenant-broker-release`. In case you want to colocate both jobs you can leverage [this ops-file](https://github.com/pivotal-cf/cf-rabbitmq-multitenant-broker-release/blob/master/manifests/add-cf-rabbitmq.yml) to colocate them in the same deployment.
 
 More information about bosh interpolate here: https://bosh.io/docs/cli-int/
-
