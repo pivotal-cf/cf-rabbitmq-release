@@ -53,7 +53,7 @@ maybe_fixup_erlang_cookie() {
 }
 
 ensure_we_are_in_a_readable_dir() {
-  cd "$RABBITMQ_HOME"
+  cd "$RABBITMQ_HOME" || exit
 }
 
 current_user_is_rabbitmq() {
