@@ -23,7 +23,7 @@ _run_rabbitmq_upgrade_preparation_on_every_node() {
 
   for remote_node in "${remote_nodes[@]}" ; do
     "$UPGRADE_PREPARATION_BINARY" \
-      -rabbitmqctl-path "$rmq_server_package/bin/rabbitmqctl" \
+      -rabbitmqctl-path "$rmq_server_package/privbin/rabbitmqctl" \
       -node "$remote_node" \
       -new-rabbitmq-version "$new_rabbitmq_version" \
       -new-erlang-version "$new_erlang_version" \
@@ -46,7 +46,7 @@ run_rabbitmq_upgrade_preparation_shutdown_cluster_if_cookie_changed () {
     fi
 
     "$UPGRADE_PREPARATION_BINARY" \
-      -rabbitmqctl-path "$rmq_server_package/bin/rabbitmqctl" \
+      -rabbitmqctl-path "$rmq_server_package/privbin/rabbitmqctl" \
       shutdown-cluster-if-cookie-changed \
       -new-cookie "$1" \
       -old-cookie-path "$2" \

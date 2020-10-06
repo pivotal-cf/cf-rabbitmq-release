@@ -21,7 +21,7 @@ RSpec.describe 'RabbitMQ server configuration' do
   end
 
   def rabbitmqctl
-    'sudo PATH=$PATH:/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/bin/rabbitmqctl'
+    'sudo PATH=$PATH:/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/privbin/rabbitmqctl'
   end
 
   def rabbitmq_diagnostics

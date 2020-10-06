@@ -18,8 +18,8 @@ export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 
 RMQ_SERVER_PACKAGE=/var/vcap/packages/rabbitmq-server
-DAEMON=${RMQ_SERVER_PACKAGE}/bin/rabbitmq-server
-CONTROL=${RMQ_SERVER_PACKAGE}/bin/rabbitmqctl
+DAEMON=${RMQ_SERVER_PACKAGE}/privbin/rabbitmq-server
+CONTROL=${RMQ_SERVER_PACKAGE}/privbin/rabbitmqctl
 PID_FILE=/var/vcap/sys/run/rabbitmq-server/pid
 HOME_DIR=/var/vcap/store/rabbitmq
 OPERATOR_USERNAME_FILE="${HOME_DIR}/operator_administrator.username"

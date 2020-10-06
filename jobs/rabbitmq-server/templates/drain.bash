@@ -2,7 +2,7 @@
 
 [ -z "$DEBUG" ] || set -x
 
-export PATH=/var/vcap/jobs/rabbitmq-server/bin:/var/vcap/packages/erlang/bin:/var/vcap/packages/rabbitmq-server/bin:$PATH
+export PATH=/var/vcap/jobs/rabbitmq-server/bin:/var/vcap/packages/erlang/bin:/var/vcap/packages/rabbitmq-server/privbin:$PATH
 
 ERLANG_PID_FILE=/var/vcap/sys/run/rabbitmq-server/pid
 

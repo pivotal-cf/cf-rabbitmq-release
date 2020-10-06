@@ -99,7 +99,7 @@ T_when_rmq_server_package_path_exists_should_call_the_upgrade_preparation_binary
 
     arguments_passed=$(run_rabbitmq_upgrade_preparation_shutdown_cluster_if_cookie_changed "new-cookie" "old-cookie-path" "node-list" "$rmq_server_path")
 
-    expect_to_contain "$arguments_passed" "-rabbitmqctl-path $rmq_server_path/bin/rabbitmqctl shutdown-cluster-if-cookie-changed -new-cookie new-cookie -old-cookie-path old-cookie-path -nodes node-list" ||
+    expect_to_contain "$arguments_passed" "-rabbitmqctl-path $rmq_server_path/privbin/rabbitmqctl shutdown-cluster-if-cookie-changed -new-cookie new-cookie -old-cookie-path old-cookie-path -nodes node-list" ||
       ( $T_fail && return 1 )
   )
 }

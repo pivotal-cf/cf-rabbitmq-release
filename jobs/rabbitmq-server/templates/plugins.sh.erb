@@ -8,7 +8,7 @@ write_log() {
 
 (
   if [ -z $RABBITMQ_PLUGINS ]; then
-    RABBITMQ_PLUGINS=/var/vcap/packages/rabbitmq-server/bin/rabbitmq-plugins
+    RABBITMQ_PLUGINS=/var/vcap/packages/rabbitmq-server/privbin/rabbitmq-plugins
   fi
   PATH=$RABBITMQ_HOME/bin:$ERLANG_HOME/bin:/var/vcap/packages/ruby/bin:$PATH
 

@@ -17,7 +17,7 @@ send_all_output_to_logfile() {
 }
 
 append_rabbitmq_server_and_erlang_to_global_path_via_login_shell() {
-  echo "export PATH=$PATH:/var/vcap/packages/rabbitmq-server/bin/:/var/vcap/packages/erlang/bin" > /etc/profile.d/add_rabbitmqctl_to_path.sh
+  echo "export PATH=$PATH:/var/vcap/packages/rabbitmq-server/privbin/:/var/vcap/packages/erlang/bin" > /etc/profile.d/add_rabbitmqctl_to_path.sh
 }
 
 ensure_rabbitmqctl_in_login_shell_path() {
