@@ -88,8 +88,8 @@ set_file_descriptor_limit() {
     ulimit -n $limit
   else
     limits_file=/etc/security/limits.d/rabbitmq.conf
-    echo "vcap    soft    nofile  $limit" >> $limits_file
-    echo "vcap    hard    nofile  $limit" >> $limits_file
+    echo "root    soft    nofile  $limit" >> $limits_file
+    echo "root    hard    nofile  $limit" >> $limits_file
   fi
 }
 
