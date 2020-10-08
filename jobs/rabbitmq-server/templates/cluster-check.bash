@@ -127,8 +127,8 @@ fail() {
 }
 
 send_all_output_to_logfile() {
-  exec 1> >(tee -a "${LOG_DIR}/cluster-check.log")
-  exec 2> >(tee -a "${LOG_DIR}/cluster-check.log")
+  exec 1> >(tee -a "$LOG_DIR/cluster-check.log")
+  exec 2> >(tee -a "$LOG_DIR/cluster-check.log")
 }
 
 # shellcheck disable=SC2128

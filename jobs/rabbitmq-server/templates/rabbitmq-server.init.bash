@@ -28,12 +28,12 @@ START_PROG=/usr/bin/setsid
 JOB_DIR=/var/vcap/jobs/rabbitmq-server
 
 LOG_DIR=/var/vcap/sys/log/rabbitmq-server
-STARTUP_LOG="${LOG_DIR}"/startup_stdout.log
-STARTUP_ERR_LOG="${LOG_DIR}"/startup_stderr.log
+STARTUP_LOG="$LOG_DIR/startup_stdout.log"
+STARTUP_ERR_LOG="$LOG_DIR/startup_stderr.log"
 
-test -x "${DAEMON}"
-test -x "${CONTROL}"
-test -x "${START_PROG}"
+test -x "$DAEMON"
+test -x "$CONTROL"
+test -x "$START_PROG"
 
 RETVAL=0
 
@@ -50,8 +50,8 @@ write_log() {
 
 delete_operator_admin() {
   set +e
-  USERNAME=$(cat $OPERATOR_USERNAME_FILE)
-  "${CONTROL}" delete_user "$USERNAME" >> "${STARTUP_LOG}" 2>&1
+  USERNAME="$(cat $OPERATOR_USERNAME_FILE)"
+  "$CONTROL" delete_user "$USERNAME" >> "$STARTUP_LOG" 2>&1
   set -e
   true
 }
@@ -59,22 +59,22 @@ delete_operator_admin() {
 run_script() {
     local script
     script=$1
-    write_log "Starting ${script}"
+    write_log "Starting $script"
     set +e
-    "${script}" \
-        1>> "${STARTUP_LOG}" \
-        2>> "${STARTUP_ERR_LOG}"
+    "$script" \
+        1>> "$STARTUP_LOG" \
+        2>> "$STARTUP_ERR_LOG"
     RETVAL=$?
     set -e
     case "${RETVAL}" in
         0)
-            write_log "Finished ${script}"
+            write_log "Finished $script"
             return 0
             ;;
         *)
-            write_log "Errored ${script}"
+            write_log "Errored $script"
             RETVAL=1
-            exit "${RETVAL}"
+            exit "$RETVAL"
             ;;
     esac
 }
@@ -85,11 +85,11 @@ set_file_descriptor_limit() {
 
   if [[ "$(lsb_release -c | awk '{print $2}')" == "trusty" ]]
   then
-    ulimit -n $limit
+    ulimit -n "$limit"
   else
     limits_file=/etc/security/limits.d/rabbitmq.conf
-    echo "vcap    soft    nofile  $limit" >> $limits_file
-    echo "vcap    hard    nofile  $limit" >> $limits_file
+    echo "vcap    soft    nofile  $limit" >> "$limits_file"
+    echo "vcap    hard    nofile  $limit" >> "$limits_file"
   fi
 }
 
@@ -100,8 +100,8 @@ start_rabbitmq () {
 
     write_log "Start RabbitMQ node..."
 
-    if [ "${RETVAL}" = 0 ]; then
-        "${CONTROL}" eval 'list_to_integer(os:getpid()).' > $PID_FILE
+    if [ "$RETVAL" = 0 ]; then
+        "$CONTROL" eval 'list_to_integer(os:getpid()).' > $PID_FILE
         write_log "RabbitMQ is currently running"
         if [ -f "$PID_FILE" ]
         then
@@ -110,21 +110,21 @@ start_rabbitmq () {
         fi
     else
         RETVAL=0
-        run_script "${JOB_DIR}/bin/setup.sh"
+        run_script "$JOB_DIR/bin/setup.sh"
         run_prepare_for_upgrade_when_first_deploy "/var/vcap/store/rabbitmq/mnesia" "/var/vcap/packages/rabbitmq-server" "/var/vcap/packages/erlang"
 
         write_log "Starting RabbitMQ"
         track_rabbitmq_erlang_vm_pid_in_pid_file
 
-        . "${JOB_DIR}/lib/rabbitmq-config-vars.bash"
+        . "$JOB_DIR/lib/rabbitmq-config-vars.bash"
 
-        RABBITMQ_CONF_ENV_FILE="${HOME_DIR}/etc/rabbitmq/rabbitmq-env.conf" \
+        RABBITMQ_CONF_ENV_FILE="$HOME_DIR/etc/rabbitmq/rabbitmq-env.conf" \
           RABBITMQ_LOG_BASE="$LOG_DIR" \
-          RABBITMQ_MNESIA_BASE="${HOME_DIR}/mnesia" \
-          RABBITMQ_PID_FILE="${PID_FILE}" \
-          "${START_PROG}" "${DAEMON}" \
-            >> "${STARTUP_LOG}" \
-            2>> "${STARTUP_ERR_LOG}" \
+          RABBITMQ_MNESIA_BASE="$HOME_DIR/mnesia" \
+          RABBITMQ_PID_FILE="$PID_FILE" \
+          "$START_PROG" "$DAEMON" \
+            >> "$STARTUP_LOG" \
+            2>> "$STARTUP_ERR_LOG" \
             0<&- &
     fi
 }
@@ -143,9 +143,9 @@ track_rabbitmq_erlang_vm_pid_in_pid_file() {
 status_rabbitmq() {
     set +e
     if [ "$1" != "quiet" ]; then
-        "${CONTROL}" status 2>&1
+        "$CONTROL" status 2>&1
     else
-        "${CONTROL}" status > /dev/null 2>&1
+        "$CONTROL" status > /dev/null 2>&1
     fi
     if [ $? != 0 ]; then
         RETVAL=3
@@ -154,10 +154,10 @@ status_rabbitmq() {
 }
 
 send_all_output_to_logfile() {
-  exec 1> >(tee -a "${LOG_DIR}/init.log") 2>&1
+  exec 1> >(tee -a "$LOG_DIR/init.log") 2>&1
 }
 send_all_output_to_logfile
 
 start_rabbitmq
 
-exit "${RETVAL}"
+exit "$RETVAL"

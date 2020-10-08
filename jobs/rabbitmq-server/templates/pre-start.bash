@@ -54,16 +54,16 @@ remove_old_syslog_config() {
 }
 
 ensure_log_files() {
-  touch "${STARTUP_LOG}"
-  touch "${STARTUP_ERR_LOG}"
-  touch "${SHUTDOWN_LOG}"
-  touch "${SHUTDOWN_ERR_LOG}"
-  chown "${USER}":"${USER}" "${INIT_LOG_DIR}"/startup*
-  chown "${USER}":"${USER}" "${INIT_LOG_DIR}"/shutdown*
+  touch "$STARTUP_LOG"
+  touch "$STARTUP_ERR_LOG"
+  touch "$SHUTDOWN_LOG"
+  touch "$SHUTDOWN_ERR_LOG"
+  chown "$USER":"$USER" "$INIT_LOG_DIR"/startup*
+  chown "$USER":"$USER" "$INIT_LOG_DIR"/shutdown*
 }
 
 ensure_http_log_cleanup_cron_job() {
-  cp "${JOB_DIR}/bin/cleanup-http-logs" /etc/cron.daily
+  cp "$JOB_DIR/bin/cleanup-http-logs" /etc/cron.daily
 }
 
 configure_rmq_version() {
@@ -94,15 +94,13 @@ setup_erl_inetrc() {
   DIR=$(mktemp -d)
   trap "rm -rf ${DIR}" EXIT
 
-  printf "${ERL_INETRC_HOSTS}{lookup, [file, native]}.\n" >> ${DIR}/erl_inetrc
-  cp ${DIR}/erl_inetrc ${ERL_INETRC}
-
-  mkdir -p $(dirname ${CONF_ENV_FILE})
+  printf "%s{lookup, [file, native]}.\n" "$ERL_INETRC_HOSTS" >> "$DIR/erl_inetrc"
+  cp "$DIR/erl_inetrc" "$ERL_INETRC"
+  mkdir -p "$(dirname "$CONF_ENV_FILE")"
 }
 
 add_env_to_global_shell_profile() {
-  ln -sf "${JOB_DIR}/bin/env" "/etc/profile.d/rabbitmq-server-env.sh"
+  ln -sf "$JOB_DIR/bin/env" "/etc/profile.d/rabbitmq-server-env.sh"
 }
 
 main
-

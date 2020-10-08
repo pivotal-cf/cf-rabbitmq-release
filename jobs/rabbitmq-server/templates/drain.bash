@@ -7,9 +7,9 @@ export PATH=/var/vcap/jobs/rabbitmq-server/bin:/var/vcap/packages/erlang/bin:/va
 ERLANG_PID_FILE=/var/vcap/sys/run/rabbitmq-server/pid
 
 LOG_DIR=/var/vcap/sys/log/rabbitmq-server
-SHUTDOWN_LOG="${LOG_DIR}"/shutdown_stdout.log
-SHUTDOWN_ERR_LOG="${LOG_DIR}"/shutdown_stderr.log
-DRAIN_LOG="${LOG_DIR}/drain.log"
+SHUTDOWN_LOG="$LOG_DIR"/shutdown_stdout.log
+SHUTDOWN_ERR_LOG="$LOG_DIR"/shutdown_stderr.log
+DRAIN_LOG="$LOG_DIR/drain.log"
 
 main() {
   write_log "Begin RabbitMQ node shutdown ..."

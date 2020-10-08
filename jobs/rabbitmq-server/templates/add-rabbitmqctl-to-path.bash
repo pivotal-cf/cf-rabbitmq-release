@@ -12,8 +12,8 @@ main() {
 }
 
 send_all_output_to_logfile() {
-  exec 1> >(tee -a "${LOG_DIR}/add-rabbitmqctl-to-path.log")
-  exec 2> >(tee -a "${LOG_DIR}/add-rabbitmqctl-to-path.log")
+  exec 1> >(tee -a "$LOG_DIR/add-rabbitmqctl-to-path.log")
+  exec 2> >(tee -a "$LOG_DIR/add-rabbitmqctl-to-path.log")
 }
 
 append_rabbitmq_server_and_erlang_to_global_path_via_login_shell() {
