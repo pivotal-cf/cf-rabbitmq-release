@@ -67,7 +67,6 @@ T_setup_environment() {
     expect_to_contain "$env" "RABBITMQ_BOOT_MODULE=rabbit"
     expect_to_contain "$env" "CONFIG_FILE="
     expect_to_contain "$env" "ADVANCED_CONFIG_FILE=/var/vcap/jobs/rabbitmq-server/etc/advanced.config"
-    expect_to_contain "$env" " -rabbit tcp_listeners []"
     expect_to_contain "$env" " -rabbit ssl_listeners [5671]"
     expect_to_contain "$env" " -rabbit cluster_name \"${CLUSTER_NAME}\""
     expect_to_contain "$env" "{verify,verify_none},"
@@ -136,7 +135,6 @@ T_do_not_configure_tls_listeners() {
     env="$(<$DIR/env)"
     expect_file_to_exist "${DIR}/env"
     expect_to_contain "$env" " -rabbitmq_management listener [{port,15672},{ssl,false}]"
-    expect_to_not_contain "$env" " -rabbit tcp_listeners []"
     expect_to_not_contain "$env" " -rabbit ssl_listeners [5671]"
     expect_to_not_contain "$env" "{verify,verify_none},"
     expect_to_not_contain "$env" " -rabbitmq_mqtt ssl_listeners [8883]"
@@ -156,11 +154,11 @@ T_configure_tls_listeners() {
   (
     DISABLE_NON_SSL_LISTENERS=false
     listeners="$(configure_tls_listeners "$DISABLE_NON_SSL_LISTENERS")"
-    expect_to_equal "$listeners" "-rabbit tcp_listeners [] -rabbit ssl_listeners [5671] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614]"
+    expect_to_equal "$listeners" "-rabbit ssl_listeners [5671] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614]"
 
     DISABLE_NON_SSL_LISTENERS=true
     listeners_non_tls_disabled="$(configure_tls_listeners "$DISABLE_NON_SSL_LISTENERS")"
-    expect_to_equal "$listeners_non_tls_disabled" "-rabbit tcp_listeners [] -rabbit ssl_listeners [5671] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614] -rabbitmq_mqtt tcp_listeners [] -rabbitmq_stomp tcp_listeners []"
+    expect_to_equal "$listeners_non_tls_disabled" "-rabbit ssl_listeners [5671] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614] -rabbit tcp_listeners [] -rabbitmq_mqtt tcp_listeners [] -rabbitmq_stomp tcp_listeners []"
     ) || ( $T_fail "Failed to configure TLS listeners" && return 1 )
 }
 
