@@ -14,13 +14,13 @@ write_log() {
 
 write_log "Running pre-stop script"
 
-if [[ "${BOSH_DEPLOYMENT_NEXT_STATE}" == "delete" ]]; then
+if [[ "$BOSH_DEPLOYMENT_NEXT_STATE" == "delete" ]]; then
   write_log "Not waiting for queues to sync since this deployment is going to be deleted"
   exit 0
 fi
 
 CHECK_QUEUE_SYNC=${CHECK_QUEUE_SYNC:-<%= p("rabbitmq-server.check_queue_sync")%>}
-if [[ "${CHECK_QUEUE_SYNC}" == "false" ]]; then
+if [[ "$CHECK_QUEUE_SYNC" == "false" ]]; then
   write_log "Not waiting for queues to sync since CHECK_QUEUE_SYNC is false"
   exit 0
 fi

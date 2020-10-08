@@ -18,8 +18,8 @@ _run_rabbitmq_upgrade_preparation_on_every_node() {
   rmq_server_package="$1"
   erlang_package="$1"
   remote_nodes=($(cat /var/vcap/data/upgrade_preparation_nodes))
-  new_rabbitmq_version="$(cat "${rmq_server_package}/rmq_version")"
-  new_erlang_version="$(cat "${erlang_package}/erlang_version")"
+  new_rabbitmq_version="$(cat "$rmq_server_package/rmq_version")"
+  new_erlang_version="$(cat "$erlang_package/erlang_version")"
 
   for remote_node in "${remote_nodes[@]}" ; do
     "$UPGRADE_PREPARATION_BINARY" \
@@ -27,7 +27,7 @@ _run_rabbitmq_upgrade_preparation_on_every_node() {
       -node "$remote_node" \
       -new-rabbitmq-version "$new_rabbitmq_version" \
       -new-erlang-version "$new_erlang_version" \
-      1> >(tee -a "${LOG_DIR}/upgrade.log") 2>&1
+      1> >(tee -a "$LOG_DIR/upgrade.log") 2>&1
   done
 }
 
@@ -42,7 +42,7 @@ run_rabbitmq_upgrade_preparation_shutdown_cluster_if_cookie_changed () {
     local rmq_server_package="$4"
 
     if [[ ! -d $rmq_server_package ]]; then
-      write_log "$rmq_server_package is not a valid directory" 1> >(tee -a "${LOG_DIR}/upgrade.log") 2>&1
+      write_log "$rmq_server_package is not a valid directory" 1> >(tee -a "$LOG_DIR/upgrade.log") 2>&1
     fi
 
     "$UPGRADE_PREPARATION_BINARY" \
@@ -51,7 +51,7 @@ run_rabbitmq_upgrade_preparation_shutdown_cluster_if_cookie_changed () {
       -new-cookie "$1" \
       -old-cookie-path "$2" \
       -nodes "$3" \
-      1> >(tee -a "${LOG_DIR}/upgrade.log") 2>&1
+      1> >(tee -a "$LOG_DIR/upgrade.log") 2>&1
 }
 
 run_prepare_for_upgrade_when_first_deploy() {
