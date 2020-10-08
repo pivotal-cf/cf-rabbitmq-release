@@ -113,8 +113,8 @@ create_cluster_args() {
 configure_tls_listeners() {
   local disable_non_ssl_listeners="$1"
 
-  local cmd="-rabbit tcp_listeners [] -rabbit ssl_listeners [5671] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614]"
-  local disable_non_ssl_listeners_cmd="-rabbitmq_mqtt tcp_listeners [] -rabbitmq_stomp tcp_listeners []"
+  local cmd="-rabbit ssl_listeners [5671] -rabbitmq_mqtt ssl_listeners [8883] -rabbitmq_stomp ssl_listeners [61614]"
+  local disable_non_ssl_listeners_cmd="-rabbit tcp_listeners [] -rabbitmq_mqtt tcp_listeners [] -rabbitmq_stomp tcp_listeners []"
 
   if ${disable_non_ssl_listeners:?must be set}
   then
