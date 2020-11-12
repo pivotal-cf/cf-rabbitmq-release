@@ -46,60 +46,60 @@ grant_permissions_for_all_vhosts() {
     set -e
 }
 
-create_operator_admin() {
-  if [ -n "$RMQ_OPERATOR_USERNAME" ]
-  then
-    echo "$RMQ_OPERATOR_USERNAME" > $OPERATOR_USERNAME_FILE
-    create_admin "$RMQ_OPERATOR_USERNAME" "$RMQ_OPERATOR_PASSWORD"
-  fi
-}
-
-create_broker_admin() {
-  if [ -n "$RMQ_BROKER_USERNAME" ]
-  then
-    echo "$RMQ_BROKER_USERNAME" > $BROKER_USERNAME_FILE
-    create_admin "$RMQ_BROKER_USERNAME" "$RMQ_BROKER_PASSWORD"
-  fi
-}
-
-delete_operator_admin() {
-  set +e
-  USERNAME=$(cat $OPERATOR_USERNAME_FILE)
-  "${RMQ_CTL}" delete_user "$USERNAME" 2>&1
-  set -e
-  true
-}
-
-delete_broker_admin() {
-  set +e
-  USERNAME=$(cat $BROKER_USERNAME_FILE)
-  "${RMQ_CTL}" delete_user "$USERNAME" 2>&1
-  set -e
-  true
-}
-
 create_admin() {
-    username=$1
-    password=$2
+  username_file=$1
+  username=$2
+  password=$3
 
-    set +e
-    {
-      "${RMQ_CTL}" add_user "$username" "$password"
-      "${RMQ_CTL}" change_password "$username" "$password"
-      "${RMQ_CTL}" set_user_tags "$username" administrator
-    } 2>&1
-    grant_permissions_for_all_vhosts "$username"
-    set -e
+  if [ -z "$username" ]
+  then
+    return
+  fi
+
+  echo "$username" > "$username_file"
+  set +e
+  "${RMQ_CTL}" add_user "$username" "$password" 2>&1
+  set -e
+  # change_password is needed for the following edge case:
+  # 1. cf-rabbitmq-release is upgraded from a version prior to v324.0.0 where there was no broker_administrator.username file, and
+  # 2. RMQ_BROKER_USERNAME stays the same, and
+  # 3. RMQ_BROKER_PASSWORD changes
+  "${RMQ_CTL}" change_password "$username" "$password" 2>&1
+  "${RMQ_CTL}" set_user_tags "$username" administrator 2>&1
+  grant_permissions_for_all_vhosts "$username"
+}
+
+configure_admin() {
+  username_file=$1
+  username=$2
+  password=$3
+
+  if [ -s "$username_file" ]
+  then
+    if [[ $(cat "$username_file") == "$username" ]]
+    then
+      if "${RMQ_CTL}" authenticate_user "$username" "$password" 2>&1
+      then
+        # username and password from previous deployment are still valid
+        return
+      fi
+      # username from previous deployment is still valid, but password isn't
+      "${RMQ_CTL}" change_password "$username" "$password" 2>&1
+      return
+    fi
+    # username from previous deployment isn't valid anymore
+    old_username=$(cat "$username_file")
+    "${RMQ_CTL}" delete_user "$old_username" 2>&1
+    rm "$username_file"
+  fi
+  create_admin "$username_file" "$username" "$password"
 }
 
 configure_users() {
   write_log "Configuring RabbitMQ users ..."
-
   delete_guest
-  [ -f $OPERATOR_USERNAME_FILE ] && delete_operator_admin
-  create_operator_admin
-  [ -f $BROKER_USERNAME_FILE ] && delete_broker_admin
-  create_broker_admin
+  configure_admin "$OPERATOR_USERNAME_FILE" "$RMQ_OPERATOR_USERNAME" "$RMQ_OPERATOR_PASSWORD"
+  configure_admin "$BROKER_USERNAME_FILE" "$RMQ_BROKER_USERNAME" "$RMQ_BROKER_PASSWORD"
 }
 
 wait_for_rabbitmq_application_to_start() {
