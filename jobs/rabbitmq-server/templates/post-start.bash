@@ -28,9 +28,7 @@ remove_pid() {
 }
 
 delete_guest() {
-    set +e
-    "${RMQ_CTL}" delete_user guest 2>&1
-    set -e
+    "${RMQ_CTL}" delete_user guest 2>&1 || true
 }
 
 grant_permissions_for_all_vhosts() {
@@ -57,9 +55,7 @@ create_admin() {
   fi
 
   echo "$username" > "$username_file"
-  set +e
-  "${RMQ_CTL}" add_user "$username" "$password" 2>&1
-  set -e
+  "${RMQ_CTL}" add_user "$username" "$password" 2>&1 || true
   # change_password is needed for the following edge case:
   # 1. cf-rabbitmq-release is upgraded from a version prior to v324.0.0 where there was no broker_administrator.username file, and
   # 2. RMQ_BROKER_USERNAME stays the same, and
