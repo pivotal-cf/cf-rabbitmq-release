@@ -74,13 +74,13 @@ configure_admin() {
   then
     if [[ $(cat "$username_file") == "$username" ]]
     then
-      if "${RMQ_CTL}" authenticate_user "$username" "$password" 2>&1
+      if ! "${RMQ_CTL}" authenticate_user "$username" "$password" 2>&1
       then
-        # username and password from previous deployment are still valid
-        return
+        # username from previous deployment is still valid, but password isn't
+        "${RMQ_CTL}" change_password "$username" "$password" 2>&1
       fi
-      # username from previous deployment is still valid, but password isn't
-      "${RMQ_CTL}" change_password "$username" "$password" 2>&1
+      # vhosts could have been added by updating property rabbitmq-server.load_definitions
+      grant_permissions_for_all_vhosts "$username"
       return
     fi
     # username from previous deployment isn't valid anymore
