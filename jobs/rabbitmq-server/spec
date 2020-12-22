@@ -122,7 +122,7 @@ properties:
     description: "If true, configure rabbitmq-server to use vm_strategy create-swap-delete (i.e. use RabbitMQ long node names, FQDNs for Rabbit nodes names, and no hosts in erl_inetrc)."
     default: false
 
-  rabbitmq-server:additional_main_conf:
+  rabbitmq-server.additional_main_conf:
     description: "A map of additional key/value pairs to include as extra configuration properties in the main configuration file, rabbitmq.conf https://www.rabbitmq.com/configure.html#config-file"
     default: { }
     example: |
