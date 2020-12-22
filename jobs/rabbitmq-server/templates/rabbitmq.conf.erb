@@ -20,9 +20,7 @@ web_stomp.ssl.ciphers.<%= index+1 %> = <%= cipher %>
 <% end
 end
 end
-end -%>
-<% if_p("rabbitmq-server.additional_main_conf") do |add_cfg| %>
+end -%><% if_p("rabbitmq-server.additional_main_conf") do |add_cfg| %>
 <% add_cfg.each do |key, value| %>
 <%= key %> = <%= value %>
-<% end %>
-<% end %>
+<% end %><% end %>
