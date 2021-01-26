@@ -22,7 +22,7 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
         expect(output).not_to include 'export SSL_ENABLED="true"'
       end
       it 'uses default tls versions' do
-        expect(output).to include "export SSL_SUPPORTED_TLS_VERSIONS=\"['tlsv1.2','tlsv1.1']\""
+        expect(output).to include "export SSL_SUPPORTED_TLS_VERSIONS=\"['tlsv1.3','tlsv1.2']\""
       end
 
       it 'should do not configure ciphers and fallback to openssl defaults' do
