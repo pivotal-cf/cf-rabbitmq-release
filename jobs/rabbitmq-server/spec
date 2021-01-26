@@ -24,7 +24,7 @@ properties:
     description: "RabbitMQ server private key"
   rabbitmq-server.ssl.versions:
     description: "TLS protocol versions to support"
-    default: ['tlsv1.3','tlsv1.2']
+    default: ['tlsv1.2','tlsv1.1']
   rabbitmq-server.ssl.ciphers:
     description: "TLS ciphers to use"
   rabbitmq-server.ssl.verify:
