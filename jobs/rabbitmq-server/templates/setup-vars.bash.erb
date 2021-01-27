@@ -1,6 +1,6 @@
 <% if_p("rabbitmq-server.ssl.enabled") do
 
-    supported_tls_versions = ['tlsv1', 'tlsv1.1', 'tlsv1.2']
+    supported_tls_versions = ['tlsv1', 'tlsv1.1', 'tlsv1.2', 'tlsv1.3']
 
     tls_versions = p('rabbitmq-server.ssl.versions')
 
