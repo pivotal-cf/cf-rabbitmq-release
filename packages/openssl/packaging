@@ -1,0 +1,18 @@
+set -ex
+
+cpus="$(grep -c ^processor /proc/cpuinfo)"
+
+cd openssl/
+
+tar -xf openssl-1.1.1i.tar.gz
+cd openssl-1.1.1i
+
+./config \
+  --shared \
+  -Wl,-rpath="${BOSH_INSTALL_TARGET}/external/openssl/lib" \
+  --prefix="${BOSH_INSTALL_TARGET}/external/openssl" \
+  --openssldir="${BOSH_INSTALL_TARGET}/external/openssldir"
+
+
+make -j$cpus
+make install
