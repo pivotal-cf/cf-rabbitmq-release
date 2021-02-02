@@ -1,5 +1,5 @@
 # get the values from the output of
-# lpass show "Shared-London Services/london-ci/aws-keys"
+# lpass show "Shared-PCF RabbitMQ/Concourse Pipelines/bosh-release-pipeline-secrets"
 #
 # After filling in the values move this file to config/private.yml
 #
