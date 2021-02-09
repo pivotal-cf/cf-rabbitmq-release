@@ -132,7 +132,7 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
 
     context 'when invalid tls ciphers are specified' do
       before :each do
-        manifest_properties['rabbitmq-server']['ssl']['ciphers'] = %w[SOME-valid-cipher-1232 an_invalid_!@#$]
+        manifest_properties['rabbitmq-server']['ssl']['ciphers'] = %w[SOME-valid-cipher-1232 TLS1_3_VALID_CIPHER an_invalid_!@#$]
       end
 
       it 'raise an error' do
