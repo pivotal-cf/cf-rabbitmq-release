@@ -83,6 +83,7 @@ create_env_config_file() {
   printf "RABBITMQ_PLUGINS_EXPAND_DIR=%s\n" "$RABBITMQ_PLUGINS_EXPAND_DIR" >> "$dir/env"
   printf "ENABLED_PLUGINS_FILE=%s\n" "$plugins_file" >> "$dir/env"
   printf "USE_LONGNAME=%s\n" "$use_longname" >> "$dir/env"
+  printf "SERVER_START_ARGS='%s'\n" "-mnesia core_dir \"/var/vcap/sys/log/rabbitmq-server\" -rabbit halt_on_upgrade_failure false" >> "$dir/env"
 
   printf "%s\n" "$suffix" >> "$dir/env"
 

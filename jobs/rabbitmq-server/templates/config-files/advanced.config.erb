@@ -1,13 +1,5 @@
 <% if p('rabbitmq-server.oauth.enabled') %>
 [
-  {rabbit, [
-    {auth_backends, [rabbit_auth_backend_oauth2, rabbit_auth_backend_internal]}
-  ]},
-  {rabbitmq_management, [
-    {enable_uaa, true},
-    {uaa_client_id, "<%= p('rabbitmq-server.oauth.uaa_client_id') %>"},
-    {uaa_location, "<%= p('rabbitmq-server.oauth.uaa_location') %>"}
-  ]},
   {rabbitmq_auth_backend_oauth2, [
     {resource_server_id, <<"<%= p('rabbitmq-server.oauth.resource_server_id') %>">>},
     {key_config, [
@@ -19,5 +11,5 @@
   ]}
 ].
 <% else %>
-[].
+<%= p("rabbitmq-server.config").unpack("m0").first %>
 <% end %>

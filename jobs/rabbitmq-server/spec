@@ -67,8 +67,10 @@ properties:
   rabbitmq-server.administrators.management.password:
     description: "RabbitMQ admin password for operator"
 
+  rabbitmq-server.override_config:
+    description: "RabbitMQ configuration in Cuttlefish format. Overrides any config set by the release."
   rabbitmq-server.config:
-    description: "RabbitMQ configuration (base64 encoded). If this property is set, rabbitmq-server.load_definitions is ignored."
+    description: "DEPRECATED. Use rabbitmq-server.override_config. RabbitMQ advanced configuration (base64 encoded Erlang term-file format). If this property is set, rabbitmq-server.load_definitions is ignored. Does not work if rabbitmq-server.oauth.enabled"
     default: "W10u" # base64 encoding of '[].'
 
   rabbitmq-server.erlang_major_version:
@@ -146,17 +148,18 @@ templates:
   management-cacert.pem.erb:                etc/management-cacert.pem
   management-cert.pem.erb:                  etc/management-cert.pem
   management-key.pem.erb:                   etc/management-key.pem
-  advanced.config.erb:                      etc/advanced.config
   users.erb:                                etc/users
   delete_old_files.bash:                    lib/delete_old_files.bash
   prepare-for-upgrade.bash:                 lib/prepare-for-upgrade.bash
   rabbitmq-config-vars.bash.erb:            lib/rabbitmq-config-vars.bash
   indicators.yml.erb:                       config/indicators.yml
   prom_scraper_config.yml.erb:              config/prom_scraper_config.yml
+  config-files/advanced.config.erb:         etc/advanced.config
   config-files/10-clusterDefaults.conf.erb: etc/conf.d/10-clusterDefaults.conf
   config-files/11-tlsConfig.conf.erb:       etc/conf.d/11-tlsConfig.conf
   config-files/12-managementConfig.conf.erb: etc/conf.d/12-managementConfig.conf
-  config-files/50-userDefinedConfig.conf.erb: etc/conf.d/50-userDefinedConfig.conf
+  config-files/13-oAuth.conf.erb:           etc/conf.d/13-oAuth.conf
+  config-files/50-overrideConfig.conf.erb:  etc/conf.d/50-overrideConfig.conf
 
 provides:
   - name: rabbitmq-server
