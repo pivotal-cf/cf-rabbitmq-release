@@ -1,0 +1,58 @@
+<%
+  require 'digest'
+
+  create_swap_delete = p('rabbitmq-server.create_swap_delete') == true
+
+  addresses = link('rabbitmq-server').instances.map(&:address)
+  if addresses.size <= 1
+    addresses = create_swap_delete ? [spec.address] : [spec.ip]
+  end
+
+  if create_swap_delete
+    cluster_formation_config = addresses.map do |fqdn|
+      "cluster_formation.classic_config.nodes.rabbit@#{fqdn} = disc"
+    end.join("\n")
+
+  else
+    cluster_formation_config = addresses.map do |ip|
+      "cluster_formation.classic_config.nodes.rabbit@#{Digest::MD5.hexdigest(ip)} = disc"
+    end.join("\n")
+
+  end
+
+%>
+
+<%= cluster_formation_config %>
+log.connection.level = info
+mnesia.core_dir = "/var/vcap/sys/log/rabbitmq-server"
+disk_free_limit.relative = <%= p("rabbitmq-server.disk_alarm_threshold") %>
+cluster_partition_handling = <%= p("rabbitmq-server.cluster_partition_handling") %>
+halt_on_upgrade_failure = false
+mqtt.subscription_ttl = 1800000
+management.http_log_dir = "/var/vcap/sys/log/rabbitmq-server/management-ui"
+<% if_p("rabbitmq-server.cluster_name") do |cluster_name| %>
+cluster_name = "<%= cluster_name %>"
+<% end %>
+<% if_p('rabbitmq-server.load_definitions') do -%>
+load_definitions = /var/vcap/jobs/rabbitmq-server/etc/definitions.json
+<% end -%>
+<% if_p('rabbitmq-server.ssl.enabled', 'rabbitmq-server.plugins') do |ssl_enabled, plugins|
+if ssl_enabled && plugins.include?('rabbitmq_web_stomp') -%>
+web_stomp.ssl.port = 15673
+web_stomp.ssl.cacertfile = /var/vcap/jobs/rabbitmq-server/etc/cacert.pem
+web_stomp.ssl.certfile = /var/vcap/jobs/rabbitmq-server/etc/cert.pem
+web_stomp.ssl.keyfile = /var/vcap/jobs/rabbitmq-server/etc/key.pem
+web_stomp.ssl.depth = <%= p('rabbitmq-server.ssl.verification_depth') %>
+<% p('rabbitmq-server.ssl.versions').each_with_index do | version, index | -%>
+web_stomp.ssl.versions.<%= index+1 %> = <%= version %>
+<% end -%>
+<% if p('rabbitmq-server.ssl.disable_non_ssl_listeners') -%>
+web_stomp.tcp.listener = none
+<% end -%>
+<% if_p('rabbitmq-server.ssl.ciphers') do |ciphers|
+ciphers.each_with_index do |cipher, index| -%>
+web_stomp.ssl.ciphers.<%= index+1 %> = <%= cipher %>
+<% end
+end
+end
+end -%>

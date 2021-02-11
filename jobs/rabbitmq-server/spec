@@ -147,15 +147,16 @@ templates:
   management-cert.pem.erb:                  etc/management-cert.pem
   management-key.pem.erb:                   etc/management-key.pem
   advanced.config.erb:                      etc/advanced.config
-  rabbitmq.config.erb:                      etc/rabbitmq.config # classic format
-  rabbitmq.conf.erb:                        etc/rabbitmq.conf   # new format
   users.erb:                                etc/users
   delete_old_files.bash:                    lib/delete_old_files.bash
   prepare-for-upgrade.bash:                 lib/prepare-for-upgrade.bash
   rabbitmq-config-vars.bash.erb:            lib/rabbitmq-config-vars.bash
-  setup-vars.bash.erb:                      lib/setup-vars.bash
   indicators.yml.erb:                       config/indicators.yml
   prom_scraper_config.yml.erb:              config/prom_scraper_config.yml
+  config-files/10-clusterDefaults.conf.erb: etc/conf.d/10-clusterDefaults.conf
+  config-files/11-tlsConfig.conf.erb:       etc/conf.d/11-tlsConfig.conf
+  config-files/12-managementConfig.conf.erb: etc/conf.d/12-managementConfig.conf
+  config-files/50-userDefinedConfig.conf.erb: etc/conf.d/50-userDefinedConfig.conf
 
 provides:
   - name: rabbitmq-server
