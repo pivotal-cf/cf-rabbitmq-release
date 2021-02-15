@@ -133,6 +133,19 @@ RSpec.describe 'RabbitMQ server configuration' do
       end
 
       context 'when tlsv1, tlsv1.1 and tlsv1.2 are enabled' do
+        before(:all) do
+          manifest = bosh.manifest
+
+          bosh.redeploy do |manifest|
+            rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
+            rmq_properties['ssl']['versions'] = ['tlsv1.2', 'tlsv1.1', 'tlsv1']
+
+            tlsv1_compatible_cipher = 'ECDHE-RSA-AES256-SHA'
+            tlsv1_2_compatible_cipher = 'ECDHE-RSA-AES256-GCM-SHA384'
+            rmq_properties['ssl']['ciphers'] = [tlsv1_compatible_cipher, tlsv1_2_compatible_cipher]
+          end
+        end
+
         it 'should have TLS 1.0 enabled' do
           output = bosh.ssh(rmq_host, connect_using('tls1'))
 
@@ -167,7 +180,6 @@ RSpec.describe 'RabbitMQ server configuration' do
           manifest = bosh.manifest
 
           bosh.redeploy do |manifest|
-            # Change management creds
             rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
             rmq_properties['ssl']['versions'] = ['tlsv1.3', 'tlsv1.2']
 
