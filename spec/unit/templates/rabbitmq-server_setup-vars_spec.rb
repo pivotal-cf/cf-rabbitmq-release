@@ -47,22 +47,12 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
     end
 
     context 'when tls versions are configured' do
-      it 'uses provided tls versions' do
+      before :each do
         manifest_properties['rabbitmq-server']['ssl']['versions'] = ['tlsv1.2']
-
-        expect(output).to include "export SSL_SUPPORTED_TLS_VERSIONS=\"['tlsv1.2']\""
       end
 
-      context 'when tls 1.3 is enabled along with tls 1.1 or tls 1.0' do
-        it 'raises an error' do
-          manifest_properties['rabbitmq-server']['ssl']['versions'] = ['tlsv1.3', 'tlsv1.2', 'tlsv1.1']
-          expect { output }.to \
-            raise_error 'TLS 1.3 cannot be enabled along with TLS 1.1 and TLS 1.0'
-
-          manifest_properties['rabbitmq-server']['ssl']['versions'] = ['tlsv1.3', 'tlsv1.2', 'tlsv1.1', 'tls1.0']
-          expect { output }.to \
-            raise_error 'TLS 1.3 cannot be enabled along with TLS 1.1 and TLS 1.0'
-        end
+      it 'uses provided tls versions' do
+        expect(output).to include "export SSL_SUPPORTED_TLS_VERSIONS=\"['tlsv1.2']\""
       end
     end
 
@@ -142,7 +132,7 @@ RSpec.describe 'setup-vars.bash file generation', template: true do
 
     context 'when invalid tls ciphers are specified' do
       before :each do
-        manifest_properties['rabbitmq-server']['ssl']['ciphers'] = %w[SOME-valid-cipher-1232 TLS1_3_VALID_CIPHER an_invalid_!@#$]
+        manifest_properties['rabbitmq-server']['ssl']['ciphers'] = %w[SOME-valid-cipher-1232 an_invalid_!@#$]
       end
 
       it 'raise an error' do
