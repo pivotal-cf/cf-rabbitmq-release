@@ -71,7 +71,7 @@ properties:
     description: "RabbitMQ configuration in Cuttlefish format. Overrides any config set by the release."
   rabbitmq-server.override_advanced_config:
     description: "RabbitMQ advanced configuration in Erlang format, as a base64-encoded string. Overrides any config set by the release. Does not work if rabbitmq-server.oauth.enabled."
-"
+
   rabbitmq-server.config:
     description: "DEPRECATED. Use rabbitmq-server.override_advanced_config."
     default: "W10u" # base64 encoding of '[].'
