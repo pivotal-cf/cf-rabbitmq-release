@@ -7,6 +7,10 @@
     tls_versions.respond_to?('map') or
       raise "Expected rabbitmq-server.ssl.versions to be a collection"
 
+    if tls_versions.include?('tlsv1.3') && (tls_versions.include?('tlsv1.1') || tls_versions.include?('tlsv1'))
+      raise "TLS 1.3 cannot be enabled along with TLS 1.1 and TLS 1.0"
+    end
+
     tls_versions = tls_versions.map do |v|
       supported_tls_versions.include?(v) or
         raise "#{v} is a not supported tls version"

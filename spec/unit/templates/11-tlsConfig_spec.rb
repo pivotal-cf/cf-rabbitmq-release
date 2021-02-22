@@ -57,6 +57,40 @@ RSpec.describe 'Configuration', template: true do
     end
   end
 
+  context 'when tls 1.3 is enabled along with tls 1.1 or tls 1.0' do
+    context 'when tls 1.3 is enabled along with tls 1.1' do
+      let(:manifest_properties) { {
+          'rabbitmq-server' => {
+            'ssl' => {
+              'enabled':true,
+              'versions':['tlsv1.3', 'tlsv1.2', 'tlsv1.1'],
+            }
+          }
+        }
+      }
+      it 'raises an error' do
+        expect { rendered_template }.to \
+          raise_error 'TLS 1.3 cannot be enabled along with TLS 1.1 and TLS 1.0'
+      end
+    end
+
+    context 'when tls 1.3 is enabled along with tls 1.1' do
+      let(:manifest_properties) { {
+          'rabbitmq-server' => {
+            'ssl' => {
+              'enabled':true,
+              'versions':['tlsv1.3', 'tlsv1.2', 'tlsv1'],
+            }
+          }
+        }
+      }
+      it 'raises an error' do
+        expect { rendered_template }.to \
+          raise_error 'TLS 1.3 cannot be enabled along with TLS 1.1 and TLS 1.0'
+      end
+    end
+  end
+
   context 'when an invalid cipher is provided' do
 		let(:manifest_properties) { {
 				'rabbitmq-server' => {

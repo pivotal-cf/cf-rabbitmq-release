@@ -24,7 +24,7 @@ properties:
   rabbitmq-server.ssl.key:
     description: "RabbitMQ server private key"
   rabbitmq-server.ssl.versions:
-    description: "TLS protocol versions to support"
+    description: "TLS protocol versions to support. Note that TLS 1.3 is incompatible with TLS 1.1 and TLS 1.0. The deployment will fail if TLS 1.3 is enabled alongside TLS 1.0 or TLS 1.1."
     default: ['tlsv1.3','tlsv1.2']
   rabbitmq-server.ssl.ciphers:
     description: "TLS ciphers to use"
