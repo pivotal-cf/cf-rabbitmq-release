@@ -1,4 +1,4 @@
-<% if p("rabbitmq-server.ssl.enabled") %>
+<% if p("rabbitmq-server.ssl.enabled") -%>
 <% 
     supported_tls_versions = ['tlsv1', 'tlsv1.1', 'tlsv1.2', 'tlsv1.3']
 
@@ -22,22 +22,22 @@
         "\\\"#{c}\\\"".gsub(/^'+|'+$/, "'")
       end
     end
-%>
-<% if p("rabbitmq-server.ssl.disable_non_ssl_listeners") %>
+-%>
+<% if p("rabbitmq-server.ssl.disable_non_ssl_listeners") -%>
 listeners.tcp = none
 mqtt.listeners.tcp = none
 stomp.listeners.tcp = none
-<% end %>
+<% end -%>
 
 listeners.ssl.1 = 5671
 mqtt.listeners.ssl.1 = 8883
 stomp.listeners.ssl.1 = 61614
 
-<% if p("rabbitmq-server.ssl.verify") %>
+<% if p("rabbitmq-server.ssl.verify") -%>
 ssl_options.verify = verify_peer
-<% else %>
+<% else -%>
 ssl_options.verify = verify_none
-<% end %>
+<% end -%>
 
 ssl_options.cacertfile = /var/vcap/jobs/rabbitmq-server/etc/cacert.pem
 ssl_options.certfile = /var/vcap/jobs/rabbitmq-server/etc/cert.pem
@@ -45,16 +45,15 @@ ssl_options.keyfile = /var/vcap/jobs/rabbitmq-server/etc/key.pem
 ssl_options.depth = <%= p("rabbitmq-server.ssl.verification_depth") %>
 ssl_options.fail_if_no_peer_cert = <%= p("rabbitmq-server.ssl.fail_if_no_peer_cert") %>
 
-<% if_p('rabbitmq-server.ssl.ciphers') do |tls_ciphers| %> 
-<% tls_ciphers.each_with_index do |cipher, index| %>
+<% if_p('rabbitmq-server.ssl.ciphers') do |tls_ciphers| -%>
+<% tls_ciphers.each_with_index do |cipher, index| -%>
 ssl_options.ciphers.<%= index+1 %> = <%= cipher %>
-<% end %>
-<% end %>
+<% end -%>
+<% end -%>
 
-<% if_p('rabbitmq-server.ssl.versions') do |tls_versions| %> 
-<% tls_versions.each_with_index do |cipher, index| %>
+<% if_p('rabbitmq-server.ssl.versions') do |tls_versions| -%>
+<% tls_versions.each_with_index do |cipher, index| -%>
 ssl_options.versions.<%= index+1 %> = <%= cipher %>
-<% end %>
-<% end %>
-
-<% end %>
+<% end -%>
+<% end -%>
+<% end -%>

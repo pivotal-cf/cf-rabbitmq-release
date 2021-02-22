@@ -1,4 +1,4 @@
-<% if p('rabbitmq-server.oauth.enabled') %>
+<% if p('rabbitmq-server.oauth.enabled') -%>
 [
   {rabbitmq_auth_backend_oauth2, [
     {resource_server_id, <<"<%= p('rabbitmq-server.oauth.resource_server_id') %>">>},
@@ -10,8 +10,8 @@
     ]}
   ]}
 ].
-<% elsif lookup_property(@raw_properties, "rabbitmq-server.override_advanced_config").nil? %>
+<% elsif lookup_property(@raw_properties, "rabbitmq-server.override_advanced_config").nil? -%>
 <%= p("rabbitmq-server.config").unpack("m0").first %>
-<% else %>
+<% else -%>
 <%= p("rabbitmq-server.override_advanced_config").unpack("m0").first %>
-<% end %>
+<% end -%>

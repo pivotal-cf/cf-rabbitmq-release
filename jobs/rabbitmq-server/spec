@@ -99,7 +99,7 @@ properties:
     default: false
 
   rabbitmq-server.load_definitions:
-    description: "Definitions to be loaded by RabbitMQ at startup. If rabbitmq-server.config is set, this property is ignored."
+    description: "Definitions to be loaded by RabbitMQ at startup."
 
   rabbitmq-server.oauth.enabled:
     description: "Enables RabbitMQ OAuth plugin"
