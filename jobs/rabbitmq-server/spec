@@ -156,6 +156,7 @@ templates:
   management-cacert.pem.erb:                etc/management-cacert.pem
   management-cert.pem.erb:                  etc/management-cert.pem
   management-key.pem.erb:                   etc/management-key.pem
+  oAuth-signing-key.pem.erb:                etc/oAuth-signing-key.pem
   users.erb:                                etc/users
   delete_old_files.bash:                    lib/delete_old_files.bash
   prepare-for-upgrade.bash:                 lib/prepare-for-upgrade.bash

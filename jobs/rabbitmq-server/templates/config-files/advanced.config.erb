@@ -1,16 +1,4 @@
-<% if p('rabbitmq-server.oauth.enabled') -%>
-[
-  {rabbitmq_auth_backend_oauth2, [
-    {resource_server_id, <<"<%= p('rabbitmq-server.oauth.resource_server_id') %>">>},
-    {key_config, [
-      {default_key, <<"<%= p('rabbitmq-server.oauth.signing_key_id') %>">>},
-      {signing_keys,
-        #{<<"<%= p('rabbitmq-server.oauth.signing_key_id') %>">> => {pem, <<"<%= p('rabbitmq-server.oauth.signing_key') %>">>}}
-      }
-    ]}
-  ]}
-].
-<% elsif lookup_property(@raw_properties, "rabbitmq-server.override_advanced_config").nil? -%>
+<% if lookup_property(@raw_properties, "rabbitmq-server.override_advanced_config").nil? -%>
 <%= p("rabbitmq-server.config").unpack("m0").first %>
 <% else -%>
 <%= p("rabbitmq-server.override_advanced_config").unpack("m0").first %>
