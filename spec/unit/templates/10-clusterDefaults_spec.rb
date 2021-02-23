@@ -141,7 +141,7 @@ RSpec.describe 'Configuration', template: true do
         }
       } 
     }
-    it 'configures RabbitMQ to import the definitions' do
+    it 'sets the cluster node configuration with the FQDN of the nodes' do
       expect(rendered_template).to include('cluster_formation.classic_config.nodes.1 = rabbit@rabbit1.foo.com')
       expect(rendered_template).to include('cluster_formation.classic_config.nodes.2 = rabbit@rabbit2.foo.com')
     end
