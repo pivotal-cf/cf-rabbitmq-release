@@ -1,0 +1,63 @@
+<% if p("rabbitmq-server.ssl.enabled") -%>
+<% 
+    supported_tls_versions = ['tlsv1', 'tlsv1.1', 'tlsv1.2', 'tlsv1.3']
+
+    tls_versions = p('rabbitmq-server.ssl.versions')
+
+    tls_versions.respond_to?('map') or
+      raise "Expected rabbitmq-server.ssl.versions to be a collection"
+
+    if tls_versions.include?('tlsv1.3') && (tls_versions.include?('tlsv1.1') || tls_versions.include?('tlsv1'))
+      raise "TLS 1.3 cannot be enabled along with TLS 1.1 and TLS 1.0"
+    end
+
+    tls_versions = tls_versions.map do |v|
+      supported_tls_versions.include?(v) or
+        raise "#{v} is a not supported tls version"
+    end
+
+    tls_ciphers = ''
+    if_p('rabbitmq-server.ssl.ciphers') do |ciphers|
+      ciphers.respond_to?('map') or
+        raise "Expected rabbitmq-server.ssl.ciphers to be a collection"
+
+      ciphers.map do |c|
+        /^[a-zA-Z0-9\-]+$/.match(c) or raise "#{c} is not a valid cipher suite"
+        "\\\"#{c}\\\"".gsub(/^'+|'+$/, "'")
+      end
+    end
+-%>
+<% if p("rabbitmq-server.ssl.disable_non_ssl_listeners") -%>
+listeners.tcp = none
+mqtt.listeners.tcp = none
+stomp.listeners.tcp = none
+<% end -%>
+
+listeners.ssl.1 = 5671
+mqtt.listeners.ssl.1 = 8883
+stomp.listeners.ssl.1 = 61614
+
+<% if p("rabbitmq-server.ssl.verify") -%>
+ssl_options.verify = verify_peer
+<% else -%>
+ssl_options.verify = verify_none
+<% end -%>
+
+ssl_options.cacertfile = /var/vcap/jobs/rabbitmq-server/etc/cacert.pem
+ssl_options.certfile = /var/vcap/jobs/rabbitmq-server/etc/cert.pem
+ssl_options.keyfile = /var/vcap/jobs/rabbitmq-server/etc/key.pem
+ssl_options.depth = <%= p("rabbitmq-server.ssl.verification_depth") %>
+ssl_options.fail_if_no_peer_cert = <%= p("rabbitmq-server.ssl.fail_if_no_peer_cert") %>
+
+<% if_p('rabbitmq-server.ssl.ciphers') do |tls_ciphers| -%>
+<% tls_ciphers.each_with_index do |cipher, index| -%>
+ssl_options.ciphers.<%= index+1 %> = <%= cipher %>
+<% end -%>
+<% end -%>
+
+<% if_p('rabbitmq-server.ssl.versions') do |tls_versions| -%>
+<% tls_versions.each_with_index do |cipher, index| -%>
+ssl_options.versions.<%= index+1 %> = <%= cipher %>
+<% end -%>
+<% end -%>
+<% end -%>

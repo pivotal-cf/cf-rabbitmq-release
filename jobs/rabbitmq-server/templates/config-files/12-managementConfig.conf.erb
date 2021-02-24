@@ -1,0 +1,9 @@
+<% if p("rabbitmq-server.management_tls.enabled") -%>
+management.ssl.port = 15671
+management.ssl.cacertfile = /var/vcap/jobs/rabbitmq-server/etc/management-cacert.pem
+management.ssl.certfile = /var/vcap/jobs/rabbitmq-server/etc/management-cert.pem
+management.ssl.keyfile = /var/vcap/jobs/rabbitmq-server/etc/management-key.pem
+<% else -%>
+management.tcp.port = 15672
+<% end -%>
+management.http_log_dir = "/var/vcap/sys/log/rabbitmq-server/management-ui"

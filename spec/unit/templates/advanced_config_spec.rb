@@ -1,6 +1,6 @@
 RSpec.describe 'advanced.config file generation for oauth', template: true do
 	let(:output) do
-    compiled_template('rabbitmq-server', 'advanced.config', manifest_properties).strip
+    compiled_template('rabbitmq-server', 'config-files/advanced.config', manifest_properties).strip
 	end
 
 	context 'when oauth is not defined' do
@@ -23,6 +23,27 @@ RSpec.describe 'advanced.config file generation for oauth', template: true do
 
 		it 'defaults to []. valid erlang config' do
 			expect(output).to eq("[].")
+    end
+	end
+
+  context 'when oauth is disabled and custom advanced.config is provided' do
+		let(:manifest_properties) { {
+				'rabbitmq-server' => {
+          'oauth' => {
+            'enabled': false
+          },
+          'override_advanced_config': 'WwogIHtyYWJiaXQsIFsKICAgICAge3RjcF9saXN0ZW5lcnMsIFs1NjczXX0KICAgIF0KICB9Cl0u'
+		    }
+      } 
+    }
+
+		it 'sets the override config' do
+			expect(output).to eq('[
+  {rabbit, [
+      {tcp_listeners, [5673]}
+    ]
+  }
+].')
     end
 	end
 
@@ -49,7 +70,7 @@ VwIDAQAB
       } 
     }
 
-		it 'configures oauth and management plugins' do
+		it 'configures only the oauth advanced config that does not have a Cuttlefish equivalent' do
       expect(output).to eq(File.open("spec/unit/templates/assets/expected_rabbitmq_advanced.config").read.strip)
     end
 	end

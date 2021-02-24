@@ -1,0 +1,46 @@
+<%
+  require 'digest'
+
+  create_swap_delete = p('rabbitmq-server.create_swap_delete') == true
+
+  addresses = link('rabbitmq-server').instances.map(&:address)
+  if addresses.size <= 1
+    addresses = create_swap_delete ? [spec.address] : [spec.ip]
+  end
+-%>
+
+<% if create_swap_delete -%>
+<% cluster_formation_config = addresses.each_with_index do |fqdn, index| -%>
+cluster_formation.classic_config.nodes.<%= index+1 %> = rabbit@<%= fqdn %>
+<% end -%>
+<% else -%>
+<% cluster_formation_config = addresses.each_with_index do |ip, index| -%>
+cluster_formation.classic_config.nodes.<%= index+1 %> = rabbit@<%= Digest::MD5.hexdigest(ip) %>
+<% end -%>
+<% end -%>
+log.connection.level = info
+
+<% if_p("rabbitmq-server.disk_alarm_threshold") do |threshold|
+  relative = threshold.match /{mem_relative,(\d+\.\d+)}/
+  if relative.nil?
+    disk_free_limit_config = "disk_free_limit.absolute = #{threshold}"
+  else
+    disk_free_limit_config = "disk_free_limit.relative = #{relative[1]}"
+  end
+-%>
+<%= disk_free_limit_config %>
+<% end -%>
+
+cluster_partition_handling = <%= p("rabbitmq-server.cluster_partition_handling") %>
+mqtt.subscription_ttl = 1800000
+
+<% if_p("rabbitmq-server.cluster_name") do |cluster_name| -%>
+<% if cluster_name != "" -%>
+cluster_name = "<%= cluster_name %>"
+<% end -%>
+<% end -%>
+
+<% if_p('rabbitmq-server.load_definitions') do -%>
+load_definitions = /var/vcap/jobs/rabbitmq-server/etc/definitions.json
+<% end -%>
+

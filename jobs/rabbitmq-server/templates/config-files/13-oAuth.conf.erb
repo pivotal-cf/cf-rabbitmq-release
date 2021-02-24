@@ -1,0 +1,7 @@
+<% if p('rabbitmq-server.oauth.enabled') -%>
+auth_backends.1 = rabbit_auth_backend_oauth2
+auth_backends.2 = rabbit_auth_backend_internal
+management.enable_uaa = true
+management.uaa_client_id = <%= p('rabbitmq-server.oauth.uaa_client_id') %>
+management.uaa_location = <%= p('rabbitmq-server.oauth.uaa_location') %>
+<% end -%>
