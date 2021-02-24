@@ -106,6 +106,22 @@ RSpec.describe 'Configuration', template: true do
     end
   end
 
+  context 'when a valid TLS 1.3 cipher is provided' do
+		let(:manifest_properties) { {
+				'rabbitmq-server' => {
+          'ssl' => {
+            'enabled':true,
+            'ciphers': ['TOTALLYLEGITCIPHER256', 'TLS1_3_VALID_CIPHER']
+          }
+		    }
+      }
+    }
+    it 'includes the valid cipher' do
+      expect(rendered_template).to include('ssl_options.ciphers.1 = TOTALLYLEGITCIPHER256')
+      expect(rendered_template).to include('ssl_options.ciphers.2 = TLS1_3_VALID_CIPHER')
+    end
+  end
+
   context 'when non-TLS listeners are disabled' do
 		let(:manifest_properties) { {
 				'rabbitmq-server' => {
