@@ -22,7 +22,7 @@
         raise "Expected rabbitmq-server.ssl.ciphers to be a collection"
 
       ciphers.map do |c|
-        /^[a-zA-Z0-9\-]+$/.match(c) or raise "#{c} is not a valid cipher suite"
+        /^[a-zA-Z0-9\-\_]+$/.match(c) or raise "#{c} is not a valid cipher suite"
         "\\\"#{c}\\\"".gsub(/^'+|'+$/, "'")
       end
     end
