@@ -1,0 +1,20 @@
+<% if_p('rabbitmq-server.ssl.enabled', 'rabbitmq-server.plugins') do |ssl_enabled, plugins|
+if ssl_enabled && plugins.include?('rabbitmq_web_mqtt') -%>
+web_mqtt.ssl.port = 15676
+web_mqtt.ssl.cacertfile = /var/vcap/jobs/rabbitmq-server/etc/cacert.pem
+web_mqtt.ssl.certfile = /var/vcap/jobs/rabbitmq-server/etc/cert.pem
+web_mqtt.ssl.keyfile = /var/vcap/jobs/rabbitmq-server/etc/key.pem
+web_mqtt.ssl.depth = <%= p('rabbitmq-server.ssl.verification_depth') %>
+<% p('rabbitmq-server.ssl.versions').each_with_index do | version, index | -%>
+web_mqtt.ssl.versions.<%= index+1 %> = <%= version %>
+<% end -%>
+<% if p('rabbitmq-server.ssl.disable_non_ssl_listeners') -%>
+web_mqtt.tcp.listener = none
+<% end -%>
+<% if_p('rabbitmq-server.ssl.ciphers') do |ciphers|
+ciphers.each_with_index do |cipher, index| -%>
+web_mqtt.ssl.ciphers.<%= index+1 %> = <%= cipher %>
+<% end
+end
+end
+end -%>
