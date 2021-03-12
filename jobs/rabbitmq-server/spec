@@ -107,13 +107,13 @@ properties:
     description: "Definitions to be loaded by RabbitMQ at startup."
 
   rabbitmq-server.oauth.enabled:
-    description: "Enables RabbitMQ OAuth plugin"
+    description: "Enables RabbitMQ OAuth plugin."
     default: false
   rabbitmq-server.oauth.resource_server_id:
     description: "Prefix used for scopes in UAA to avoid scope collisions"
     default: ""
   rabbitmq-server.oauth.signing_key:
-    description: "The public key (verification key) of the RSA key pair or the symmetric signing key used by UAA to sign the JWT token"
+    description: "The public key (verification key) of the RSA key pair used by UAA to sign the JWT token."
   rabbitmq-server.oauth.signing_key_id:
     description: "The ID of the JWT signing key to be used when signing tokens."
   rabbitmq-server.oauth.uaa_client_id:
