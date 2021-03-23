@@ -1,6 +1,6 @@
 ---
 port: 15692
 source_id: <%= if p('rabbitmq-server.cluster_name') == "" then 'rabbit@localhost' else p('rabbitmq-server.cluster_name') end %>
-instance_id: rabbit@<%= Digest::MD5.hexdigest(spec.ip) %>
+instance_id: <%= if p('rabbitmq-server.create_swap_delete') == true then "'rabbit@#{spec.address}'" else "'rabbit@#{Digest::MD5.hexdigest(spec.ip)}'" end %>
 scheme: http
 server_name: localhost
