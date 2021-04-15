@@ -1,7 +1,7 @@
 ---
 name: haproxy
 metadata:
-  version: 1.8.29
+  version: 1.8.30
 files:
-- haproxy/haproxy-1.8.29.tar.gz
+- haproxy/haproxy-1.8.30.tar.gz
 dependencies: []
