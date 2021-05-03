@@ -1,9 +1,9 @@
 ---
 name: rabbitmq-server-3.8
 metadata:
-  version: 3.8.14
+  version: 3.8.15
 files:
-- rabbitmq-server-3.8/rabbitmq-server-generic-unix-3.8.14.tar.xz
+- rabbitmq-server-3.8/rabbitmq-server-generic-unix-3.8.15.tar.xz
 - rabbitmq-server/rabbitmq-script-wrapper
 - rabbitmq-server/rabbitmq-defaults
 dependencies: []
