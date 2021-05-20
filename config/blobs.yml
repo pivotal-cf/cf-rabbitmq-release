@@ -10,10 +10,10 @@ erlang-22/otp_src_oss_22.3.4.4.tgz:
   object_id: a4c45e98-3852-42ce-6efb-72270bafa43b
   sha: sha256:1d96ef7e9153903c7dfcd7c6714190359fb56d1d2e300840a609145fb63b063a
 # this comment prevents git conflicts
-erlang-23/otp_src_oss_23.3.4.tgz:
-  size: 58333652
-  object_id: d61f35f5-fb6f-44d1-582a-9c71a83d07e9
-  sha: sha256:ceca3be81feef97881c8dcaf318386eb4675a34c82efe90f6b459e2966ac199a
+erlang-23/otp_src_oss_23.3.4.1.tgz:
+  size: 57673211
+  object_id: c0e3067a-3660-4e94-5cfd-0b1540787ad7
+  sha: sha256:709ccae79104f967a695b0bafbe2c526e998fe6612fa13a13b6488cd08a1f8fd
 # this comment prevents git conflicts
 golang/go1.16.4.linux-amd64.tar.gz:
   size: 129044044
