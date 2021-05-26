@@ -1,6 +1,9 @@
 RMQ_FD_LIMIT=<%= p('rabbitmq-server.fd_limit') %>
 RMQ_FD_LIMIT="${RMQ_FD_LIMIT:?must be set}"
 
-<% if !p('rabbitmq-server.force_cluster_shutdown_on_version_change') %>
-  SKIP_PREPARE_FOR_UPGRADE=true
+<% if !p('rabbitmq-server.force_cluster_shutdown_on_version_change') -%>
+SKIP_PREPARE_FOR_UPGRADE=true
+<% end %>
+<% if p('rabbitmq-server.ssl.enabled') and p('rabbitmq-server.ssl.inter_node_enabled') -%>
+RABBITMQ_CTL_ERL_ARGS="-proto_dist inet_tls -ssl_dist_optfile /var/vcap/jobs/rabbitmq-server/etc/inter_node_tls.config"
 <% end %>

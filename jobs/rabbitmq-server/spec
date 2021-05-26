@@ -40,6 +40,9 @@ properties:
   rabbitmq-server.ssl.disable_non_ssl_listeners:
     description: "Should RabbitMQ reject connections on non-TLS ports when TLS is enabled"
     default: false
+  rabbitmq-server.ssl.inter_node_enabled:
+    description: "Whether to use TLS for inter-node communications through the Erlang distribution, including by RabbitMQ CLIs. Has no effect if TLS is disabled."
+    default: false
 
   rabbitmq-server.management_tls.enabled:
     default: false
@@ -164,6 +167,7 @@ templates:
   indicators.yml.erb:                       config/indicators.yml
   prom_scraper_config.yml.erb:              config/prom_scraper_config.yml
   config-files/advanced.config.erb:         etc/advanced.config
+  config-files/inter_node_tls.config.erb:   etc/inter_node_tls.config
   config-files/10-clusterDefaults.conf.erb: etc/conf.d/10-clusterDefaults.conf
   config-files/11-tlsConfig.conf.erb:       etc/conf.d/11-tlsConfig.conf
   config-files/12-managementConfig.conf.erb: etc/conf.d/12-managementConfig.conf

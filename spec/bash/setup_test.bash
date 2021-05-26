@@ -14,17 +14,18 @@ export T_fail
 
 T_create_env_config_file() {
   (
-    local conf_env_file self_node dir plugins_file use_longname
+    local conf_env_file self_node dir plugins_file use_longname inter_node_tls
 
     conf_env_file="$(mktemp)"
     self_node="node-1"
     dir="$(mktemp -d)"
     plugins_file="/var/vcap/store/rabbitmq/enabled_plugins"
     use_longname=false
+    inter_node_tls=true
 
     trap "rm -rf ${dir}" EXIT
 
-    create_env_config_file "$conf_env_file" "$self_node" "$dir" "$plugins_file" "$use_longname"
+    create_env_config_file "$conf_env_file" "$self_node" "$dir" "$plugins_file" "$use_longname" "$inter_node_tls"
 
     expect_file_to_exist "${dir}/env"
     expect_file_to_exist "${dir}/env.backup"
@@ -38,6 +39,8 @@ T_create_env_config_file() {
     expect_to_contain "$(<$dir/env)" "RABBITMQ_PLUGINS_EXPAND_DIR=/var/vcap/store/rabbitmq/mnesia/db-plugins-expand"
     expect_to_contain "$(<$dir/env)" "ENABLED_PLUGINS_FILE=$plugins_file"
     expect_to_contain "$(<$dir/env)" "USE_LONGNAME=false"
+    expect_to_contain "$(<$dir/env)" "SERVER_ADDITIONAL_ERL_ARGS=\"-proto_dist inet_tls -ssl_dist_optfile /var/vcap/jobs/rabbitmq-server/etc/inter_node_tls.config"
+    expect_to_contain "$(<$dir/env)" "CTL_ERL_ARGS=\"-proto_dist inet_tls -ssl_dist_optfile /var/vcap/jobs/rabbitmq-server/etc/inter_node_tls.config"
 
     ) || ( $T_fail "Failed to create conf_env file" && return 1 )
 }

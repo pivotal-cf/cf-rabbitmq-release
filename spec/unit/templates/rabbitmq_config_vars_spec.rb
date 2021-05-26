@@ -49,6 +49,34 @@ RSpec.describe 'Configuration', template: true do
     end
   end
 
+  describe 'inter node TLS' do
+    context('when TLS is disabled') do
+      before do
+        manifest['rabbitmq-server']['ssl'] = {
+          'enabled' => false,
+          'inter_node_enabled' => true
+        }
+      end
+
+      it 'sets INTER_NODE_TLS to false' do
+        expect(rendered_template).to include('export INTER_NODE_TLS=false')
+      end
+    end
+
+    context('when TLS is enabled') do
+      before do
+        manifest['rabbitmq-server']['ssl'] = {
+          'enabled' => true,
+          'inter_node_enabled' => true
+        }
+      end
+
+      it 'sets INTER_NODE_TLS to true' do
+        expect(rendered_template).to include('export INTER_NODE_TLS=true')
+      end
+    end
+  end
+
   describe 'create_swap_delete' do
     context('is true') do
       before do
