@@ -64,13 +64,9 @@ RSpec.describe 'RabbitMQ server configuration' do
         management_credentials['password'] = @new_password
 
         # SSL
-        server_key_path = File.join(__dir__, '../..', '/spec/assets/server_key.pem')
-        server_cert_path = File.join(__dir__, '../..', '/spec/assets/server_certificate.pem')
-        ca_cert_path = File.join(__dir__, '../..', '/spec/assets/ca_certificate.pem')
-
-        server_key = File.read(server_key_path)
-        server_cert = File.read(server_cert_path)
-        ca_cert = File.read(ca_cert_path)
+        server_key_path = '/var/vcap/jobs/rabbitmq-server/etc/key.pem'
+        server_cert_path = '/var/vcap/jobs/rabbitmq-server/etc/cert.pem'
+        ca_cert_path = '/var/vcap/jobs/rabbitmq-server/etc/cacert.pem'
 
         rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
         rmq_properties['ssl'] = {}
