@@ -67,6 +67,9 @@ RSpec.describe 'RabbitMQ server configuration' do
         server_key_path = '/var/vcap/jobs/rabbitmq-server/etc/key.pem'
         server_cert_path = '/var/vcap/jobs/rabbitmq-server/etc/cert.pem'
         ca_cert_path = '/var/vcap/jobs/rabbitmq-server/etc/cacert.pem'
+        server_key = File.read(server_key_path)
+        server_cert = File.read(server_cert_path)
+        ca_cert = File.read(ca_cert_path)
 
         rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
         rmq_properties['ssl'] = {}
