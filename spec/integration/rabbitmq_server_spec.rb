@@ -64,13 +64,9 @@ RSpec.describe 'RabbitMQ server configuration' do
         management_credentials['password'] = @new_password
 
         # SSL
-        server_key_path = File.join(__dir__, '../..', '/spec/assets/server_key.pem')
-        server_cert_path = File.join(__dir__, '../..', '/spec/assets/server_certificate.pem')
-        ca_cert_path = File.join(__dir__, '../..', '/spec/assets/ca_certificate.pem')
-
-        server_key = File.read(server_key_path)
-        server_cert = File.read(server_cert_path)
-        ca_cert = File.read(ca_cert_path)
+        server_key = File.read(File.join(__dir__, '../..', '/spec/assets/server_key.pem'))
+        server_cert = File.read(File.join(__dir__, '../..', '/spec/assets/server_certificate.pem'))
+        ca_cert = File.read(File.join(__dir__, '../..', '/spec/assets/ca_certificate.pem'))
 
         rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
         rmq_properties['ssl'] = {}
@@ -120,29 +116,6 @@ RSpec.describe 'RabbitMQ server configuration' do
         expect(response.code).to eq 401
       end
     end
-
-    context 'when inter-node TLS is enabled' do
-      before(:all) do
-        manifest = bosh.manifest
-
-        bosh.redeploy do |manifest|
-          rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
-          rmq_properties['ssl']['inter_node_enabled'] = true
-        end
-      end
-
-      it 'secures inter-node communications with TLS' do
-        output = bosh.ssh(rmq_host, "#{openssl} s_client -connect 127.0.0.1:25672 -CAfile #{ca_cert_path} -cert #{server_cert_path} -key #{server_key_path}")
-        expect(stdout(output)).to include('BEGIN CERTIFICATE')
-        expect(stdout(output)).to include('END CERTIFICATE')
-      end
-
-      it 'successfully configures rabbitmqctl to use the correct TLS certs' do
-        output = bosh.ssh(rmq_host, "#{rabbitmqctl} cluster_status")
-        expect(stdout(output)).to include('port: 25672, protocol: clustering, purpose: inter-node and CLI tool communication')
-      end
-    end
-
 
     describe 'SSL' do
       def connect_using(tls_version)
