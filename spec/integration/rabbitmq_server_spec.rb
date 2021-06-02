@@ -64,6 +64,9 @@ RSpec.describe 'RabbitMQ server configuration' do
         management_credentials['password'] = @new_password
 
         # SSL
+        server_key = File.read(File.join(__dir__, '../..', '/spec/assets/server_key.pem'))
+        server_cert = File.read(File.join(__dir__, '../..', '/spec/assets/server_certificate.pem'))
+        ca_cert = File.read(File.join(__dir__, '../..', '/spec/assets/ca_certificate.pem'))
         server_key_path = '/var/vcap/jobs/rabbitmq-server/etc/key.pem'
         server_cert_path = '/var/vcap/jobs/rabbitmq-server/etc/cert.pem'
         ca_cert_path = '/var/vcap/jobs/rabbitmq-server/etc/cacert.pem'
@@ -71,6 +74,9 @@ RSpec.describe 'RabbitMQ server configuration' do
         rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
         rmq_properties['ssl'] = {}
         rmq_properties['ssl']['enabled'] = true
+        rmq_properties['ssl']['key'] = server_key
+        rmq_properties['ssl']['cert'] = server_cert
+        rmq_properties['ssl']['cacert'] = ca_cert
         rmq_properties['ssl']['versions'] = ['tlsv1.2', 'tlsv1.1', 'tlsv1']
         rmq_properties['ssl']['disable_non_ssl_listeners'] = true
 
