@@ -1,7 +1,0 @@
----
-name: erlang-22
-metadata:
-  version: 22.3.4.4
-files:
-- erlang-22/otp_src_oss_22.3.4.4.tgz
-dependencies: []
