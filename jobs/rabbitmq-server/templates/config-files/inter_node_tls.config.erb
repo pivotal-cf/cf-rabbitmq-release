@@ -4,9 +4,9 @@
     {cacertfile, "/var/vcap/jobs/rabbitmq-server/etc/cacert.pem"},
     {certfile,   "/var/vcap/jobs/rabbitmq-server/etc/cert.pem"},
     {keyfile,    "/var/vcap/jobs/rabbitmq-server/etc/key.pem"},
-    {secure_renegotiate, true},
     {fail_if_no_peer_cert, true},
     {verify, verify_peer},
+    {versions, ['tlsv1.3']},
     {customize_hostname_check, [
       {match_fun, public_key:pkix_verify_hostname_match_fun(https)}
     ]}
@@ -15,9 +15,9 @@
     {cacertfile, "/var/vcap/jobs/rabbitmq-server/etc/cacert.pem"},
     {certfile,   "/var/vcap/jobs/rabbitmq-server/etc/cert.pem"},
     {keyfile,    "/var/vcap/jobs/rabbitmq-server/etc/key.pem"},
-    {secure_renegotiate, true},
     {fail_if_no_peer_cert, true},
     {verify, verify_peer},
+    {versions, ['tlsv1.3']},
     {customize_hostname_check, [
       {match_fun, public_key:pkix_verify_hostname_match_fun(https)}
     ]}
