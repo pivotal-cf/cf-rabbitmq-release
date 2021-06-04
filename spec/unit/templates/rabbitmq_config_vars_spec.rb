@@ -58,8 +58,8 @@ RSpec.describe 'Configuration', template: true do
         }
       end
 
-      it 'sets INTER_NODE_TLS to false' do
-        expect(rendered_template).to include('export INTER_NODE_TLS=false')
+      it 'sets INTER_NODE_TLS to true' do
+        expect(rendered_template).to include('export INTER_NODE_TLS=true')
       end
     end
 

@@ -42,7 +42,7 @@ properties:
     description: "Should RabbitMQ reject connections on non-TLS ports when TLS is enabled"
     default: false
   rabbitmq-server.ssl.inter_node_enabled:
-    description: "Whether to use TLS for inter-node communications through the Erlang distribution, including by RabbitMQ CLIs. Has no effect if TLS is disabled."
+    description: "Whether to use TLS for inter-node communications through the Erlang distribution, including by RabbitMQ CLIs. This uses the same certificates and key provided under rabbitmq-server.ssl."
     default: false
 
   rabbitmq-server.management_tls.enabled:

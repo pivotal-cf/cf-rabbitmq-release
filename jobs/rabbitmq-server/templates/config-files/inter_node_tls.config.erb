@@ -1,4 +1,14 @@
-<% if p("rabbitmq-server.ssl.enabled") and p("rabbitmq-server.ssl.inter_node_enabled") -%>
+<% if p("rabbitmq-server.ssl.inter_node_enabled") -%>
+<%
+    if p('rabbitmq-server.ssl.key', '') == '' or
+        p('rabbitmq-server.ssl.cert', '') == '' or
+        p('rabbitmq-server.ssl.cacert', '') == ''
+      raise 'Inter-node TLS cannot be enabled if not provided with all necessary TLS certificates and keys'
+    end
+    if p('rabbitmq-server.erlang_major_version') < 24
+      raise 'Inter-node TLS requires Erlang 24 or later'
+    end
+-%>
 [
   {server, [
     {cacertfile, "/var/vcap/jobs/rabbitmq-server/etc/cacert.pem"},

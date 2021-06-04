@@ -40,4 +40,4 @@ export ERLANG_COOKIE="<%= cookie %>"
 export ERLANG_MAJOR_VERSION='<%= p('rabbitmq-server.erlang_major_version') %>'
 export ERL_INETRC_HOSTS='<%= inetrc_hosts %>'
 export RMQ_SERVER_VERSION='<%= p('rabbitmq-server.version') %>'
-export INTER_NODE_TLS=<%= p('rabbitmq-server.ssl.enabled') and p('rabbitmq-server.ssl.inter_node_enabled') %>
+export INTER_NODE_TLS=<%= p('rabbitmq-server.ssl.inter_node_enabled') %>

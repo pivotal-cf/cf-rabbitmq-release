@@ -31,8 +31,8 @@ RSpec.describe 'Configuration', template: true do
       before do
         manifest_properties['rabbitmq-server']['ssl']['enabled'] = false
       end
-      it 'does not contain erl args for rabbitmqctl' do
-        expect(rendered_template).not_to include('RABBITMQ_CTL_ERL_ARGS="-proto_dist inet_tls -ssl_dist_optfile /var/vcap/jobs/rabbitmq-server/etc/inter_node_tls.config"')
+      it 'does contain erl args for rabbitmqctl' do
+        expect(rendered_template).to include('RABBITMQ_CTL_ERL_ARGS="-proto_dist inet_tls -ssl_dist_optfile /var/vcap/jobs/rabbitmq-server/etc/inter_node_tls.config"')
       end
     end
 
