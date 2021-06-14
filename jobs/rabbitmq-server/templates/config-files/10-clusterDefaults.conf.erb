@@ -36,7 +36,7 @@ mqtt.subscription_ttl = 1800000
 
 <% if_p("rabbitmq-server.cluster_name") do |cluster_name| -%>
 <% if cluster_name != "" -%>
-cluster_name = "<%= cluster_name %>"
+cluster_name = <%= cluster_name %>
 <% end -%>
 <% end -%>
 

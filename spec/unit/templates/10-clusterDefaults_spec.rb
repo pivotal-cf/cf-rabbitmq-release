@@ -25,7 +25,7 @@ RSpec.describe 'Configuration', template: true do
   context 'when there is no config provided' do
 		let(:manifest_properties) { {
 				'rabbitmq-server' => {}
-      } 
+      }
     }
     it 'renders cluster default configuration' do
       expect(rendered_template).to include('log.connection.level = info')
@@ -96,10 +96,10 @@ RSpec.describe 'Configuration', template: true do
 				'rabbitmq-server' => {
           'cluster_name': 'my-favourite-rabbit'
         }
-      } 
+      }
     }
     it 'configures the cluster name' do
-      expect(rendered_template).to include('cluster_name = "my-favourite-rabbit"')
+      expect(rendered_template).to include('cluster_name = my-favourite-rabbit')
     end
   end
 
