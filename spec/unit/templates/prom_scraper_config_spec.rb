@@ -24,7 +24,16 @@ RSpec.describe 'Configuration', template: true do
       expect(rendered_template).to include('server_name: localhost')
     end
 
-    context 'when cluster_name is provided' do 
+    context 'when prom_scraper labels are set' do
+      it 'adds the labels to the prom_scraper_config file' do
+        manifest['rabbitmq-server']['prom_scraper_labels'] = { 'key1' => 'value1', 'key2' => 'value2' }
+        expect(rendered_template).to include('labels:')
+        expect(rendered_template).to include('  key1: value1')
+        expect(rendered_template).to include('  key2: value2')
+      end
+    end
+
+    context 'when cluster_name is provided' do
       it 'source_id includes the cluster name' do
         manifest['rabbitmq-server']['cluster_name'] = 'ha-cluster'
         expect(rendered_template).to include('source_id: ha-cluster')
@@ -36,7 +45,7 @@ RSpec.describe 'Configuration', template: true do
         expect(rendered_template).to include('source_id: rabbit@localhost')
       end
     end
-  
+
     context 'when create_swap_delete is true' do
       before(:each) do
         manifest['rabbitmq-server']['create_swap_delete'] = true
