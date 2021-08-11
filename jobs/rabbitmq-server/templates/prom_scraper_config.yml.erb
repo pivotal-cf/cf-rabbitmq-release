@@ -4,3 +4,9 @@ source_id: <%= if p('rabbitmq-server.cluster_name') == "" then 'rabbit@localhost
 instance_id: <%= if p('rabbitmq-server.create_swap_delete') == true then "'rabbit@#{spec.address}'" else "'rabbit@#{Digest::MD5.hexdigest(spec.ip)}'" end %>
 scheme: http
 server_name: localhost
+<% if_p('rabbitmq-server.prom_scraper_labels') do |labels| %>
+labels:
+  <% labels.each do |key, value| %>
+  <%= key %>: <%= value %>
+  <% end %>
+<% end %>

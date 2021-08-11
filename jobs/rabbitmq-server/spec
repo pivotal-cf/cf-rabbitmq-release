@@ -137,6 +137,10 @@ properties:
     description: "If true, configure rabbitmq-server to use vm_strategy create-swap-delete (i.e. use RabbitMQ long node names, FQDNs for Rabbit nodes names, and no hosts in erl_inetrc)."
     default: false
 
+  rabbitmq-server.prom_scraper_labels:
+    description: "Optional metric labels (see loggregator-agent's prom_scraper job for details)"
+    default: {}
+
 templates:
   add-rabbitmqctl-to-path.bash:             bin/add-rabbitmqctl-to-path
   cleanup-http-logs.bash:                   bin/cleanup-http-logs
