@@ -1,4 +1,4 @@
-# github.com/fsnotify/fsnotify v1.5.0
+# github.com/fsnotify/fsnotify v1.5.1
 github.com/fsnotify/fsnotify
 # github.com/nxadm/tail v1.4.8
 github.com/nxadm/tail
@@ -44,11 +44,11 @@ github.com/vito/go-interact/interact
 github.com/vito/go-interact/interact/terminal
 # golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
 golang.org/x/crypto/ssh/terminal
-# golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d
+# golang.org/x/net v0.0.0-20210825183410-e898025ed96a
 golang.org/x/net/html
 golang.org/x/net/html/atom
 golang.org/x/net/html/charset
-# golang.org/x/sys v0.0.0-20210820121016-41cdb8703e55
+# golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/plan9
 golang.org/x/sys/unix
