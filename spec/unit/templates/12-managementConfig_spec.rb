@@ -21,7 +21,7 @@ RSpec.describe 'Configuration', template: true do
       expect(rendered_template).to include('management.ssl.certfile = /var/vcap/jobs/rabbitmq-server/etc/management-cert.pem')
       expect(rendered_template).to include('management.ssl.keyfile = /var/vcap/jobs/rabbitmq-server/etc/management-key.pem')
       expect(rendered_template).not_to include('management.tcp.port = 15672')
-      expect(rendered_template).to include('management.http_log_dir = "/var/vcap/sys/log/rabbitmq-server/management-ui"')
+      expect(rendered_template).to include('management.http_log_dir = /var/vcap/sys/log/rabbitmq-server/management-ui')
     end
   end
 
@@ -41,7 +41,7 @@ RSpec.describe 'Configuration', template: true do
       expect(rendered_template).not_to include('management.ssl.certfile = /var/vcap/jobs/rabbitmq-server/etc/management-cert.pem')
       expect(rendered_template).not_to include('management.ssl.keyfile = /var/vcap/jobs/rabbitmq-server/etc/management-key.pem')
       expect(rendered_template).to include('management.tcp.port = 15672')
-      expect(rendered_template).to include('management.http_log_dir = "/var/vcap/sys/log/rabbitmq-server/management-ui"')
+      expect(rendered_template).to include('management.http_log_dir = /var/vcap/sys/log/rabbitmq-server/management-ui')
     end
   end
 
@@ -57,7 +57,7 @@ RSpec.describe 'Configuration', template: true do
       expect(rendered_template).not_to include('management.ssl.certfile = /var/vcap/jobs/rabbitmq-server/etc/management-cert.pem')
       expect(rendered_template).not_to include('management.ssl.keyfile = /var/vcap/jobs/rabbitmq-server/etc/management-key.pem')
       expect(rendered_template).to include('management.tcp.port = 15672')
-      expect(rendered_template).to include('management.http_log_dir = "/var/vcap/sys/log/rabbitmq-server/management-ui"')
+      expect(rendered_template).to include('management.http_log_dir = /var/vcap/sys/log/rabbitmq-server/management-ui')
     end
   end
 end
