@@ -1,8 +1,8 @@
 ---
 name: erlang-23
 metadata:
-  version: 23.3.4.5
+  version: 23.3.4.6
 files:
-- erlang-23/otp_src_oss_23.3.4.5.tgz
+- erlang-23/otp_src_oss_23.3.4.6.tgz
 dependencies:
 - openssl
