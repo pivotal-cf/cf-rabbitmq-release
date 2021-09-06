@@ -16,8 +16,17 @@ RSpec.describe 'Configuration', template: true do
       expect(rendered_template).to include('port: 15692')
     end
 
-    it 'sets the scheme to http' do
-      expect(rendered_template).to include('scheme: http')
+    context 'when management has TLS enabled' do
+      it 'sets scheme to https' do
+        manifest['rabbitmq-server']['management_tls'] = { 'enabled' => true }
+        expect(rendered_template).to include('scheme: https')
+      end
+    end
+
+    context 'when management has TLS disabled' do
+      it 'sets scheme to http' do
+        expect(rendered_template).to include('scheme: http')
+      end
     end
 
     it 'sets server name to localhost' do
