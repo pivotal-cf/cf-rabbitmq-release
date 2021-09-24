@@ -5,6 +5,10 @@ It is deployable by BOSH in the [usual way](https://bosh.io/docs/deploying.html)
 
 This release is now using BOSH v2 [job links](https://bosh.io/docs/links.html) and [cloud config](https://bosh.io/docs/cloud-config.html) and requires at least BOSH Director v255.5
 
+## Contributing
+
+Even though the default branch is `release`, you should push changes to `master`. [The `release` branch is the default so that bosh.io can find our releases](https://github.com/bosh-io/releases#how-does-boshio-find-my-release).
+
 ## Status
 
 Job | Status
