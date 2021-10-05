@@ -29,6 +29,7 @@ instance_groups:
         - rabbitmq_management
         - rabbitmq_mqtt
         - rabbitmq_stomp
+        - rabbitmq_stream
         ports:
         - 5672
         - 5671
@@ -38,6 +39,8 @@ instance_groups:
         - 61614
         - 15672
         - 15674
+        - 5551
+        - 5552
         administrators:
           management:
             username: ((rabbitmq-management-username))

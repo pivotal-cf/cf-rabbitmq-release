@@ -28,6 +28,7 @@ RSpec.describe 'Configuration', template: true do
       expect(rendered_template).to include('listeners.ssl.1 = 5671')
       expect(rendered_template).to include('mqtt.listeners.ssl.1 = 8883')
       expect(rendered_template).to include('stomp.listeners.ssl.1 = 61614')
+      expect(rendered_template).to include('stream.listeners.ssl.1 = 5551')
 
       expect(rendered_template).to include('ssl_options.verify = verify_none')
       expect(rendered_template).to include('ssl_options.cacertfile = /var/vcap/jobs/rabbitmq-server/etc/cacert.pem')
@@ -136,6 +137,7 @@ RSpec.describe 'Configuration', template: true do
       expect(rendered_template).to include('listeners.tcp = none')
       expect(rendered_template).to include('mqtt.listeners.tcp = none')
       expect(rendered_template).to include('stomp.listeners.tcp = none')
+      expect(rendered_template).to include('stream.listeners.tcp = none')
     end
   end
 

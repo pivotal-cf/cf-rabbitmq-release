@@ -8,12 +8,14 @@ require 'httparty'
 
 RMQ_VERSION = '3.9'
 
-MQTT_TCP_PORT = "1883"
-STOMP_TCP_PORT = "61613"
+MQTT_TCP_PORT = '1883'
+STOMP_TCP_PORT = '61613'
+STREAM_TCP_PORT = '5552'
 
-MQTT_SSL_PORT = "8883"
-STOMP_SSL_PORT = "61614"
-AMQP_SSL_PORT = "5671"
+MQTT_SSL_PORT = '8883'
+STOMP_SSL_PORT = '61614'
+STREAM_SSL_PORT = '5551'
+AMQP_SSL_PORT = '5671'
 
 RSpec.describe 'RabbitMQ server configuration' do
   let(:rmq_host) do
@@ -123,13 +125,14 @@ RSpec.describe 'RabbitMQ server configuration' do
       end
 
       it 'enables SSL listeners' do
-          output = bosh.ssh(rmq_host, "#{rabbitmq_diagnostics} listeners")
-          # regex in order not to match the management api ssl port 15671
-          amqp_ssl_port_regex = AMQPPortRegex.ssl_regex
+        output = bosh.ssh(rmq_host, "#{rabbitmq_diagnostics} listeners")
+        # regex in order not to match the management api ssl port 15671
+        amqp_ssl_port_regex = AMQPPortRegex.ssl_regex
 
-          expect(stdout(output)).to include(MQTT_SSL_PORT)
-          expect(stdout(output)).to include(STOMP_SSL_PORT)
-          expect(stdout(output)).to match(amqp_ssl_port_regex)
+        expect(stdout(output)).to include(MQTT_SSL_PORT)
+        expect(stdout(output)).to include(STOMP_SSL_PORT)
+        expect(stdout(output)).to include(STREAM_SSL_PORT)
+        expect(stdout(output)).to match(amqp_ssl_port_regex)
       end
 
       context 'when tlsv1, tlsv1.1 and tlsv1.2 are enabled' do
@@ -225,6 +228,7 @@ RSpec.describe 'RabbitMQ server configuration' do
 
           expect(stdout(output)).not_to include(MQTT_TCP_PORT)
           expect(stdout(output)).not_to include(STOMP_TCP_PORT)
+          expect(stdout(output)).not_to include(STREAM_TCP_PORT)
           expect(stdout(output)).not_to match(amqp_tcp_regex)
         end
       end
