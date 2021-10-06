@@ -31,13 +31,11 @@
 listeners.tcp = none
 mqtt.listeners.tcp = none
 stomp.listeners.tcp = none
-stream.listeners.tcp = none
 <% end -%>
 
 listeners.ssl.1 = 5671
 mqtt.listeners.ssl.1 = 8883
 stomp.listeners.ssl.1 = 61614
-stream.listeners.ssl.1 = 5551
 
 <% if p("rabbitmq-server.ssl.verify") -%>
 ssl_options.verify = verify_peer
