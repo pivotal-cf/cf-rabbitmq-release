@@ -180,6 +180,7 @@ templates:
   config-files/13-oAuth.conf.erb:           etc/conf.d/13-oAuth.conf
   config-files/14-webSTOMP.conf.erb:        etc/conf.d/14-webSTOMP.conf
   config-files/15-webMQTT.conf.erb:         etc/conf.d/15-webMQTT.conf
+  config-files/16-stream.conf.erb:          etc/conf.d/16-stream.conf
   config-files/50-overrideConfig.conf.erb:  etc/conf.d/50-overrideConfig.conf
 
 provides:
