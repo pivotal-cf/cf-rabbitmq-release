@@ -141,6 +141,14 @@ properties:
     description: "Optional metric labels (see loggregator-agent's prom_scraper job for details)"
     default: {}
 
+  rabbitmq-server.stream.advertised_host:
+    description: "Hostname returned when asked for the stream topology."
+    default: ""
+
+  rabbitmq-server.stream.advertised_port:
+    description: "Port returned when asked for the stream topology."
+    default: ""
+
 templates:
   add-rabbitmqctl-to-path.bash:             bin/add-rabbitmqctl-to-path
   cleanup-http-logs.bash:                   bin/cleanup-http-logs

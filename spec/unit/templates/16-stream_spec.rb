@@ -87,4 +87,24 @@ RSpec.describe 'Configuration', template: true do
       expect(rendered_template).not_to include('stream.listeners')
     end
   end
+
+  context 'when stream.advertised_host and stream.advertised_port are configured' do
+    let(:manifest_properties) do
+      {
+        'rabbitmq-server' => {
+          'version' => '3.9',
+          'plugins' => ['rabbitmq_stream'],
+          'stream' => {
+            'advertised_host' => 'external_host',
+            'advertised_port' => 'external_port'
+          }
+        }
+      }
+    end
+
+    it 'stream plugin is configured accordingly' do
+      expect(rendered_template).to include('stream.advertised_host = external_host')
+      expect(rendered_template).to include('stream.advertised_port = external_port')
+    end
+  end
 end
