@@ -10,6 +10,7 @@ RSpec.describe 'Configuration', template: true do
     let(:manifest_properties) do
       {
         'rabbitmq-server' => {
+          'version' => '3.9',
           'plugins' => ['rabbitmq_stream'],
           'ssl' => {
             'enabled' => true,
@@ -43,7 +44,32 @@ RSpec.describe 'Configuration', template: true do
     let(:manifest_properties) do
       {
         'rabbitmq-server' => {
+          'version' => '3.9',
           'plugins' => [''],
+          'ssl' => {
+            'enabled' => true,
+            'cacert' => 'fake CA cert',
+            'cert' => 'fake cert',
+            'key' => 'fake key',
+            'verification_depth' => 3,
+            'versions' => ['tlsv1.2', 'tlsv1.1'],
+            'disable_non_ssl_listeners' => true
+          }
+        }
+      }
+    end
+
+    it 'stream plugin is not configured' do
+      expect(rendered_template).not_to include('stream.listeners')
+    end
+  end
+
+  context 'when version is 3.8 and plugins contains "rabbitmq_stream"' do
+    let(:manifest_properties) do
+      {
+        'rabbitmq-server' => {
+          'version' => '3.8',
+          'plugins' => ['rabbitmq_stream'],
           'ssl' => {
             'enabled' => true,
             'cacert' => 'fake CA cert',

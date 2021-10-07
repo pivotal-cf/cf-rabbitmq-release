@@ -1,8 +1,10 @@
-<% if_p('rabbitmq-server.ssl.enabled', 'rabbitmq-server.plugins') do |ssl_enabled, plugins| %>
+<% if_p('rabbitmq-server.ssl.enabled', 'rabbitmq-server.plugins', 'rabbitmq-server.version') do |ssl_enabled, plugins, version| %>
+<% if version != "3.8" %>
 <% if ssl_enabled && plugins.include?('rabbitmq_stream') -%>
 stream.listeners.ssl.default = 5551
 <% if p('rabbitmq-server.ssl.disable_non_ssl_listeners') -%>
 stream.listeners.tcp = none
+<% end -%>
 <% end -%>
 <% end -%>
 <% end -%>
