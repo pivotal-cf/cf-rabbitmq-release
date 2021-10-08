@@ -16,5 +16,9 @@ stream.advertised_host = <%= p('rabbitmq-server.stream.advertised_host') %>
 stream.advertised_port = <%= p('rabbitmq-server.stream.advertised_port') %>
 <% end -%>
 
+<% if p('rabbitmq-server.stream.advertised_tls_port') != "" %>
+stream.advertised_tls_port = <%= p('rabbitmq-server.stream.advertised_tls_port') %>
+<% end -%>
+
 <% end -%>
 <% end -%>

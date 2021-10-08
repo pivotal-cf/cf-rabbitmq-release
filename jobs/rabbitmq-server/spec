@@ -149,6 +149,10 @@ properties:
     description: "Port returned when asked for the stream topology."
     default: ""
 
+  rabbitmq-server.stream.advertised_tls_port:
+    description: "Port returned when asked for the stream topology over TLS."
+    default: ""
+
 templates:
   add-rabbitmqctl-to-path.bash:             bin/add-rabbitmqctl-to-path
   cleanup-http-logs.bash:                   bin/cleanup-http-logs

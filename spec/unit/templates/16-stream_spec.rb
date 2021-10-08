@@ -20,6 +20,10 @@ RSpec.describe 'Configuration', template: true do
             'verification_depth' => 3,
             'versions' => ['tlsv1.2', 'tlsv1.1'],
             'disable_non_ssl_listeners' => false
+          },
+          'stream' => {
+            'advertised_host' => 'external_host',
+            'advertised_tls_port' => 'external_tls_port'
           }
         }
       }
@@ -27,6 +31,8 @@ RSpec.describe 'Configuration', template: true do
     it 'renders stream config' do
       expect(rendered_template).to include('stream.listeners.ssl.default = 5551')
       expect(rendered_template).not_to include('stream.listeners.tcp = none')
+      expect(rendered_template).to include('stream.advertised_host = external_host')
+      expect(rendered_template).to include('stream.advertised_tls_port = external_tls_port')
     end
 
     context 'when disable_non_ssl_listeners is true' do
@@ -60,7 +66,7 @@ RSpec.describe 'Configuration', template: true do
     end
 
     it 'stream plugin is not configured' do
-      expect(rendered_template).not_to include('stream.listeners')
+      expect(rendered_template).not_to include('stream')
     end
   end
 
