@@ -601,6 +601,8 @@ builds:
     version: "8"
   ca383b57-e84b-4465-73cb-37e6f0be3ab9:
     version: 336.0.0
+  ca790e57-fdac-4e7b-64ff-b4b11c28d680:
+    version: 404.0.0
   cb1bf27a-881e-4a2a-5c37-6a752f865da9:
     version: 245.0.0
   cb47323f-a826-473c-5acb-93b83dd765dd:
