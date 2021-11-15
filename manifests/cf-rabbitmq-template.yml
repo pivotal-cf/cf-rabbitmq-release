@@ -66,6 +66,11 @@ instance_groups:
     consumes:
       nats-tls: {from: nats-tls, deployment: cf}
     properties:
+      nats:
+        tls:
+          enabled: true
+          client_cert: ((nats-client-cert))
+          client_key: ((nats-client-key))
       route_registrar:
         routes:
         - name: ((rabbitmq-management-hostname))
