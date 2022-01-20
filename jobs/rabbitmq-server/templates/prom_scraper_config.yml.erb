@@ -1,5 +1,5 @@
 ---
-port: 15692
+port: <%= if p("rabbitmq-server.management_tls.enabled") then 15691 else 15692 end %>
 source_id: <%= if p('rabbitmq-server.cluster_name') == "" then 'rabbit@localhost' else p('rabbitmq-server.cluster_name') end %>
 instance_id: <%= if p('rabbitmq-server.create_swap_delete') == true then "'rabbit@#{spec.address}'" else "'rabbit@#{Digest::MD5.hexdigest(spec.ip)}'" end %>
 scheme: <%= if p("rabbitmq-server.management_tls.enabled") then 'https' else 'http' end %>

@@ -12,18 +12,23 @@ RSpec.describe 'Configuration', template: true do
   let(:rendered_template) { template.render(manifest, spec: instance, consumes: [link]) }
 
   describe 'Prom Scraper Config' do
-    it 'sets the port to the rabbitmq prometheus port' do
-      expect(rendered_template).to include('port: 15692')
-    end
-
     context 'when management has TLS enabled' do
       it 'sets scheme to https' do
         manifest['rabbitmq-server']['management_tls'] = { 'enabled' => true }
         expect(rendered_template).to include('scheme: https')
       end
+
+      it 'sets the port to the rabbitmq prometheus TLS port' do
+        manifest['rabbitmq-server']['management_tls'] = { 'enabled' => true }
+        expect(rendered_template).to include('port: 15691')
+      end
     end
 
     context 'when management has TLS disabled' do
+      it 'sets the port to the rabbitmq prometheus port' do
+      expect(rendered_template).to include('port: 15692')
+    end
+
       it 'sets scheme to http' do
         expect(rendered_template).to include('scheme: http')
       end
