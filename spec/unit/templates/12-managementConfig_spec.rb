@@ -23,6 +23,13 @@ RSpec.describe 'Configuration', template: true do
       expect(rendered_template).not_to include('management.tcp.port = 15672')
       expect(rendered_template).to include('management.http_log_dir = /var/vcap/sys/log/rabbitmq-server/management-ui')
     end
+
+    it 'renders the tls config for prometheus' do
+      expect(rendered_template).to include('prometheus.ssl.port = 15691')
+      expect(rendered_template).to include('prometheus.ssl.cacertfile = /var/vcap/jobs/rabbitmq-server/etc/management-cacert.pem')
+      expect(rendered_template).to include('prometheus.ssl.certfile = /var/vcap/jobs/rabbitmq-server/etc/management-cert.pem')
+      expect(rendered_template).to include('prometheus.ssl.keyfile = /var/vcap/jobs/rabbitmq-server/etc/management-key.pem')
+    end
   end
 
   context 'when management-over-tls is disabled' do
