@@ -8,8 +8,9 @@ RSpec.describe 'Configuration', template: true do
   let(:instance) { Bosh::Template::Test::InstanceSpec.new(ip: '1.1.1.1', address: 'instance-1.example.bosh') }
   let(:link_instances) { [] }
   let(:link) { Bosh::Template::Test::Link.new(name: 'rabbitmq-server', instances: link_instances) }
+  let(:dns_link) { Bosh::Template::Test::Link.new(name: 'rabbitmq-server-dns-name', address: 'my-rabbitmq.dns.name') }
   let(:manifest) { { 'rabbitmq-server' => {} } }
-  let(:rendered_template) { template.render(manifest, spec: instance, consumes: [link]) }
+  let(:rendered_template) { template.render(manifest, spec: instance, consumes: [link, dns_link]) }
 
   describe 'Prom Scraper Config' do
     context 'when management has TLS enabled' do
@@ -40,8 +41,8 @@ RSpec.describe 'Configuration', template: true do
       end
     end
 
-    it 'sets server name to localhost' do
-      expect(rendered_template).to include('server_name: localhost')
+    it 'sets server name to rabbitmq server dns name' do
+      expect(rendered_template).to include('server_name: my-rabbitmq.dns.name')
     end
 
     context 'when prom_scraper labels are set' do
