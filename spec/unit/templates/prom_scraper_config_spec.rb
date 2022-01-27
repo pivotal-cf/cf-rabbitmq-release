@@ -8,29 +8,41 @@ RSpec.describe 'Configuration', template: true do
   let(:instance) { Bosh::Template::Test::InstanceSpec.new(ip: '1.1.1.1', address: 'instance-1.example.bosh') }
   let(:link_instances) { [] }
   let(:link) { Bosh::Template::Test::Link.new(name: 'rabbitmq-server', instances: link_instances) }
+  let(:dns_link) { Bosh::Template::Test::Link.new(name: 'rabbitmq-server-dns-name', address: 'my-rabbitmq.dns.name') }
   let(:manifest) { { 'rabbitmq-server' => {} } }
-  let(:rendered_template) { template.render(manifest, spec: instance, consumes: [link]) }
+  let(:rendered_template) { template.render(manifest, spec: instance, consumes: [link, dns_link]) }
 
   describe 'Prom Scraper Config' do
-    it 'sets the port to the rabbitmq prometheus port' do
-      expect(rendered_template).to include('port: 15692')
-    end
-
     context 'when management has TLS enabled' do
       it 'sets scheme to https' do
         manifest['rabbitmq-server']['management_tls'] = { 'enabled' => true }
         expect(rendered_template).to include('scheme: https')
       end
+
+      it 'sets the port to the rabbitmq prometheus TLS port' do
+        manifest['rabbitmq-server']['management_tls'] = { 'enabled' => true }
+        expect(rendered_template).to include('port: 15691')
+      end
+
+      it 'configures the scrape tls ca_cert' do
+        manifest['rabbitmq-server']['management_tls'] = { 'enabled' => true }
+        manifest['rabbitmq-server']['management_tls']['cacert'] = 'a-ca-cert'
+        expect(rendered_template).to include('ca_cert: a-ca-cert')
+      end
     end
 
     context 'when management has TLS disabled' do
+      it 'sets the port to the rabbitmq prometheus port' do
+      expect(rendered_template).to include('port: 15692')
+    end
+
       it 'sets scheme to http' do
         expect(rendered_template).to include('scheme: http')
       end
     end
 
-    it 'sets server name to localhost' do
-      expect(rendered_template).to include('server_name: localhost')
+    it 'sets server name to rabbitmq server dns name' do
+      expect(rendered_template).to include('server_name: my-rabbitmq.dns.name')
     end
 
     context 'when prom_scraper labels are set' do
