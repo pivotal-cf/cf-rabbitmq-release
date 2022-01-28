@@ -4,7 +4,7 @@ export HOME=${BOSH_INSTALL_DIR}
 
 cpus="$(grep -c ^processor /proc/cpuinfo)"
 
-VERSION="24.2"
+VERSION="24.2.1"
 MAJOR_VERSION="24"
 echo "$MAJOR_VERSION" > "$BOSH_INSTALL_TARGET/erlang_version"
 
