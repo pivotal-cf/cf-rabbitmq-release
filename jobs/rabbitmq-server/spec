@@ -204,3 +204,6 @@ provides:
 consumes:
   - name: rabbitmq-server
     type: rabbitmq-server
+
+  - name: rabbitmq-server-dns-name
+    type: address
