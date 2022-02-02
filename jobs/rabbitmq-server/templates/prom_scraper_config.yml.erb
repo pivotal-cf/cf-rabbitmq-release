@@ -3,7 +3,16 @@ port: <%= if p("rabbitmq-server.management_tls.enabled") then 15691 else 15692 e
 source_id: <%= if p('rabbitmq-server.cluster_name') == "" then 'rabbit@localhost' else p('rabbitmq-server.cluster_name') end %>
 instance_id: <%= if p('rabbitmq-server.create_swap_delete') == true then "'rabbit@#{spec.address}'" else "'rabbit@#{Digest::MD5.hexdigest(spec.ip)}'" end %>
 scheme: <%= if p("rabbitmq-server.management_tls.enabled") then 'https' else 'http' end %>
-server_name: <%= link('rabbitmq-server-dns-name').address %>
+
+<%
+  server_name = 'localhost'
+
+  if_link('rabbitmq-server-address') do |dns|
+    server_name = dns.address
+  end
+%>
+server_name: <%= server_name %>
+
 <% if_p('rabbitmq-server.prom_scraper_labels') do |labels| %>
 labels:
   <% labels.each do |key, value| %>

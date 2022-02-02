@@ -196,9 +196,6 @@ templates:
   config-files/50-overrideConfig.conf.erb:  etc/conf.d/50-overrideConfig.conf
 
 provides:
-  - name: rabbitmq-server-dns-name
-    type: address
-
   - name: rabbitmq-server
     type: rabbitmq-server
     properties:
@@ -208,5 +205,6 @@ consumes:
   - name: rabbitmq-server
     type: rabbitmq-server
 
-  - name: rabbitmq-server-dns-name
+  - name: rabbitmq-server-address
     type: address
+    optional: true
