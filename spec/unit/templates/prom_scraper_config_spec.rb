@@ -86,6 +86,42 @@ RSpec.describe 'Configuration', template: true do
       end
     end
 
+    context 'when using the aggregated metrics' do
+      it 'sets scrape path accordingly' do
+        expect(rendered_template).to include('path: /metrics')
+      end
+    end
+
+    context 'when using the per-object metrics' do
+      it 'sets scrape path accordingly' do
+        template = job.template('config/prom_scraper_per_object_config.yml')
+        rendered_template = template.render(manifest, spec: instance, consumes: [link])
+        expect(rendered_template).to include('path: /metrics/per-object')
+      end
+    end
+
+    context 'when using the detailed metrics' do
+      context 'when the custom scrape query is unset' do
+        it 'sets scrape path accordingly' do
+          template = job.template('config/prom_scraper_detailed_config.yml')
+          rendered_template = template.render(manifest, spec: instance, consumes: [link])
+          expect(rendered_template).to include('path: /metrics/detailed')
+        end
+      end
+
+      context 'when the custom scrape query is unset' do
+        before(:each) do
+          manifest['rabbitmq-server']['prom_scraper_detailed_endpoint_query'] = '?foo=bar&baz=vhost'
+        end
+
+        it 'sets scrape path accordingly' do
+          template = job.template('config/prom_scraper_detailed_config.yml')
+          rendered_template = template.render(manifest, spec: instance, consumes: [link])
+          expect(rendered_template).to include('path: /metrics/detailed?foo=bar&baz=vhost')
+        end
+      end
+    end
+
     context 'when create_swap_delete is false' do
       it 'sets the instance id to the ip address' do
         expect(rendered_template).to include("instance_id: 'rabbit@#{Digest::MD5.hexdigest('1.1.1.1')}'\n")
