@@ -92,14 +92,6 @@ RSpec.describe 'Configuration', template: true do
       end
     end
 
-    context 'when using the per-object metrics' do
-      it 'sets scrape path accordingly' do
-        template = job.template('config/prom_scraper_per_object_config.yml')
-        rendered_template = template.render(manifest, spec: instance, consumes: [link])
-        expect(rendered_template).to include('path: /metrics/per-object')
-      end
-    end
-
     context 'when using the detailed metrics' do
       context 'when the custom scrape query is unset' do
         it 'sets scrape path accordingly' do
