@@ -1,8 +1,8 @@
 ---
 name: erlang-24
 metadata:
-  version: 24.3.1
+  version: 24.3.2
 files:
-- erlang-24/otp_src_oss_24.3.1.tgz
+- erlang-24/otp_src_oss_24.3.2.tgz
 dependencies:
 - openssl
