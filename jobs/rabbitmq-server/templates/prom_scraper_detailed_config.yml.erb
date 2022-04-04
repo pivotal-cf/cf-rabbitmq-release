@@ -20,9 +20,3 @@ labels:
   <%= key %>: <%= value %>
   <% end %>
 <% end %>
-
-<% if_p("rabbitmq-server.management_tls.enabled") do %>
-scrape:
-  tls:
-    ca_cert: <%= p("rabbitmq-server.management_tls.cacert", "").gsub("\n", "") %>
-<% end %>
