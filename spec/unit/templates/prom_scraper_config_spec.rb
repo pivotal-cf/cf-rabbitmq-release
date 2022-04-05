@@ -23,12 +23,6 @@ RSpec.describe 'Configuration', template: true do
         manifest['rabbitmq-server']['management_tls'] = { 'enabled' => true }
         expect(rendered_template).to include('port: 15691')
       end
-
-      it 'configures the scrape tls ca_cert' do
-        manifest['rabbitmq-server']['management_tls'] = { 'enabled' => true }
-        manifest['rabbitmq-server']['management_tls']['cacert'] = 'a-ca-cert'
-        expect(rendered_template).to include('ca_cert: a-ca-cert')
-      end
     end
 
     context 'when management has TLS disabled' do
