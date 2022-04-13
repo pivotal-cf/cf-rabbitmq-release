@@ -25,10 +25,10 @@ openssl/openssl-1.1.1n.tar.gz:
   object_id: 99991ec8-3764-4c48-6a3d-330be82f48ac
   sha: sha256:40dceb51a4f6a5275bde0e6bf20ef4b91bfc32ed57c0552e2e8e15463372b17a
 # this comment prevents git conflicts
-rabbitmq-server-3.8/rabbitmq-server-generic-unix-3.8.28.tar.xz:
-  size: 15733580
-  object_id: 1be77745-af4a-459f-61e2-228887a76dc1
-  sha: sha256:3beff71ca211be0ee4042b31807d13f299a5a4a1ea6ca023d3808b8aad02c743
+rabbitmq-server-3.8/rabbitmq-server-generic-unix-3.8.29.tar.xz:
+  size: 15781452
+  object_id: e45a4435-c808-4bad-5837-46a4adb7fd45
+  sha: sha256:13c32d9364bd7a760a783fd57a21fdda9e6d1d77ad98b0906e0c410861b4dc63
 # this comment prevents git conflicts
 rabbitmq-server-3.9/rabbitmq-server-generic-unix-3.9.15.tar.xz:
   size: 12695880
