@@ -1,8 +1,8 @@
 # github.com/cenkalti/backoff v2.2.1+incompatible
 ## explicit
 github.com/cenkalti/backoff
-# github.com/fsnotify/fsnotify v1.5.3
-## explicit; go 1.13
+# github.com/fsnotify/fsnotify v1.5.4
+## explicit; go 1.16
 github.com/fsnotify/fsnotify
 # github.com/hashicorp/go-version v1.4.0
 ## explicit
@@ -55,7 +55,7 @@ github.com/onsi/gomega/matchers/support/goraph/util
 github.com/onsi/gomega/types
 # github.com/rogpeppe/go-internal v1.8.1
 ## explicit; go 1.16
-# golang.org/x/net v0.0.0-20220421235706-1d1ef9303861
+# golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4
 ## explicit; go 1.17
 golang.org/x/net/html
 golang.org/x/net/html/atom
