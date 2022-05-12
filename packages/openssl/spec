@@ -1,9 +1,9 @@
 ---
 name: openssl
 metadata:
-  version: 1.1.1n
+  version: 1.1.1o
 
 dependencies: []
 
 files:
-- openssl/openssl-1.1.1n.tar.gz
+- openssl/openssl-1.1.1o.tar.gz
