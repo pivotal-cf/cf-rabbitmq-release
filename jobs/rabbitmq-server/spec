@@ -5,6 +5,7 @@ packages:
 - erlang-24
 - rabbitmq-server-3.8
 - rabbitmq-server-3.9
+- rabbitmq-server-3.10
 - rabbitmq-common
 - rabbitmq-upgrade-preparation
 - rabbitmq-admin
@@ -13,7 +14,7 @@ packages:
 properties:
   rabbitmq-server.version:
     description: "Version of RabbitMQ to use"
-    default: "3.8"
+    default: "3.10"
 
   rabbitmq-server.ssl.enabled:
     default: false
