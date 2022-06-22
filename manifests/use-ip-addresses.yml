@@ -1,0 +1,6 @@
+---
+- type: replace
+  path: /instance_groups/name=rmq/jobs/name=rabbitmq-server/consumes?
+  value:
+    rabbitmq-server:
+      ip_addresses: true
