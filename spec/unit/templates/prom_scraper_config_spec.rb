@@ -57,6 +57,21 @@ RSpec.describe 'Configuration', template: true do
       end
     end
 
+    context 'when source_id is explicitly provided' do
+      it 'sets the source_id without modification' do
+        manifest['rabbitmq-server']['prom_scraper_source_id'] = 'prom_scraper_source_id'
+        expect(rendered_template).to include('source_id: prom_scraper_source_id')
+      end
+    end
+
+    context 'when ensure_log_cache_compatibility is  provided' do
+      it 'errors if source_id is greater than 48 characters in length' do
+        manifest['rabbitmq-server']['prom_scraper_source_id'] = 'source_id_longer_than_48_characters---------------'
+        manifest['rabbitmq-server']['ensure_log_cache_compatibility'] = true
+        expect{ rendered_template }.to raise_error 'prom_scraper source_id must be 48 characters or less'
+      end
+    end
+
     context 'when cluster_name is provided' do
       it 'source_id includes the cluster name' do
         manifest['rabbitmq-server']['cluster_name'] = 'ha-cluster'

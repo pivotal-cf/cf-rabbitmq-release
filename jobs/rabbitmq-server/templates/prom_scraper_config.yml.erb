@@ -1,6 +1,19 @@
 ---
 port: <%= if p("rabbitmq-server.management_tls.enabled") then 15691 else 15692 end %>
-source_id: <%= if p('rabbitmq-server.cluster_name') == "" then 'rabbit@localhost' else p('rabbitmq-server.cluster_name') end %>
+
+<%
+if p('rabbitmq-server.prom_scraper_source_id') != "" then
+  source_id = p('rabbitmq-server.prom_scraper_source_id')
+  if p('rabbitmq-server.ensure_log_cache_compatibility') and p('rabbitmq-server.prom_scraper_source_id').length > 48 then
+    raise 'prom_scraper source_id must be 48 characters or less'
+  end
+elsif p('rabbitmq-server.cluster_name') == "" then
+  source_id = 'rabbit@localhost'
+else
+ source_id = p('rabbitmq-server.cluster_name')
+end
+-%>
+source_id: <%= source_id %>
 instance_id: <%= if p('rabbitmq-server.create_swap_delete') == true then "'rabbit@#{spec.address}'" else "'rabbit@#{Digest::MD5.hexdigest(spec.ip)}'" end %>
 path: /metrics
 scheme: <%= if p("rabbitmq-server.management_tls.enabled") then 'https' else 'http' end %>
