@@ -70,6 +70,13 @@ RSpec.describe 'Configuration', template: true do
         manifest['rabbitmq-server']['ensure_log_cache_compatibility'] = true
         expect{ rendered_template }.to raise_error 'prom_scraper source_id must be 48 characters or less'
       end
+
+      it 'sets the instance_id to the vm index' do
+        manifest['rabbitmq-server']['prom_scraper_source_id'] = 'source_id_and_vm_index'
+        manifest['rabbitmq-server']['ensure_log_cache_compatibility'] = true
+        expect(rendered_template).to include('instance_id: xxxxxx-xxxxxxxx-xxxxx')
+        expect(rendered_template).to_not include('instance_id: rabbit@')
+      end
     end
 
     context 'when cluster_name is provided' do

@@ -14,7 +14,17 @@ else
 end
 -%>
 source_id: <%= source_id %>
-instance_id: <%= if p('rabbitmq-server.create_swap_delete') == true then "'rabbit@#{spec.address}'" else "'rabbit@#{Digest::MD5.hexdigest(spec.ip)}'" end %>
+<%
+  if p('rabbitmq-server.create_swap_delete') == true then
+    instance_id = "'rabbit@#{spec.address}'"
+  else
+    instance_id = "'rabbit@#{Digest::MD5.hexdigest(spec.ip)}'"
+  end
+if p('rabbitmq-server.ensure_log_cache_compatibility') == true then
+  instance_id = spec.id || spec.index.to_s
+end
+-%>
+instance_id: <%= instance_id %>
 path: /metrics/detailed<%= p('rabbitmq-server.prom_scraper_detailed_endpoint_query') %>
 scheme: <%= if p("rabbitmq-server.management_tls.enabled") then 'https' else 'http' end %>
 
