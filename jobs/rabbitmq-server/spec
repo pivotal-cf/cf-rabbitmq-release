@@ -138,14 +138,6 @@ properties:
     description: "If true, configure rabbitmq-server to use vm_strategy create-swap-delete (i.e. use RabbitMQ long node names, FQDNs for Rabbit nodes names, and no hosts in erl_inetrc)."
     default: false
 
-  rabbitmq-server.ensure_log_cache_compatibility:
-    description: "Ensures the prom_scraper source_id is compatible with log cache"
-    default: false
-
-  rabbitmq-server.prom_scraper_source_id:
-    description: "The source ID to set on scraped metrics. Must be 48 characters or less to be compatible with log-cache. Warning: Changing this on a live deployment will cause discontinuity in metrics from that deployment."
-    default: ""
-
   rabbitmq-server.prom_scraper_labels:
     description: "Optional metric labels (see loggregator-agent's prom_scraper job for details)"
     default: {}
