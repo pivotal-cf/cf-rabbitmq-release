@@ -44,3 +44,5 @@ cluster_name = <%= cluster_name %>
 load_definitions = /var/vcap/jobs/rabbitmq-server/etc/definitions.json
 <% end -%>
 
+log.dir = /var/vcap/sys/log/rabbitmq-server
+log.file.level = info
