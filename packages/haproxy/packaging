@@ -5,7 +5,7 @@ VERSION="2.6.2"
 tar xzf haproxy/haproxy-${VERSION}.tar.gz
 cd haproxy-${VERSION}
 
-make TARGET=linux2628 USE_OPENSSL=1
+make TARGET=linux-glibc USE_OPENSSL=1
 mkdir ${BOSH_INSTALL_TARGET}/bin
 cp haproxy ${BOSH_INSTALL_TARGET}/bin/
 chmod 755 ${BOSH_INSTALL_TARGET}/bin/haproxy
