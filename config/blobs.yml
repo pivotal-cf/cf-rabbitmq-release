@@ -5,10 +5,10 @@ basht/basht_0.1.0_Linux_x86_64.tgz:
   object_id: bbc2200b-670b-4562-72db-27ce98bc3161
   sha: 5dee8d242fc333672e14d9e1d70162b77eab5924
 # this comment prevents git conflicts
-erlang-24/otp_src_oss_24.3.4.4.tgz:
-  size: 59993078
-  object_id: 6f81013c-c468-4e44-689a-56f73b02e2fa
-  sha: sha256:925c2aa816ea81947cfeca8772cde60b019461b6311190ae046d1c6a9b3c585f
+erlang-24/otp_src_oss_24.3.4.5.tgz:
+  size: 60010786
+  object_id: fdcea696-06f2-4f0a-4ea9-aaeaa033b2d0
+  sha: sha256:1ff9bce02891352da5e1ba78b263cb5f465900342d9c72690b97905bf405b48b
 # this comment prevents git conflicts
 golang/go1.19.1.linux-amd64.tar.gz:
   size: 148820241
