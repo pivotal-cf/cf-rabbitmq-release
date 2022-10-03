@@ -1,0 +1,51 @@
+set -e
+
+export HOME=${BOSH_INSTALL_DIR}
+
+cpus="$(grep -c ^processor /proc/cpuinfo)"
+
+VERSION="25.1"
+MAJOR_VERSION="25"
+echo "$MAJOR_VERSION" > "$BOSH_INSTALL_TARGET/erlang_version"
+
+tar xzf erlang-25/otp_src_oss_${VERSION}.tgz
+cd otp_src_oss_${VERSION}
+./configure \
+  --with-ssl="/var/vcap/packages/openssl/external/openssl/" \
+  --with-ssl-rpath="/var/vcap/packages/openssl/external/openssl/lib/" \
+	--disable-hipe \
+	--disable-sctp \
+	--disable-silent-rules \
+	--enable-dynamic-ssl-lib \
+	--enable-clock-gettime \
+	--enable-dynamic-ssl \
+	--enable-hybrid-heap \
+	--enable-kernel-poll \
+	--enable-shared-zlib \
+	--enable-smp-support \
+	--enable-threads \
+	--enable-lock-counter \
+	--with-microstate-accounting=extra \
+	--without-common_test \
+	--without-debugger \
+	--without-dialyzer \
+	--without-diameter \
+	--without-edoc \
+	--without-erl_docgen \
+	--without-et \
+	--without-eunit \
+	--without-ftp \
+	--without-hipe \
+	--without-jinterface \
+	--without-megaco \
+	--without-observer \
+	--without-odbc \
+	--without-reltool \
+	--without-ssh \
+	--without-tftp \
+	--without-wx \
+  --prefix=${BOSH_INSTALL_TARGET}
+
+make -j$cpus
+make install
+
