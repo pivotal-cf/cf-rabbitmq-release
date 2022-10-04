@@ -1,0 +1,9 @@
+---
+name: rabbitmq-server-3.11
+metadata:
+  version: 3.11.0
+files:
+- rabbitmq-server-3.11/rabbitmq-server-generic-unix-3.11.0.tar.xz
+- rabbitmq-server/rabbitmq-script-wrapper
+- rabbitmq-server/rabbitmq-defaults
+dependencies: []
