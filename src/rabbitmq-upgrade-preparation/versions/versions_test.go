@@ -3,9 +3,7 @@ package versions_test
 import (
 	. "rabbitmq-upgrade-preparation/versions"
 
-	. "github.com/onsi/ginkgo/extensions/table"
-
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 

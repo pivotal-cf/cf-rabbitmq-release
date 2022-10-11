@@ -11,7 +11,7 @@ pushd src/rabbitmq-upgrade-preparation
   scripts/run_tests
 popd
 
-echo "rabbitmq-adminn"
+echo "rabbitmq-admin"
 pushd src/rabbitmq-admin
   ginkgo -r
 popd
