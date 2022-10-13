@@ -10,11 +10,6 @@ erlang-24/otp_src_oss_24.3.4.6.tgz:
   object_id: 9525829d-69f3-4069-4647-6ba33dd2ffb8
   sha: sha256:684a9a18e4e5bac172b639b4ba71c321774cfc16d9416a3a416bdf0a1ed23532
 # this comment prevents git conflicts
-erlang-25/otp_src_25.1.tgz:
-  size: 103454812
-  object_id: a961e144-48cc-40ee-64f2-e6c9c363a7ce
-  sha: sha256:a5ea27c1e07511a84bdd869c37f5e254f198c1cecf68ee9c8fedd23010750c31
-# this comment prevents git conflicts
 erlang-25/otp_src_oss_25.1.1.tgz:
   size: 60419788
   object_id: 561bdf55-bad3-43ca-5407-f9fa75d2d57e
