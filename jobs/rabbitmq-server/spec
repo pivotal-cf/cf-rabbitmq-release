@@ -3,6 +3,7 @@
 name: rabbitmq-server
 packages:
 - erlang-24
+- erlang-25
 - rabbitmq-server-3.8
 - rabbitmq-server-3.9
 - rabbitmq-server-3.10
@@ -89,7 +90,7 @@ properties:
 
   rabbitmq-server.erlang_major_version:
     description: "Major version of Erlang to use on RabbitMQ instances in this deployment"
-    default: 24 # We should not change the deafult until 31st October 2022, when Tile 2.0 is EOGS.
+    default: 25
   rabbitmq-server.cookie:
     description: "Erlang cookie used by RabbitMQ nodes and rabbitmqctl. You should set this to a secure password"
 
