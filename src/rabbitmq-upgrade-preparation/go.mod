@@ -6,7 +6,7 @@ require (
 	github.com/cenkalti/backoff v2.2.1+incompatible
 	github.com/hashicorp/go-version v1.6.0
 	github.com/onsi/ginkgo v1.16.5
-	github.com/onsi/gomega v1.23.0
+	github.com/onsi/gomega v1.24.0
 )
 
 require (
