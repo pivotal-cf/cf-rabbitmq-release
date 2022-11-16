@@ -5,25 +5,13 @@ import (
 	"os/exec"
 	"strings"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gbytes"
 	. "github.com/onsi/gomega/gexec"
 )
 
 var _ = Describe("Main", func() {
-	var pathToCmd string
-
-	BeforeSuite(func() {
-		var err error
-		pathToCmd, err = Build("rabbitmq-admin/amqp-traffic/restore-amqp-traffic")
-		Expect(err).NotTo(HaveOccurred())
-	})
-
-	AfterSuite(func() {
-		CleanupBuildArtifacts()
-	})
-
 	It("prints a message saying what it is going to do", func() {
 		session := runWithInput(pathToCmd, "no\n", 0)
 
