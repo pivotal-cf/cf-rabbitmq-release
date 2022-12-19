@@ -3,8 +3,8 @@ module rabbitmq-admin
 go 1.19
 
 require (
-	github.com/onsi/ginkgo/v2 v2.6.0
-	github.com/onsi/gomega v1.24.1
+	github.com/onsi/ginkgo/v2 v2.6.1
+	github.com/onsi/gomega v1.24.2
 	github.com/vito/go-interact v1.0.1
 )
 
