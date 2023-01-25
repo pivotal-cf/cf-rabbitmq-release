@@ -1,0 +1,17 @@
+version: 2
+updates:
+- package-ecosystem: "bundler"
+  directory: "/"
+  target-branch: "master"
+  schedule:
+    interval: "daily"
+- package-ecosystem: "gomod"
+  directory: "/src/rabbitmq-admin/"
+  target-branch: "master"
+  schedule:
+    interval: "daily"
+- package-ecosystem: "gomod"
+  directory: "/src/rabbitmq-upgrade-preparation/"
+  target-branch: "master"
+  schedule:
+    interval: "daily"
