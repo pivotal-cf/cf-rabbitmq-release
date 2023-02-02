@@ -2,10 +2,7 @@
 ---
 name: rabbitmq-server
 packages:
-- erlang-24
 - erlang-25
-- rabbitmq-server-3.8
-- rabbitmq-server-3.9
 - rabbitmq-server-3.10
 - rabbitmq-server-3.11
 - rabbitmq-common

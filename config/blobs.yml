@@ -5,20 +5,15 @@ basht/basht_0.1.0_Linux_x86_64.tgz:
   object_id: bbc2200b-670b-4562-72db-27ce98bc3161
   sha: 5dee8d242fc333672e14d9e1d70162b77eab5924
 # this comment prevents git conflicts
-erlang-24/otp_src_oss_24.3.4.8.tgz:
-  size: 60027665
-  object_id: 11bd2cd8-a1fe-4c69-5114-79ee580ab6d8
-  sha: sha256:77cfff8ebd64d611618bdbddba5bf9d82c5c3a4ef11f783459e3ac28e4b948ea
-# this comment prevents git conflicts
 erlang-25/otp_src_oss_25.2.2.tgz:
   size: 60469841
   object_id: 783d234f-2220-41a7-485f-93c06942ced1
   sha: sha256:0eb9b4945c4168b637fc1816bc0298f9ba7f99a35444347439dbbe382876eed5
 # this comment prevents git conflicts
-golang/go1.19.5.linux-amd64.tar.gz:
-  size: 148949578
-  object_id: d7074b41-76e3-4915-505f-9db473be4d1b
-  sha: sha256:36519702ae2fd573c9869461990ae550c8c0d955cd28d2827a6b159fda81ff95
+golang/go1.20.linux-amd64.tar.gz:
+  size: 99869470
+  object_id: bc4a1e0c-8e7b-4ec5-6898-81d28709d621
+  sha: sha256:5a9ebcc65c1cce56e0d2dc616aff4c4cedcfbda8cc6f0288cc08cda3b18dcbf1
 # this comment prevents git conflicts
 haproxy/haproxy-2.6.8.tar.gz:
   size: 4041517
@@ -29,16 +24,6 @@ openssl/openssl-1.1.1s.tar.gz:
   size: 9868981
   object_id: cb0b36e0-f99e-4f26-405a-afa944d30a02
   sha: sha256:c5ac01e760ee6ff0dab61d6b2bbd30146724d063eb322180c6f18a6f74e4b6aa
-# this comment prevents git conflicts
-rabbitmq-server-3.8/rabbitmq-server-generic-unix-3.8.35.tar.xz:
-  size: 15825620
-  object_id: 7442d589-7af9-4353-5737-e396ad7551ed
-  sha: sha256:09c970742b84209af5fe7e8f38ad8eaa9d074b798056bbe7dc83a7a32df3d9af
-# this comment prevents git conflicts
-rabbitmq-server-3.9/rabbitmq-server-generic-unix-3.9.28.tar.xz:
-  size: 14787488
-  object_id: 9658789c-6ec4-49e0-42e8-b49f6e9bf5be
-  sha: sha256:f37fb3f0b7e027f49fffe04bcd8fff521373861b54f997dfc7c23dfc76ba399b
 # this comment prevents git conflicts
 rabbitmq-server-3.10/rabbitmq-server-generic-unix-3.10.17.tar.xz:
   size: 14903896
