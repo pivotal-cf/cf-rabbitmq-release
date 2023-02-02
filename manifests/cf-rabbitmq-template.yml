@@ -12,8 +12,8 @@ releases:
   version: latest
 
 stemcells:
-- alias: xenial
-  os: ubuntu-xenial
+- alias: bionic
+  os: ubuntu-bionic
   version: ((stemcell-version))
 
 instance_groups:
@@ -48,7 +48,7 @@ instance_groups:
         cookie: ((rabbitmq-cookie))
         cluster_partition_handling: ((cluster-partition-handling-strategy))
   vm_type: n1-highmem-4
-  stemcell: xenial
+  stemcell: bionic
   persistent_disk_type: 100GB
   networks:
   - name: default
@@ -81,7 +81,7 @@ instance_groups:
   - name: bpm
     release: bpm
   vm_type: n1-standard-1
-  stemcell: xenial
+  stemcell: bionic
   networks:
   - name: default
   azs:
