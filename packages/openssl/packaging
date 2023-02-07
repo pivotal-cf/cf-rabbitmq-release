@@ -4,8 +4,8 @@ cpus="$(grep -c ^processor /proc/cpuinfo)"
 
 cd openssl/
 
-tar -xf openssl-1.1.1s.tar.gz
-cd openssl-1.1.1s
+tar -xf openssl-1.1.1t.tar.gz
+cd openssl-1.1.1t
 
 ./config \
   --shared \
