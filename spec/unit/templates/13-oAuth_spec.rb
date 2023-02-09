@@ -42,6 +42,7 @@ VwIDAQAB
       expect(rendered_template).to include('management.oauth_provider_url = https://uaa.cf.example.com')
       expect(rendered_template).to include('management.oauth_scopes = openid 5507278f-73bc-44fd-904d-03aea4add4f0.*')
       expect(rendered_template).to include('auth_oauth2.resource_server_id = 5507278f-73bc-44fd-904d-03aea4add4f0')
+      expect(rendered_template).to include('auth_oauth2.preferred_username_claims = user_name')
       expect(rendered_template).to include('auth_oauth2.default_key = fake-key-id')
       expect(rendered_template).to include('auth_oauth2.signing_keys.fake-key-id = /var/vcap/jobs/rabbitmq-server/etc/oAuth-signing-key.pem')
 
