@@ -16,7 +16,9 @@ RSpec.describe 'Configuration', template: true do
             'enabled':true,
             'resource_server_id': '5507278f-73bc-44fd-904d-03aea4add4f0',
             'client_id': '67866802-73bc-44fd-904d-03aea4add4f0',
+            'client_secret': 'secret',
             'provider_url': 'https://uaa.cf.example.com',
+            'oauth_scopes': 'scopes',
             'signing_key_id': 'fake-key-id',
             'signing_key': "-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2dP+vRn+Kj+S/oGd49kq
@@ -36,8 +38,9 @@ VwIDAQAB
       expect(rendered_template).to include('auth_backends.2 = rabbit_auth_backend_internal')
       expect(rendered_template).to include('management.oauth_enabled = true')
       expect(rendered_template).to include('management.oauth_client_id = 67866802-73bc-44fd-904d-03aea4add4f0')
-      expect(rendered_template).to include('management.oauth_client_secret = _')
+      expect(rendered_template).to include('management.oauth_client_secret = secret')
       expect(rendered_template).to include('management.oauth_provider_url = https://uaa.cf.example.com')
+      expect(rendered_template).to include('management.oauth_scopes = openid 5507278f-73bc-44fd-904d-03aea4add4f0.*')
       expect(rendered_template).to include('auth_oauth2.resource_server_id = 5507278f-73bc-44fd-904d-03aea4add4f0')
       expect(rendered_template).to include('auth_oauth2.default_key = fake-key-id')
       expect(rendered_template).to include('auth_oauth2.signing_keys.fake-key-id = /var/vcap/jobs/rabbitmq-server/etc/oAuth-signing-key.pem')
