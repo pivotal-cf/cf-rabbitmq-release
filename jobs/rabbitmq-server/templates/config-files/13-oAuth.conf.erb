@@ -4,7 +4,6 @@ auth_backends.2 = rabbit_auth_backend_internal
 management.oauth_enabled = true
 management.oauth_client_id = <%= p('rabbitmq-server.oauth.client_id') %>
 management.oauth_client_secret = <%= p('rabbitmq-server.oauth.client_secret') %>
-management.enable_uaa = true
 management.oauth_provider_url = <%= p('rabbitmq-server.oauth.provider_url') %>
 auth_oauth2.resource_server_id = <%= p('rabbitmq-server.oauth.resource_server_id') %>
 auth_oauth2.default_key = <%= p('rabbitmq-server.oauth.signing_key_id') %>
