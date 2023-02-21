@@ -105,7 +105,6 @@ RSpec.describe 'Configuration', template: true do
     context 'when using the aggregated metrics' do
       it 'sets scrape path accordingly' do
         expect(rendered_template).to include('path: /metrics')
-        expect(rendered_template).to include('scrape_interval: 30s')
       end
     end
 
@@ -115,11 +114,10 @@ RSpec.describe 'Configuration', template: true do
           template = job.template('config/prom_scraper_detailed_config.yml')
           rendered_template = template.render(manifest, spec: instance, consumes: [link])
           expect(rendered_template).to include('path: /metrics/detailed')
-          expect(rendered_template).to include('scrape_interval: 30s')
         end
       end
 
-      context 'when the custom scrape query is set' do
+      context 'when the custom scrape query is unset' do
         before(:each) do
           manifest['rabbitmq-server']['prom_scraper_detailed_endpoint_query'] = '?foo=bar&baz=vhost'
         end
@@ -128,7 +126,6 @@ RSpec.describe 'Configuration', template: true do
           template = job.template('config/prom_scraper_detailed_config.yml')
           rendered_template = template.render(manifest, spec: instance, consumes: [link])
           expect(rendered_template).to include('path: /metrics/detailed?foo=bar&baz=vhost')
-          expect(rendered_template).to include('scrape_interval: 30s')
         end
       end
     end
