@@ -149,6 +149,10 @@ properties:
     description: "Optional metric labels (see loggregator-agent's prom_scraper job for details)"
     default: {}
 
+  rabbitmq-server.prom_scraper_scrape_interval:
+    description: "The scrape interval for scraping the metrics endpoint"
+    default: "30s"
+
   rabbitmq-server.prom_scraper_detailed_endpoint_query:
     description: "Query parameters to append to the prom_scraper target endpoint for `/metrics/detailed`, including the leading `?`. See https://github.com/rabbitmq/rabbitmq-server/blob/master/deps/rabbitmq_prometheus/README.md#selective-querying-of-per-object-metrics"
     default: ""

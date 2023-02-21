@@ -43,3 +43,5 @@ labels:
   <%= key %>: <%= value %>
   <% end %>
 <% end %>
+
+scrape_interval: <%= p('rabbitmq-server.prom_scraper_scrape_interval') %>
