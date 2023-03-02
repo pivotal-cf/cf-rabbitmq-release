@@ -120,16 +120,10 @@ properties:
     description: "The public key (verification key) of the RSA key pair used by UAA to sign the JWT token."
   rabbitmq-server.oauth.signing_key_id:
     description: "The ID of the JWT signing key to be used when signing tokens."
-  rabbitmq-server.oauth.client_id:
-    description: "The OAuth client which presents a valid access_token acquired from an OAuth server as the password in order to authenticate with RabbitMQ."
-  rabbitmq-server.oauth.client_secret:
-    description: "The OAuth client secret"
-  rabbitmq-server.oauth.provider_url:
-    description: "URL of the OAuth2 provider (e.g. http://localhost:8080/uaa)"
   rabbitmq-server.oauth.uaa_client_id:
-    description: "Deprecated. Do not use this property. Use rabbitmq-server.oauth.client_id instead."
+    description: "The UAA client which presents a valid access_token acquired from UAA as the password in order to authenticate with RabbitMQ."
   rabbitmq-server.oauth.uaa_location:
-    description: "Deprecated. Do not use this property. Use rabbitmq-server.oauth.provider_url instead."
+    description: "UAA URL (e.g. http://localhost:8080/uaa)"
 
   rabbitmq-server.check_queue_sync:
     description: "If true, waits for quorum and mirror queues to sync before stopping the node"
