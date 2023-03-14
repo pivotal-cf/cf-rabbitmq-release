@@ -15,10 +15,10 @@ golang/go1.20.2.linux-amd64.tar.gz:
   object_id: ed4fa376-ad95-418d-50eb-eb8c76d2e829
   sha: sha256:4eaea32f59cde4dc635fbc42161031d13e1c780b87097f4b4234cfce671f1768
 # this comment prevents git conflicts
-haproxy/haproxy-2.6.9.tar.gz:
-  size: 4045208
-  object_id: d39b0f15-ea4e-4376-5dd2-3e6bf16485f6
-  sha: sha256:f01a1c5f465dc1b5cd175d0b28b98beb4dfe82b5b5b63ddcc68d1df433641701
+haproxy/haproxy-2.6.10.tar.gz:
+  size: 4056147
+  object_id: 6cea0c0e-0d26-46d1-415e-4536c2214c18
+  sha: sha256:e71b2cd9ca1043345f083a5225078ccf824dced2b5779d86f11fa4e88f451773
 # this comment prevents git conflicts
 openssl/openssl-1.1.1t.tar.gz:
   size: 9881866
