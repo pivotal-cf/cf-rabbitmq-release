@@ -7,7 +7,7 @@ management.oauth_client_secret = <%= p('rabbitmq-server.oauth.client_secret') %>
 management.oauth_provider_url = <%= p('rabbitmq-server.oauth.provider_url') %>
 management.oauth_scopes = openid <%= p('rabbitmq-server.oauth.resource_server_id') %>.*
 auth_oauth2.resource_server_id = <%= p('rabbitmq-server.oauth.resource_server_id') %>
-auth_oauth2.preferred_username_claims = user_name
+auth_oauth2.preferred_username_claims.1 = user_name
 auth_oauth2.default_key = <%= p('rabbitmq-server.oauth.signing_key_id') %>
 auth_oauth2.signing_keys.<%= p('rabbitmq-server.oauth.signing_key_id') %> = /var/vcap/jobs/rabbitmq-server/etc/oAuth-signing-key.pem
 <% end -%>
