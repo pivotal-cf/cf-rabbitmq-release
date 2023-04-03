@@ -116,6 +116,8 @@ properties:
   rabbitmq-server.oauth.resource_server_id:
     description: "Prefix used for scopes in UAA to avoid scope collisions"
     default: ""
+  rabbitmq-server.oauth.jwks_url:
+    description: "URL for dynamically retreiving JWK Set"
   rabbitmq-server.oauth.signing_key:
     description: "The public key (verification key) of the RSA key pair used by UAA to sign the JWT token."
   rabbitmq-server.oauth.signing_key_id:
