@@ -5,12 +5,7 @@
 set -u
 
 main() {
-    enable_all
     enable_stream_queue
-}
-
-enable_all() {
-    enable_feature_flag "all"
 }
 
 enable_stream_queue() {
