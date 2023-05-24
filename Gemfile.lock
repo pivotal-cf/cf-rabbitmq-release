@@ -50,7 +50,7 @@ GEM
     multi_json (1.15.0)
     multi_xml (0.6.0)
     multipart-post (2.3.0)
-    papertrail (0.11.1)
+    papertrail (0.11.2)
       ansi (~> 1.5)
       chronic (~> 0.10)
     pry (0.14.2)
