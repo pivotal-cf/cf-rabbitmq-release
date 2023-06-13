@@ -5,37 +5,7 @@
 set -u
 
 main() {
-    enable_all_3_8_features
-    enable_all_supported_features
-    enable_stream_queue
-}
-
-enable_all_3_8_features() {
-    for feature in "implicit_default_bindings" "maintenance_mode_status" "quorum_queue" "user_limits" "virtual_host_metadata"
-    do
-        echo "Enabling feature flag $feature"
-        enable_feature_flag "$feature"
-    done
-}
-
-enable_all_supported_features() {
-    for feature in "classic_mirrored_queue_version" "classic_queue_type_delivery_support" "drop_unroutable_metric" "empty_basic_get_metric"
-    do
-        echo "Ensuring feature flag $feature is supported"
-        if feature_flag_supported "$feature"; then
-            echo "Enabling feature flag $feature"
-            enable_feature_flag "$feature"
-        fi
-    done
-}
-
-enable_stream_queue() {
-    if feature_flag_supported "stream_queue" && plugin_enabled "rabbitmq_stream"; then
-        echo "Making sure stream_queue flag is enabled"
-        enable_feature_flag "stream_queue"
-    else
-        echo "Ignoring stream_queue flag (either not supported or plugin disabled)"
-    fi
+    enable_feature_flag "all"
 }
 
 feature_flag_supported() {
