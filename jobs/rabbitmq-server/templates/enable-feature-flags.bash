@@ -5,41 +5,43 @@
 set -u
 
 main() {
-    enable_all_3_8_features
-    enable_all_supported_features
-    enable_stream_queue
+    enable_standard_features
+    enable_stream_features
+    enable_mqtt_features
 }
 
-enable_all_3_8_features() {
-    for feature in "implicit_default_bindings" "maintenance_mode_status" "quorum_queue" "user_limits" "virtual_host_metadata"
+enable_standard_features() {
+    for feature in "virtual_host_metadata" "quorum_queue" "implicit_default_bindings" "maintenance_mode_status" "user_limits" "classic_queue_type_delivery_support" "tracking_records_in_ets" "listener_records_in_ets" "feature_flags_v2" "direct_exchange_routing_v2" "classic_mirrored_queue_version" "drop_unroutable_metric" "empty_basic_get_metric"
     do
-        echo "Enabling feature flag $feature"
         enable_feature_flag "$feature"
     done
 }
 
-enable_all_supported_features() {
-    for feature in "classic_mirrored_queue_version" "classic_queue_type_delivery_support" "drop_unroutable_metric" "empty_basic_get_metric"
-    do
-        echo "Ensuring feature flag $feature is supported"
-        if feature_flag_supported "$feature"; then
-            echo "Enabling feature flag $feature"
+enable_stream_features() {
+    if plugin_enabled "rabbitmq_stream"; then
+        for feature in "stream_queue" "stream_single_active_consumer" "restart_streams" "stream_sac_coordinator_unblock_group"
+        do
             enable_feature_flag "$feature"
-        fi
-    done
+        done
+    else
+        echo "Ignoring stream feature flags (plugin disabled)"
+    fi
 }
 
-enable_stream_queue() {
-    if feature_flag_supported "stream_queue" && plugin_enabled "rabbitmq_stream"; then
-        echo "Making sure stream_queue flag is enabled"
-        enable_feature_flag "stream_queue"
+enable_mqtt_features() {
+    if plugin_enabled "rabbitmq_mqtt"; then
+        for feature in "deleta_ra_cluster_mqtt_node" "rabbit_mqtt_qos0_queue"
+        do
+            enable_feature_flag "$feature"
+        done
     else
-        echo "Ignoring stream_queue flag (either not supported or plugin disabled)"
+        echo "Ignoring mqtt feature flags (plugin disabled)"
     fi
 }
 
 feature_flag_supported() {
     flag_name="$1"
+    echo "Ensuring feature flag $flag_name is supported"
     rabbitmqctl list_feature_flags --quiet | grep -q "$flag_name"
 }
 
@@ -50,7 +52,10 @@ plugin_enabled() {
 
 enable_feature_flag() {
     flag_name="$1"
-    rabbitmqctl enable_feature_flag --quiet "$flag_name"
+    if feature_flag_supported "$flag_name"; then
+        echo "Enabling feature flag $flag_name"
+        rabbitmqctl enable_feature_flag --quiet "$flag_name"
+    fi
 }
 
 main
