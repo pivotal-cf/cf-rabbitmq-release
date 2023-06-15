@@ -6,26 +6,14 @@ set -u
 
 main() {
     enable_standard_features
-    enable_stream_features
     enable_mqtt_features
 }
 
 enable_standard_features() {
-    for feature in "virtual_host_metadata" "quorum_queue" "implicit_default_bindings" "maintenance_mode_status" "user_limits" "classic_queue_type_delivery_support" "tracking_records_in_ets" "listener_records_in_ets" "feature_flags_v2" "direct_exchange_routing_v2" "classic_mirrored_queue_version" "drop_unroutable_metric" "empty_basic_get_metric"
+    for feature in "virtual_host_metadata" "quorum_queue" "implicit_default_bindings" "maintenance_mode_status" "user_limits" "stream_queue" "classic_queue_type_delivery_support" "tracking_records_in_ets" "stream_single_active_consumer" "listener_records_in_ets" "feature_flags_v2" "direct_exchange_routing_v2" "classic_mirrored_queue_version" "drop_unroutable_metric" "empty_basic_get_metric" "stream_sac_coordinator_unblock_group" "restart_streams"
     do
         enable_feature_flag "$feature"
     done
-}
-
-enable_stream_features() {
-    if plugin_enabled "rabbitmq_stream"; then
-        for feature in "stream_queue" "stream_single_active_consumer" "restart_streams" "stream_sac_coordinator_unblock_group"
-        do
-            enable_feature_flag "$feature"
-        done
-    else
-        echo "Ignoring stream feature flags (plugin disabled)"
-    fi
 }
 
 enable_mqtt_features() {
