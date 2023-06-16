@@ -40,9 +40,12 @@ plugin_enabled() {
 
 enable_feature_flag() {
     flag_name="$1"
-    feature_flag_supported "$flag_name" && \
-        echo "Enabling feature flag $flag_name" && \
+    if feature_flag_supported "$flag_name"; then
+        echo "Enabling feature flag $flag_name"
         rabbitmqctl enable_feature_flag --quiet "$flag_name"
+    else
+        echo "Feature flag $flag_name unsupported"
+    fi
 }
 
 main
