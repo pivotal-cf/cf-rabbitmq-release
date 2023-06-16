@@ -93,10 +93,6 @@ RSpec.describe 'RabbitMQ server configuration' do
       end
     end
 
-    after(:all) do
-      bosh.deploy(test_manifest)
-    end
-
     it "should deploy RabbitMQ #{RMQ_VERSION}" do
         creds = admin_creds
         response = get("#{rabbitmq_api_url}/overview", creds['username'], creds['password'])
