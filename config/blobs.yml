@@ -1,39 +1,47 @@
 ---
 # this comment prevents git conflicts
+# this comment prevents git conflicts
 basht/basht_0.1.0_Linux_x86_64.tgz:
   size: 757703
   object_id: bbc2200b-670b-4562-72db-27ce98bc3161
   sha: 5dee8d242fc333672e14d9e1d70162b77eab5924
+# this comment prevents git conflicts
 # this comment prevents git conflicts
 erlang-25/otp_src_oss_25.3.2.5.tgz:
   size: 62913518
   object_id: a69f910e-48b6-4881-712a-83f710f2c973
   sha: sha256:d17c273ddd47e1105790e8bdb650be30cf2bc5a4f2d0293834b8cb784ac52323
 # this comment prevents git conflicts
+# this comment prevents git conflicts
 golang/go1.21.0.linux-amd64.tar.gz:
   size: 66479500
   object_id: e2788bc5-a3b5-4337-5c57-c419703add06
   sha: sha256:d0398903a16ba2232b389fb31032ddf57cac34efda306a0eebac34f0965a0742
+# this comment prevents git conflicts
 # this comment prevents git conflicts
 haproxy/haproxy-2.6.15.tar.gz:
   size: 4074156
   object_id: 94beb1ef-ee7a-4a93-7124-a9c0d4a23b8d
   sha: sha256:41f8e1695e92fafdffe39690a68993f1a0f5f7f06931a99e9a153f749ea39cfd
 # this comment prevents git conflicts
+# this comment prevents git conflicts
 openssl/openssl-1.1.1v.tar.gz:
   size: 9893443
   object_id: c96ea64d-3b9f-4bfe-5487-1040a5d272dd
   sha: sha256:d6697e2871e77238460402e9362d47d18382b15ef9f246aba6c7bd780d38a6b0
+# this comment prevents git conflicts
 # this comment prevents git conflicts
 rabbitmq-server-3.10/rabbitmq-server-generic-unix-3.10.25.tar.xz:
   size: 15006512
   object_id: 4e0309e6-bdab-4342-57da-368f5d6ba685
   sha: sha256:5a915280dc6d521de9403a07e42d66ea9e3bf7d24880b356d395b950e6dcb3ca
 # this comment prevents git conflicts
+# this comment prevents git conflicts
 rabbitmq-server-3.11/rabbitmq-server-generic-unix-3.11.21.tar.xz:
   size: 15565916
   object_id: 7bb8a8f8-ba2a-4203-57a8-4e72b2e9b137
   sha: sha256:a2cdd833ff6cc40421c66db87cbbe42cc0b3cb755db5a52aa6ed9ab4297ba518
+# this comment prevents git conflicts
 # this comment prevents git conflicts
 rabbitmq-server-3.12/rabbitmq-server-generic-unix-3.12.2.tar.xz:
   size: 15602964
