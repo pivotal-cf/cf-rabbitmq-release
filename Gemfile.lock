@@ -5,7 +5,7 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     amq-protocol (2.3.2)
     ansi (1.5.0)
-    bosh-template (2.2.1)
+    bosh-template (2.3.0)
       semi_semantic (~> 1.2.0)
     bunny (2.22.0)
       amq-protocol (~> 2.3, >= 2.3.1)
@@ -110,6 +110,3 @@ DEPENDENCIES
   rspec-instafail
   rspec-retry
   stomp
-
-BUNDLED WITH
-   1.17.2
