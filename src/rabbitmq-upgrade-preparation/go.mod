@@ -1,6 +1,8 @@
 module rabbitmq-upgrade-preparation
 
-go 1.20
+go 1.21
+
+toolchain go1.21.0
 
 require (
 	github.com/cenkalti/backoff v2.2.1+incompatible
