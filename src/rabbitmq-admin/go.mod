@@ -2,7 +2,7 @@ module rabbitmq-admin
 
 go 1.21
 
-toolchain go1.21.0
+toolchain go1.21.1
 
 require (
 	github.com/onsi/ginkgo/v2 v2.12.0
