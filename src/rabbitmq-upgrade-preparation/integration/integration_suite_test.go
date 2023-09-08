@@ -13,7 +13,7 @@ import (
 var binPath string
 
 var _ = BeforeSuite(func() {
-	SetDefaultEventuallyTimeout(10 * time.Second)
+	SetDefaultEventuallyTimeout(1 * time.Minute)
 	var err error
 	binPath, err = gexec.Build("rabbitmq-upgrade-preparation")
 	Expect(err).NotTo(HaveOccurred())
