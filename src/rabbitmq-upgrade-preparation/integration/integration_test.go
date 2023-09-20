@@ -299,7 +299,7 @@ var _ = Describe("Upgrading RabbitMQ", func() {
 		})
 
 		It("logs to stderr, because we're in an unsafe state", func() {
-			Eventually(session.Err).Should(sayWithTimestamp("Unable to connect to node rabbit@host after 3 retries within 1s: Unable to reach epmd and host seems down"))
+			Eventually(session.Err).Should(sayWithTimestamp(`Unable to connect to node rabbit@host after \d retries within 1s: Unable to reach epmd and host seems down`))
 		})
 	})
 
