@@ -3,6 +3,7 @@
 name: rabbitmq-server
 packages:
 - erlang-25
+- erlang-26
 - rabbitmq-server-3.10
 - rabbitmq-server-3.11
 - rabbitmq-server-3.12

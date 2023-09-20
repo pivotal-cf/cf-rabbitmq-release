@@ -1,0 +1,8 @@
+---
+name: erlang-26
+metadata:
+  version: 26.1
+files:
+- erlang-26/otp_src_oss_26.1.tgz
+dependencies:
+- openssl
