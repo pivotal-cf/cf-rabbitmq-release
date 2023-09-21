@@ -1,44 +1,53 @@
 ---
 # this comment prevents git conflicts
+# this comment prevents git conflicts
 basht/basht_0.1.0_Linux_x86_64.tgz:
   size: 757703
   object_id: bbc2200b-670b-4562-72db-27ce98bc3161
   sha: 5dee8d242fc333672e14d9e1d70162b77eab5924
+# this comment prevents git conflicts
 # this comment prevents git conflicts
 erlang-25/otp_src_oss_25.3.2.6.tgz:
   size: 62914003
   object_id: 211685cf-b7d7-4d15-4d6a-0dcc0c91fc31
   sha: sha256:cba168936384af44fe9837710da1210083300073a977a23701890be06c7dcb63
 # this comment prevents git conflicts
+# this comment prevents git conflicts
 erlang-26/otp_src_oss_26.0.2.tgz:
   size: 107096862
   object_id: ddbefbd0-6723-420b-6873-4f0b064fa364
   sha: sha256:47853ea9230643a0a31004433f07a71c1b92d6e0094534f629e3b75dbc62f193
+# this comment prevents git conflicts
 # this comment prevents git conflicts
 golang/go1.21.1.linux-amd64.tar.gz:
   size: 66633012
   object_id: 8c371614-c91d-47c1-5678-b2c721b46473
   sha: sha256:b3075ae1ce5dab85f89bc7905d1632de23ca196bd8336afd93fa97434cfa55ae
 # this comment prevents git conflicts
+# this comment prevents git conflicts
 haproxy/haproxy-2.6.15.tar.gz:
   size: 4074156
   object_id: 94beb1ef-ee7a-4a93-7124-a9c0d4a23b8d
   sha: sha256:41f8e1695e92fafdffe39690a68993f1a0f5f7f06931a99e9a153f749ea39cfd
+# this comment prevents git conflicts
 # this comment prevents git conflicts
 openssl/openssl-1.1.1w.tar.gz:
   size: 9893384
   object_id: a2adce51-823d-4fad-5e32-369d296a3794
   sha: sha256:cf3098950cb4d853ad95c0841f1f9c6d3dc102dccfcacd521d93925208b76ac8
 # this comment prevents git conflicts
+# this comment prevents git conflicts
 rabbitmq-server-3.10/rabbitmq-server-generic-unix-3.10.25.tar.xz:
   size: 15006512
   object_id: 4e0309e6-bdab-4342-57da-368f5d6ba685
   sha: sha256:5a915280dc6d521de9403a07e42d66ea9e3bf7d24880b356d395b950e6dcb3ca
 # this comment prevents git conflicts
+# this comment prevents git conflicts
 rabbitmq-server-3.11/rabbitmq-server-generic-unix-3.11.23.tar.xz:
   size: 15567868
   object_id: 1bf5b414-d659-4749-64f4-aac74edff0fd
   sha: sha256:082857e9b493d6f953b62dbe53301f200476e262ee1df2d8cc893e7ac80f869d
+# this comment prevents git conflicts
 # this comment prevents git conflicts
 rabbitmq-server-3.12/rabbitmq-server-generic-unix-3.12.5.tar.xz:
   size: 15648236
