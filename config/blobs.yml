@@ -14,6 +14,7 @@ erlang-26/otp_src_oss_26.1.tgz:
   size: 108814324
   object_id: 2548a648-dfe2-4cd9-7ac4-fddb58e8859e
   sha: sha256:e00f666881491bb92b584589032b7e5df1c6c7aa70c1547384b02326d5333b7d
+# this comment prevents git conflicts
 golang/go1.21.1.linux-amd64.tar.gz:
   size: 66633012
   object_id: 8c371614-c91d-47c1-5678-b2c721b46473
@@ -39,7 +40,7 @@ rabbitmq-server-3.11/rabbitmq-server-generic-unix-3.11.23.tar.xz:
   object_id: 1bf5b414-d659-4749-64f4-aac74edff0fd
   sha: sha256:082857e9b493d6f953b62dbe53301f200476e262ee1df2d8cc893e7ac80f869d
 # this comment prevents git conflicts
-rabbitmq-server-3.12/rabbitmq-server-generic-unix-3.12.4.tar.xz:
-  size: 15639796
-  object_id: ed77fc15-e722-45d8-781c-ad5574c946ee
-  sha: sha256:03bc521e664afd8278d40193bb6fbe3d66d6301fc24cbb120bf53fda6613ef36
+rabbitmq-server-3.12/rabbitmq-server-generic-unix-3.12.5.tar.xz:
+  size: 15648236
+  object_id: 8b6710b7-d35f-42c3-454a-dd3d6075f28b
+  sha: sha256:33cd437c4b0e598a669825139f69c0f09ea9dc995241fdb5fc40eddedaba004d
