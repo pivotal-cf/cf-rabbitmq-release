@@ -69,8 +69,8 @@ instance_groups:
       nats:
         tls:
           enabled: true
-          client_cert: ((nats_client_cert.certificate))
-          client_key: ((nats_client_cert.private_key))
+          client_cert: ((nats-client-cert))
+          client_key: ((nats-client-key))
       route_registrar:
         routes:
         - name: ((rabbitmq-management-hostname))
