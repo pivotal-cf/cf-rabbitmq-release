@@ -23,6 +23,7 @@ cd otp_src_oss_${VERSION}
 	--disable-sctp \
 	--disable-silent-rules \
 	--enable-dynamic-ssl-lib \
+	--enable-jit \
 	--enable-clock-gettime \
 	--enable-dynamic-ssl \
 	--enable-hybrid-heap \
