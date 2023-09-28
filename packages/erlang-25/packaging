@@ -15,6 +15,12 @@ else
 	openssl_flags="--with-ssl=/var/vcap/packages/openssl/external/openssl/ --with-ssl-rpath=/var/vcap/packages/openssl/external/openssl/lib/"
 fi
 
+if grep -Fxq jammy /etc/lsb-release; then
+	jit_flags="--enable-jit"
+else
+	jit_flags=""
+fi
+
 tar xzf erlang-25/otp_src_oss_${VERSION}.tgz
 cd otp_src_oss_${VERSION}
 ./configure \
@@ -23,7 +29,7 @@ cd otp_src_oss_${VERSION}
 	--disable-sctp \
 	--disable-silent-rules \
 	--enable-dynamic-ssl-lib \
-        --enable-jit \
+	$jit_flags \
 	--enable-clock-gettime \
 	--enable-dynamic-ssl \
 	--enable-hybrid-heap \
