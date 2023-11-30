@@ -7,7 +7,7 @@ toolchain go1.21.1
 require (
 	github.com/cenkalti/backoff v2.2.1+incompatible
 	github.com/hashicorp/go-version v1.6.0
-	github.com/onsi/ginkgo/v2 v2.13.1
+	github.com/onsi/ginkgo/v2 v2.13.2
 	github.com/onsi/gomega v1.30.0
 )
 
