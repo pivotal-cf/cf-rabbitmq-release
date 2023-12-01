@@ -8,13 +8,6 @@ VERSION="26.1.2"
 MAJOR_VERSION="26"
 echo "$MAJOR_VERSION" > "$BOSH_INSTALL_TARGET/erlang_version"
 
-openssl_major_version="$(openssl version | awk '{print $2}' | cut -d "." -f 1)"
-if [ "$openssl_major_version" = "3" ]; then
-	openssl_flags=""
-else
-	openssl_flags="--with-ssl=/var/vcap/packages/openssl/external/openssl/ --with-ssl-rpath=/var/vcap/packages/openssl/external/openssl/lib/"
-fi
-
 if grep -Fxq jammy /etc/lsb-release; then
 	jit_flags="--enable-jit"
 else
@@ -24,7 +17,6 @@ fi
 tar xzf erlang-26/otp_src_oss_${VERSION}.tgz
 cd otp_src_oss_${VERSION}
 ./configure \
-	$openssl_flags \
 	--disable-hipe \
 	--disable-sctp \
 	--disable-silent-rules \

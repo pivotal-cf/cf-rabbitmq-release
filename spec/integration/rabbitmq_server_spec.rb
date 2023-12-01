@@ -28,10 +28,6 @@ RSpec.describe 'RabbitMQ server configuration' do
     'sudo PATH=$PATH:/var/vcap/packages/erlang/bin/ /var/vcap/packages/rabbitmq-server/privbin/rabbitmq-diagnostics'
   end
 
-  def openssl
-    '/var/vcap/packages/openssl/external/openssl/bin/openssl'
-  end
-
   let(:environment_settings) do
     stdout(bosh.ssh(rmq_host, "#{rabbitmqctl} environment"))
   end
@@ -115,7 +111,7 @@ RSpec.describe 'RabbitMQ server configuration' do
 
     describe 'SSL' do
       def connect_using(tls_version)
-        "#{openssl} s_client -#{tls_version} -connect 127.0.0.1:5671"
+        "openssl s_client -#{tls_version} -connect 127.0.0.1:5671"
       end
 
       it 'enables SSL listeners' do

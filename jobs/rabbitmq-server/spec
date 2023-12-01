@@ -10,7 +10,6 @@ packages:
 - rabbitmq-common
 - rabbitmq-upgrade-preparation
 - rabbitmq-admin
-- openssl
 
 properties:
   rabbitmq-server.version:
