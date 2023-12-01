@@ -70,12 +70,11 @@ RSpec.describe 'RabbitMQ server configuration' do
         rmq_properties['ssl']['key'] = server_key
         rmq_properties['ssl']['cert'] = server_cert
         rmq_properties['ssl']['cacert'] = ca_cert
-        rmq_properties['ssl']['versions'] = ['tlsv1.2', 'tlsv1.1', 'tlsv1']
+        rmq_properties['ssl']['versions'] = ['tlsv1.2']
         rmq_properties['ssl']['disable_non_ssl_listeners'] = true
 
-        tlsv1_compatible_cipher = 'ECDHE-RSA-AES256-SHA'
         tlsv1_2_compatible_cipher = 'ECDHE-RSA-AES256-GCM-SHA384'
-        rmq_properties['ssl']['ciphers'] = [tlsv1_compatible_cipher, tlsv1_2_compatible_cipher]
+        rmq_properties['ssl']['ciphers'] = [tlsv1_2_compatible_cipher]
 
         rmq_ssl_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']['ssl']
         rmq_ssl_properties['verify'] = true
@@ -124,32 +123,17 @@ RSpec.describe 'RabbitMQ server configuration' do
           expect(stdout(output)).to match(amqp_ssl_port_regex)
       end
 
-      context 'when tlsv1, tlsv1.1 and tlsv1.2 are enabled' do
+      context 'when tlsv1.2 is enabled' do
         before(:all) do
           manifest = bosh.manifest
 
           bosh.redeploy do |manifest|
             rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
-            rmq_properties['ssl']['versions'] = ['tlsv1.2', 'tlsv1.1', 'tlsv1']
+            rmq_properties['ssl']['versions'] = ['tlsv1.2']
 
-            tlsv1_compatible_cipher = 'ECDHE-RSA-AES256-SHA'
             tlsv1_2_compatible_cipher = 'ECDHE-RSA-AES256-GCM-SHA384'
-            rmq_properties['ssl']['ciphers'] = [tlsv1_compatible_cipher, tlsv1_2_compatible_cipher]
+            rmq_properties['ssl']['ciphers'] = [tlsv1_2_compatible_cipher]
           end
-        end
-
-        it 'should have TLS 1.0 enabled' do
-          output = bosh.ssh(rmq_host, connect_using('tls1'))
-
-          expect(stdout(output)).to include('BEGIN CERTIFICATE')
-          expect(stdout(output)).to include('END CERTIFICATE')
-        end
-
-        it 'should have TLS 1.1 enabled' do
-          output = bosh.ssh(rmq_host, connect_using('tls1_1'))
-
-          expect(stdout(output)).to include('BEGIN CERTIFICATE')
-          expect(stdout(output)).to include('END CERTIFICATE')
         end
 
         it 'should have TLS 1.2 enabled' do
@@ -185,6 +169,27 @@ RSpec.describe 'RabbitMQ server configuration' do
 
           expect(stdout(output)).to include('BEGIN CERTIFICATE')
           expect(stdout(output)).to include('END CERTIFICATE')
+        end
+
+        it 'should have TLS 1.3 enabled' do
+          output = bosh.ssh(rmq_host, connect_using('tls1_3'))
+
+          expect(stdout(output)).to include('BEGIN CERTIFICATE')
+          expect(stdout(output)).to include('END CERTIFICATE')
+        end
+      end
+
+      context 'when tlsv1.3 is enabled' do
+        before(:all) do
+          manifest = bosh.manifest
+
+          bosh.redeploy do |manifest|
+            rmq_properties = get_properties(manifest, 'rmq', 'rabbitmq-server')['rabbitmq-server']
+            rmq_properties['ssl']['versions'] = ['tlsv1.3']
+
+            tlsv1_3_compatible_cipher = 'TLS_AES_256_GCM_SHA384'
+            rmq_properties['ssl']['ciphers'] = [tlsv1_3_compatible_cipher]
+          end
         end
 
         it 'should have TLS 1.3 enabled' do
