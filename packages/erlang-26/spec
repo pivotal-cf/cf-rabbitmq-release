@@ -1,6 +1,6 @@
 ---
 name: erlang-26
 metadata:
-  version: 26.2
+  version: 26.2.1
 files:
-- erlang-26/otp_src_oss_26.2.tgz
+- erlang-26/otp_src_oss_26.2.1.tgz
