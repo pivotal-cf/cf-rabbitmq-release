@@ -1,6 +1,6 @@
 ---
 name: erlang-25
 metadata:
-  version: 25.3.2.7
+  version: 25.3.2.8
 files:
-- erlang-25/otp_src_oss_25.3.2.7.tgz
+- erlang-25/otp_src_oss_25.3.2.8.tgz
