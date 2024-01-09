@@ -1,9 +1,0 @@
----
-name: rabbitmq-server-3.10
-metadata:
-  version: 3.10.25
-files:
-- rabbitmq-server-3.10/rabbitmq-server-generic-unix-3.10.25.tar.xz
-- rabbitmq-server/rabbitmq-script-wrapper
-- rabbitmq-server/rabbitmq-defaults
-dependencies: []
