@@ -6,7 +6,7 @@ toolchain go1.21.1
 
 require (
 	github.com/onsi/ginkgo/v2 v2.15.0
-	github.com/onsi/gomega v1.31.0
+	github.com/onsi/gomega v1.31.1
 	github.com/vito/go-interact v1.0.1
 )
 
