@@ -1,9 +1,9 @@
 ---
 name: rabbitmq-server-3.12
 metadata:
-  version: 3.12.12
+  version: 3.12.13
 files:
-- rabbitmq-server-3.12/rabbitmq-server-generic-unix-3.12.12.tar.xz
+- rabbitmq-server-3.12/rabbitmq-server-generic-unix-3.12.13.tar.xz
 - rabbitmq-server/rabbitmq-script-wrapper
 - rabbitmq-server/rabbitmq-defaults
 dependencies: []
