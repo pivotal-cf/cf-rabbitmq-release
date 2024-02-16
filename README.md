@@ -7,7 +7,7 @@ This release is now using BOSH v2 [job links](https://bosh.io/docs/links.html) a
 
 ## Contributing
 
-Even though the default branch is `release`, you should push changes to `master`. [The `release` branch is the default so that bosh.io can find our releases](https://github.com/bosh-io/releases#how-does-boshio-find-my-release).
+Even though the default branch is `release`, you should push changes to `main`. [The `release` branch is the default so that bosh.io can find our releases](https://github.com/bosh-io/releases#how-does-boshio-find-my-release).
 
 ## Status
 
