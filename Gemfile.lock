@@ -43,7 +43,7 @@ GEM
     httparty (0.21.0)
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
-    json (2.7.1)
+    json (2.7.2)
     method_source (1.0.0)
     mini_mime (1.1.2)
     mqtt (0.6.0)
