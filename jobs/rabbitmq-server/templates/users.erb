@@ -1,17 +1,18 @@
-<% if_p('rabbitmq-server.administrators.management.username') do |username| %>
+<% require 'shellwords' -%>
+<% if_p('rabbitmq-server.administrators.management.username') do |username| -%>
 RMQ_OPERATOR_USERNAME=<%= Shellwords.escape(username) %>
 RMQ_OPERATOR_USERNAME="${RMQ_OPERATOR_USERNAME:?must be set}"
-<% end %>
+<% end -%>
 
-<% if_p('rabbitmq-server.administrators.management.password') do |password| %>
+<% if_p('rabbitmq-server.administrators.management.password') do |password| -%>
 RMQ_OPERATOR_PASSWORD=<%= Shellwords.escape(password) %>
 RMQ_OPERATOR_PASSWORD="${RMQ_OPERATOR_PASSWORD:?must be set}"
-<% end %>
+<% end -%>
 
-<% if_p('rabbitmq-server.administrators.broker.username') do |username| %>
+<% if_p('rabbitmq-server.administrators.broker.username') do |username| -%>
 RMQ_BROKER_USERNAME=<%= Shellwords.escape(username) %>
-<% end %>
+<% end -%>
 
-<% if_p('rabbitmq-server.administrators.broker.password') do |password| %>
+<% if_p('rabbitmq-server.administrators.broker.password') do |password| -%>
 RMQ_BROKER_PASSWORD=<%= Shellwords.escape(password) %>
-<% end %>
+<% end -%>

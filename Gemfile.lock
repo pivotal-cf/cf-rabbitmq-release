@@ -88,6 +88,7 @@ GEM
     ruby2_keywords (0.0.5)
     semi_semantic (1.2.0)
     set (1.0.3)
+    shellwords (0.2.0)
     sorted_set (1.0.3)
       rbtree
       set (~> 1.0)
@@ -109,4 +110,5 @@ DEPENDENCIES
   rspec (~> 3.13)
   rspec-instafail
   rspec-retry
+  shellwords
   stomp
