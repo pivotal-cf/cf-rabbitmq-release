@@ -40,7 +40,8 @@ cluster_name = <%= cluster_name %>
 <% end -%>
 <% end -%>
 
+default_vhost = <%= p('rabbitmq-server.default_vhost') %>
+
 <% if_p('rabbitmq-server.load_definitions') do -%>
 load_definitions = /var/vcap/jobs/rabbitmq-server/etc/definitions.json
 <% end -%>
-
