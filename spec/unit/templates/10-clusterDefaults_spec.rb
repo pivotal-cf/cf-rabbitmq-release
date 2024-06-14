@@ -103,6 +103,17 @@ RSpec.describe 'Configuration', template: true do
     end
   end
 
+  context 'when a default vhost is specified' do
+    let(:manifest_properties) { {
+      'rabbitmq-server' => {
+        'default_vhost': 'my-special-vhost'
+      }
+    }}
+    it 'configures the default vhost' do
+      expect(rendered_template).to include('default_vhost = my-special-vhost')
+    end
+  end
+
   context 'when definitions are provided to the rabbitmq-server job' do
 		let(:manifest_properties) { {
 				'rabbitmq-server' => {
