@@ -71,6 +71,10 @@ properties:
   rabbitmq-server.administrators.management.password:
     description: "RabbitMQ admin password for operator"
 
+  rabbitmq-server.default_vhost:
+    description: "Name of RabbitMQ default vhost"
+    default: "/"
+
   rabbitmq-server.override_config:
     description: "RabbitMQ configuration in Cuttlefish format. Overrides any config set by the release."
     example: |
