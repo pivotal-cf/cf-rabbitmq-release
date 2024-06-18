@@ -20,10 +20,10 @@ golang/go1.22.4.linux-amd64.tar.gz:
   object_id: d4b9ec3a-94fa-4b1d-4ee3-1a84653fb152
   sha: sha256:ba79d4526102575196273416239cca418a651e049c2b099f3159db85e7bade7d
 # this comment prevents git conflicts
-haproxy/haproxy-2.6.17.tar.gz:
-  size: 4094829
-  object_id: '085503b4-8bf5-4063-545d-322063427507'
-  sha: sha256:be48ee8ff9127c402b4c6cf1445cef7052f2c540ed1eff2dd04af677b8cd9dd0
+haproxy/haproxy-2.6.18.tar.gz:
+  size: 4103766
+  object_id: bef8a52d-c998-42f7-52f1-448b61c7dc8c
+  sha: sha256:1b36d3c618360eff7cdc2b70dd53affdf9c939d0fdf8602ac2d77018535f709a
 # this comment prevents git conflicts
 rabbitmq-server-3.11/rabbitmq-server-generic-unix-3.11.28.tar.xz:
   size: 15594916
