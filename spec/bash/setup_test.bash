@@ -39,8 +39,8 @@ T_create_env_config_file() {
     expect_to_contain "$(<$dir/env)" "RABBITMQ_PLUGINS_EXPAND_DIR=/var/vcap/store/rabbitmq/mnesia/db-plugins-expand"
     expect_to_contain "$(<$dir/env)" "ENABLED_PLUGINS_FILE=$plugins_file"
     expect_to_contain "$(<$dir/env)" "USE_LONGNAME=false"
-    expect_to_contain "$(<$dir/env)" "SERVER_ADDITIONAL_ERL_ARGS=\"-proto_dist inet_tls -ssl_dist_optfile /var/vcap/jobs/rabbitmq-server/etc/inter_node_tls.config"
-    expect_to_contain "$(<$dir/env)" "CTL_ERL_ARGS=\"-proto_dist inet_tls -ssl_dist_optfile /var/vcap/jobs/rabbitmq-server/etc/inter_node_tls.config"
+    expect_to_contain "$(<$dir/env)" "SERVER_ADDITIONAL_ERL_ARGS=\"-pa \$ERL_SSL_PATH -proto_dist inet_tls -ssl_dist_optfile /var/vcap/jobs/rabbitmq-server/etc/inter_node_tls.config"
+    expect_to_contain "$(<$dir/env)" "CTL_ERL_ARGS=\"-pa \$ERL_SSL_PATH -proto_dist inet_tls -ssl_dist_optfile /var/vcap/jobs/rabbitmq-server/etc/inter_node_tls.config"
 
     ) || ( $T_fail "Failed to create conf_env file" && return 1 )
 }
