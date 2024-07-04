@@ -32,7 +32,7 @@ main(){
   create_env_config_file \
     "$CONF_ENV_FILE" \
     "$SELF_NODE" \
-    "$DIR" \
+    "$HOME_DIR" \
     "$ENABLED_PLUGINS_FILE" \
     "$USE_LONGNAME" \
     "$INTER_NODE_TLS"
@@ -84,8 +84,11 @@ create_env_config_file() {
   printf "SERVER_START_ARGS='%s'\n" "-mnesia core_dir \"/var/vcap/sys/log/rabbitmq-server\" -rabbit halt_on_upgrade_failure false" >> "$dir/env"
 
   if [[ "$inter_node_tls" == "true" ]]; then
-    printf "SERVER_ADDITIONAL_ERL_ARGS=\"-proto_dist inet_tls -ssl_dist_optfile %s\"\n" "$RABBITMQ_INTERNODE_TLS_CONFIG_FILE" >> "$dir/env"
-    printf "CTL_ERL_ARGS=\"-proto_dist inet_tls -ssl_dist_optfile %s\"\n" "$RABBITMQ_INTERNODE_TLS_CONFIG_FILE" >> "$dir/env"
+    local erl_ssl_path
+    erl_ssl_path="$(erl -noinput -eval 'io:format("~s~n", [filename:dirname(code:which(inet_tls_dist))])' -s init stop)"
+    printf "ERL_SSL_PATH=\"%s\"\n" "$erl_ssl_path" >> "$dir/env"
+    printf "SERVER_ADDITIONAL_ERL_ARGS=\"-pa \$ERL_SSL_PATH -proto_dist inet_tls -ssl_dist_optfile %s\"\n" "$RABBITMQ_INTERNODE_TLS_CONFIG_FILE" >> "$dir/env"
+    printf "CTL_ERL_ARGS=\"-pa \$ERL_SSL_PATH -proto_dist inet_tls -ssl_dist_optfile %s\"\n" "$RABBITMQ_INTERNODE_TLS_CONFIG_FILE" >> "$dir/env"
   fi
 
   printf "%s\n" "$suffix" >> "$dir/env"

@@ -27,12 +27,13 @@ RSpec.describe 'Configuration', template: true do
         }
       }
     end
+
     context 'TLS is disabled' do
       before do
         manifest_properties['rabbitmq-server']['ssl']['enabled'] = false
       end
       it 'does contain erl args for rabbitmqctl' do
-        expect(rendered_template).to include('RABBITMQ_CTL_ERL_ARGS="-proto_dist inet_tls -ssl_dist_optfile /var/vcap/jobs/rabbitmq-server/etc/inter_node_tls.config"')
+        expect(rendered_template).to include('RABBITMQ_CTL_ERL_ARGS="-pa $ERL_SSL_PATH -proto_dist inet_tls -ssl_dist_optfile /var/vcap/jobs/rabbitmq-server/etc/inter_node_tls.config"')
       end
     end
 
@@ -41,7 +42,7 @@ RSpec.describe 'Configuration', template: true do
         manifest_properties['rabbitmq-server']['ssl']['enabled'] = true
       end
       it 'does contain erl args for rabbitmqctl' do
-        expect(rendered_template).to include('RABBITMQ_CTL_ERL_ARGS="-proto_dist inet_tls -ssl_dist_optfile /var/vcap/jobs/rabbitmq-server/etc/inter_node_tls.config"')
+        expect(rendered_template).to include('RABBITMQ_CTL_ERL_ARGS="-pa $ERL_SSL_PATH -proto_dist inet_tls -ssl_dist_optfile /var/vcap/jobs/rabbitmq-server/etc/inter_node_tls.config"')
       end
     end
   end

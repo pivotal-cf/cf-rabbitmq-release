@@ -5,5 +5,6 @@ RMQ_FD_LIMIT="${RMQ_FD_LIMIT:?must be set}"
 SKIP_PREPARE_FOR_UPGRADE=true
 <% end %>
 <% if p('rabbitmq-server.ssl.inter_node_enabled') -%>
-RABBITMQ_CTL_ERL_ARGS="-proto_dist inet_tls -ssl_dist_optfile /var/vcap/jobs/rabbitmq-server/etc/inter_node_tls.config"
+ERL_SSL_PATH="$(erl -noinput -eval 'io:format("~s~n", [filename:dirname(code:which(inet_tls_dist))])' -s init stop)"
+RABBITMQ_CTL_ERL_ARGS="-pa $ERL_SSL_PATH -proto_dist inet_tls -ssl_dist_optfile /var/vcap/jobs/rabbitmq-server/etc/inter_node_tls.config"
 <% end %>
