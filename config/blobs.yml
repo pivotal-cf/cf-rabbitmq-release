@@ -30,7 +30,7 @@ rabbitmq-server-3.11/rabbitmq-server-generic-unix-3.11.28.tar.xz:
   object_id: 519ebb39-4f9d-46cf-7d49-7057987bd959
   sha: sha256:7b19ae061454ca1f8aeac0412673f718cb7a9b3a060b495dad0ec6345c3b8f30
 # this comment prevents git conflicts
-rabbitmq-server-3.12/rabbitmq-server-generic-unix-3.12.14.tar.xz:
-  size: 15710532
-  object_id: fc4bdff2-7615-40fa-69fc-dc02e7f19cd4
-  sha: sha256:7257ebe7749ef416d045983fee7f5029bf3855c6547d8f4a1d0abfacb8514a68
+rabbitmq-server-3.12/rabbitmq-server-generic-unix-3.12.15.tar.xz:
+  size: 15675056
+  object_id: 2385caac-bdd5-4600-71a5-a64a4be138e6
+  sha: sha256:4af7d7bff2815f8c54d181a8a5321c854ce765c4f4e677b20904f4586131c032
