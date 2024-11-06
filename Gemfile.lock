@@ -73,7 +73,7 @@ GEM
     rspec-support (3.13.0)
     semi_semantic (1.2.0)
     set (1.1.0)
-    shellwords (0.2.0)
+    shellwords (0.2.1)
     sorted_set (1.0.3)
       rbtree
       set (~> 1.0)
